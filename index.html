@@ -85,6 +85,17 @@
 
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
   .profile-hide{display:none !important}
+  .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+  .collapsible-header:hover .collapse-icon{color:#e0e0e0}
+  .collapse-icon{font-size:12px;color:#555;transition:transform .2s;display:inline-block}
+  .collapse-icon.collapsed{transform:rotate(-90deg)}
+  .collapsible-body{transition:none}
+  .collapsible-body.collapsed{display:none}
+  .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+  .collapsible-header:hover .collapse-icon{color:#c9a84c}
+  .collapse-icon{font-size:12px;color:#555;transition:transform .2s;display:inline-block}
+  .collapsed .collapse-icon{transform:rotate(-90deg)}
+  .collapsible-body{overflow:hidden;transition:max-height .25s ease}
 
   /* Calendar */
   .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -146,9 +157,10 @@
 
   <div class="card gap">
     <div class="section-label">Session</div>
-    <div class="grid-4">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
       <div><label>Date</label><input type="date" id="f-date"></div>
       <div><label>Entry time (UK)</label><input type="time" id="f-entry-time" min="14:30" max="16:00"></div>
+      <div><label>Exit time (UK)</label><input type="time" id="f-exit-time" min="14:30" max="16:30"></div>
       <div><label>Instrument</label>
         <select id="f-instrument">
           <option>NQ / MNQ</option>
@@ -167,10 +179,11 @@
   </div>
 
   <div class="card">
-    <div class="flex-between" style="margin-bottom:10px">
+    <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
       <div class="section-label" style="margin-bottom:0">Model checklist</div>
-      <span id="check-count" style="font-size:12px;color:#555">0 / 10</span>
+      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:12px;color:#555">0 / 10</span><span class="collapse-icon">▼</span></div>
     </div>
+    <div id="checklist-body" class="collapsible-body">
     <div class="check-group-title">Allowed?</div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Within NY window (14:30–16:00 UK)</span></div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>News clear, no pending event</span></div>
@@ -188,6 +201,7 @@
     <div class="check-group-title">Confirmation (1M)</div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>BOS driving toward draw, waited for candle close</span></div>
     <div id="gate" class="gate">Complete checklist to see verdict</div>
+    </div>
   </div>
 
   <div class="card gap">
@@ -277,7 +291,11 @@
   </div>
 
   <div class="card">
-    <div class="section-label">Execution</div>
+    <div class="collapsible-header" onclick="toggleCollapse('execution-body')">
+      <div class="section-label" style="margin-bottom:0">Execution</div>
+      <span class="collapse-icon">▼</span>
+    </div>
+    <div id="execution-body" class="collapsible-body">
     <div class="gap">
       <label>Discipline (followed model?)</label>
       <div class="stars" id="stars-disc">
@@ -305,6 +323,8 @@
     <div>
       <label style="margin-bottom:6px">Mistakes <span id="mistake-count" style="color:#c4a020;font-size:12px"></span></label>
       <div class="mistakes-list" id="mistakes-list"></div>
+      <div class="hint">Hold Ctrl / Cmd to select multiple</div>
+    </div>
     </div>
   </div>
 
@@ -388,11 +408,12 @@
 <div class="page" id="page-stats">
   <!-- Filter bar -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div class="mode-toggle" id="stats-toggle" style="margin-bottom:0">
+    <div style="display:flex;align-items:center;gap:12px"><div class="mode-toggle" id="stats-toggle" style="margin-bottom:0">
       <button class="mode-btn active" onclick="setStatsMode('all',this)">All</button>
       <button class="mode-btn" onclick="setStatsMode('live',this)">Live</button>
       <button class="mode-btn" onclick="setStatsMode('backtest',this)">Backtest</button>
     </div>
+  </div><button id="notif-btn" onclick="requestNotifications()" style="font-size:11px;padding:5px 12px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">Notify me at 14:25</button>
     <div id="s-tilt"></div>
   </div>
 
@@ -404,6 +425,7 @@
     <div class="metric-card"><div class="metric-lbl">Profit factor</div><div class="metric-val" id="s-profitfactor" style="font-size:18px">—</div></div>
     <div class="metric-card"><div class="metric-lbl">Expectancy</div><div class="metric-val" id="s-expectancy" style="font-size:18px">—</div></div>
     <div class="metric-card"><div class="metric-lbl">Avg disc.</div><div class="metric-val" id="s-disc" style="font-size:18px">—</div></div>
+    
   </div>
 
   <!-- Row 2: Equity curve (wide) + Outcomes donut -->
@@ -468,6 +490,7 @@
         <div class="section-label">Time of day</div>
         <div id="s-timeofday" style="font-size:13px;color:#666">No data</div>
       </div>
+
     </div>
   </div>
 
@@ -480,6 +503,10 @@
     <div class="card">
       <div class="section-label">Best day &amp; bias</div>
       <div id="s-bestday" style="font-size:13px;color:#666">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Best RR &amp; rolling WR</div>
+      <div id="s-bestrr" style="font-size:13px;color:#666">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Top mistakes</div>
@@ -1050,14 +1077,14 @@ function saveTrade(){
   }
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   const pnl=parseFloat(pnlRaw);
-  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:(document.getElementById('f-ss-1m')||{}).value||'',ss5m:(document.getElementById('f-ss-5m')||{}).value||'',ss15m:(document.getElementById('f-ss-15m')||{}).value||'',ss1h:(document.getElementById('f-ss-1h')||{}).value||'',ss4h:(document.getElementById('f-ss-4h')||{}).value||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
+  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:(document.getElementById('f-ss-1m')||{}).value||'',ss5m:(document.getElementById('f-ss-5m')||{}).value||'',ss15m:(document.getElementById('f-ss-15m')||{}).value||'',ss1h:(document.getElementById('f-ss-1h')||{}).value||'',ss4h:(document.getElementById('f-ss-4h')||{}).value||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
     checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
     checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length};
   checkPB(trade);trades.unshift(trade);save();try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}alert('Saved');clearForm();
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-session','f-bias','f-direction','f-draw','f-rr','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-ss-1m','f-ss-5m','f-ss-15m','f-ss-1h','f-ss-4h','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-session','f-bias','f-direction','f-draw','f-rr','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-ss-1m','f-ss-5m','f-ss-15m','f-ss-1h','f-ss-4h','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
@@ -1193,6 +1220,8 @@ function renderStats(){
   renderMonthlyChart(f);
   renderCompliance(f);
   renderTags(f);
+  renderBestRR(f);
+  renderTradeDuration(f);
 }
 
 let eqMode='live';
@@ -1480,11 +1509,12 @@ function renderCalendar(){
     if(!t.date)return;
     const [y,m,d]=t.date.split('-').map(Number);
     if(y===calYear&&m-1===calMonth){
-      if(!dayMap[d])dayMap[d]={pnl:0,trades:0,wins:0,losses:0};
+      if(!dayMap[d])dayMap[d]={pnl:0,trades:0,wins:0,losses:0,bes:0};
       dayMap[d].pnl+=t.pnl;
       dayMap[d].trades++;
       if(t.outcome==='win')dayMap[d].wins++;
-      if(t.outcome==='loss')dayMap[d].losses++;
+      else if(t.outcome==='loss')dayMap[d].losses++;
+      else if(t.outcome==='be')dayMap[d].bes++;
     }
   });
 
@@ -1538,7 +1568,7 @@ function renderCalendar(){
         let inner='<div class="cal-day" style="color:'+(isToday?'#e0e0e0':'#555')+'">'+day+'</div>';
         if(d){
           const pColor=d.pnl>0?'#6abf6a':d.pnl<0?'#c06060':'#c4a020';
-          const bg=d.pnl>0?'rgba(58,110,58,0.2)':d.pnl<0?'rgba(110,42,42,0.2)':'rgba(110,90,0,0.1)';
+          const bg=d.pnl>0?'rgba(58,110,58,0.2)':d.pnl<0&&d.losses>d.bes?'rgba(110,42,42,0.2)':'rgba(110,90,0,0.1)';
           inner='<div class="cal-day" style="color:#aaa">'+day+'</div><div class="cal-pnl" style="color:'+pColor+'">'+(d.pnl>=0?'+':'')+d.pnl.toFixed(2)+'</div><div class="cal-count">'+d.trades+' trade'+(d.trades>1?'s':'')+'</div>';
           html+='<td class="'+cls+'" style="background:'+bg+'"  onclick="calDayClick('+day+')">'+inner+'</td>';
           weekPnl+=d.pnl;weekTrades+=d.trades;
@@ -1625,6 +1655,7 @@ function openEdit(id){
   document.getElementById('e-pnl').value=t.pnl!=null?t.pnl:'';
   document.getElementById('e-risk').value=t.risk||'';
   document.getElementById('e-entry-time').value=t.entryTime||'';
+  if(document.getElementById('e-exit-time'))document.getElementById('e-exit-time').value=t.exitTime||'';
   document.getElementById('e-session').value=t.session||'';
   document.getElementById('e-emotion').value=t.emotion||'';
   document.getElementById('e-ss-1m').value=t.ss1m||'';
@@ -1673,6 +1704,7 @@ function saveEdit(){
     pnl:pnlRaw!==''?parseFloat(pnlRaw):null,
     risk:document.getElementById('e-risk').value,
     entryTime:document.getElementById('e-entry-time').value,
+    exitTime:(document.getElementById('e-exit-time')||{}).value||'',
     session:document.getElementById('e-session').value,
     emotion:document.getElementById('e-emotion').value,
     discRating:eDiscRating,
@@ -1720,7 +1752,10 @@ function randomizeTrade(){
   document.getElementById('f-date').value=rDate.toISOString().split('T')[0];
   document.getElementById('f-instrument').value=instruments[Math.floor(Math.random()*instruments.length)];
   const entryTimes=['14:30','14:45','15:00','15:15','15:30','15:45'];
-  document.getElementById('f-entry-time').value=entryTimes[Math.floor(Math.random()*entryTimes.length)];
+  const entryT=entryTimes[Math.floor(Math.random()*entryTimes.length)];
+  document.getElementById('f-entry-time').value=entryT;
+  const exitEl=document.getElementById('f-exit-time');
+  if(exitEl){const [h,m]=entryT.split(':').map(Number);const exitMins=h*60+m+Math.floor(Math.random()*45)+5;exitEl.value=Math.floor(exitMins/60)+':'+String(exitMins%60).padStart(2,'0');}
   document.getElementById('f-session').value=sessions[Math.floor(Math.random()*sessions.length)];
   document.getElementById('f-bias').value=bias;
   document.getElementById('f-direction').value=direction;
@@ -2182,6 +2217,115 @@ function renderPayouts(){
   renderProp&&renderProp();
 }
 
+
+// ── Collapse/expand ──
+function toggleCollapse(id){
+  const body=document.getElementById(id);
+  const header=body?body.previousElementSibling:null;
+  const icon=header?header.querySelector('.collapse-icon'):null;
+  if(!body)return;
+  const collapsed=body.classList.toggle('collapsed');
+  if(icon)icon.classList.toggle('collapsed',collapsed);
+}
+
+// ── Trade duration on stats ──
+function renderTradeDuration(f){
+  const el=document.getElementById('s-duration');if(!el)return;
+  const withBoth=f.filter(t=>t.entryTime&&t.exitTime);
+  if(!withBoth.length){el.innerHTML='<span style="color:#555;font-size:12px">Log entry + exit time to see duration stats</span>';return;}
+  const durations=withBoth.map(t=>{
+    const [eh,em]=t.entryTime.split(':').map(Number);
+    const [xh,xm]=t.exitTime.split(':').map(Number);
+    return(xh*60+xm)-(eh*60+em);
+  }).filter(d=>d>0);
+  if(!durations.length){el.textContent='No data';return;}
+  const avg=Math.round(durations.reduce((a,b)=>a+b,0)/durations.length);
+  const min=Math.min(...durations);
+  const max=Math.max(...durations);
+  const winDurs=withBoth.filter((t,i)=>t.outcome==='win'&&durations[withBoth.indexOf(t)]>0);
+  const lossDurs=withBoth.filter((t,i)=>t.outcome==='loss'&&durations[withBoth.indexOf(t)]>0);
+  const avgWinDur=winDurs.length?Math.round(winDurs.reduce((s,t)=>{const[eh,em]=t.entryTime.split(':').map(Number);const[xh,xm]=t.exitTime.split(':').map(Number);return s+(xh*60+xm)-(eh*60+em);},0)/winDurs.length):null;
+  const avgLossDur=lossDurs.length?Math.round(lossDurs.reduce((s,t)=>{const[eh,em]=t.entryTime.split(':').map(Number);const[xh,xm]=t.exitTime.split(':').map(Number);return s+(xh*60+xm)-(eh*60+em);},0)/lossDurs.length):null;
+  el.innerHTML='<div class="grid-2" style="gap:8px">'
+    +'<div><div style="font-size:11px;color:#555;margin-bottom:2px">Avg duration</div><div style="font-size:18px;font-weight:500;color:#c9a84c">'+avg+'m</div></div>'
+    +'<div><div style="font-size:11px;color:#555;margin-bottom:2px">Range</div><div style="font-size:13px;color:#aaa">'+min+'m — '+max+'m</div></div>'
+    +'</div>'
+    +'<div style="margin-top:10px;border-top:0.5px solid #2a2a2a;padding-top:10px;display:flex;gap:20px">'
+    +(avgWinDur?'<span style="font-size:12px;color:#6abf6a">Avg win: '+avgWinDur+'m</span>':'')
+    +(avgLossDur?'<span style="font-size:12px;color:#c06060">Avg loss: '+avgLossDur+'m</span>':'')
+    +'</div>';
+}
+
+// ── Best RR analysis + Rolling win rate ──
+function renderBestRR(f){
+  const el=document.getElementById('s-bestrr');if(!el)return;
+  // Best planned RR
+  const rrMap={};
+  f.filter(t=>t.rrPlan&&t.outcome&&t.outcome!=='be').forEach(t=>{
+    if(!rrMap[t.rrPlan])rrMap[t.rrPlan]={win:0,total:0};
+    rrMap[t.rrPlan].total++;
+    if(t.outcome==='win')rrMap[t.rrPlan].win++;
+  });
+  const rrSorted=Object.entries(rrMap).filter(([,v])=>v.total>=2).sort((a,b)=>(b[1].win/b[1].total)-(a[1].win/a[1].total));
+  // Rolling win rate last 10/20
+  const active=f.filter(t=>t.outcome==='win'||t.outcome==='loss').sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id));
+  const last10=active.slice(0,10);
+  const last20=active.slice(0,20);
+  const wr10=last10.length?Math.round(last10.filter(t=>t.outcome==='win').length/last10.length*100):null;
+  const wr20=last20.length?Math.round(last20.filter(t=>t.outcome==='win').length/last20.length*100):null;
+  if(!rrSorted.length&&!wr10){el.textContent='No data';return;}
+  let html='';
+  if(rrSorted.length){
+    html+='<div style="margin-bottom:10px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#555;margin-bottom:6px">Best RR (min 2 trades)</div>';
+    html+=rrSorted.slice(0,4).map(([rr,d])=>{
+      const wr=Math.round(d.win/d.total*100);
+      const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
+      return'<div class="flex-between" style="margin-bottom:5px"><span style="font-size:12px;color:#aaa">'+rr+'</span><span style="font-size:12px;font-weight:500;color:'+col+'">'+wr+'% ('+d.win+'/'+d.total+')</span></div>';
+    }).join('');
+    html+='</div>';
+  }
+  if(wr10!==null||wr20!==null){
+    html+='<div style="border-top:0.5px solid #2a2a2a;padding-top:10px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#555;margin-bottom:6px">Rolling win rate</div>';
+    if(wr10!==null)html+='<div class="flex-between" style="margin-bottom:5px"><span style="font-size:12px;color:#aaa">Last 10 trades</span><span style="font-size:12px;font-weight:500;color:'+(wr10>=50?'#6abf6a':'#c06060')+'">'+wr10+'%</span></div>';
+    if(wr20!==null)html+='<div class="flex-between"><span style="font-size:12px;color:#aaa">Last 20 trades</span><span style="font-size:12px;font-weight:500;color:'+(wr20>=50?'#6abf6a':'#c06060')+'">'+wr20+'%</span></div>';
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+
+// ── Push notifications ──
+async function requestNotifications(){
+  if(!('Notification' in window)){alert('Notifications not supported in this browser');return;}
+  const permission=await Notification.requestPermission();
+  if(permission==='granted'){
+    localStorage.setItem('ict_notifs','1');
+    document.getElementById('notif-btn').textContent='Notifications on ✓';
+    document.getElementById('notif-btn').style.color='#6abf6a';
+    scheduleNYReminder();
+    alert('Notifications enabled. You will get a reminder at 14:25 UK when the NY window opens.');
+  }
+}
+function scheduleNYReminder(){
+  if(localStorage.getItem('ict_notifs')!=='1')return;
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const now=new Date();
+  // Calculate next 14:25 UK time
+  const target=new Date();
+  target.setHours(14,25,0,0);
+  if(target<=now)target.setDate(target.getDate()+1);
+  // Skip weekends
+  while(target.getDay()===0||target.getDay()===6)target.setDate(target.getDate()+1);
+  const msUntil=target-now;
+  setTimeout(()=>{
+    new Notification('fuze\'s Journal — NY window opens in 5 mins 🟡',{
+      body:'14:30 UK — check your draw, get ready.',
+      icon:'/favicon.ico'
+    });
+    // Schedule next day
+    setTimeout(scheduleNYReminder,60000);
+  },msUntil);
+}
+
 // ── Missed trades ──
 let missedTrades=[];
 
@@ -2481,6 +2625,7 @@ document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Entry time (UK)</label><input type="time" id="e-entry-time" min="14:30" max="16:00"></div>
+      <div><label>Exit time (UK)</label><input type="time" id="e-exit-time" min="14:30" max="16:30"></div>
       <div><label>Session quality</label><select id="e-session"><option value="">—</option><option>Clean / trending</option><option>Choppy / ranging</option><option>News driven</option><option>Slow / low volume</option></select></div>
       <div><label>Emotional state</label><select id="e-emotion"><option value="">—</option><option>Neutral ✓</option><option>Patient / waiting</option><option>FOMO / chasing</option><option>Revenge trading</option><option>Overconfident</option><option>Anxious / hesitant</option><option>Distracted</option><option>Tired / low energy</option></select></div>
     </div>
@@ -2560,4 +2705,3 @@ document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body>
 </html>
-
