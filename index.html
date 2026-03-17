@@ -84,6 +84,112 @@
   .mistake-cat{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#444;padding:8px 8px 2px;pointer-events:none}
 
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
+
+  /* ── MOBILE STYLES ── */
+  @media(max-width:768px){
+    body{padding:.75rem .75rem 80px;font-size:14px}
+
+    /* Hide desktop tabs, show bottom nav */
+    .tabs{display:none !important}
+
+    /* Profile bar compact */
+    .profile-bar{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:1rem}
+    .profile-btns{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+    .profile-btn{padding:6px 4px;font-size:11px;text-align:center}
+    h1{font-size:14px}
+    #notif-btn{font-size:10px}
+
+    /* Grids go single column on mobile */
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr !important}
+    [style*="grid-template-columns:repeat(5,1fr)"]{display:grid !important;grid-template-columns:1fr 1fr !important;gap:10px}
+    [style*="grid-template-columns:repeat(6,1fr)"]{display:grid !important;grid-template-columns:1fr 1fr 1fr !important;gap:8px}
+    [style*="grid-template-columns:2fr 1fr"]{display:grid !important;grid-template-columns:1fr !important}
+    [style*="grid-template-columns:1fr 2fr"]{display:grid !important;grid-template-columns:1fr !important}
+    [style*="grid-template-columns:1fr 1fr 1fr"]{display:grid !important;grid-template-columns:1fr 1fr !important}
+    [style*="grid-template-columns:1fr 220px"]{display:block !important}
+    [style*="grid-template-columns:repeat(4,1fr)"]{display:grid !important;grid-template-columns:1fr 1fr !important}
+
+    /* Cards */
+    .card{padding:.75rem;margin-bottom:10px;border-radius:10px}
+
+    /* Inputs bigger tap targets */
+    input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{
+      padding:10px 12px;font-size:14px;border-radius:8px
+    }
+
+    /* Outcome buttons */
+    .outcome-btn{padding:12px 6px;font-size:13px}
+
+    /* Stars bigger */
+    .star{font-size:26px !important}
+
+    /* Buttons */
+    .btn{padding:10px 16px;font-size:13px}
+    .btn-sm{padding:7px 12px;font-size:12px}
+
+    /* Log table — horizontal scroll */
+    .log-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .log-table{min-width:700px}
+
+    /* Cal grid horizontal scroll */
+    .cal-grid{min-width:500px}
+    .cal-layout>div:first-child{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+    /* Metric cards compact */
+    .metric-val{font-size:18px !important}
+    .metric-lbl{font-size:10px}
+
+    /* Hide export / less important btns on small screens to reduce clutter */
+    .section-label{font-size:10px}
+
+    /* More menu overlay */
+    #mobile-more-menu{
+      display:none;position:fixed;bottom:64px;left:0;right:0;
+      background:#141414;border-top:0.5px solid #2a2a2a;
+      padding:12px;z-index:9990;
+      display:none;flex-direction:column;gap:4px
+    }
+    #mobile-more-menu.open{display:flex}
+    .more-menu-item{
+      padding:13px 16px;font-size:14px;color:#e0e0e0;
+      border-radius:8px;cursor:pointer;transition:background .15s;
+      display:flex;align-items:center;gap:10px
+    }
+    .more-menu-item:hover,.more-menu-item:active{background:#222}
+    .more-menu-item.active-more{color:#c9a84c}
+
+    /* Playbook textareas */
+    #page-playbook textarea{min-height:70px !important}
+
+    /* Weekly review */
+    #page-weekly .cal-nav{gap:4px}
+    #page-weekly .cal-nav button{padding:6px 10px;font-size:12px}
+
+    /* Prop page grids */
+    #page-prop .grid-2{grid-template-columns:1fr !important}
+
+    /* AI analysis */
+    #ai-analysis-out{font-size:12px}
+  }
+
+  /* ── BOTTOM NAV BAR ── */
+  #mobile-nav{display:none}
+  @media(max-width:768px){
+    #mobile-nav{
+      display:flex;position:fixed;bottom:0;left:0;right:0;height:60px;
+      background:#111;border-top:0.5px solid #2a2a2a;
+      z-index:9999;align-items:stretch
+    }
+    .mob-nav-btn{
+      flex:1;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:3px;cursor:pointer;
+      font-size:10px;color:#666;transition:color .15s;
+      border:none;background:none;font-family:inherit;padding:0
+    }
+    .mob-nav-btn .mob-icon{font-size:20px;line-height:1}
+    .mob-nav-btn.active{color:#c9a84c}
+    .mob-nav-btn:active{opacity:.7}
+  }
   .profile-hide{display:none !important}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .collapsible-header:hover .collapse-icon{color:#e0e0e0}
@@ -2718,5 +2824,63 @@ loadAllData().then(()=>{
   <div style="font-size:13px;color:#888">Loading your journal...</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<!-- More menu (mobile) -->
+<div id="mobile-more-menu">
+  <div class="more-menu-item" id="more-prop"      onclick="mobileNav('prop')">      <span>📊</span> Prop firm</div>
+  <div class="more-menu-item" id="more-missed"    onclick="mobileNav('missed')">    <span>👁️</span> Missed trades</div>
+  <div class="more-menu-item" id="more-weekly"    onclick="mobileNav('weekly')">    <span>📋</span> Weekly review</div>
+  <div class="more-menu-item" id="more-playbook"  onclick="mobileNav('playbook')">  <span>📖</span> Playbook</div>
+  <div class="more-menu-item" id="more-session"   onclick="mobileNav('session')">   <span>🎯</span> Session report</div>
+</div>
+
+<!-- Bottom nav bar (mobile) -->
+<nav id="mobile-nav">
+  <button class="mob-nav-btn active" id="mobnav-log"      onclick="mobileNav('log')">      <span class="mob-icon">✍️</span>Log</button>
+  <button class="mob-nav-btn"        id="mobnav-journal"  onclick="mobileNav('journal')">  <span class="mob-icon">📒</span>Trades</button>
+  <button class="mob-nav-btn"        id="mobnav-stats"    onclick="mobileNav('stats')">    <span class="mob-icon">📈</span>Stats</button>
+  <button class="mob-nav-btn"        id="mobnav-calendar" onclick="mobileNav('calendar')"> <span class="mob-icon">📅</span>Calendar</button>
+  <button class="mob-nav-btn"        id="mobnav-more"     onclick="toggleMoreMenu()">      <span class="mob-icon">☰</span>More</button>
+</nav>
+
+<script>
+// ── Mobile nav ──
+const MOB_MAIN_TABS = ['log','journal','stats','calendar'];
+
+function mobileNav(t){
+  // Close more menu
+  document.getElementById('mobile-more-menu').classList.remove('open');
+  // Activate tab
+  showTab(t);
+  // Update bottom nav active state
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
+  const mainBtn = document.getElementById('mobnav-'+t);
+  if(mainBtn){ mainBtn.classList.add('active'); }
+  else {
+    // It's a "more" tab — highlight More button
+    document.getElementById('mobnav-more').classList.add('active');
+  }
+  // Update more menu item active state
+  document.querySelectorAll('.more-menu-item').forEach(el=>el.classList.remove('active-more'));
+  const moreItem = document.getElementById('more-'+t);
+  if(moreItem) moreItem.classList.add('active-more');
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleMoreMenu(){
+  const menu = document.getElementById('mobile-more-menu');
+  menu.classList.toggle('open');
+}
+
+// Close more menu when tapping outside
+document.addEventListener('click', function(e){
+  const menu = document.getElementById('mobile-more-menu');
+  const moreBtn = document.getElementById('mobnav-more');
+  if(menu.classList.contains('open') && !menu.contains(e.target) && !moreBtn.contains(e.target)){
+    menu.classList.remove('open');
+  }
+});
+</script>
 </body>
 </html>
