@@ -1901,11 +1901,6 @@ let playbookData={};
 
 function savePlaybookStore(){try{localStorage.setItem('ict_playbook',JSON.stringify(playbookData));}catch(e){}supaSet('ict_playbook',playbookData);}
 async function loadPlaybook(){
-  // If playbookData is empty, re-fetch from Supabase
-  if(!playbookData[currentProfile]||Object.keys(playbookData[currentProfile]).length===0){
-    const fresh=await supaGet('ict_playbook');
-    if(fresh)playbookData=fresh;
-  }
   const pb=playbookData[currentProfile]||{};
   ['perfect','rules','avoid','pre','goals'].forEach(k=>{
     const el=document.getElementById('pb-'+k);
