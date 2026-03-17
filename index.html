@@ -919,57 +919,53 @@ async function supaGet(key){
     const r=await fetch(SUPA_URL+'/rest/v1/misc?key=eq.'+encodeURIComponent(key)+'&select=data',{
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
     });
-    if(!r.ok){console.error('supaGet failed:',r.status,key);return null;}
+    if(!r.ok)return null;
     const d=await r.json();
     if(!d||!d[0])return null;
-    // Handle both already-parsed JSONB and stringified data
     const raw=d[0].data;
-    if(typeof raw==='string'){try{return JSON.parse(raw);}catch(e){return raw;}}
+    if(typeof raw==='string'){try{return JSON.parse(raw);}catch(e){return null;}}
     return raw;
-  }catch(e){console.error('supaGet error:',key,e);return null;}
+  }catch(e){return null;}
 }
 
 async function supaSet(key,data){
   try{
-    const r=await fetch(SUPA_URL+'/rest/v1/misc',{
+    await fetch(SUPA_URL+'/rest/v1/misc',{
       method:'POST',
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
       body:JSON.stringify({key,data,updated_at:new Date().toISOString()})
     });
-    if(!r.ok){const txt=await r.text();console.error('supaSet failed:',r.status,key,txt);}
-  }catch(e){console.error('Supabase save error',key,e);}
+  }catch(e){}
+}
+
+function applyLoadedData(){
+  trades=allTrades[currentProfile]||[];
+  propSettings=allPropSettings[currentProfile]||{};
+  weeklyNotes=allWeeklyNotes[currentProfile]||{};
+  missedTrades=allMissedTrades[currentProfile]||[];
 }
 
 async function loadAllData(){
   const loadingEl=document.getElementById('loading-overlay');
   if(loadingEl)loadingEl.style.display='flex';
   try{
-    const [trades_d,prop_d,weekly_d,missed_d,goals_d,playbook_d,sessions_d]=await Promise.all([
-      supaGet('ict_profiles'),supaGet('ict_prop_profiles'),
-      supaGet('ict_weekly_profiles'),supaGet('ict_missed_profiles'),
-      supaGet('ict_goals'),supaGet('ict_playbook'),supaGet('ict_session_reports')
-    ]);
-    if(trades_d)allTrades=trades_d;
-    if(prop_d)allPropSettings=prop_d;
-    if(weekly_d)allWeeklyNotes=weekly_d;
-    if(missed_d)allMissedTrades=missed_d;
-    if(goals_d)monthlyGoals=goals_d;
-    if(playbook_d)playbookData=playbook_d;
-    if(sessions_d)sessionReports=sessions_d;
+    const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_goals','ict_playbook','ict_session_reports','ict_payouts'];
+    const results=await Promise.all(keys.map(k=>supaGet(k)));
+    const [trades_d,prop_d,weekly_d,missed_d,goals_d,playbook_d,sessions_d,payouts_d]=results;
+    if(trades_d&&typeof trades_d==='object')allTrades=trades_d;
+    if(prop_d&&typeof prop_d==='object')allPropSettings=prop_d;
+    if(weekly_d&&typeof weekly_d==='object')allWeeklyNotes=weekly_d;
+    if(missed_d&&typeof missed_d==='object')allMissedTrades=missed_d;
+    if(goals_d&&typeof goals_d==='object')monthlyGoals=goals_d;
+    if(playbook_d&&typeof playbook_d==='object')playbookData=playbook_d;
+    if(sessions_d&&typeof sessions_d==='object')sessionReports=sessions_d;
+    if(payouts_d&&typeof payouts_d==='object')payouts=payouts_d;
   }catch(e){console.error('Load error',e);}
-  mode=currentProfile==='backtesting'?'backtest':'live';
-  trades=allTrades[currentProfile]||[];
+  applyLoadedData();
   applyProfileUI();
-  propSettings=allPropSettings[currentProfile]||{};
-  weeklyNotes=allWeeklyNotes[currentProfile]||{};
-  missedTrades=allMissedTrades[currentProfile]||[];
   if(loadingEl)loadingEl.style.display='none';
-  // Render initial tab
   renderJournal&&renderJournal();
 }
-trades=allTrades[currentProfile]||[];
-propSettings=allPropSettings[currentProfile]||{};
-
 function save(){
   allTrades[currentProfile]=trades;
   try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
