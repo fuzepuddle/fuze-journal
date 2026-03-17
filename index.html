@@ -2608,8 +2608,13 @@ function launchConfetti(){
 // ── Init ──
 buildMistakes();
 document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
-loadDraft();
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
+loadAllData().then(()=>{
+  loadDraft();
+  scheduleNYReminder();
+  document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
+  try{if(localStorage.getItem('ict_notifs')==='1'&&typeof Notification!=='undefined'&&Notification.permission==='granted'){const nb=document.getElementById('notif-btn');if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}}}catch(e){}
+});
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
