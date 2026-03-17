@@ -966,6 +966,7 @@ propSettings=allPropSettings[currentProfile]||{};
 function save(){
   allTrades[currentProfile]=trades;
   supaSet('ict_profiles',allTrades);
+  try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
 }
 function saveProp(){
   allPropSettings[currentProfile]=propSettings;
@@ -1895,7 +1896,12 @@ function renderKeyMetrics(f){
 let playbookData={};
 
 function savePlaybookStore(){supaSet('ict_playbook',playbookData);}
-function loadPlaybook(){
+async function loadPlaybook(){
+  // If playbookData is empty, re-fetch from Supabase
+  if(!playbookData[currentProfile]||Object.keys(playbookData[currentProfile]).length===0){
+    const fresh=await supaGet('ict_playbook');
+    if(fresh)playbookData=fresh;
+  }
   const pb=playbookData[currentProfile]||{};
   ['perfect','rules','avoid','pre','goals'].forEach(k=>{
     const el=document.getElementById('pb-'+k);
