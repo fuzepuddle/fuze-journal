@@ -972,11 +972,12 @@ propSettings=allPropSettings[currentProfile]||{};
 
 function save(){
   allTrades[currentProfile]=trades;
-  supaSet('ict_profiles',allTrades);
   try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
+  supaSet('ict_profiles',allTrades);
 }
 function saveProp(){
   allPropSettings[currentProfile]=propSettings;
+  try{localStorage.setItem('ict_prop_profiles',JSON.stringify(allPropSettings));}catch(e){}
   supaSet('ict_prop_profiles',allPropSettings);
 }
 
@@ -1902,7 +1903,7 @@ function renderKeyMetrics(f){
 // ── Playbook ──
 let playbookData={};
 
-function savePlaybookStore(){supaSet('ict_playbook',playbookData);}
+function savePlaybookStore(){try{localStorage.setItem('ict_playbook',JSON.stringify(playbookData));}catch(e){}supaSet('ict_playbook',playbookData);}
 async function loadPlaybook(){
   // If playbookData is empty, re-fetch from Supabase
   if(!playbookData[currentProfile]||Object.keys(playbookData[currentProfile]).length===0){
@@ -1930,7 +1931,7 @@ function savePlaybook(){
 let sessionReports={};
 let srRatings={patience:0,discipline:0,execution:0,psychology:0};
 
-function saveSessionReportsStore(){supaSet('ict_session_reports',sessionReports);}
+function saveSessionReportsStore(){try{localStorage.setItem('ict_session_reports',JSON.stringify(sessionReports));}catch(e){}supaSet('ict_session_reports',sessionReports);}
 function srRate(key,n){
   srRatings[key]=n;
   document.querySelectorAll('#sr-'+key+'-stars .star').forEach((s,i)=>s.classList.toggle('lit',i<n));
@@ -2052,7 +2053,7 @@ function renderBestDayBias(f){
 // ── Goal tracker ──
 let monthlyGoals={};
 
-function saveGoalStore(){supaSet('ict_goals',monthlyGoals);}
+function saveGoalStore(){try{localStorage.setItem('ict_goals',JSON.stringify(monthlyGoals));}catch(e){}supaSet('ict_goals',monthlyGoals);}
 function saveGoal(){
   const val=parseFloat(document.getElementById('goal-input').value);
   if(!val||val<=0){alert('Enter a valid goal');return;}
@@ -2344,6 +2345,7 @@ let missedTrades=[];
 
 function saveMissedStore(){
   allMissedTrades[currentProfile]=missedTrades;
+  try{localStorage.setItem('ict_missed_profiles',JSON.stringify(allMissedTrades));}catch(e){}
   supaSet('ict_missed_profiles',allMissedTrades);
 }
 
@@ -2370,6 +2372,7 @@ let currentWeekOffset=0;
 
 function saveWeeklyStore(){
   allWeeklyNotes[currentProfile]=weeklyNotes;
+  try{localStorage.setItem('ict_weekly_profiles',JSON.stringify(allWeeklyNotes));}catch(e){}
   supaSet('ict_weekly_profiles',allWeeklyNotes);
 }
 
