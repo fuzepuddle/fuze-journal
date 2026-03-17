@@ -2525,6 +2525,9 @@ function loadDraft(){
     if(!d)return;
     const draft=JSON.parse(d);
     if(!draft.date)return;
+    // Only prompt if draft has meaningful data
+    const hasMeaningfulData=draft.outcome||draft.draw||draft.pnl;
+    if(!hasMeaningfulData){localStorage.removeItem('ict_draft_'+currentProfile);return;}
     if(!confirm('You have an unsaved draft from '+draft.date+'. Load it?')){localStorage.removeItem('ict_draft_'+currentProfile);return;}
     ['date','instrument','entryTime','session','bias','direction','draw','pnl','risk','emotion','narrative','improve'].forEach(k=>{
       const el=document.getElementById('f-'+k.replace(/([A-Z])/g,'-$1').toLowerCase());
