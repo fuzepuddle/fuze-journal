@@ -130,13 +130,15 @@
 </head>
 <body>
 <div class="profile-bar">
-  <h1>fuze's ICT Trading Journal ✍️</h1>
+  <div style="display:flex;align-items:center;gap:12px">
+    <h1>fuze's ICT Trading Journal ✍️</h1>
+    <button id="notif-btn" onclick="requestNotifications()" style="font-size:11px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
+  </div>
   <div class="profile-btns">
     <button class="profile-btn active" onclick="switchProfile('challenge',this)">Challenge</button>
     <button class="profile-btn" onclick="switchProfile('funded',this)">Funded</button>
     <button class="profile-btn" onclick="switchProfile('experiments',this)">Experiments</button>
     <button class="profile-btn" onclick="switchProfile('demo',this)">Demo</button>
-    <button class="profile-btn" onclick="switchProfile('backtesting',this)">Backtesting</button>
   </div>
 </div>
 <div class="tabs">
@@ -408,12 +410,11 @@
 <div class="page" id="page-stats">
   <!-- Filter bar -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div style="display:flex;align-items:center;gap:12px"><div class="mode-toggle" id="stats-toggle" style="margin-bottom:0">
+    <div class="mode-toggle" id="stats-toggle" style="margin-bottom:0">
       <button class="mode-btn active" onclick="setStatsMode('all',this)">All</button>
       <button class="mode-btn" onclick="setStatsMode('live',this)">Live</button>
       <button class="mode-btn" onclick="setStatsMode('backtest',this)">Backtest</button>
     </div>
-  </div><button id="notif-btn" onclick="requestNotifications()" style="font-size:11px;padding:5px 12px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">Notify me at 14:25</button>
     <div id="s-tilt"></div>
   </div>
 
@@ -891,11 +892,11 @@
 <script>
 // ── State ──
 let currentProfile='challenge';
-const PROFILES=['challenge','funded','experiments','demo','backtesting'];
-let allTrades={challenge:[],funded:[],experiments:[],demo:[],backtesting:[]};
-let allPropSettings={challenge:{},funded:{},experiments:{},demo:{},backtesting:{}};
-let allWeeklyNotes={challenge:{},funded:{},experiments:{},demo:{},backtesting:{}};
-let allMissedTrades={challenge:[],funded:[],experiments:[],demo:[],backtesting:[]};
+const PROFILES=['challenge','funded','experiments','demo'];
+let allTrades={challenge:[],funded:[],experiments:[],demo:[]};
+let allPropSettings={challenge:{},funded:{},experiments:{},demo:{}};
+let allWeeklyNotes={challenge:{},funded:{},experiments:{},demo:{}};
+let allMissedTrades={challenge:[],funded:[],experiments:[],demo:[]};
 let trades=[];let mode='live';let discRating=0;let outcome='';let statsMode='all';
 let propSettings={};let selectedMistakes=[];let propPassedShown=false;let propBlownShown=false;
 
@@ -918,19 +919,25 @@ async function supaGet(key){
     const r=await fetch(SUPA_URL+'/rest/v1/misc?key=eq.'+encodeURIComponent(key)+'&select=data',{
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
     });
+    if(!r.ok){console.error('supaGet failed:',r.status,key);return null;}
     const d=await r.json();
-    return d&&d[0]?d[0].data:null;
-  }catch(e){return null;}
+    if(!d||!d[0])return null;
+    // Handle both already-parsed JSONB and stringified data
+    const raw=d[0].data;
+    if(typeof raw==='string'){try{return JSON.parse(raw);}catch(e){return raw;}}
+    return raw;
+  }catch(e){console.error('supaGet error:',key,e);return null;}
 }
 
 async function supaSet(key,data){
   try{
-    await fetch(SUPA_URL+'/rest/v1/misc',{
+    const r=await fetch(SUPA_URL+'/rest/v1/misc',{
       method:'POST',
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
       body:JSON.stringify({key,data,updated_at:new Date().toISOString()})
     });
-  }catch(e){console.error('Supabase save error',e);}
+    if(!r.ok){const txt=await r.text();console.error('supaSet failed:',r.status,key,txt);}
+  }catch(e){console.error('Supabase save error',key,e);}
 }
 
 async function loadAllData(){
