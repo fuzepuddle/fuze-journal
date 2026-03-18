@@ -2906,11 +2906,13 @@ document.addEventListener('click', function(e){
   </div>
   <div style="display:flex;align-items:center;gap:16px;max-width:100vw" onclick="event.stopPropagation()">
     <button onclick="ssNav(-1)" id="ss-prev-btn" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#e0e0e0;font-size:24px;padding:12px 16px;border-radius:8px;line-height:1;flex-shrink:0">&#8249;</button>
-    <img id="ss-lightbox-img" src="" style="max-width:80vw;max-height:78vh;border-radius:10px;object-fit:contain;border:0.5px solid #2a2a2a">
+    <div id="ss-img-wrap" style="overflow:hidden;border-radius:10px;border:0.5px solid #2a2a2a;cursor:zoom-in;max-width:80vw;max-height:78vh;display:flex;align-items:center;justify-content:center" onclick="ssToggleZoom(event)">
+      <img id="ss-lightbox-img" src="" style="max-width:80vw;max-height:78vh;object-fit:contain;transform-origin:center center;transition:transform .2s;user-select:none;display:block">
+    </div>
     <button onclick="ssNav(1)" id="ss-next-btn" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#e0e0e0;font-size:24px;padding:12px 16px;border-radius:8px;line-height:1;flex-shrink:0">&#8250;</button>
   </div>
   <div style="display:flex;gap:6px;margin-top:4px" id="ss-dots"></div>
-  <div style="font-size:11px;color:#333">← → arrow keys to navigate · Esc to close</div>
+  <div style="font-size:11px;color:#444">← → navigate · scroll or pinch to zoom · click to zoom in · Esc to close</div>
 </div>
 
 <script>
@@ -2994,6 +2996,9 @@ let _ssUrls = [];
 let _ssIdx = 0;
 const _ssTfLabels = ['1M','5M','15M','1H','4H'];
 
+let _ssZoom = 1;
+let _ssZoomed = false;
+
 function openSSViewerById(tradeId, idx){
   const urls = (window._ssCache && window._ssCache[tradeId]) || [];
   openSSViewer(idx, urls);
@@ -3001,6 +3006,7 @@ function openSSViewerById(tradeId, idx){
 function openSSViewer(idx, urls){
   _ssUrls = Array.isArray(urls) ? urls : [urls];
   _ssIdx = idx || 0;
+  _ssResetZoom();
   _renderSS();
   document.getElementById('ss-lightbox').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -3016,20 +3022,106 @@ function _renderSS(){
   prevBtn.style.opacity = _ssIdx === 0 ? '0.3' : '1';
   nextBtn.style.opacity = _ssIdx === _ssUrls.length-1 ? '0.3' : '1';
   dots.innerHTML = _ssUrls.map((_,i)=>'<div style="width:7px;height:7px;border-radius:50%;background:'+(i===_ssIdx?'#c9a84c':'#333')+';transition:background .2s"></div>').join('');
+  _ssResetZoom();
 }
 function ssNav(dir){
   const next = _ssIdx + dir;
   if(next >= 0 && next < _ssUrls.length){ _ssIdx = next; _renderSS(); }
 }
+function _ssResetZoom(){
+  _ssZoom = 1; _ssZoomed = false;
+  const img = document.getElementById('ss-lightbox-img');
+  const wrap = document.getElementById('ss-img-wrap');
+  if(img) img.style.transform = 'scale(1)';
+  if(wrap){ wrap.style.cursor = 'zoom-in'; wrap.style.overflow = 'hidden'; }
+}
+function ssToggleZoom(e){
+  const img = document.getElementById('ss-lightbox-img');
+  const wrap = document.getElementById('ss-img-wrap');
+  if(!img) return;
+  if(!_ssZoomed){
+    // Zoom into click point
+    const rect = wrap.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    img.style.transformOrigin = x+'% '+y+'%';
+    img.style.transform = 'scale(2.5)';
+    img.style.maxWidth = 'none';
+    img.style.maxHeight = 'none';
+    wrap.style.cursor = 'zoom-out';
+    wrap.style.overflow = 'auto';
+    _ssZoomed = true;
+  } else {
+    _ssResetZoom();
+    img.style.maxWidth = '80vw';
+    img.style.maxHeight = '78vh';
+  }
+}
+// Mouse wheel zoom
+document.addEventListener('wheel', function(e){
+  const lb = document.getElementById('ss-lightbox');
+  if(!lb || lb.style.display === 'none') return;
+  const img = document.getElementById('ss-lightbox-img');
+  const wrap = document.getElementById('ss-img-wrap');
+  if(!img) return;
+  e.preventDefault();
+  _ssZoom = Math.min(5, Math.max(1, _ssZoom - e.deltaY * 0.002));
+  if(_ssZoom <= 1){
+    _ssResetZoom();
+    img.style.maxWidth = '80vw';
+    img.style.maxHeight = '78vh';
+  } else {
+    img.style.transform = 'scale('+_ssZoom+')';
+    img.style.maxWidth = 'none';
+    img.style.maxHeight = 'none';
+    wrap.style.cursor = 'zoom-out';
+    wrap.style.overflow = 'auto';
+    _ssZoomed = true;
+  }
+}, {passive: false});
+// Pinch to zoom (mobile)
+let _pinchDist = 0;
+document.addEventListener('touchstart', function(e){
+  if(e.touches.length === 2){
+    const lb = document.getElementById('ss-lightbox');
+    if(lb && lb.style.display !== 'none'){
+      _pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }
+});
+document.addEventListener('touchmove', function(e){
+  if(e.touches.length === 2){
+    const lb = document.getElementById('ss-lightbox');
+    if(!lb || lb.style.display === 'none') return;
+    const img = document.getElementById('ss-lightbox-img');
+    const wrap = document.getElementById('ss-img-wrap');
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    _ssZoom = Math.min(5, Math.max(1, _ssZoom * (dist / _pinchDist)));
+    _pinchDist = dist;
+    if(_ssZoom <= 1){
+      _ssResetZoom();
+      img.style.maxWidth = '80vw';
+      img.style.maxHeight = '78vh';
+    } else {
+      img.style.transform = 'scale('+_ssZoom+')';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+      wrap.style.overflow = 'auto';
+      _ssZoomed = true;
+    }
+    e.preventDefault();
+  }
+}, {passive: false});
 function closeSSViewer(){
   document.getElementById('ss-lightbox').style.display = 'none';
   document.getElementById('ss-lightbox-img').src = '';
   document.body.style.overflow = '';
+  _ssResetZoom();
 }
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape') closeSSViewer();
-  if(e.key==='ArrowLeft') ssNav(-1);
-  if(e.key==='ArrowRight') ssNav(1);
+  if(e.key==='ArrowLeft' && !_ssZoomed) ssNav(-1);
+  if(e.key==='ArrowRight' && !_ssZoomed) ssNav(1);
 });
 </script>
 </body>
