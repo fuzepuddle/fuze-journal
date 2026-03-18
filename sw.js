@@ -20,6 +20,13 @@ self.addEventListener('message', e => {
     console.log('[SW] Scheduling reminder');
     scheduleReminder();
   }
+  if (e.data && e.data.type === 'TEST_NOTIFICATION') {
+    self.registration.showNotification("fuze's Journal 🔔", {
+      body: "Reminders enabled! You'll get a heads up at 14:25 UK every weekday.",
+      icon: '/favicon.ico',
+      tag: 'test-notif'
+    });
+  }
 });
 
 // ── Helpers ──
