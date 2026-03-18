@@ -2431,30 +2431,57 @@ async function requestNotifications(){
   const permission=await Notification.requestPermission();
   if(permission==='granted'){
     localStorage.setItem('ict_notifs','1');
-    document.getElementById('notif-btn').textContent='Notifications on ✓';
-    document.getElementById('notif-btn').style.color='#6abf6a';
+    _setNotifBtnOn();
     scheduleNYReminder();
-    alert('Notifications enabled. You will get a reminder at 14:25 UK when the NY window opens.');
+    // Fire a test notification immediately so user knows it works
+    new Notification('fuze\'s Journal 🔔',{body:'Reminders enabled. You\'ll get a heads up at 14:25 UK every weekday.'});
+  } else {
+    alert('Notification permission denied. Please allow notifications in your browser settings.');
   }
+}
+function _setNotifBtnOn(){
+  const nb=document.getElementById('notif-btn');
+  if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}
 }
 function scheduleNYReminder(){
   if(localStorage.getItem('ict_notifs')!=='1')return;
   if(!('Notification' in window)||Notification.permission!=='granted')return;
   const now=new Date();
-  // Calculate next 14:25 UK time
-  const target=new Date();
-  target.setHours(14,25,0,0);
-  if(target<=now)target.setDate(target.getDate()+1);
-  // Skip weekends
-  while(target.getDay()===0||target.getDay()===6)target.setDate(target.getDate()+1);
-  const msUntil=target-now;
-  setTimeout(()=>{
-    new Notification('fuze\'s Journal — NY window opens in 5 mins 🟡',{
-      body:'14:30 UK — check your draw, get ready.',
-      icon:'/favicon.ico'
-    });
-    // Schedule next day
-    setTimeout(scheduleNYReminder,60000);
+  // Get current UK time using Intl to handle BST/GMT correctly
+  const ukStr=now.toLocaleString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
+  const [ukH,ukM]=ukStr.split(':').map(Number);
+  const ukMins=ukH*60+ukM;
+  const targetMins=14*60+25; // 14:25 UK
+  // ms until next 14:25 UK — calculate offset between local and UK
+  const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
+  const localNow=new Date(now.toLocaleString('en-US'));
+  const ukOffset=(ukNow-localNow); // ms difference
+  // Next 14:25 in local time
+  const target=new Date(now);
+  // Set to today's 14:25 UK expressed in local time
+  const todayUK=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
+  todayUK.setHours(14,25,0,0);
+  // Convert back to UTC
+  const targetUTC=new Date(todayUK.getTime()-ukOffset);
+  if(targetUTC<=now) targetUTC.setDate(targetUTC.getDate()+1);
+  // Skip weekends (check in UK time)
+  while(true){
+    const day=new Date(targetUTC.toLocaleString('en-US',{timeZone:'Europe/London'})).getDay();
+    if(day!==0&&day!==6)break;
+    targetUTC.setDate(targetUTC.getDate()+1);
+  }
+  const msUntil=targetUTC-now;
+  console.log('Next NY reminder in',Math.round(msUntil/60000),'minutes (UK 14:25)');
+  clearTimeout(window._notifTimer);
+  window._notifTimer=setTimeout(()=>{
+    if(Notification.permission==='granted'){
+      new Notification('fuze\'s Journal — NY window in 5 mins 🟡',{
+        body:'14:30 UK — check your HTF draw and get ready.',
+        icon:'/favicon.ico'
+      });
+    }
+    // Schedule for next day
+    setTimeout(scheduleNYReminder,2*60*1000);
   },msUntil);
 }
 
@@ -2755,7 +2782,7 @@ loadAllData().then(()=>{
   loadDraft();
   scheduleNYReminder();
   document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
-  try{if(localStorage.getItem('ict_notifs')==='1'&&typeof Notification!=='undefined'&&Notification.permission==='granted'){const nb=document.getElementById('notif-btn');if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}}}catch(e){}
+  try{if(localStorage.getItem('ict_notifs')==='1'&&typeof Notification!=='undefined'&&Notification.permission==='granted'){_setNotifBtnOn();}}catch(e){}
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
