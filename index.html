@@ -3117,6 +3117,8 @@ document.addEventListener('mousedown', function(e){
 });
 document.addEventListener('mousemove', function(e){
   if(!_ssDragging) return;
+  // If mouse button is no longer held (e.g. released outside window), stop drag
+  if(e.buttons === 0){ _ssStopDrag(); return; }
   _ssPanX = _ssPanStartX + (e.clientX - _ssDragStartX);
   _ssPanY = _ssPanStartY + (e.clientY - _ssDragStartY);
   _ssApplyTransform();
