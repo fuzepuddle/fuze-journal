@@ -2425,53 +2425,53 @@ function renderBestRR(f){
   el.innerHTML=html;
 }
 
-// ── Push notifications ──
+// ── Push notifications + Service Worker ──
 async function requestNotifications(){
   if(!('Notification' in window)){alert('Notifications not supported in this browser');return;}
   const permission=await Notification.requestPermission();
-  if(permission==='granted'){
-    localStorage.setItem('ict_notifs','1');
-    _setNotifBtnOn();
-    scheduleNYReminder();
-    // Fire a test notification immediately so user knows it works
-    new Notification('fuze\'s Journal 🔔',{body:'Reminders enabled. You\'ll get a heads up at 14:25 UK every weekday.'});
-  } else {
-    alert('Notification permission denied. Please allow notifications in your browser settings.');
+  if(permission!=='granted'){alert('Notification permission denied. Please allow notifications in your browser settings and try again.');return;}
+  localStorage.setItem('ict_notifs','1');
+  _setNotifBtnOn();
+  // Register service worker for background notifications
+  if('serviceWorker' in navigator){
+    try{
+      const reg=await navigator.serviceWorker.register('/sw.js');
+      console.log('SW registered',reg.scope);
+      // Tell SW to schedule the reminder
+      if(reg.active) reg.active.postMessage({type:'SCHEDULE_REMINDER'});
+      else{
+        navigator.serviceWorker.addEventListener('controllerchange',()=>{
+          navigator.serviceWorker.controller&&navigator.serviceWorker.controller.postMessage({type:'SCHEDULE_REMINDER'});
+        });
+      }
+    }catch(e){console.warn('SW registration failed',e);}
   }
+  // Also schedule in-tab as fallback
+  scheduleNYReminder();
+  new Notification('fuze\'s Journal 🔔',{body:'Reminders enabled! You\'ll get a notification at 14:25 UK every weekday.'});
 }
 function _setNotifBtnOn(){
   const nb=document.getElementById('notif-btn');
   if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}
 }
+function _msUntilUKTime(h,m){
+  // Returns ms until next occurrence of h:m in Europe/London
+  const now=new Date();
+  const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
+  const target=new Date(ukNow);
+  target.setHours(h,m,0,0);
+  if(target<=ukNow) target.setDate(target.getDate()+1);
+  // Skip weekends
+  while(target.getDay()===0||target.getDay()===6) target.setDate(target.getDate()+1);
+  // Offset back to real UTC ms
+  const diffUK=target-ukNow; // ms from now in UK time
+  return diffUK;
+}
 function scheduleNYReminder(){
   if(localStorage.getItem('ict_notifs')!=='1')return;
   if(!('Notification' in window)||Notification.permission!=='granted')return;
-  const now=new Date();
-  // Get current UK time using Intl to handle BST/GMT correctly
-  const ukStr=now.toLocaleString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
-  const [ukH,ukM]=ukStr.split(':').map(Number);
-  const ukMins=ukH*60+ukM;
-  const targetMins=14*60+25; // 14:25 UK
-  // ms until next 14:25 UK — calculate offset between local and UK
-  const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
-  const localNow=new Date(now.toLocaleString('en-US'));
-  const ukOffset=(ukNow-localNow); // ms difference
-  // Next 14:25 in local time
-  const target=new Date(now);
-  // Set to today's 14:25 UK expressed in local time
-  const todayUK=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
-  todayUK.setHours(14,25,0,0);
-  // Convert back to UTC
-  const targetUTC=new Date(todayUK.getTime()-ukOffset);
-  if(targetUTC<=now) targetUTC.setDate(targetUTC.getDate()+1);
-  // Skip weekends (check in UK time)
-  while(true){
-    const day=new Date(targetUTC.toLocaleString('en-US',{timeZone:'Europe/London'})).getDay();
-    if(day!==0&&day!==6)break;
-    targetUTC.setDate(targetUTC.getDate()+1);
-  }
-  const msUntil=targetUTC-now;
-  console.log('Next NY reminder in',Math.round(msUntil/60000),'minutes (UK 14:25)');
+  const ms=_msUntilUKTime(14,25);
+  console.log('Next NY reminder in',Math.round(ms/60000),'min');
   clearTimeout(window._notifTimer);
   window._notifTimer=setTimeout(()=>{
     if(Notification.permission==='granted'){
@@ -2480,9 +2480,14 @@ function scheduleNYReminder(){
         icon:'/favicon.ico'
       });
     }
-    // Schedule for next day
     setTimeout(scheduleNYReminder,2*60*1000);
-  },msUntil);
+  },ms);
+}
+// Re-register SW on load if notifs already enabled
+if(localStorage.getItem('ict_notifs')==='1'&&'serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').then(reg=>{
+    console.log('SW re-registered on load');
+  }).catch(e=>console.warn('SW load reg failed',e));
 }
 
 // ── Missed trades ──
