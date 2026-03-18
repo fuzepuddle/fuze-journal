@@ -1235,8 +1235,14 @@ function renderJournal(){
     window._ssCache[t.id] = ssLinks.map(s=>s[1]);
     const ssHtml=ssLinks.length?'<div style="margin-bottom:'+(t.narrative||t.improve?'16px':'4px')+'">'
       +'<div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#555;margin-bottom:8px">Charts</div>'
-      +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-      +ssLinks.map((s,i)=>'<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:10px;color:#888;font-weight:500">'+s[0]+'</div><img src="'+s[1]+'" loading="lazy" onclick="openSSViewerById('+t.id+','+i+')" style="width:140px;height:88px;object-fit:cover;border-radius:7px;border:0.5px solid #2a2a2a;cursor:pointer;background:#1a1a1a;transition:border-color .15s" onmouseover="this.style.borderColor=\'#c9a84c\'" onmouseout="this.style.borderColor=\'#2a2a2a\'"></div>').join('')
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;" id="ss-grid-'+t.id+'">'
+      +ssLinks.map((s,i)=>{
+        return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">'
+          +'<div style="font-size:10px;color:#888;font-weight:500">'+s[0]+'</div>'
+          +'<img src="'+s[1]+'" loading="lazy" data-tradeid="'+t.id+'" data-idx="'+i+'" class="ss-thumb" '
+          +'style="width:140px;height:88px;object-fit:cover;border-radius:7px;border:0.5px solid #2a2a2a;cursor:pointer;background:#1a1a1a">'
+          +'</div>';
+      }).join('')
       +'</div></div>':'';
 
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#555;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.narrative+'</div></div>':'';
@@ -1247,6 +1253,15 @@ function renderJournal(){
   }).join('');
 }
 function del(id){if(!confirm('Delete?'))return;trades=trades.filter(t=>t.id!==id);save();renderJournal();}
+
+// Delegated click handler for screenshot thumbnails
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('ss-thumb')){
+    const tradeId = parseInt(e.target.dataset.tradeid);
+    const idx = parseInt(e.target.dataset.idx);
+    openSSViewerById(tradeId, idx);
+  }
+});
 function toggleFav(id,btn){
   const t=trades.find(t=>t.id===id);if(!t)return;
   t.favourite=!t.favourite;
@@ -1844,7 +1859,7 @@ function randomizeTrade(){
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
   const rrOptions=['1:1','1:1.25','1:1.5','1:1.75','1:2'];
   const rrPlan=rrOptions[Math.floor(Math.random()*rrOptions.length)];
-  const rrActualOptions=rOutcome==='win'?['1:1','1:1.25','1:1.5','1:1.75','1:2']:rOutcome==='loss'?['-1R (full loss)']:rOutcome==='be'?['0 (BE)']:[''];
+  const rrActualOptions=rOutcome==='win'?['1:1','1:1.25','1:1.5','1:1.75','1:2','Partials']:rOutcome==='loss'?['-1R (full loss)']:rOutcome==='be'?['0 (BE)']:['0 (BE)'];
   const rrActual=rrActualOptions[Math.floor(Math.random()*rrActualOptions.length)];
   const pnlBase=Math.floor(Math.random()*400)+50;
   const pnl=rOutcome==='win'?pnlBase:rOutcome==='loss'?-pnlBase:0;
