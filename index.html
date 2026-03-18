@@ -2924,7 +2924,7 @@ document.addEventListener('click', function(e){
 </script>
 
 <!-- Screenshot lightbox -->
-<div id="ss-lightbox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:12px" onclick="if(event.target===this)closeSSViewer()">
+<div id="ss-lightbox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:12px" id="ss-lightbox">
   <div style="width:100%;max-width:1200px;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;box-sizing:border-box;flex-shrink:0">
     <div style="font-size:13px;color:#c9a84c;font-weight:500" id="ss-lightbox-label"></div>
     <button onclick="closeSSViewer()" style="border:none;background:none;cursor:pointer;color:#888;font-size:28px;line-height:1;padding:2px 8px">×</button>
@@ -3117,21 +3117,28 @@ document.addEventListener('mousedown', function(e){
 });
 document.addEventListener('mousemove', function(e){
   if(!_ssDragging) return;
-  // If mouse button is no longer held (e.g. released outside window), stop drag
   if(e.buttons === 0){ _ssStopDrag(); return; }
+  _ssDragMoved = true;
   _ssPanX = _ssPanStartX + (e.clientX - _ssDragStartX);
   _ssPanY = _ssPanStartY + (e.clientY - _ssDragStartY);
   _ssApplyTransform();
 });
+let _ssDragMoved = false;
 function _ssStopDrag(){
   if(!_ssDragging) return;
   _ssDragging = false;
   const wrap = document.getElementById('ss-img-wrap');
   if(wrap) wrap.style.cursor = 'grab';
 }
-document.addEventListener('mouseup', _ssStopDrag);
+document.addEventListener('mouseup', function(e){
+  _ssStopDrag();
+});
 window.addEventListener('blur', _ssStopDrag);
-document.addEventListener('mouseleave', _ssStopDrag);
+// Click on backdrop closes lightbox — but only if we didn't just drag
+document.getElementById('ss-lightbox').addEventListener('click', function(e){
+  if(e.target === this && !_ssDragMoved) closeSSViewer();
+  _ssDragMoved = false;
+});
 // Pinch to zoom (mobile)
 document.addEventListener('touchstart', function(e){
   if(e.touches.length === 2){
