@@ -1154,7 +1154,7 @@ function setOutcome(type,btn){
 }
 
 // ── Save trade ──
-function _saveTrade(){
+function _saveTrade(tradeId){
   const date=document.getElementById('f-date').value;
   const bias=document.getElementById('f-bias').value;
   const direction=document.getElementById('f-direction').value;
@@ -1178,7 +1178,7 @@ function _saveTrade(){
 
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   const pnl=parseFloat(pnlRaw);
-  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:pendingSS['1m']||'',ss5m:pendingSS['5m']||'',ss15m:pendingSS['15m']||'',ss1h:pendingSS['1h']||'',ss4h:pendingSS['4h']||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
+  const trade={id:tradeId||Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:pendingSS['1m']||'',ss5m:pendingSS['5m']||'',ss15m:pendingSS['15m']||'',ss1h:pendingSS['1h']||'',ss4h:pendingSS['4h']||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
     checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
     checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length};
   checkPB(trade);trades.unshift(trade);save();try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}alert('Saved');clearForm();
@@ -2949,21 +2949,23 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 async function saveTrade(){
-  const tempId = Date.now();
   pendingSS = {};
   const statusEl = document.getElementById('ss-upload-status');
   const files = window._pendingSSFiles || {};
   const tfs = Object.keys(files);
+  // Generate the trade ID now so upload path matches what gets saved
+  const tradeId = Date.now();
+  window._pendingTradeId = tradeId;
   if(tfs.length > 0){
     if(statusEl) statusEl.textContent = 'Uploading screenshots...';
     for(const tf of tfs){
-      const url = await uploadSSToSupabase(files[tf], tempId, tf);
+      const url = await uploadSSToSupabase(files[tf], tradeId, tf);
       if(url) pendingSS[tf] = url;
     }
     if(statusEl) statusEl.textContent = '';
     window._pendingSSFiles = {};
   }
-  _saveTrade();
+  _saveTrade(tradeId);
 }
 
 function openSSViewer(url){
