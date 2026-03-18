@@ -1175,10 +1175,7 @@ function _saveTrade(){
   if(!outcome) missing.push('Outcome');
   if(!discRating) missing.push('Discipline rating');
 
-  if(currentProfile!=='backtesting'){
-    const ssUploaded=pendingSS['1m']||pendingSS['5m']||pendingSS['15m']||pendingSS['1h']||pendingSS['4h'];
-    if(!ssUploaded)missing.push('At least one screenshot');
-  }
+
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   const pnl=parseFloat(pnlRaw);
   const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:pendingSS['1m']||'',ss5m:pendingSS['5m']||'',ss15m:pendingSS['15m']||'',ss1h:pendingSS['1h']||'',ss4h:pendingSS['4h']||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
