@@ -2432,23 +2432,39 @@ async function requestNotifications(){
   if(permission!=='granted'){alert('Notification permission denied. Please allow notifications in your browser settings and try again.');return;}
   localStorage.setItem('ict_notifs','1');
   _setNotifBtnOn();
-  // Register service worker for background notifications
+  // Show test notification immediately — we have permission so this works directly
+  try{
+    const reg=await navigator.serviceWorker.getRegistration('/');
+    if(reg){
+      // Use SW to show notification (works even if tab not focused)
+      await reg.showNotification("fuze's Journal 🔔",{
+        body:"Reminders enabled! You'll get a heads up at 14:25 UK every weekday.",
+        icon:'/favicon.ico',
+        tag:'test-notif'
+      });
+    } else {
+      new Notification("fuze's Journal 🔔",{body:"Reminders enabled! You'll get a heads up at 14:25 UK every weekday."});
+    }
+  }catch(ex){
+    try{new Notification("fuze's Journal 🔔",{body:"Reminders enabled!"});}catch(e2){}
+  }
+  // Register SW for background reminders
   if('serviceWorker' in navigator){
     try{
       const reg=await navigator.serviceWorker.register('/sw.js');
       console.log('SW registered',reg.scope);
-      // Tell SW to schedule the reminder
-      if(reg.active) reg.active.postMessage({type:'SCHEDULE_REMINDER'});
-      else{
-        navigator.serviceWorker.addEventListener('controllerchange',()=>{
-          navigator.serviceWorker.controller&&navigator.serviceWorker.controller.postMessage({type:'SCHEDULE_REMINDER'});
-        });
-      }
+      // Wait until SW is active before posting message
+      const waitActive=(r)=>new Promise(resolve=>{
+        if(r.active){resolve(r.active);return;}
+        const sw=r.installing||r.waiting;
+        sw.addEventListener('statechange',function(){if(this.state==='activated')resolve(this);});
+      });
+      const sw=await waitActive(reg);
+      sw.postMessage({type:'SCHEDULE_REMINDER'});
     }catch(e){console.warn('SW registration failed',e);}
   }
-  // Also schedule in-tab as fallback
+  // In-tab fallback scheduler
   scheduleNYReminder();
-  new Notification('fuze\'s Journal 🔔',{body:'Reminders enabled! You\'ll get a notification at 14:25 UK every weekday.'});
 }
 function _setNotifBtnOn(){
   const nb=document.getElementById('notif-btn');
