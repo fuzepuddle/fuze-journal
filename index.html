@@ -3014,32 +3014,30 @@ function openSSViewer(idx, urls){
 }
 function _ssResetZoom(){
   _ssZoom = 1; _ssPanX = 0; _ssPanY = 0;
-  _ssApplyTransform();
   const wrap = document.getElementById('ss-img-wrap');
   if(wrap) wrap.style.cursor = 'grab';
+  _ssApplyTransform();
 }
 function _ssApplyTransform(){
   const img = document.getElementById('ss-lightbox-img');
   const wrap = document.getElementById('ss-img-wrap');
-  if(!img || !wrap) return;
-  // Fit image into wrap at zoom=1
+  if(!img || !wrap || !img.naturalWidth) return;
   const wW = wrap.clientWidth, wH = wrap.clientHeight;
-  const nW = img.naturalWidth || wW, nH = img.naturalHeight || wH;
-  const baseScale = Math.min(wW / nW, wH / nH);
-  const scale = baseScale * _ssZoom;
-  const scaledW = nW * scale, scaledH = nH * scale;
-  // Clamp pan so image doesn't go out of bounds when zoomed
-  const maxPanX = Math.max(0, (scaledW - wW) / 2);
-  const maxPanY = Math.max(0, (scaledH - wH) / 2);
-  _ssPanX = Math.max(-maxPanX, Math.min(maxPanX, _ssPanX));
-  _ssPanY = Math.max(-maxPanY, Math.min(maxPanY, _ssPanY));
-  const offX = (wW - scaledW) / 2 + _ssPanX;
-  const offY = (wH - scaledH) / 2 + _ssPanY;
-  img.style.width = scaledW + 'px';
-  img.style.height = scaledH + 'px';
-  img.style.left = offX + 'px';
-  img.style.top = offY + 'px';
-  img.style.transform = '';
+  const nW = img.naturalWidth, nH = img.naturalHeight;
+  // Base scale to fit image in container
+  const base = Math.min(wW / nW, wH / nH);
+  const scale = base * _ssZoom;
+  const iW = nW * scale, iH = nH * scale;
+  // Clamp pan
+  const maxX = Math.max(0, (iW - wW) / 2);
+  const maxY = Math.max(0, (iH - wH) / 2);
+  _ssPanX = Math.max(-maxX, Math.min(maxX, _ssPanX));
+  _ssPanY = Math.max(-maxY, Math.min(maxY, _ssPanY));
+  // Center image + apply pan
+  img.style.width = iW + 'px';
+  img.style.height = iH + 'px';
+  img.style.left = ((wW - iW) / 2 + _ssPanX) + 'px';
+  img.style.top  = ((wH - iH) / 2 + _ssPanY) + 'px';
 }
 function _renderSS(){
   const img = document.getElementById('ss-lightbox-img');
@@ -3047,7 +3045,8 @@ function _renderSS(){
   const dots = document.getElementById('ss-dots');
   const prevBtn = document.getElementById('ss-prev-btn');
   const nextBtn = document.getElementById('ss-next-btn');
-  _ssResetZoom();
+  _ssZoom = 1; _ssPanX = 0; _ssPanY = 0;
+  img.style.width = ''; img.style.height = ''; img.style.left = ''; img.style.top = '';
   img.onload = () => _ssApplyTransform();
   img.src = _ssUrls[_ssIdx];
   label.textContent = (_ssTfLabels[_ssIdx] || (_ssIdx+1)) + ' chart  ' + (_ssIdx+1) + ' / ' + _ssUrls.length;
@@ -3059,28 +3058,31 @@ function ssNav(dir){
   const next = _ssIdx + dir;
   if(next >= 0 && next < _ssUrls.length){ _ssIdx = next; _renderSS(); }
 }
-// Scroll to zoom toward cursor
+// Scroll to zoom toward cursor position
 document.addEventListener('wheel', function(e){
   const lb = document.getElementById('ss-lightbox');
   const wrap = document.getElementById('ss-img-wrap');
   if(!lb || lb.style.display === 'none' || !wrap) return;
   e.preventDefault();
   const rect = wrap.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left - rect.width/2;
-  const mouseY = e.clientY - rect.top - rect.height/2;
+  // Cursor position relative to wrap center
+  const cx = e.clientX - rect.left - rect.width / 2;
+  const cy = e.clientY - rect.top - rect.height / 2;
   const prevZoom = _ssZoom;
-  _ssZoom = Math.min(8, Math.max(1, _ssZoom * (e.deltaY < 0 ? 1.12 : 0.89)));
-  // Adjust pan so zoom is centered on cursor
-  const zoomRatio = _ssZoom / prevZoom;
-  _ssPanX = mouseX + (_ssPanX - mouseX) * zoomRatio;
-  _ssPanY = mouseY + (_ssPanY - mouseY) * zoomRatio;
-  wrap.style.cursor = _ssZoom > 1 ? 'grab' : 'grab';
+  _ssZoom = Math.min(8, Math.max(1, _ssZoom * (e.deltaY < 0 ? 1.1 : 0.9)));
+  if(_ssZoom === 1){
+    _ssPanX = 0; _ssPanY = 0;
+  } else {
+    // Scale pan so zoom feels anchored to cursor
+    const ratio = _ssZoom / prevZoom;
+    _ssPanX = cx - (cx - _ssPanX) * ratio;
+    _ssPanY = cy - (cy - _ssPanY) * ratio;
+  }
   _ssApplyTransform();
 }, {passive:false});
 // Drag to pan
-const _ssWrap = () => document.getElementById('ss-img-wrap');
 document.addEventListener('mousedown', function(e){
-  const wrap = _ssWrap();
+  const wrap = document.getElementById('ss-img-wrap');
   if(!wrap || !wrap.contains(e.target)) return;
   _ssDragging = true;
   _ssDragStartX = e.clientX; _ssDragStartY = e.clientY;
@@ -3097,8 +3099,8 @@ document.addEventListener('mousemove', function(e){
 document.addEventListener('mouseup', function(){
   if(!_ssDragging) return;
   _ssDragging = false;
-  const wrap = _ssWrap();
-  if(wrap) wrap.style.cursor = _ssZoom > 1 ? 'grab' : 'grab';
+  const wrap = document.getElementById('ss-img-wrap');
+  if(wrap) wrap.style.cursor = 'grab';
 });
 // Pinch to zoom (mobile)
 document.addEventListener('touchstart', function(e){
@@ -3107,7 +3109,7 @@ document.addEventListener('touchstart', function(e){
     if(lb && lb.style.display !== 'none')
       _pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
   }
-}, {passive:true});
+},{passive:true});
 document.addEventListener('touchmove', function(e){
   if(e.touches.length === 2){
     const lb = document.getElementById('ss-lightbox');
@@ -3118,7 +3120,7 @@ document.addEventListener('touchmove', function(e){
     _ssApplyTransform();
     e.preventDefault();
   }
-}, {passive:false});
+},{passive:false});
 function closeSSViewer(){
   document.getElementById('ss-lightbox').style.display = 'none';
   document.getElementById('ss-lightbox-img').src = '';
@@ -3127,7 +3129,7 @@ function closeSSViewer(){
 }
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape') closeSSViewer();
-  if(e.key==='ArrowLeft' && _ssZoom === 1) ssNav(-1);
+  if(e.key==='ArrowLeft'  && _ssZoom === 1) ssNav(-1);
   if(e.key==='ArrowRight' && _ssZoom === 1) ssNav(1);
 });
 </script>
