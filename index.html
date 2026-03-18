@@ -3121,12 +3121,15 @@ document.addEventListener('mousemove', function(e){
   _ssPanY = _ssPanStartY + (e.clientY - _ssDragStartY);
   _ssApplyTransform();
 });
-document.addEventListener('mouseup', function(){
+function _ssStopDrag(){
   if(!_ssDragging) return;
   _ssDragging = false;
   const wrap = document.getElementById('ss-img-wrap');
   if(wrap) wrap.style.cursor = 'grab';
-});
+}
+document.addEventListener('mouseup', _ssStopDrag);
+window.addEventListener('blur', _ssStopDrag);
+document.addEventListener('mouseleave', _ssStopDrag);
 // Pinch to zoom (mobile)
 document.addEventListener('touchstart', function(e){
   if(e.touches.length === 2){
