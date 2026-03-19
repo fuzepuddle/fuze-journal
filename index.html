@@ -1353,7 +1353,7 @@ function setOutcome(type,btn){
 }
 
 // ── Save trade ──
-function saveTrade(){
+async function saveTrade(){
   const date=document.getElementById('f-date').value;
   const bias=document.getElementById('f-bias').value;
   const direction=document.getElementById('f-direction').value;
@@ -1374,21 +1374,58 @@ function saveTrade(){
   if(!outcome) missing.push('Outcome');
   if(!discRating) missing.push('Discipline rating');
 
-  if(currentProfile!=='backtesting'&&!window._skipSSValidation){
-    const pf=window._pendingSSFiles||{};
-    if(!pf['1m']) missing.push('1M screenshot');
-    if(!pf['5m']) missing.push('5M screenshot');
-    if(!pf['15m']) missing.push('15M screenshot');
-    if(!pf['1h']) missing.push('1H screenshot');
-    if(!pf['4h']) missing.push('4H screenshot');
+  const files = window._pendingSSFiles || {};
+  if(currentProfile!=='backtesting'){
+    if(!files['1m']) missing.push('1M screenshot');
+    if(!files['5m']) missing.push('5M screenshot');
+    if(!files['15m']) missing.push('15M screenshot');
+    if(!files['1h']) missing.push('1H screenshot');
+    if(!files['4h']) missing.push('4H screenshot');
   }
-  window._skipSSValidation=false;
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
-  const pnl=parseFloat(pnlRaw);
-  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:pendingSS['1m']||'',ss5m:pendingSS['5m']||'',ss15m:pendingSS['15m']||'',ss1h:pendingSS['1h']||'',ss4h:pendingSS['4h']||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
+
+  // Upload images to Cloudinary
+  const tradeId = Date.now();
+  const ssUrls = {};
+  const statusEl = document.getElementById('ss-upload-status');
+  const tfs = Object.keys(files);
+  if(tfs.length){
+    const saveBtn = document.querySelector('[onclick="saveTrade()"]');
+    if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Uploading...';}
+    for(const tf of tfs){
+      if(statusEl) statusEl.textContent = 'Uploading '+tf.toUpperCase()+'...';
+      const url = await uploadToCloudinary(files[tf], tradeId, tf);
+      if(url) ssUrls[tf] = url;
+    }
+    if(statusEl) statusEl.textContent = '';
+    if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='Save →';}
+  }
+
+  const pnl = parseFloat(pnlRaw);
+  const trade = {
+    id:tradeId, date, mode,
+    instrument:document.getElementById('f-instrument').value,
+    entryTime:document.getElementById('f-entry-time').value,
+    exitTime:(document.getElementById('f-exit-time')||{}).value||'',
+    session:document.getElementById('f-session').value,
+    bias, direction, draw, rrPlan, rrActual, pnl, outcome, discRating,
+    emotion:document.getElementById('f-emotion')?document.getElementById('f-emotion').value:'',
+    mistakes:[...selectedMistakes],
+    narrative:document.getElementById('f-narrative').value,
+    improve:document.getElementById('f-improve').value,
+    ss1m:ssUrls['1m']||'', ss5m:ssUrls['5m']||'',
+    ss15m:ssUrls['15m']||'', ss1h:ssUrls['1h']||'', ss4h:ssUrls['4h']||'',
+    risk,
+    tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
     checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
-    checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length};
-  checkPB(trade);trades.unshift(trade);save();try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}alert('Saved');clearForm();
+    checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length
+  };
+  checkPB(trade);
+  trades.unshift(trade);
+  save();
+  try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}
+  alert('Saved');
+  clearForm();
 }
 
 function clearForm(){
