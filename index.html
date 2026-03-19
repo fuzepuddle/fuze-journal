@@ -2203,8 +2203,19 @@ function randomizeTrade(){
   }
   updateChecks();
 
-  // Set fake TV links
-  // File inputs can't be set programmatically — skip ss for randomizer
+  // Set placeholder images for randomizer so validation passes
+  if(!window._pendingSSFiles) window._pendingSSFiles={};
+  ['1m','5m','15m','1h','4h'].forEach(tf=>{
+    // Create a fake File object from a placeholder image
+    fetch('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
+      .then(r=>r.blob())
+      .then(blob=>{
+        const file=new File([blob],'placeholder.png',{type:'image/png'});
+        window._pendingSSFiles[tf]=file;
+        const prev=document.getElementById('f-ss-'+tf+'-prev');
+        if(prev) prev.innerHTML='<div style="width:120px;height:75px;background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#555">placeholder</div>';
+      });
+  });
 
   // Random tags
   const allTags=[['A+ setup'],['clean displacement'],['V-shape recovery'],['50% FVG tap'],['textbook entry'],['news day'],['London sweep'],['Asia sweep'],['PDH target'],['strong momentum']];
