@@ -261,6 +261,7 @@
   <div class="tab" onclick="showTab('calendar')" data-tab="calendar">Calendar</div>
   <div class="tab" onclick="showTab('missed')" data-tab="missed">Missed trades</div>
   <div class="tab" onclick="showTab('weekly')" data-tab="weekly">Weekly review</div>
+  <div class="tab" onclick="showTab('news')" data-tab="news">📅 News</div>
   <div class="tab" onclick="showTab('playbook')" data-tab="playbook">Playbook</div>
   <div class="tab" onclick="showTab('session')" data-tab="session">Session report</div>
 </div>
@@ -656,6 +657,35 @@
   </div>
   <!-- Hidden metric-card id for pnl card compat -->
   <div id="s-pnl-card" style="display:none"></div>
+</div>
+
+<!-- NEWS / ECONOMIC CALENDAR -->
+<div class="page" id="page-news">
+  <div class="flex-between" style="margin-bottom:14px">
+    <div>
+      <div class="section-label" style="margin-bottom:2px">Economic calendar — USD events</div>
+      <div style="font-size:11px;color:#555">High & medium impact only · Times in UK time · Source: ForexFactory</div>
+    </div>
+    <button onclick="loadNewsCalendar(true)" class="btn btn-sm" id="news-refresh-btn">Refresh</button>
+  </div>
+
+  <!-- Today highlight bar -->
+  <div id="news-today-bar" style="display:none;background:#1a1600;border:0.5px solid #6e5a00;border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:#c4a020"></div>
+
+  <!-- Filter row -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button onclick="setNewsFilter('all',this)" class="mode-btn active" id="nf-all">All week</button>
+    <button onclick="setNewsFilter('today',this)" class="mode-btn" id="nf-today">Today</button>
+    <button onclick="setNewsFilter('tomorrow',this)" class="mode-btn" id="nf-tomorrow">Tomorrow</button>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <button onclick="setNewsImpact('high',this)" class="mode-btn active" id="ni-high" style="font-size:11px;color:#c06060;border-color:#6e2a2a">🔴 High</button>
+      <button onclick="setNewsImpact('medium',this)" class="mode-btn active" id="ni-medium" style="font-size:11px;color:#c4a020;border-color:#6e5a00">🟡 Medium</button>
+    </div>
+  </div>
+
+  <div id="news-loading" style="text-align:center;padding:40px;color:#555;font-size:13px">Loading calendar...</div>
+  <div id="news-error" style="display:none;text-align:center;padding:40px;color:#c06060;font-size:13px"></div>
+  <div id="news-body"></div>
 </div>
 
 <!-- PLAYBOOK -->
@@ -1123,6 +1153,7 @@ function showTab(t){
   if(t==='calendar')renderCalendar();
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
+  if(t==='news'){loadNewsCalendar();}
   if(t==='playbook')loadPlaybook();
   if(t==='session'){document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];renderSessionReports();}
 }
@@ -2680,6 +2711,7 @@ function switchProfile(p, btn){
     else if(t==='missed')renderMissed();
     else if(t==='weekly')renderWeekly();
     else if(t==='playbook')loadPlaybook();
+    else if(t==='news')loadNewsCalendar();
     else if(t==='session')renderSessionReports();
   }
   clearForm();
@@ -2928,6 +2960,7 @@ loadAllData().then(()=>{
 
 <!-- More menu (mobile) -->
 <div id="mobile-more-menu">
+  <div class="more-menu-item" id="more-news"      onclick="mobileNav('news')">      <span>📅</span> News</div>
   <div class="more-menu-item" id="more-prop"      onclick="mobileNav('prop')">      <span>📊</span> Prop firm</div>
   <div class="more-menu-item" id="more-missed"    onclick="mobileNav('missed')">    <span>👁️</span> Missed trades</div>
   <div class="more-menu-item" id="more-weekly"    onclick="mobileNav('weekly')">    <span>📋</span> Weekly review</div>
@@ -3002,6 +3035,147 @@ document.addEventListener('click', function(e){
 </div>
 
 <script>
+// ── Economic calendar ──
+let _newsData = [];
+let _newsFilter = 'all';
+let _newsImpact = { high: true, medium: true };
+let _newsFetched = false;
+
+function setNewsFilter(f, btn){
+  _newsFilter = f;
+  document.querySelectorAll('#page-news .mode-btn').forEach(b => {
+    if(['nf-all','nf-today','nf-tomorrow'].includes(b.id)) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  renderNewsCalendar();
+}
+function setNewsImpact(type, btn){
+  _newsImpact[type] = !_newsImpact[type];
+  btn.classList.toggle('active', _newsImpact[type]);
+  renderNewsCalendar();
+}
+
+async function loadNewsCalendar(force=false){
+  if(_newsFetched && !force){ renderNewsCalendar(); return; }
+  const loadEl = document.getElementById('news-loading');
+  const errEl = document.getElementById('news-error');
+  const bodyEl = document.getElementById('news-body');
+  if(loadEl) loadEl.style.display='block';
+  if(errEl) errEl.style.display='none';
+  if(bodyEl) bodyEl.innerHTML='';
+  try{
+    const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json', {
+      headers: { 'Accept': 'application/json' }
+    });
+    if(!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    // Filter USD only, high/medium impact
+    _newsData = data.filter(e =>
+      e.currency === 'USD' &&
+      (e.impact === 'High' || e.impact === 'Medium')
+    );
+    _newsFetched = true;
+    if(loadEl) loadEl.style.display='none';
+    renderNewsCalendar();
+  } catch(err){
+    if(loadEl) loadEl.style.display='none';
+    if(errEl){ errEl.style.display='block'; errEl.textContent='Could not load calendar — ForexFactory may be rate limiting. Try again in a minute.'; }
+    console.error('News fetch error:', err);
+  }
+}
+
+function renderNewsCalendar(){
+  const bodyEl = document.getElementById('news-body');
+  const todayBar = document.getElementById('news-today-bar');
+  if(!bodyEl) return;
+
+  const now = new Date();
+  const ukNow = new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
+  const todayStr = ukNow.toISOString().split('T')[0];
+  const tomorrowDate = new Date(ukNow); tomorrowDate.setDate(tomorrowDate.getDate()+1);
+  const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+
+  // Filter by selected time range
+  let filtered = _newsData.filter(e => {
+    if(!_newsImpact.high && e.impact==='High') return false;
+    if(!_newsImpact.medium && e.impact==='Medium') return false;
+    const eDate = e.date.split('T')[0];
+    if(_newsFilter==='today') return eDate===todayStr;
+    if(_newsFilter==='tomorrow') return eDate===tomorrowStr;
+    return true;
+  });
+
+  // Today's upcoming events for the highlight bar
+  const upcomingToday = _newsData.filter(e => {
+    const eDate = e.date.split('T')[0];
+    if(eDate !== todayStr) return false;
+    const eTime = new Date(e.date);
+    const ukEventTime = new Date(eTime.toLocaleString('en-US',{timeZone:'Europe/London'}));
+    return ukEventTime > ukNow && e.impact === 'High';
+  });
+
+  if(todayBar){
+    if(upcomingToday.length){
+      const next = upcomingToday[0];
+      const ukTime = new Date(next.date).toLocaleString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
+      todayBar.style.display='block';
+      todayBar.innerHTML='⚠️ Next high impact event today: <strong>'+next.title+'</strong> at '+ukTime+' UK';
+    } else {
+      todayBar.style.display='none';
+    }
+  }
+
+  if(!filtered.length){
+    bodyEl.innerHTML='<div style="text-align:center;padding:40px;color:#555;font-size:13px">No events matching filters.</div>';
+    return;
+  }
+
+  // Group by day
+  const groups = {};
+  filtered.forEach(e => {
+    const day = e.date.split('T')[0];
+    if(!groups[day]) groups[day]=[];
+    groups[day].push(e);
+  });
+
+  const impactColor = { High:'#c06060', Medium:'#c4a020' };
+  const impactBg = { High:'#1f0f0f', Medium:'#1f1800' };
+  const impactBorder = { High:'#6e2a2a', Medium:'#6e5a00' };
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  bodyEl.innerHTML = Object.keys(groups).sort().map(day => {
+    const date = new Date(day+'T12:00:00');
+    const ukDate = new Date(date.toLocaleString('en-US',{timeZone:'Europe/London'}));
+    const isToday = day===todayStr;
+    const dayLabel = isToday ? '🟡 Today — ' : dayNames[ukDate.getDay()]+' ';
+    const dateLabel = ukDate.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+
+    const events = groups[day].map(e => {
+      const ukTime = new Date(e.date).toLocaleString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
+      const isPast = new Date(e.date) < now;
+      const hasActual = e.actual && e.actual !== '';
+      const actualColor = e.actual && e.forecast ? (parseFloat(e.actual) >= parseFloat(e.forecast) ? '#6abf6a' : '#c06060') : '#e0e0e0';
+      return `<div style="display:grid;grid-template-columns:52px 1fr 80px 80px 80px;gap:8px;align-items:center;padding:9px 12px;border-bottom:0.5px solid #1e1e1e;opacity:${isPast?'0.5':'1'}">
+        <div style="font-size:12px;font-weight:500;color:#aaa;font-family:monospace">${ukTime}</div>
+        <div>
+          <div style="font-size:13px;color:#e0e0e0;margin-bottom:2px">${e.title}</div>
+          <span style="font-size:10px;padding:1px 6px;border-radius:3px;background:${impactBg[e.impact]};color:${impactColor[e.impact]};border:0.5px solid ${impactBorder[e.impact]}">${e.impact}</span>
+        </div>
+        <div style="text-align:right;font-size:12px;color:#555">${e.forecast||'—'}<div style="font-size:10px;color:#444">forecast</div></div>
+        <div style="text-align:right;font-size:12px;color:#555">${e.previous||'—'}<div style="font-size:10px;color:#444">previous</div></div>
+        <div style="text-align:right;font-size:13px;font-weight:500;color:${hasActual?actualColor:'#555'}">${e.actual||'—'}<div style="font-size:10px;color:#444">actual</div></div>
+      </div>`;
+    }).join('');
+
+    return `<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
+      <div style="padding:10px 12px;background:${isToday?'#1a1600':'#161616'};border-bottom:0.5px solid #2a2a2a">
+        <span style="font-size:13px;font-weight:500;color:${isToday?'#c9a84c':'#aaa'}">${dayLabel}${dateLabel}</span>
+      </div>
+      ${events}
+    </div>`;
+  }).join('');
+}
+
 // ── Screenshot uploads ──
 
 async function uploadSSToSupabase(file, tradeId, tf){
