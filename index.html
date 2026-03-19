@@ -590,17 +590,36 @@
   </div>
 
   <div id="screenshots-section" class="card">
-    <div class="section-label">Screenshots (TradingView links)</div>
-    <div class="grid-2 gap">
-      <div><label>1M</label><input type="text" id="f-ss-1m" placeholder="https://www.tradingview.com/x/..."></div>
-      <div><label>5M</label><input type="text" id="f-ss-5m" placeholder="https://www.tradingview.com/x/..."></div>
+    <div class="flex-between" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:0">Screenshots</div>
+      <div id="ss-upload-status" style="font-size:11px;color:#c9a84c"></div>
     </div>
-    <div class="grid-2 gap">
-      <div><label>15M</label><input type="text" id="f-ss-15m" placeholder="https://www.tradingview.com/x/..."></div>
-      <div><label>1H</label><input type="text" id="f-ss-1h" placeholder="https://www.tradingview.com/x/..."></div>
-    </div>
-    <div style="max-width:50%;padding-right:6px">
-      <label>4H</label><input type="text" id="f-ss-4h" placeholder="https://www.tradingview.com/x/...">
+    <div class="grid-2 gap" style="margin-bottom:8px">
+      <div>
+        <label>1M</label>
+        <input type="file" id="f-ss-1m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <div id="f-ss-1m-prev" style="margin-top:5px"></div>
+      </div>
+      <div>
+        <label>5M</label>
+        <input type="file" id="f-ss-5m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <div id="f-ss-5m-prev" style="margin-top:5px"></div>
+      </div>
+      <div>
+        <label>15M</label>
+        <input type="file" id="f-ss-15m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <div id="f-ss-15m-prev" style="margin-top:5px"></div>
+      </div>
+      <div>
+        <label>1H</label>
+        <input type="file" id="f-ss-1h" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <div id="f-ss-1h-prev" style="margin-top:5px"></div>
+      </div>
+      <div>
+        <label>4H</label>
+        <input type="file" id="f-ss-4h" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <div id="f-ss-4h-prev" style="margin-top:5px"></div>
+      </div>
     </div>
   </div>
 
@@ -1355,23 +1374,33 @@ function saveTrade(){
   if(!outcome) missing.push('Outcome');
   if(!discRating) missing.push('Discipline rating');
 
-  if(currentProfile!=='backtesting'){
-    if(!(document.getElementById('f-ss-1m')||{}).value) missing.push('1M screenshot');
-    if(!(document.getElementById('f-ss-5m')||{}).value) missing.push('5M screenshot');
-    if(!(document.getElementById('f-ss-15m')||{}).value) missing.push('15M screenshot');
-    if(!(document.getElementById('f-ss-1h')||{}).value) missing.push('1H screenshot');
-    if(!(document.getElementById('f-ss-4h')||{}).value) missing.push('4H screenshot');
+  if(currentProfile!=='backtesting'&&!window._skipSSValidation){
+    const pf=window._pendingSSFiles||{};
+    if(!pf['1m']) missing.push('1M screenshot');
+    if(!pf['5m']) missing.push('5M screenshot');
+    if(!pf['15m']) missing.push('15M screenshot');
+    if(!pf['1h']) missing.push('1H screenshot');
+    if(!pf['4h']) missing.push('4H screenshot');
   }
+  window._skipSSValidation=false;
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   const pnl=parseFloat(pnlRaw);
-  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:(document.getElementById('f-ss-1m')||{}).value||'',ss5m:(document.getElementById('f-ss-5m')||{}).value||'',ss15m:(document.getElementById('f-ss-15m')||{}).value||'',ss1h:(document.getElementById('f-ss-1h')||{}).value||'',ss4h:(document.getElementById('f-ss-4h')||{}).value||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
+  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:pendingSS['1m']||'',ss5m:pendingSS['5m']||'',ss15m:pendingSS['15m']||'',ss1h:pendingSS['1h']||'',ss4h:pendingSS['4h']||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
     checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
     checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length};
   checkPB(trade);trades.unshift(trade);save();try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}alert('Saved');clearForm();
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-session','f-bias','f-direction','f-draw','f-rr','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-ss-1m','f-ss-5m','f-ss-15m','f-ss-1h','f-ss-4h','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-session','f-bias','f-direction','f-draw','f-rr','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['1m','5m','15m','1h','4h'].forEach(tf=>{
+    const inp=document.getElementById('f-ss-'+tf);
+    if(inp){try{inp.value='';}catch(e){}}
+    const prev=document.getElementById('f-ss-'+tf+'-prev');
+    if(prev)prev.innerHTML='';
+  });
+  window._pendingSSFiles={};
+  pendingSS={};
   document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
@@ -2123,10 +2152,7 @@ function randomizeTrade(){
   updateChecks();
 
   // Set fake TV links
-  if(currentProfile!=='backtesting'){
-    const fakeLink='https://www.tradingview.com/x/testrade'+Math.floor(Math.random()*9999);
-    ['f-ss-1m','f-ss-5m','f-ss-15m','f-ss-1h','f-ss-4h'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=fakeLink;});
-  }
+  // File inputs can't be set programmatically — skip ss for randomizer
 
   // Random tags
   const allTags=[['A+ setup'],['clean displacement'],['V-shape recovery'],['50% FVG tap'],['textbook entry'],['news day'],['London sweep'],['Asia sweep'],['PDH target'],['strong momentum']];
