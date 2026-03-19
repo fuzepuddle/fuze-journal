@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>fuze's ICT Trading Journal ✍️</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d0d0d'/><rect x='4' y='18' width='5' height='10' rx='1' fill='%23c9a84c'/><rect x='11' y='10' width='5' height='18' rx='1' fill='%23c9a84c'/><rect x='18' y='14' width='5' height='14' rx='1' fill='%23c9a84c'/><rect x='25' y='6' width='5' height='22' rx='1' fill='%236abf6a'/></svg>">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d0d0d;color:#e0e0e0;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid #c9a84c}
@@ -85,113 +84,6 @@
   .mistake-cat{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#444;padding:8px 8px 2px;pointer-events:none}
 
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
-
-  /* ── MOBILE STYLES ── */
-  @media(max-width:768px){
-    body{padding:.75rem .75rem 80px;font-size:14px}
-
-    /* Hide desktop tabs, show bottom nav */
-    .tabs{display:none !important}
-
-    /* Profile bar compact */
-    .profile-bar{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:1rem}
-    .profile-btns{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-    .profile-btn{padding:6px 4px;font-size:11px;text-align:center}
-    h1{font-size:14px}
-    #notif-btn{font-size:10px}
-
-    /* Grids go single column on mobile */
-    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr !important}
-    [style*="grid-template-columns:repeat(5,1fr)"]{display:grid !important;grid-template-columns:1fr 1fr !important;gap:10px}
-    [style*="grid-template-columns:repeat(6,1fr)"]{display:grid !important;grid-template-columns:1fr 1fr 1fr !important;gap:8px}
-    [style*="grid-template-columns:2fr 1fr"]{display:grid !important;grid-template-columns:1fr !important}
-    [style*="grid-template-columns:1fr 2fr"]{display:grid !important;grid-template-columns:1fr !important}
-    [style*="grid-template-columns:1fr 1fr 1fr"]{display:grid !important;grid-template-columns:1fr 1fr !important}
-    [style*="grid-template-columns:1fr 220px"]{display:block !important}
-    [style*="grid-template-columns:repeat(4,1fr)"]{display:grid !important;grid-template-columns:1fr 1fr !important}
-
-    /* Cards */
-    .card{padding:.75rem;margin-bottom:10px;border-radius:10px}
-
-    /* Inputs bigger tap targets */
-    input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{
-      padding:10px 12px;font-size:14px;border-radius:8px
-    }
-
-    /* Outcome buttons */
-    .outcome-btn{padding:12px 6px;font-size:13px}
-
-    /* Stars bigger */
-    .star{font-size:26px !important}
-
-    /* Buttons */
-    .btn{padding:10px 16px;font-size:13px}
-    .btn-sm{padding:7px 12px;font-size:12px}
-
-    /* Log table — horizontal scroll */
-    .log-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .log-table{min-width:700px}
-
-    /* Cal grid horizontal scroll */
-    .cal-grid{min-width:500px}
-    .cal-layout>div:first-child{overflow-x:auto;-webkit-overflow-scrolling:touch}
-
-    /* Metric cards compact */
-    .metric-val{font-size:18px !important}
-    .metric-lbl{font-size:10px}
-
-    /* Hide export / less important btns on small screens to reduce clutter */
-    .section-label{font-size:10px}
-
-    /* More menu overlay */
-    #mobile-more-menu{
-      display:none;position:fixed;bottom:64px;left:0;right:0;
-      background:#141414;border-top:0.5px solid #2a2a2a;
-      padding:12px;z-index:9990;
-      flex-direction:column;gap:4px
-    }
-    #mobile-more-menu.open{display:flex}
-    .more-menu-item{
-      padding:13px 16px;font-size:14px;color:#e0e0e0;
-      border-radius:8px;cursor:pointer;transition:background .15s;
-      display:flex;align-items:center;gap:10px
-    }
-    .more-menu-item:hover,.more-menu-item:active{background:#222}
-    .more-menu-item.active-more{color:#c9a84c}
-
-    /* Playbook textareas */
-    #page-playbook textarea{min-height:70px !important}
-
-    /* Weekly review */
-    #page-weekly .cal-nav{gap:4px}
-    #page-weekly .cal-nav button{padding:6px 10px;font-size:12px}
-
-    /* Prop page grids */
-    #page-prop .grid-2{grid-template-columns:1fr !important}
-
-    /* AI analysis */
-    #ai-analysis-out{font-size:12px}
-  }
-
-  /* ── BOTTOM NAV BAR ── */
-  #mobile-nav{display:none}
-  #mobile-more-menu{display:none !important}
-  @media(max-width:768px){
-    #mobile-nav{
-      display:flex;position:fixed;bottom:0;left:0;right:0;height:60px;
-      background:#111;border-top:0.5px solid #2a2a2a;
-      z-index:9999;align-items:stretch
-    }
-    .mob-nav-btn{
-      flex:1;display:flex;flex-direction:column;align-items:center;
-      justify-content:center;gap:3px;cursor:pointer;
-      font-size:10px;color:#666;transition:color .15s;
-      border:none;background:none;font-family:inherit;padding:0
-    }
-    .mob-nav-btn .mob-icon{font-size:20px;line-height:1}
-    .mob-nav-btn.active{color:#c9a84c}
-    .mob-nav-btn:active{opacity:.7}
-  }
   .profile-hide{display:none !important}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .collapsible-header:hover .collapse-icon{color:#e0e0e0}
@@ -241,10 +133,6 @@
   <div style="display:flex;align-items:center;gap:12px">
     <h1>fuze's ICT Trading Journal ✍️</h1>
     <button id="notif-btn" onclick="requestNotifications()" style="font-size:11px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
-    <div style="display:flex;gap:10px;align-items:center;margin-left:4px">
-      <div style="font-size:11px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 UK <span id="clock-uk" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--:--</span></div>
-      <div style="font-size:11px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇺🇸 NY <span id="clock-ny" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--:--</span></div>
-    </div>
   </div>
   <div class="profile-btns">
     <button class="profile-btn active" onclick="switchProfile('challenge',this)">Challenge</button>
@@ -261,13 +149,14 @@
   <div class="tab" onclick="showTab('calendar')" data-tab="calendar">Calendar</div>
   <div class="tab" onclick="showTab('missed')" data-tab="missed">Missed trades</div>
   <div class="tab" onclick="showTab('weekly')" data-tab="weekly">Weekly review</div>
-  <div class="tab" onclick="showTab('news')" data-tab="news">📅 News</div>
   <div class="tab" onclick="showTab('playbook')" data-tab="playbook">Playbook</div>
   <div class="tab" onclick="showTab('session')" data-tab="session">Session report</div>
 </div>
 
 <!-- LOG -->
 <div class="page active" id="page-log">
+<div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+<div id="log-form-col">
 
 
   <div class="card gap">
@@ -444,15 +333,18 @@
   </div>
 
   <div id="screenshots-section" class="card">
-    <div class="section-label">Screenshots</div>
-    <div class="grid-2 gap" style="margin-bottom:8px">
-      <div><label>1M</label><input type="file" id="f-ss-1m" accept="image/*" style="font-size:12px;padding:6px 8px"><div id="f-ss-1m-prev" style="margin-top:6px"></div></div>
-      <div><label>5M</label><input type="file" id="f-ss-5m" accept="image/*" style="font-size:12px;padding:6px 8px"><div id="f-ss-5m-prev" style="margin-top:6px"></div></div>
-      <div><label>15M</label><input type="file" id="f-ss-15m" accept="image/*" style="font-size:12px;padding:6px 8px"><div id="f-ss-15m-prev" style="margin-top:6px"></div></div>
-      <div><label>1H</label><input type="file" id="f-ss-1h" accept="image/*" style="font-size:12px;padding:6px 8px"><div id="f-ss-1h-prev" style="margin-top:6px"></div></div>
-      <div><label>4H</label><input type="file" id="f-ss-4h" accept="image/*" style="font-size:12px;padding:6px 8px"><div id="f-ss-4h-prev" style="margin-top:6px"></div></div>
+    <div class="section-label">Screenshots (TradingView links)</div>
+    <div class="grid-2 gap">
+      <div><label>1M</label><input type="text" id="f-ss-1m" placeholder="https://www.tradingview.com/x/..."></div>
+      <div><label>5M</label><input type="text" id="f-ss-5m" placeholder="https://www.tradingview.com/x/..."></div>
     </div>
-    <div id="ss-upload-status" style="font-size:12px;color:#888;margin-top:4px"></div>
+    <div class="grid-2 gap">
+      <div><label>15M</label><input type="text" id="f-ss-15m" placeholder="https://www.tradingview.com/x/..."></div>
+      <div><label>1H</label><input type="text" id="f-ss-1h" placeholder="https://www.tradingview.com/x/..."></div>
+    </div>
+    <div style="max-width:50%;padding-right:6px">
+      <label>4H</label><input type="text" id="f-ss-4h" placeholder="https://www.tradingview.com/x/...">
+    </div>
   </div>
 
   <div class="card">
@@ -472,6 +364,24 @@
     <button class="btn" onclick="randomizeTrade()">Randomize</button>
     <button class="btn btn-primary" onclick="saveTrade()">Save →</button>
   </div>
+</div>
+<!-- NEWS SIDEBAR -->
+<div id="log-news-sidebar" style="position:sticky;top:16px">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:10px 14px;background:#161616;border-bottom:0.5px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:12px;font-weight:500;color:#c9a84c;letter-spacing:.04em">📅 USD NEWS</div>
+        <div style="font-size:10px;color:#555;margin-top:1px">High &amp; medium impact · UK time</div>
+      </div>
+      <button onclick="loadNewsCalendar(true)" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#888;font-size:10px;padding:3px 8px;border-radius:5px;font-family:inherit">↻</button>
+    </div>
+    <div id="sidebar-news-today-bar" style="display:none;padding:8px 12px;background:#1a1600;border-bottom:0.5px solid #6e5a00;font-size:11px;color:#c4a020;line-height:1.4"></div>
+    <div id="sidebar-news-loading" style="padding:20px;text-align:center;color:#555;font-size:12px">Loading...</div>
+    <div id="sidebar-news-error" style="display:none;padding:16px;text-align:center;color:#c06060;font-size:12px"></div>
+    <div id="sidebar-news-body" style="max-height:600px;overflow-y:auto"></div>
+  </div>
+</div>
+</div>
 </div>
 
 <!-- ALL TRADES -->
@@ -659,35 +569,6 @@
   <div id="s-pnl-card" style="display:none"></div>
 </div>
 
-<!-- NEWS / ECONOMIC CALENDAR -->
-<div class="page" id="page-news">
-  <div class="flex-between" style="margin-bottom:14px">
-    <div>
-      <div class="section-label" style="margin-bottom:2px">Economic calendar — USD events</div>
-      <div style="font-size:11px;color:#555">High & medium impact only · Times in UK time · Source: ForexFactory</div>
-    </div>
-    <button onclick="loadNewsCalendar(true)" class="btn btn-sm" id="news-refresh-btn">Refresh</button>
-  </div>
-
-  <!-- Today highlight bar -->
-  <div id="news-today-bar" style="display:none;background:#1a1600;border:0.5px solid #6e5a00;border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:#c4a020"></div>
-
-  <!-- Filter row -->
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-    <button onclick="setNewsFilter('all',this)" class="mode-btn active" id="nf-all">All week</button>
-    <button onclick="setNewsFilter('today',this)" class="mode-btn" id="nf-today">Today</button>
-    <button onclick="setNewsFilter('tomorrow',this)" class="mode-btn" id="nf-tomorrow">Tomorrow</button>
-    <div style="margin-left:auto;display:flex;gap:6px">
-      <button onclick="setNewsImpact('high',this)" class="mode-btn active" id="ni-high" style="font-size:11px;color:#c06060;border-color:#6e2a2a">🔴 High</button>
-      <button onclick="setNewsImpact('medium',this)" class="mode-btn active" id="ni-medium" style="font-size:11px;color:#c4a020;border-color:#6e5a00">🟡 Medium</button>
-    </div>
-  </div>
-
-  <div id="news-loading" style="text-align:center;padding:40px;color:#555;font-size:13px">Loading calendar...</div>
-  <div id="news-error" style="display:none;text-align:center;padding:40px;color:#c06060;font-size:13px"></div>
-  <div id="news-body"></div>
-</div>
-
 <!-- PLAYBOOK -->
 <div class="page" id="page-playbook">
   <div class="card gap">
@@ -701,7 +582,7 @@
     </div>
     <div class="gap">
       <label>Hard rules (never break these)</label>
-      <textarea id="pb-rules" placeholder="List your absolute hard rules..." style="min-height:140px"></textarea>
+      <textarea id="pb-rules" placeholder="List your absolute hard rules..." style="min-height:80px"></textarea>
     </div>
     <div class="gap">
       <label>What to avoid</label>
@@ -709,7 +590,7 @@
     </div>
     <div class="gap">
       <label>Pre-session checklist (mental)</label>
-      <textarea id="pb-pre" placeholder="What do you check / think about before sitting down to trade..." style="min-height:120px"></textarea>
+      <textarea id="pb-pre" placeholder="What do you check / think about before sitting down to trade..." style="min-height:60px"></textarea>
     </div>
     <div>
       <label>Goals</label>
@@ -1031,7 +912,6 @@
 <script>
 // ── State ──
 let currentProfile='challenge';
-let pendingSS = {};
 const PROFILES=['challenge','funded','experiments','demo'];
 let allTrades={challenge:[],funded:[],experiments:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},experiments:{},demo:{}};
@@ -1147,13 +1027,14 @@ function showTab(t){
   document.querySelectorAll('.page').forEach(el=>{if(el.id)el.classList.remove('active');});
   document.querySelectorAll('.tab').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
   const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
+  document.getElementById('page-'+t).classList.add('active');
+  if(t==='log'){loadNewsCalendar();}
   if(t==='journal')renderJournal();
   if(t==='stats')renderStats();
   if(t==='prop'){loadPropSettings();renderProp();}
   if(t==='calendar')renderCalendar();
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
-  if(t==='news'){loadNewsCalendar();}
   if(t==='playbook')loadPlaybook();
   if(t==='session'){document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];renderSessionReports();}
 }
@@ -1192,7 +1073,7 @@ function setOutcome(type,btn){
 }
 
 // ── Save trade ──
-function _saveTrade(tradeId){
+function saveTrade(){
   const date=document.getElementById('f-date').value;
   const bias=document.getElementById('f-bias').value;
   const direction=document.getElementById('f-direction').value;
@@ -1213,19 +1094,23 @@ function _saveTrade(tradeId){
   if(!outcome) missing.push('Outcome');
   if(!discRating) missing.push('Discipline rating');
 
-
+  if(currentProfile!=='backtesting'){
+    if(!(document.getElementById('f-ss-1m')||{}).value) missing.push('1M screenshot');
+    if(!(document.getElementById('f-ss-5m')||{}).value) missing.push('5M screenshot');
+    if(!(document.getElementById('f-ss-15m')||{}).value) missing.push('15M screenshot');
+    if(!(document.getElementById('f-ss-1h')||{}).value) missing.push('1H screenshot');
+    if(!(document.getElementById('f-ss-4h')||{}).value) missing.push('4H screenshot');
+  }
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   const pnl=parseFloat(pnlRaw);
-  const trade={id:tradeId||Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:pendingSS['1m']||'',ss5m:pendingSS['5m']||'',ss15m:pendingSS['15m']||'',ss1h:pendingSS['1h']||'',ss4h:pendingSS['4h']||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
+  const trade={id:Date.now(),date,mode,instrument:document.getElementById('f-instrument').value,entryTime:document.getElementById('f-entry-time').value,exitTime:(document.getElementById('f-exit-time')||{}).value||'',session:document.getElementById('f-session').value,bias:document.getElementById('f-bias').value,direction:document.getElementById('f-direction').value,draw:document.getElementById('f-draw').value,rrPlan:document.getElementById('f-rr').value,rrActual:document.getElementById('f-actual-rr').value,pnl,outcome,discRating,emotion:(document.getElementById('f-emotion')?document.getElementById('f-emotion').value:''),mistakes:[...selectedMistakes],narrative:document.getElementById('f-narrative').value,improve:document.getElementById('f-improve').value,ss1m:(document.getElementById('f-ss-1m')||{}).value||'',ss5m:(document.getElementById('f-ss-5m')||{}).value||'',ss15m:(document.getElementById('f-ss-15m')||{}).value||'',ss1h:(document.getElementById('f-ss-1h')||{}).value||'',ss4h:(document.getElementById('f-ss-4h')||{}).value||'',risk:document.getElementById('f-risk').value,tags:((document.getElementById('f-tags')||{}).value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
     checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
     checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length};
   checkPB(trade);trades.unshift(trade);save();try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}alert('Saved');clearForm();
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-session','f-bias','f-direction','f-draw','f-rr','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['1m','5m','15m','1h','4h'].forEach(tf=>{const el=document.getElementById('f-ss-'+tf);if(el&&el.type==='file'){try{el.value='';}catch(e){}}const prev=document.getElementById('f-ss-'+tf+'-prev');if(prev)prev.innerHTML='';});
-  pendingSS={};
+  ['f-date','f-entry-time','f-exit-time','f-session','f-bias','f-direction','f-draw','f-rr','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-ss-1m','f-ss-5m','f-ss-15m','f-ss-1h','f-ss-4h','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
@@ -1269,20 +1154,9 @@ function renderJournal(){
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#555;font-size:13px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'#2a2a2a'};
     const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'#2a2a2a')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:11px;color:#666">'+(t.draw||'—')+'</td><td>'+(t.rrPlan||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:11px;color:#888">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#BA7517">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#555;font-size:14px;padding:2px 6px">×</button></td></tr>';
-    window._ssCache = window._ssCache || {};
-    window._ssCache[t.id] = ssLinks.map(s=>s[1]);
-    const ssHtml=ssLinks.length?'<div style="margin-bottom:'+(t.narrative||t.improve?'16px':'4px')+'">'
-      +'<div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#555;margin-bottom:8px">Charts</div>'
-      +'<div style="display:flex;gap:8px;flex-wrap:wrap;" id="ss-grid-'+t.id+'">'
-      +ssLinks.map((s,i)=>{
-        return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">'
-          +'<div style="font-size:10px;color:#888;font-weight:500">'+s[0]+'</div>'
-          +'<img src="'+s[1]+'" loading="lazy" data-tradeid="'+t.id+'" data-idx="'+i+'" class="ss-thumb" '
-          +'style="width:140px;height:88px;object-fit:cover;border-radius:7px;border:0.5px solid #2a2a2a;cursor:pointer;background:#1a1a1a">'
-          +'</div>';
-      }).join('')
-      +'</div></div>':'';
-
+    const ssHtml=ssLinks.length?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:'+(t.narrative||t.improve?'12px':'0')+'">'
+      +ssLinks.map(s=>'<a href="'+s[1]+'" target="_blank" style="color:#aaa;font-size:12px;text-decoration:none;border:0.5px solid #2a2a2a;padding:4px 10px;border-radius:6px;background:#1a1a1a">'+s[0]+' ↗</a>').join('')
+      +'</div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#555;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div><div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#555;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.improve+'</div></div>':'';
     const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#aaa;font-size:11px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
@@ -1291,15 +1165,6 @@ function renderJournal(){
   }).join('');
 }
 function del(id){if(!confirm('Delete?'))return;trades=trades.filter(t=>t.id!==id);save();renderJournal();}
-
-// Delegated click handler for screenshot thumbnails
-document.addEventListener('click', function(e){
-  if(e.target.classList.contains('ss-thumb')){
-    const tradeId = parseInt(e.target.dataset.tradeid);
-    const idx = parseInt(e.target.dataset.idx);
-    openSSViewerById(tradeId, idx);
-  }
-});
 function toggleFav(id,btn){
   const t=trades.find(t=>t.id===id);if(!t)return;
   t.favourite=!t.favourite;
@@ -1819,13 +1684,11 @@ function openEdit(id){
   if(document.getElementById('e-exit-time'))document.getElementById('e-exit-time').value=t.exitTime||'';
   document.getElementById('e-session').value=t.session||'';
   document.getElementById('e-emotion').value=t.emotion||'';
-  ['1m','5m','15m','1h','4h'].forEach(tf=>{
-    const urlKey='ss'+tf;
-    const url=t[urlKey]||'';
-    document.getElementById('e-ss-'+tf+'-url').value=url;
-    const prev=document.getElementById('e-ss-'+tf+'-prev');
-    prev.innerHTML=url?'<img src="'+url+'" onclick="openSSViewer(\''+url+'\')" style="width:100%;max-width:160px;height:80px;object-fit:cover;border-radius:6px;border:0.5px solid #2a2a2a;cursor:pointer;display:block">':'<span style="font-size:11px;color:#555">No image</span>';
-  });
+  document.getElementById('e-ss-1m').value=t.ss1m||'';
+  document.getElementById('e-ss-5m').value=t.ss5m||'';
+  document.getElementById('e-ss-15m').value=t.ss15m||'';
+  document.getElementById('e-ss-1h').value=t.ss1h||'';
+  document.getElementById('e-ss-4h').value=t.ss4h||'';
   document.getElementById('e-tags').value=(t.tags||[]).join(', ');
   document.getElementById('e-narrative').value=t.narrative||'';
   document.getElementById('e-improve').value=t.improve||'';
@@ -1871,11 +1734,11 @@ function saveEdit(){
     session:document.getElementById('e-session').value,
     emotion:document.getElementById('e-emotion').value,
     discRating:eDiscRating,
-    ss1m:document.getElementById('e-ss-1m-url').value||trades[idx].ss1m||'',
-    ss5m:document.getElementById('e-ss-5m-url').value||trades[idx].ss5m||'',
-    ss15m:document.getElementById('e-ss-15m-url').value||trades[idx].ss15m||'',
-    ss1h:document.getElementById('e-ss-1h-url').value||trades[idx].ss1h||'',
-    ss4h:document.getElementById('e-ss-4h-url').value||trades[idx].ss4h||'',
+    ss1m:document.getElementById('e-ss-1m').value,
+    ss5m:document.getElementById('e-ss-5m').value,
+    ss15m:document.getElementById('e-ss-15m').value,
+    ss1h:document.getElementById('e-ss-1h').value,
+    ss4h:document.getElementById('e-ss-4h').value,
     tags:(document.getElementById('e-tags').value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
     narrative:document.getElementById('e-narrative').value,
     improve:document.getElementById('e-improve').value,
@@ -1897,7 +1760,7 @@ function randomizeTrade(){
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
   const rrOptions=['1:1','1:1.25','1:1.5','1:1.75','1:2'];
   const rrPlan=rrOptions[Math.floor(Math.random()*rrOptions.length)];
-  const rrActualOptions=rOutcome==='win'?['1:1','1:1.25','1:1.5','1:1.75','1:2','Partials']:rOutcome==='loss'?['-1R (full loss)']:rOutcome==='be'?['0 (BE)']:['0 (BE)'];
+  const rrActualOptions=rOutcome==='win'?['1:1','1:1.25','1:1.5','1:1.75','1:2']:rOutcome==='loss'?['-1R (full loss)']:rOutcome==='be'?['0 (BE)']:[''];
   const rrActual=rrActualOptions[Math.floor(Math.random()*rrActualOptions.length)];
   const pnlBase=Math.floor(Math.random()*400)+50;
   const pnl=rOutcome==='win'?pnlBase:rOutcome==='loss'?-pnlBase:0;
@@ -1933,8 +1796,7 @@ function randomizeTrade(){
   outcome=rOutcome;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   const outcomeMap={win:0,loss:1,be:2,skip:3};
-  const outcomeBtn=document.querySelectorAll('.outcome-btn')[outcomeMap[rOutcome]];
-  if(outcomeBtn)outcomeBtn.classList.add('active-'+rOutcome);
+  document.querySelectorAll('.outcome-btn')[outcomeMap[rOutcome]].classList.add('active-'+rOutcome);
 
   // Set discipline stars (3-5 for win, 1-3 for loss)
   const disc=rOutcome==='win'?Math.floor(Math.random()*3)+3:Math.floor(Math.random()*3)+1;
@@ -1987,7 +1849,7 @@ function randomizeTrade(){
   // Set fake TV links
   if(currentProfile!=='backtesting'){
     const fakeLink='https://www.tradingview.com/x/testrade'+Math.floor(Math.random()*9999);
-    // screenshot file inputs cannot be set programmatically
+    ['f-ss-1m','f-ss-5m','f-ss-15m','f-ss-1h','f-ss-4h'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=fakeLink;});
   }
 
   // Random tags
@@ -2060,6 +1922,11 @@ let playbookData={};
 
 function savePlaybookStore(){try{localStorage.setItem('ict_playbook',JSON.stringify(playbookData));}catch(e){}supaSet('ict_playbook',playbookData);}
 async function loadPlaybook(){
+  // If playbookData is empty, re-fetch from Supabase
+  if(!playbookData[currentProfile]||Object.keys(playbookData[currentProfile]).length===0){
+    const fresh=await supaGet('ict_playbook');
+    if(fresh)playbookData=fresh;
+  }
   const pb=playbookData[currentProfile]||{};
   ['perfect','rules','avoid','pre','goals'].forEach(k=>{
     const el=document.getElementById('pb-'+k);
@@ -2105,26 +1972,17 @@ function saveSessionReport(){
   renderSessionReports();
   alert('Report saved ✓');
 }
-function delSessionReport(id){
-  if(!confirm('Delete this report?'))return;
-  sessionReports[currentProfile]=(sessionReports[currentProfile]||[]).filter(r=>r.id!==id);
-  saveSessionReportsStore();
-  renderSessionReports();
-}
 function renderSessionReports(){
   const el=document.getElementById('sr-list');
   if(!el)return;
   const reports=(sessionReports[currentProfile]||[]);
   if(!reports.length){el.textContent='No reports yet.';return;}
   const gradeColor={A:'#6abf6a',B:'#6abf6a',C:'#c4a020',D:'#c06060',F:'#c06060'};
-  el.innerHTML=reports.slice(0,20).map(r=>`
+  el.innerHTML=reports.slice(0,10).map(r=>`
     <div style="background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:8px;padding:12px 14px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:13px;color:#aaa">${r.date}</span>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px;font-weight:500;color:${gradeColor[r.grade]||'#888'}">${r.grade||'—'}</span>
-          <button onclick="delSessionReport(${r.id})" style="border:none;background:none;cursor:pointer;color:#555;font-size:16px;padding:2px 4px;line-height:1" title="Delete">×</button>
-        </div>
+        <span style="font-size:20px;font-weight:500;color:${gradeColor[r.grade]||'#888'}">${r.grade}</span>
       </div>
       <div style="display:flex;gap:16px;font-size:12px;color:#666;margin-bottom:8px">
         <span>Patience ${'★'.repeat(r.patience||0)}</span>
@@ -2466,85 +2324,37 @@ function renderBestRR(f){
   el.innerHTML=html;
 }
 
-// ── Push notifications + Service Worker ──
+// ── Push notifications ──
 async function requestNotifications(){
   if(!('Notification' in window)){alert('Notifications not supported in this browser');return;}
   const permission=await Notification.requestPermission();
-  if(permission!=='granted'){alert('Notification permission denied. Please allow notifications in your browser settings and try again.');return;}
-  localStorage.setItem('ict_notifs','1');
-  _setNotifBtnOn();
-  // Show test notification immediately — we have permission so this works directly
-  try{
-    const reg=await navigator.serviceWorker.getRegistration('/');
-    if(reg){
-      // Use SW to show notification (works even if tab not focused)
-      await reg.showNotification("fuze's Journal 🔔",{
-        body:"Reminders enabled! You'll get a heads up at 14:25 UK every weekday.",
-        icon:'/favicon.ico',
-        tag:'test-notif'
-      });
-    } else {
-      new Notification("fuze's Journal 🔔",{body:"Reminders enabled! You'll get a heads up at 14:25 UK every weekday."});
-    }
-  }catch(ex){
-    try{new Notification("fuze's Journal 🔔",{body:"Reminders enabled!"});}catch(e2){}
+  if(permission==='granted'){
+    localStorage.setItem('ict_notifs','1');
+    document.getElementById('notif-btn').textContent='Notifications on ✓';
+    document.getElementById('notif-btn').style.color='#6abf6a';
+    scheduleNYReminder();
+    alert('Notifications enabled. You will get a reminder at 14:25 UK when the NY window opens.');
   }
-  // Register SW for background reminders
-  if('serviceWorker' in navigator){
-    try{
-      const reg=await navigator.serviceWorker.register('/sw.js');
-      console.log('SW registered',reg.scope);
-      // Wait until SW is active before posting message
-      const waitActive=(r)=>new Promise(resolve=>{
-        if(r.active){resolve(r.active);return;}
-        const sw=r.installing||r.waiting;
-        sw.addEventListener('statechange',function(){if(this.state==='activated')resolve(this);});
-      });
-      const sw=await waitActive(reg);
-      sw.postMessage({type:'SCHEDULE_REMINDER'});
-    }catch(e){console.warn('SW registration failed',e);}
-  }
-  // In-tab fallback scheduler
-  scheduleNYReminder();
-}
-function _setNotifBtnOn(){
-  const nb=document.getElementById('notif-btn');
-  if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}
-}
-function _msUntilUKTime(h,m){
-  // Returns ms until next occurrence of h:m in Europe/London
-  const now=new Date();
-  const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
-  const target=new Date(ukNow);
-  target.setHours(h,m,0,0);
-  if(target<=ukNow) target.setDate(target.getDate()+1);
-  // Skip weekends
-  while(target.getDay()===0||target.getDay()===6) target.setDate(target.getDate()+1);
-  // Offset back to real UTC ms
-  const diffUK=target-ukNow; // ms from now in UK time
-  return diffUK;
 }
 function scheduleNYReminder(){
   if(localStorage.getItem('ict_notifs')!=='1')return;
   if(!('Notification' in window)||Notification.permission!=='granted')return;
-  const ms=_msUntilUKTime(14,25);
-  console.log('Next NY reminder in',Math.round(ms/60000),'min');
-  clearTimeout(window._notifTimer);
-  window._notifTimer=setTimeout(()=>{
-    if(Notification.permission==='granted'){
-      new Notification('fuze\'s Journal — NY window in 5 mins 🟡',{
-        body:'14:30 UK — check your HTF draw and get ready.',
-        icon:'/favicon.ico'
-      });
-    }
-    setTimeout(scheduleNYReminder,2*60*1000);
-  },ms);
-}
-// Re-register SW on load if notifs already enabled
-if(localStorage.getItem('ict_notifs')==='1'&&'serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js').then(reg=>{
-    console.log('SW re-registered on load');
-  }).catch(e=>console.warn('SW load reg failed',e));
+  const now=new Date();
+  // Calculate next 14:25 UK time
+  const target=new Date();
+  target.setHours(14,25,0,0);
+  if(target<=now)target.setDate(target.getDate()+1);
+  // Skip weekends
+  while(target.getDay()===0||target.getDay()===6)target.setDate(target.getDate()+1);
+  const msUntil=target-now;
+  setTimeout(()=>{
+    new Notification('fuze\'s Journal — NY window opens in 5 mins 🟡',{
+      body:'14:30 UK — check your draw, get ready.',
+      icon:'/favicon.ico'
+    });
+    // Schedule next day
+    setTimeout(scheduleNYReminder,60000);
+  },msUntil);
 }
 
 // ── Missed trades ──
@@ -2704,15 +2514,13 @@ function switchProfile(p, btn){
   const activeTab=document.querySelector('.tab.active');
   if(activeTab){
     const t=activeTab.getAttribute('data-tab');
-    if(t==='journal')renderJournal();
+    if(t==='log'){loadNewsCalendar();}
+  if(t==='journal')renderJournal();
     else if(t==='stats')renderStats();
     else if(t==='prop'){loadPropSettings();renderProp();}
     else if(t==='calendar')renderCalendar();
     else if(t==='missed')renderMissed();
     else if(t==='weekly')renderWeekly();
-    else if(t==='playbook')loadPlaybook();
-    else if(t==='news')loadNewsCalendar();
-    else if(t==='session')renderSessionReports();
   }
   clearForm();
   applyProfileUI();
@@ -2823,31 +2631,12 @@ function launchConfetti(){
 buildMistakes();
 document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
-// Live clocks
-function updateClocks(){
-  const ukEl = document.getElementById('clock-uk');
-  const nyEl = document.getElementById('clock-ny');
-  if(!ukEl || !nyEl) return;
-  const now = new Date();
-  const uk = now.toLocaleTimeString('en-GB', {timeZone:'Europe/London', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
-  const ny = now.toLocaleTimeString('en-US', {timeZone:'America/New_York', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
-  ukEl.textContent = uk;
-  nyEl.textContent = ny;
-  // Highlight gold during NY session window (14:30–16:30 UK)
-  const [h,m] = uk.split(':').map(Number);
-  const mins = h*60+m;
-  const inSession = mins >= 14*60+30 && mins < 16*60+30;
-  ukEl.style.color = inSession ? '#6abf6a' : '#c9a84c';
-  nyEl.style.color = inSession ? '#6abf6a' : '#c9a84c';
-}
-updateClocks();
-setInterval(updateClocks, 1000);
-
 loadAllData().then(()=>{
+  loadNewsCalendar();
   loadDraft();
   scheduleNYReminder();
   document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
-  try{if(localStorage.getItem('ict_notifs')==='1'&&typeof Notification!=='undefined'&&Notification.permission==='granted'){_setNotifBtnOn();}}catch(e){}
+  try{if(localStorage.getItem('ict_notifs')==='1'&&typeof Notification!=='undefined'&&Notification.permission==='granted'){const nb=document.getElementById('notif-btn');if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}}}catch(e){}
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -2895,11 +2684,11 @@ loadAllData().then(()=>{
     </div>
 
         <div id="e-ss-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>1M</label><div id="e-ss-1m-prev" style="margin-bottom:4px"></div><input type="file" id="e-ss-1m" accept="image/*" style="font-size:12px;padding:5px 8px"><input type="hidden" id="e-ss-1m-url"></div>
-      <div><label>5M</label><div id="e-ss-5m-prev" style="margin-bottom:4px"></div><input type="file" id="e-ss-5m" accept="image/*" style="font-size:12px;padding:5px 8px"><input type="hidden" id="e-ss-5m-url"></div>
-      <div><label>15M</label><div id="e-ss-15m-prev" style="margin-bottom:4px"></div><input type="file" id="e-ss-15m" accept="image/*" style="font-size:12px;padding:5px 8px"><input type="hidden" id="e-ss-15m-url"></div>
-      <div><label>1H</label><div id="e-ss-1h-prev" style="margin-bottom:4px"></div><input type="file" id="e-ss-1h" accept="image/*" style="font-size:12px;padding:5px 8px"><input type="hidden" id="e-ss-1h-url"></div>
-      <div><label>4H</label><div id="e-ss-4h-prev" style="margin-bottom:4px"></div><input type="file" id="e-ss-4h" accept="image/*" style="font-size:12px;padding:5px 8px"><input type="hidden" id="e-ss-4h-url"></div>
+      <div><label>1M screenshot</label><input type="text" id="e-ss-1m" placeholder="TradingView link"></div>
+      <div><label>5M screenshot</label><input type="text" id="e-ss-5m" placeholder="TradingView link"></div>
+      <div><label>15M screenshot</label><input type="text" id="e-ss-15m" placeholder="TradingView link"></div>
+      <div><label>1H screenshot</label><input type="text" id="e-ss-1h" placeholder="TradingView link"></div>
+      <div><label>4H screenshot</label><input type="text" id="e-ss-4h" placeholder="TradingView link"></div>
     </div>
     <div style="margin-bottom:12px">
       <label>Tags <span style="color:#555;font-size:11px">comma separated</span></label>
@@ -2957,452 +2746,5 @@ loadAllData().then(()=>{
   <div style="font-size:13px;color:#888">Loading your journal...</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-
-<!-- More menu (mobile) -->
-<div id="mobile-more-menu">
-  <div class="more-menu-item" id="more-news"      onclick="mobileNav('news')">      <span>📅</span> News</div>
-  <div class="more-menu-item" id="more-prop"      onclick="mobileNav('prop')">      <span>📊</span> Prop firm</div>
-  <div class="more-menu-item" id="more-missed"    onclick="mobileNav('missed')">    <span>👁️</span> Missed trades</div>
-  <div class="more-menu-item" id="more-weekly"    onclick="mobileNav('weekly')">    <span>📋</span> Weekly review</div>
-  <div class="more-menu-item" id="more-playbook"  onclick="mobileNav('playbook')">  <span>📖</span> Playbook</div>
-  <div class="more-menu-item" id="more-session"   onclick="mobileNav('session')">   <span>🎯</span> Session report</div>
-</div>
-
-<!-- Bottom nav bar (mobile) -->
-<nav id="mobile-nav">
-  <button class="mob-nav-btn active" id="mobnav-log"      onclick="mobileNav('log')">      <span class="mob-icon">✍️</span>Log</button>
-  <button class="mob-nav-btn"        id="mobnav-journal"  onclick="mobileNav('journal')">  <span class="mob-icon">📒</span>Trades</button>
-  <button class="mob-nav-btn"        id="mobnav-stats"    onclick="mobileNav('stats')">    <span class="mob-icon">📈</span>Stats</button>
-  <button class="mob-nav-btn"        id="mobnav-calendar" onclick="mobileNav('calendar')"> <span class="mob-icon">📅</span>Calendar</button>
-  <button class="mob-nav-btn"        id="mobnav-more"     onclick="toggleMoreMenu()">      <span class="mob-icon">☰</span>More</button>
-</nav>
-
-<script>
-// ── Mobile nav ──
-const MOB_MAIN_TABS = ['log','journal','stats','calendar'];
-
-function mobileNav(t){
-  // Close more menu
-  document.getElementById('mobile-more-menu').classList.remove('open');
-  // Activate tab
-  showTab(t);
-  // Update bottom nav active state
-  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
-  const mainBtn = document.getElementById('mobnav-'+t);
-  if(mainBtn){ mainBtn.classList.add('active'); }
-  else {
-    // It's a "more" tab — highlight More button
-    document.getElementById('mobnav-more').classList.add('active');
-  }
-  // Update more menu item active state
-  document.querySelectorAll('.more-menu-item').forEach(el=>el.classList.remove('active-more'));
-  const moreItem = document.getElementById('more-'+t);
-  if(moreItem) moreItem.classList.add('active-more');
-  // Scroll to top
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function toggleMoreMenu(){
-  const menu = document.getElementById('mobile-more-menu');
-  menu.classList.toggle('open');
-}
-
-// Close more menu when tapping outside
-document.addEventListener('click', function(e){
-  const menu = document.getElementById('mobile-more-menu');
-  const moreBtn = document.getElementById('mobnav-more');
-  if(menu.classList.contains('open') && !menu.contains(e.target) && !moreBtn.contains(e.target)){
-    menu.classList.remove('open');
-  }
-});
-</script>
-
-<!-- Screenshot lightbox -->
-<div id="ss-lightbox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:12px">
-  <div style="width:100%;max-width:1200px;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;box-sizing:border-box;flex-shrink:0">
-    <div style="font-size:13px;color:#c9a84c;font-weight:500" id="ss-lightbox-label"></div>
-    <button onclick="closeSSViewer()" style="border:none;background:none;cursor:pointer;color:#888;font-size:28px;line-height:1;padding:2px 8px">×</button>
-  </div>
-  <div style="display:flex;align-items:center;gap:16px;width:100%;justify-content:center" onclick="event.stopPropagation()">
-    <button onclick="ssNav(-1)" id="ss-prev-btn" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#e0e0e0;font-size:24px;padding:12px 16px;border-radius:8px;line-height:1;flex-shrink:0">&#8249;</button>
-    <div id="ss-img-wrap" style="position:relative;overflow:hidden;border-radius:10px;border:0.5px solid #2a2a2a;width:82vw;height:76vh;cursor:grab;background:#0a0a0a;flex-shrink:0">
-      <img id="ss-lightbox-img" src="" style="position:absolute;top:0;left:0;transform-origin:0 0;user-select:none;pointer-events:none;max-width:none;max-height:none;display:block">
-    </div>
-    <button onclick="ssNav(1)" id="ss-next-btn" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#e0e0e0;font-size:24px;padding:12px 16px;border-radius:8px;line-height:1;flex-shrink:0">&#8250;</button>
-  </div>
-  <div style="display:flex;gap:6px;margin-top:4px" id="ss-dots"></div>
-  <div style="font-size:11px;color:#444">← → navigate · scroll to zoom · drag to pan · Esc to close</div>
-</div>
-
-<script>
-// ── Economic calendar ──
-let _newsData = [];
-let _newsFilter = 'all';
-let _newsImpact = { high: true, medium: true };
-let _newsFetched = false;
-
-function setNewsFilter(f, btn){
-  _newsFilter = f;
-  document.querySelectorAll('#page-news .mode-btn').forEach(b => {
-    if(['nf-all','nf-today','nf-tomorrow'].includes(b.id)) b.classList.remove('active');
-  });
-  btn.classList.add('active');
-  renderNewsCalendar();
-}
-function setNewsImpact(type, btn){
-  _newsImpact[type] = !_newsImpact[type];
-  btn.classList.toggle('active', _newsImpact[type]);
-  renderNewsCalendar();
-}
-
-async function loadNewsCalendar(force=false){
-  if(_newsFetched && !force){ renderNewsCalendar(); return; }
-  const loadEl = document.getElementById('news-loading');
-  const errEl = document.getElementById('news-error');
-  const bodyEl = document.getElementById('news-body');
-  if(loadEl) loadEl.style.display='block';
-  if(errEl) errEl.style.display='none';
-  if(bodyEl) bodyEl.innerHTML='';
-  try{
-    const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json', {
-      headers: { 'Accept': 'application/json' }
-    });
-    if(!res.ok) throw new Error('Failed to fetch');
-    const data = await res.json();
-    // Filter USD only, high/medium impact
-    _newsData = data.filter(e =>
-      e.currency === 'USD' &&
-      (e.impact === 'High' || e.impact === 'Medium')
-    );
-    _newsFetched = true;
-    if(loadEl) loadEl.style.display='none';
-    renderNewsCalendar();
-  } catch(err){
-    if(loadEl) loadEl.style.display='none';
-    if(errEl){ errEl.style.display='block'; errEl.textContent='Could not load calendar — ForexFactory may be rate limiting. Try again in a minute.'; }
-    console.error('News fetch error:', err);
-  }
-}
-
-function renderNewsCalendar(){
-  const bodyEl = document.getElementById('news-body');
-  const todayBar = document.getElementById('news-today-bar');
-  if(!bodyEl) return;
-
-  const now = new Date();
-  const ukNow = new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
-  const todayStr = ukNow.toISOString().split('T')[0];
-  const tomorrowDate = new Date(ukNow); tomorrowDate.setDate(tomorrowDate.getDate()+1);
-  const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
-
-  // Filter by selected time range
-  let filtered = _newsData.filter(e => {
-    if(!_newsImpact.high && e.impact==='High') return false;
-    if(!_newsImpact.medium && e.impact==='Medium') return false;
-    const eDate = e.date.split('T')[0];
-    if(_newsFilter==='today') return eDate===todayStr;
-    if(_newsFilter==='tomorrow') return eDate===tomorrowStr;
-    return true;
-  });
-
-  // Today's upcoming events for the highlight bar
-  const upcomingToday = _newsData.filter(e => {
-    const eDate = e.date.split('T')[0];
-    if(eDate !== todayStr) return false;
-    const eTime = new Date(e.date);
-    const ukEventTime = new Date(eTime.toLocaleString('en-US',{timeZone:'Europe/London'}));
-    return ukEventTime > ukNow && e.impact === 'High';
-  });
-
-  if(todayBar){
-    if(upcomingToday.length){
-      const next = upcomingToday[0];
-      const ukTime = new Date(next.date).toLocaleString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
-      todayBar.style.display='block';
-      todayBar.innerHTML='⚠️ Next high impact event today: <strong>'+next.title+'</strong> at '+ukTime+' UK';
-    } else {
-      todayBar.style.display='none';
-    }
-  }
-
-  if(!filtered.length){
-    bodyEl.innerHTML='<div style="text-align:center;padding:40px;color:#555;font-size:13px">No events matching filters.</div>';
-    return;
-  }
-
-  // Group by day
-  const groups = {};
-  filtered.forEach(e => {
-    const day = e.date.split('T')[0];
-    if(!groups[day]) groups[day]=[];
-    groups[day].push(e);
-  });
-
-  const impactColor = { High:'#c06060', Medium:'#c4a020' };
-  const impactBg = { High:'#1f0f0f', Medium:'#1f1800' };
-  const impactBorder = { High:'#6e2a2a', Medium:'#6e5a00' };
-  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-  bodyEl.innerHTML = Object.keys(groups).sort().map(day => {
-    const date = new Date(day+'T12:00:00');
-    const ukDate = new Date(date.toLocaleString('en-US',{timeZone:'Europe/London'}));
-    const isToday = day===todayStr;
-    const dayLabel = isToday ? '🟡 Today — ' : dayNames[ukDate.getDay()]+' ';
-    const dateLabel = ukDate.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-
-    const events = groups[day].map(e => {
-      const ukTime = new Date(e.date).toLocaleString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
-      const isPast = new Date(e.date) < now;
-      const hasActual = e.actual && e.actual !== '';
-      const actualColor = e.actual && e.forecast ? (parseFloat(e.actual) >= parseFloat(e.forecast) ? '#6abf6a' : '#c06060') : '#e0e0e0';
-      return `<div style="display:grid;grid-template-columns:52px 1fr 80px 80px 80px;gap:8px;align-items:center;padding:9px 12px;border-bottom:0.5px solid #1e1e1e;opacity:${isPast?'0.5':'1'}">
-        <div style="font-size:12px;font-weight:500;color:#aaa;font-family:monospace">${ukTime}</div>
-        <div>
-          <div style="font-size:13px;color:#e0e0e0;margin-bottom:2px">${e.title}</div>
-          <span style="font-size:10px;padding:1px 6px;border-radius:3px;background:${impactBg[e.impact]};color:${impactColor[e.impact]};border:0.5px solid ${impactBorder[e.impact]}">${e.impact}</span>
-        </div>
-        <div style="text-align:right;font-size:12px;color:#555">${e.forecast||'—'}<div style="font-size:10px;color:#444">forecast</div></div>
-        <div style="text-align:right;font-size:12px;color:#555">${e.previous||'—'}<div style="font-size:10px;color:#444">previous</div></div>
-        <div style="text-align:right;font-size:13px;font-weight:500;color:${hasActual?actualColor:'#555'}">${e.actual||'—'}<div style="font-size:10px;color:#444">actual</div></div>
-      </div>`;
-    }).join('');
-
-    return `<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
-      <div style="padding:10px 12px;background:${isToday?'#1a1600':'#161616'};border-bottom:0.5px solid #2a2a2a">
-        <span style="font-size:13px;font-weight:500;color:${isToday?'#c9a84c':'#aaa'}">${dayLabel}${dateLabel}</span>
-      </div>
-      ${events}
-    </div>`;
-  }).join('');
-}
-
-// ── Screenshot uploads ──
-
-async function uploadSSToSupabase(file, tradeId, tf){
-  const ext = file.name.split('.').pop() || 'png';
-  const path = currentProfile+'/'+tradeId+'/'+tf+'.'+ext;
-  const res = await fetch(SUPA_URL+'/storage/v1/object/screenshots/'+path, {
-    method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type,'x-upsert':'true'},
-    body: file
-  });
-  if(!res.ok){ const e=await res.text(); console.error('Upload failed',e); return null; }
-  return SUPA_URL+'/storage/v1/object/public/screenshots/'+path;
-}
-
-async function uploadEditSS(file, tradeId, tf){
-  const url = await uploadSSToSupabase(file, tradeId, tf);
-  if(url){
-    document.getElementById('e-ss-'+tf+'-url').value = url;
-    const prev = document.getElementById('e-ss-'+tf+'-prev');
-    prev.innerHTML = '<img src="'+url+'" onclick="openSSViewer(\''+url+'\')" style="width:100%;max-width:160px;height:80px;object-fit:cover;border-radius:6px;border:0.5px solid #3a6e3a;cursor:pointer;display:block">';
-  }
-}
-
-// Wire up file input previews on the log form
-document.addEventListener('DOMContentLoaded', function(){
-  ['1m','5m','15m','1h','4h'].forEach(tf=>{
-    const inp = document.getElementById('f-ss-'+tf);
-    if(!inp) return;
-    inp.addEventListener('change', function(){
-      const file = this.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        const prev = document.getElementById('f-ss-'+tf+'-prev');
-        // Store as data URL temporarily for preview
-        prev.innerHTML = '<img src="'+e.target.result+'" style="width:100%;max-width:160px;height:80px;object-fit:cover;border-radius:6px;border:0.5px solid #2a2a2a;cursor:pointer" onclick="openSSViewer(\''+e.target.result+'\')">';
-        // Store file for upload on save
-        if(!window._pendingSSFiles) window._pendingSSFiles = {};
-        window._pendingSSFiles[tf] = file;
-      };
-      reader.readAsDataURL(file);
-    });
-    // Edit modal file inputs
-    const einp = document.getElementById('e-ss-'+tf);
-    if(!einp) return;
-    einp.addEventListener('change', async function(){
-      const file = this.files[0];
-      if(!file || !editingId) return;
-      const prev = document.getElementById('e-ss-'+tf+'-prev');
-      prev.innerHTML = '<span style="font-size:11px;color:#888">Uploading...</span>';
-      await uploadEditSS(file, editingId, tf);
-    });
-  });
-});
-
-async function saveTrade(){
-  pendingSS = {};
-  const statusEl = document.getElementById('ss-upload-status');
-  const files = window._pendingSSFiles || {};
-  const tfs = Object.keys(files);
-  // Generate the trade ID now so upload path matches what gets saved
-  const tradeId = Date.now();
-  window._pendingTradeId = tradeId;
-  if(tfs.length > 0){
-    if(statusEl) statusEl.textContent = 'Uploading screenshots...';
-    for(const tf of tfs){
-      const url = await uploadSSToSupabase(files[tf], tradeId, tf);
-      if(url) pendingSS[tf] = url;
-    }
-    if(statusEl) statusEl.textContent = '';
-    window._pendingSSFiles = {};
-  }
-  _saveTrade(tradeId);
-}
-
-let _ssUrls = [];
-let _ssIdx = 0;
-const _ssTfLabels = ['1M','5M','15M','1H','4H'];
-
-// ── Lightbox pan/zoom ──
-let _ssZoom = 1, _ssPanX = 0, _ssPanY = 0;
-let _ssDragging = false, _ssDragStartX = 0, _ssDragStartY = 0, _ssPanStartX = 0, _ssPanStartY = 0;
-let _pinchDist = 0;
-
-function openSSViewerById(tradeId, idx){
-  const urls = (window._ssCache && window._ssCache[tradeId]) || [];
-  openSSViewer(idx, urls);
-}
-function openSSViewer(idx, urls){
-  _ssUrls = Array.isArray(urls) ? urls : [urls];
-  _ssIdx = idx || 0;
-  _renderSS();
-  document.getElementById('ss-lightbox').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-function _ssResetZoom(){
-  _ssZoom = 1; _ssPanX = 0; _ssPanY = 0;
-  const wrap = document.getElementById('ss-img-wrap');
-  if(wrap) wrap.style.cursor = 'grab';
-  _ssApplyTransform();
-}
-function _ssApplyTransform(){
-  const img = document.getElementById('ss-lightbox-img');
-  const wrap = document.getElementById('ss-img-wrap');
-  if(!img || !wrap || !img.naturalWidth) return;
-  const wW = wrap.clientWidth, wH = wrap.clientHeight;
-  const nW = img.naturalWidth, nH = img.naturalHeight;
-  // Base scale to fit image in container
-  const base = Math.min(wW / nW, wH / nH);
-  const scale = base * _ssZoom;
-  const iW = nW * scale, iH = nH * scale;
-  // Clamp pan
-  const maxX = Math.max(0, (iW - wW) / 2);
-  const maxY = Math.max(0, (iH - wH) / 2);
-  _ssPanX = Math.max(-maxX, Math.min(maxX, _ssPanX));
-  _ssPanY = Math.max(-maxY, Math.min(maxY, _ssPanY));
-  // Center image + apply pan
-  img.style.width = iW + 'px';
-  img.style.height = iH + 'px';
-  img.style.left = ((wW - iW) / 2 + _ssPanX) + 'px';
-  img.style.top  = ((wH - iH) / 2 + _ssPanY) + 'px';
-}
-function _renderSS(){
-  const img = document.getElementById('ss-lightbox-img');
-  const label = document.getElementById('ss-lightbox-label');
-  const dots = document.getElementById('ss-dots');
-  const prevBtn = document.getElementById('ss-prev-btn');
-  const nextBtn = document.getElementById('ss-next-btn');
-  _ssZoom = 1; _ssPanX = 0; _ssPanY = 0;
-  img.style.width = ''; img.style.height = ''; img.style.left = ''; img.style.top = '';
-  img.onload = () => _ssApplyTransform();
-  img.src = _ssUrls[_ssIdx];
-  label.textContent = (_ssTfLabels[_ssIdx] || (_ssIdx+1)) + ' chart  ' + (_ssIdx+1) + ' / ' + _ssUrls.length;
-  prevBtn.style.opacity = _ssIdx === 0 ? '0.3' : '1';
-  nextBtn.style.opacity = _ssIdx === _ssUrls.length-1 ? '0.3' : '1';
-  dots.innerHTML = _ssUrls.map((_,i)=>'<div style="width:7px;height:7px;border-radius:50%;background:'+(i===_ssIdx?'#c9a84c':'#333')+';transition:background .2s"></div>').join('');
-}
-function ssNav(dir){
-  const next = _ssIdx + dir;
-  if(next >= 0 && next < _ssUrls.length){ _ssIdx = next; _renderSS(); }
-}
-// Scroll to zoom toward cursor position
-document.addEventListener('wheel', function(e){
-  const lb = document.getElementById('ss-lightbox');
-  const wrap = document.getElementById('ss-img-wrap');
-  if(!lb || lb.style.display === 'none' || !wrap) return;
-  e.preventDefault();
-  const rect = wrap.getBoundingClientRect();
-  // Cursor position relative to wrap center
-  const cx = e.clientX - rect.left - rect.width / 2;
-  const cy = e.clientY - rect.top - rect.height / 2;
-  const prevZoom = _ssZoom;
-  _ssZoom = Math.min(8, Math.max(1, _ssZoom * (e.deltaY < 0 ? 1.1 : 0.9)));
-  if(_ssZoom === 1){
-    _ssPanX = 0; _ssPanY = 0;
-  } else {
-    // Scale pan so zoom feels anchored to cursor
-    const ratio = _ssZoom / prevZoom;
-    _ssPanX = cx - (cx - _ssPanX) * ratio;
-    _ssPanY = cy - (cy - _ssPanY) * ratio;
-  }
-  _ssApplyTransform();
-}, {passive:false});
-// Drag to pan
-document.addEventListener('mousedown', function(e){
-  const wrap = document.getElementById('ss-img-wrap');
-  if(!wrap || !wrap.contains(e.target)) return;
-  _ssDragging = true;
-  _ssDragStartX = e.clientX; _ssDragStartY = e.clientY;
-  _ssPanStartX = _ssPanX; _ssPanStartY = _ssPanY;
-  wrap.style.cursor = 'grabbing';
-  e.preventDefault();
-});
-document.addEventListener('mousemove', function(e){
-  if(!_ssDragging) return;
-  if(e.buttons === 0){ _ssStopDrag(); return; }
-  _ssDragMoved = true;
-  _ssPanX = _ssPanStartX + (e.clientX - _ssDragStartX);
-  _ssPanY = _ssPanStartY + (e.clientY - _ssDragStartY);
-  _ssApplyTransform();
-});
-let _ssDragMoved = false;
-function _ssStopDrag(){
-  if(!_ssDragging) return;
-  _ssDragging = false;
-  const wrap = document.getElementById('ss-img-wrap');
-  if(wrap) wrap.style.cursor = 'grab';
-}
-document.addEventListener('mouseup', function(e){
-  _ssStopDrag();
-});
-window.addEventListener('blur', _ssStopDrag);
-// Click on backdrop closes lightbox — but only if we didn't just drag
-document.getElementById('ss-lightbox').addEventListener('click', function(e){
-  if(e.target === this && !_ssDragMoved) closeSSViewer();
-  _ssDragMoved = false;
-});
-// Pinch to zoom (mobile)
-document.addEventListener('touchstart', function(e){
-  if(e.touches.length === 2){
-    const lb = document.getElementById('ss-lightbox');
-    if(lb && lb.style.display !== 'none')
-      _pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-  }
-},{passive:true});
-document.addEventListener('touchmove', function(e){
-  if(e.touches.length === 2){
-    const lb = document.getElementById('ss-lightbox');
-    if(!lb || lb.style.display === 'none') return;
-    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-    _ssZoom = Math.min(8, Math.max(1, _ssZoom * (dist / _pinchDist)));
-    _pinchDist = dist;
-    _ssApplyTransform();
-    e.preventDefault();
-  }
-},{passive:false});
-function closeSSViewer(){
-  document.getElementById('ss-lightbox').style.display = 'none';
-  document.getElementById('ss-lightbox-img').src = '';
-  document.body.style.overflow = '';
-  _ssResetZoom();
-}
-document.addEventListener('keydown', e=>{
-  if(e.key==='Escape') closeSSViewer();
-  if(e.key==='ArrowLeft'  && _ssZoom === 1) ssNav(-1);
-  if(e.key==='ArrowRight' && _ssZoom === 1) ssNav(1);
-});
-</script>
 </body>
 </html>
