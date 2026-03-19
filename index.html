@@ -90,6 +90,10 @@
   .collapse-icon{font-size:12px;color:#555;transition:transform .2s;display:inline-block}
   .collapse-icon.collapsed{transform:rotate(-90deg)}
   .collapsible-body{transition:none}
+  @keyframes glow-green{0%,100%{box-shadow:0 0 0px #3a6e3a}50%{box-shadow:0 0 18px rgba(106,191,106,0.4)}}
+  @keyframes glow-red{0%,100%{box-shadow:0 0 0px #6e2a2a}50%{box-shadow:0 0 18px rgba(192,96,96,0.4)}}
+  .glow-green{animation:glow-green 2s ease-in-out infinite}
+  .glow-red{animation:glow-red 2s ease-in-out infinite}
   .collapsible-body.collapsed{display:none}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .collapsible-header:hover .collapse-icon{color:#c9a84c}
@@ -785,7 +789,7 @@
     </div>
   </div>
 
-  <div class="card" id="prop-tracker" style="display:none">
+  <div class="card" id="prop-tracker" style="display:none" id="prop-tracker">
     <div class="flex-between" style="margin-bottom:14px">
       <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
       <span style="font-size:12px;color:#555" id="prop-account-lbl"></span>
@@ -1028,7 +1032,7 @@ function showTab(t){
   document.querySelectorAll('.tab').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
   const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
   document.getElementById('page-'+t).classList.add('active');
-  if(t==='log'){loadNewsCalendar();}
+  if(t==='log'){loadNewsCalendar();setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
   if(t==='stats')renderStats();
   if(t==='prop'){loadPropSettings();renderProp();}
@@ -1499,6 +1503,13 @@ function renderProp(){
     }
   }
 
+  // Glow effect on prop tracker
+  const propCard=document.getElementById('prop-tracker');
+  if(propCard){
+    propCard.classList.remove('glow-green','glow-red');
+    if(totalPnl>=propSettings.target*0.8&&propSettings.target>0)propCard.classList.add('glow-green');
+    else if(bufferRemaining<maxddAmt*0.3&&maxddAmt>0)propCard.classList.add('glow-red');
+  }
   // Popups
   const firmName=propSettings.name||'your eval';
   if(totalPnl>=propSettings.target&&propSettings.target>0&&!propPassedShown){
@@ -2548,6 +2559,131 @@ function renderNewsSidebar(){
       +'</div>'+rows;
   }).join('');
 }
+
+// ── Session timer ──
+function _ukNow(){
+  return new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/London'}));
+}
+function _pad(n){return String(n).padStart(2,'0');}
+function _fmt(totalSecs){
+  const h=Math.floor(totalSecs/3600);
+  const m=Math.floor((totalSecs%3600)/60);
+  const s=totalSecs%60;
+  return (h?_pad(h)+':':'')+_pad(m)+':'+_pad(s);
+}
+
+function updateSessionTimer(){
+  const now=_ukNow();
+  const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+  const nowMins=h*60+m;
+  const nowSecs=h*3600+m*60+s;
+
+  // Key times in minutes
+  const T_OPEN=9*60+30;    // 09:30 NY open
+  const T_STOP=11*60;      // 11:00 stop trading
+  const T_NY_OPEN=14*60+30; // 14:30 UK = 09:30 NY (approx, EST)
+  const T_NY_CLOSE=16*60;   // 16:00 UK last entry
+  const T_HARD=16*60+30;    // 16:30 hard close
+
+  const timerEl=document.getElementById('timer-display');
+  const labelEl=document.getElementById('timer-label');
+  const barEl=document.getElementById('timer-bar');
+  const subEl=document.getElementById('timer-sub');
+  const cardEl=document.getElementById('session-timer-card');
+  if(!timerEl)return;
+
+  let label='',color='#c9a84c',barPct=0,sub='';
+
+  if(nowMins < T_NY_OPEN){
+    // Before NY open — countdown to 14:30 UK
+    const secsLeft=(T_NY_OPEN*60)-nowSecs;
+    label='Until NY open (14:30 UK)';
+    timerEl.textContent=_fmt(secsLeft);
+    barPct=Math.max(0,100-(secsLeft/(4*3600)*100));
+    color='#c9a84c';
+    sub='';
+  } else if(nowMins < T_NY_CLOSE){
+    // In session — count up from open, countdown to 16:00
+    const secsIn=nowSecs-(T_NY_OPEN*60);
+    const secsLeft=(T_NY_CLOSE*60)-nowSecs;
+    label='Session live ✅  —  closes in';
+    timerEl.textContent=_fmt(secsLeft);
+    barPct=(secsIn/((T_NY_CLOSE-T_NY_OPEN)*60))*100;
+    color='#6abf6a';
+    sub='Hard close at 16:30 UK';
+    if(cardEl){cardEl.style.borderColor='#3a6e3a';cardEl.style.background='rgba(58,110,58,0.06)';}
+  } else if(nowMins < T_HARD){
+    // 16:00–16:30 — no new entries, close open trades
+    const secsLeft=(T_HARD*60)-nowSecs;
+    label='No new entries — hard close in';
+    timerEl.textContent=_fmt(secsLeft);
+    barPct=100;
+    color='#c4a020';
+    sub='Close all trades NOW';
+    if(cardEl){cardEl.style.borderColor='#6e5a00';cardEl.style.background='rgba(110,90,0,0.06)';}
+  } else {
+    // Session over
+    label='Session closed';
+    timerEl.textContent='--:--';
+    barPct=100;
+    color='#555';
+    sub='Next session 14:30 UK';
+    if(cardEl){cardEl.style.borderColor='#2a2a2a';cardEl.style.background='';}
+  }
+
+  timerEl.style.color=color;
+  if(labelEl)labelEl.textContent=label;
+  if(barEl){barEl.style.width=Math.min(100,barPct)+'%';barEl.style.background=color;}
+  if(subEl)subEl.textContent=sub;
+}
+
+setInterval(updateSessionTimer,1000);
+updateSessionTimer();
+
+// ── Risk calculator ──
+// NQ point value = $20 per point (full NQ)
+// MNQ point value = $2 per point (micro)
+function calcRisk(){
+  const account=parseFloat(document.getElementById('calc-account').value)||0;
+  const stop=parseFloat(document.getElementById('calc-stop').value)||0;
+  const out=document.getElementById('calc-output');
+  if(!account||!stop){out.innerHTML='<span style="color:#555">Enter account size and stop distance</span>';return;}
+
+  const risk1pct=account*0.01;
+  const risk05pct=account*0.005;
+
+  // NQ: $20/pt. Contracts = risk / (stop * 20)
+  const nq1=risk1pct/(stop*20);
+  const nq05=risk05pct/(stop*20);
+  // MNQ: $2/pt
+  const mnq1=risk1pct/(stop*2);
+  const mnq05=risk05pct/(stop*2);
+
+  out.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+    +'<div style="background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:6px;padding:7px 10px">'
+    +'<div style="font-size:10px;color:#555;margin-bottom:3px">1% risk ($'+risk1pct.toFixed(0)+')</div>'
+    +'<div style="font-size:13px;font-weight:500;color:#c9a84c">'+nq1.toFixed(2)+' NQ</div>'
+    +'<div style="font-size:12px;color:#888">'+Math.round(mnq1)+' MNQ</div>'
+    +'</div>'
+    +'<div style="background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:6px;padding:7px 10px">'
+    +'<div style="font-size:10px;color:#555;margin-bottom:3px">0.5% risk ($'+risk05pct.toFixed(0)+')</div>'
+    +'<div style="font-size:13px;font-weight:500;color:#c9a84c">'+nq05.toFixed(2)+' NQ</div>'
+    +'<div style="font-size:12px;color:#888">'+Math.round(mnq05)+' MNQ</div>'
+    +'</div>'
+    +'</div>'
+    +'<div style="font-size:10px;color:#444;margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
+}
+
+// Pre-fill calc from prop settings if available
+function prefillCalc(){
+  const accEl=document.getElementById('calc-account');
+  if(accEl&&propSettings&&propSettings.account&&!accEl.value){
+    accEl.value=propSettings.account;
+    calcRisk();
+  }
+}
+
 // ── Missed trades ──
 let missedTrades=[];
 
@@ -2705,7 +2841,7 @@ function switchProfile(p, btn){
   const activeTab=document.querySelector('.tab.active');
   if(activeTab){
     const t=activeTab.getAttribute('data-tab');
-    if(t==='log'){loadNewsCalendar();}
+    if(t==='log'){loadNewsCalendar();setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
     else if(t==='stats')renderStats();
     else if(t==='prop'){loadPropSettings();renderProp();}
