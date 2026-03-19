@@ -1481,9 +1481,21 @@ function renderJournal(){
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#555;font-size:13px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'#2a2a2a'};
     const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'#2a2a2a')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:11px;color:#666">'+(t.draw||'—')+'</td><td>'+(t.rrPlan||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:11px;color:#888">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#BA7517">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#555;font-size:14px;padding:2px 6px">×</button></td></tr>';
-    const ssHtml=ssLinks.length?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:'+(t.narrative||t.improve?'12px':'0')+'">'
-      +ssLinks.map(s=>'<a href="'+s[1]+'" target="_blank" style="color:#aaa;font-size:12px;text-decoration:none;border:0.5px solid #2a2a2a;padding:4px 10px;border-radius:6px;background:#1a1a1a">'+s[0]+' ↗</a>').join('')
-      +'</div>':'';
+    window._ssStore=window._ssStore||{};
+    window._ssStore[t.id]=ssLinks;
+    const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
+    const ssHtml=ssLinks.length?'<div style="margin-bottom:'+(t.narrative||t.improve?'14px':'4px')+'">'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      +ssLinks.map((s,i)=>_isCDN(s[1])
+        ?'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
+          +'<div style="font-size:10px;color:#555">'+s[0]+'</div>'
+          +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
+          +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:0.5px solid #2a2a2a;cursor:pointer;background:#111" '
+          +'onmouseover="this.style.borderColor=\'#c9a84c\'" onmouseout="this.style.borderColor=\'#2a2a2a\'">'
+          +'</div>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#aaa;font-size:12px;text-decoration:none;border:0.5px solid #2a2a2a;padding:4px 10px;border-radius:6px;background:#1a1a1a">'+s[0]+' ↗</a>'
+      ).join('')
+      +'</div></div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#555;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div><div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#555;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.improve+'</div></div>':'';
     const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#aaa;font-size:11px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
