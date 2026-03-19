@@ -1892,7 +1892,15 @@ function calDayClick(day){
   document.getElementById('cal-popup-body').innerHTML=dayTrades.map(t=>{
     const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#6abf6a;font-weight:500">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#c06060;font-weight:500">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#c4a020;font-weight:500">$0</span>'):'—';
     const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
-    const ssHtml=ssLinks.length?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+ssLinks.map(s=>'<a href="'+s[1]+'" target="_blank" style="color:#aaa;font-size:12px;text-decoration:none;border:0.5px solid #2a2a2a;padding:3px 8px;border-radius:5px;background:#1a1a1a">'+s[0]+' ↗</a>').join('')+'</div>':'';
+    window._ssStore=window._ssStore||{};
+    window._ssStore['cal_'+t.id]=ssLinks;
+    const ssHtml=ssLinks.length?'<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">'
+      +ssLinks.map((s,i)=>'<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'
+        +'<div style="font-size:10px;color:#666">'+s[0]+'</div>'
+        +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox(\'cal_'+t.id+'\','+i+')" '
+        +'style="width:90px;height:56px;object-fit:cover;border-radius:6px;border:0.5px solid #2a2a2a;cursor:pointer;background:#111">'
+        +'</div>').join('')
+      +'</div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#555;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#555;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.improve+'</div></div>':'';
     return'<div style="background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:10px;padding:14px;margin-bottom:10px">'
@@ -3021,6 +3029,76 @@ function closeLightbox(){
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); });
 
+
+// ── Trade screenshot lightbox ──
+let _lbTradeId = null;
+let _lbIdx = 0;
+const _lbTfOrder = ['1M','5M','15M','1H','4H'];
+
+function openTradeSSLightbox(tradeId, idx){
+  _lbTradeId = tradeId;
+  _lbIdx = idx || 0;
+  _lbRender();
+  document.getElementById('trade-ss-lightbox').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function _lbRender(){
+  const links = (window._ssStore && window._ssStore[_lbTradeId]) || [];
+  if(!links.length) return;
+  _lbIdx = Math.max(0, Math.min(links.length-1, _lbIdx));
+
+  const img = document.getElementById('lb-main-img');
+  const dots = document.getElementById('lb-dots');
+  const thumbs = document.getElementById('lb-thumbs');
+  if(!img) return;
+
+  img.src = links[_lbIdx][1];
+
+  // Dots
+  dots.innerHTML = links.map((_,i) =>
+    '<div style="width:8px;height:8px;border-radius:50%;cursor:pointer;background:'+(i===_lbIdx?'#c9a84c':'#333')+';transition:background .2s" onclick="lbJump('+i+')"></div>'
+  ).join('');
+
+  // Thumbnails strip
+  thumbs.innerHTML = links.map((s,i) =>
+    '<div onclick="lbJump('+i+')" style="cursor:pointer;opacity:'+(i===_lbIdx?'1':'0.45')+';transition:opacity .2s">'
+    +'<div style="font-size:10px;color:'+(i===_lbIdx?'#c9a84c':'#555')+';text-align:center;margin-bottom:3px">'+s[0]+'</div>'
+    +'<img src="'+s[1]+'" style="width:60px;height:38px;object-fit:cover;border-radius:5px;border:1px solid '+(i===_lbIdx?'#c9a84c':'#2a2a2a')+'">'
+    +'</div>'
+  ).join('');
+}
+
+function lbNav(dir){
+  const links = (window._ssStore && window._ssStore[_lbTradeId]) || [];
+  const next = _lbIdx + dir;
+  if(next >= 0 && next < links.length){ _lbIdx = next; _lbRender(); }
+}
+
+function lbJump(i){ _lbIdx = i; _lbRender(); }
+
+function closeTradeLightbox(){
+  document.getElementById('trade-ss-lightbox').style.display = 'none';
+  document.body.style.overflow = '';
+  const img = document.getElementById('lb-main-img');
+  if(img) img.src = '';
+}
+
+// Arrow key navigation
+document.addEventListener('keydown', function(e){
+  const lb = document.getElementById('trade-ss-lightbox');
+  if(!lb || lb.style.display === 'none') return;
+  if(e.key === 'ArrowLeft') lbNav(-1);
+  if(e.key === 'ArrowRight') lbNav(1);
+  if(e.key === 'Escape') closeTradeLightbox();
+});
+
+// Click backdrop to close
+document.addEventListener('click', function(e){
+  const lb = document.getElementById('trade-ss-lightbox');
+  if(lb && e.target === lb) closeTradeLightbox();
+});
+
 // ── Missed trades ──
 let missedTrades=[];
 
@@ -3410,6 +3488,24 @@ loadAllData().then(()=>{
   <div style="font-size:13px;color:#888">Loading your journal...</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+
+<!-- Screenshot Lightbox -->
+<div id="trade-ss-lightbox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.94);z-index:99999;flex-direction:column;align-items:center;justify-content:center">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1200px;padding:10px 16px;flex-shrink:0">
+    <div style="display:flex;gap:8px" id="lb-thumbs"></div>
+    <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:#888;font-size:28px;line-height:1;padding:4px 8px">×</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;flex:1;width:100%;justify-content:center;min-height:0">
+    <button onclick="lbNav(-1)" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#e0e0e0;font-size:28px;padding:14px 16px;border-radius:8px;line-height:1;flex-shrink:0;transition:background .15s" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1a1a1a'">&#8249;</button>
+    <div style="flex:1;max-width:1100px;max-height:calc(100vh - 160px);display:flex;align-items:center;justify-content:center">
+      <img id="lb-main-img" src="" style="max-width:100%;max-height:calc(100vh - 160px);border-radius:10px;object-fit:contain;display:block">
+    </div>
+    <button onclick="lbNav(1)" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#e0e0e0;font-size:28px;padding:14px 16px;border-radius:8px;line-height:1;flex-shrink:0;transition:background .15s" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1a1a1a'">&#8250;</button>
+  </div>
+  <div style="display:flex;gap:8px;padding:10px 0;flex-shrink:0" id="lb-dots"></div>
+  <div style="font-size:11px;color:#444;padding-bottom:8px">← → arrow keys to navigate · Esc to close</div>
+</div>
 
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
