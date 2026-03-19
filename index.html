@@ -597,27 +597,27 @@
     <div class="grid-2 gap" style="margin-bottom:8px">
       <div>
         <label>1M</label>
-        <input type="file" id="f-ss-1m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <input type="file" id="f-ss-1m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'1m')">
         <div id="f-ss-1m-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>5M</label>
-        <input type="file" id="f-ss-5m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <input type="file" id="f-ss-5m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'5m')">
         <div id="f-ss-5m-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>15M</label>
-        <input type="file" id="f-ss-15m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <input type="file" id="f-ss-15m" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'15m')">
         <div id="f-ss-15m-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>1H</label>
-        <input type="file" id="f-ss-1h" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <input type="file" id="f-ss-1h" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'1h')">
         <div id="f-ss-1h-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>4H</label>
-        <input type="file" id="f-ss-4h" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer">
+        <input type="file" id="f-ss-4h" accept="image/*" style="font-size:12px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'4h')">
         <div id="f-ss-4h-prev" style="margin-top:5px"></div>
       </div>
     </div>
@@ -3124,6 +3124,25 @@ document.addEventListener('click', function(e){
   const lb = document.getElementById('trade-ss-lightbox');
   if(lb && e.target === lb) closeTradeLightbox();
 });
+
+
+// ── Screenshot file handler ──
+if(!window._pendingSSFiles) window._pendingSSFiles = {};
+function handleSSFile(inp, tf){
+  const file = inp.files[0];
+  if(!file) return;
+  if(!window._pendingSSFiles) window._pendingSSFiles = {};
+  window._pendingSSFiles[tf] = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('f-ss-'+tf+'-prev');
+    if(prev) prev.innerHTML = '<img src="'+e.target.result+'" '
+      +'style="width:100%;max-width:180px;height:90px;object-fit:cover;border-radius:7px;border:0.5px solid #3a6e3a;cursor:pointer;display:block;margin-top:4px" '
+      +'onclick="openSSLightbox(this.src)">'
+      +'<div style="font-size:10px;color:#6abf6a;margin-top:3px">✓ Ready</div>';
+  };
+  reader.readAsDataURL(file);
+}
 
 // ── Missed trades ──
 let missedTrades=[];
