@@ -3181,6 +3181,42 @@ function handleSSFile(inp, tf){
   reader.readAsDataURL(file);
 }
 
+
+// ── Cloudinary config ──
+const CLOUDINARY_CLOUD = 'dxhrqlrdz';
+const CLOUDINARY_PRESET = 'Claude setup';
+
+async function uploadToCloudinary(file, tradeId, tf){
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'fuze-journal/'+currentProfile+'/'+tradeId);
+  fd.append('public_id', tf);
+  try{
+    const res = await fetch('https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/image/upload', {
+      method:'POST',
+      body: fd
+    });
+    const data = await res.json();
+    if(data.secure_url) return data.secure_url;
+    console.error('Cloudinary error:', data);
+    return null;
+  }catch(e){
+    console.error('Cloudinary upload failed:', e);
+    return null;
+  }
+}
+
+async function uploadEditSS(file, tradeId, tf){
+  const url = await uploadToCloudinary(file, tradeId, tf);
+  if(url){
+    const urlInput = document.getElementById('e-ss-'+tf+'-url');
+    if(urlInput) urlInput.value = url;
+    const prev = document.getElementById('e-ss-'+tf+'-prev');
+    if(prev) prev.innerHTML = '<img src="'+url+'" style="width:100%;max-width:160px;height:80px;object-fit:cover;border-radius:6px;border:0.5px solid #3a6e3a;cursor:pointer;display:block" onclick="openSSLightbox(this.src)">';
+  }
+}
+
 // ── Missed trades ──
 let missedTrades=[];
 
