@@ -2753,82 +2753,296 @@ const US_HOLIDAYS = [
 ];
 
 const SCHEDULED_EVENTS = [
-  // NFP
-  {date:'2025-04-04',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-05-02',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-06-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-07-03',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-08-01',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-09-05',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-10-03',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-11-07',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2025-12-05',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2026-01-09',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2026-02-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  {date:'2026-03-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  // ── NFP Fridays (first Friday of month) ──
   {date:'2026-04-03',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
-  // CPI
-  {date:'2025-04-10',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-05-13',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-06-11',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-07-15',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-08-12',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-09-10',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-10-15',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-11-13',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2025-12-10',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2026-01-14',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2026-02-11',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2026-03-11',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  {date:'2026-04-15',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
-  // FOMC
-  {date:'2025-05-07',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2025-06-18',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2025-07-30',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2025-09-17',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2025-10-29',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2025-12-10',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2026-01-28',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  {date:'2026-03-18',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
-  // PCE
-  {date:'2025-04-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-05-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-06-27',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-07-31',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-08-29',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-09-26',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-10-31',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-11-26',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2025-12-19',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2026-01-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2026-02-27',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  {date:'2026-03-27',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
-  // PPI
-  {date:'2025-04-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-05-15',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-06-12',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-07-16',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-08-13',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-09-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-10-16',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-11-14',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2025-12-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2026-01-15',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2026-02-12',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  {date:'2026-03-12',time:'13:30',title:'PPI m/m',impact:'Medium'},
-  // Retail Sales
-  {date:'2025-04-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-05-15',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-06-17',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-07-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-08-15',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-09-12',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-10-17',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-11-14',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2025-12-12',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2026-01-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2026-02-13',time:'13:30',title:'Retail Sales m/m',impact:'High'},
-  {date:'2026-03-13',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-04-03',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-04-03',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-05-08',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-05-08',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-05-08',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-06-05',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-06-05',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-06-05',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-07-02',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-07-02',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-07-02',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-08-07',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-08-07',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-08-07',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-09-04',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-09-04',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-09-04',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-10-02',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-10-02',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-10-02',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-11-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-11-06',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-11-06',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+  {date:'2026-12-04',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-12-04',time:'13:30',title:'Unemployment Rate',impact:'High'},
+  {date:'2026-12-04',time:'13:30',title:'Average Hourly Earnings m/m',impact:'High'},
+
+  // ── CPI ──
+  {date:'2026-04-15',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-04-15',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-04-15',time:'13:30',title:'CPI y/y',impact:'High'},
+  {date:'2026-05-12',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-05-12',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-05-12',time:'13:30',title:'CPI y/y',impact:'High'},
+  {date:'2026-06-10',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-06-10',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-06-10',time:'13:30',title:'CPI y/y',impact:'High'},
+  {date:'2026-07-14',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-07-14',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-07-14',time:'13:30',title:'CPI y/y',impact:'High'},
+  {date:'2026-08-12',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-08-12',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-08-12',time:'13:30',title:'CPI y/y',impact:'High'},
+  {date:'2026-09-11',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-09-11',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-09-11',time:'13:30',title:'CPI y/y',impact:'High'},
+  {date:'2026-10-14',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-10-14',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-11-12',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-11-12',time:'13:30',title:'Core CPI m/m',impact:'High'},
+  {date:'2026-12-10',time:'13:30',title:'CPI m/m',impact:'High'},
+  {date:'2026-12-10',time:'13:30',title:'Core CPI m/m',impact:'High'},
+
+  // ── PPI ──
+  {date:'2026-04-11',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-04-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-05-13',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-05-13',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-06-11',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-06-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-07-15',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-07-15',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-08-13',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-08-13',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-09-10',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-09-10',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-10-15',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-10-15',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-11-13',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+  {date:'2026-12-11',time:'13:30',title:'Core PPI m/m',impact:'Medium'},
+
+  // ── Retail Sales ──
+  {date:'2026-04-16',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-04-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-05-14',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-05-14',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-06-17',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-06-17',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-07-16',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-07-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-08-14',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-08-14',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-09-16',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-09-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-10-15',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-10-15',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-11-17',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+  {date:'2026-12-16',time:'13:30',title:'Core Retail Sales m/m',impact:'High'},
+
+  // ── FOMC ──
+  {date:'2026-05-07',time:'19:00',title:'Federal Funds Rate',impact:'High'},
+  {date:'2026-05-07',time:'19:00',title:'FOMC Statement',impact:'High'},
+  {date:'2026-05-07',time:'19:00',title:'FOMC Economic Projections',impact:'High'},
+  {date:'2026-05-07',time:'19:30',title:'FOMC Press Conference',impact:'High'},
+  {date:'2026-06-17',time:'19:00',title:'Federal Funds Rate',impact:'High'},
+  {date:'2026-06-17',time:'19:00',title:'FOMC Statement',impact:'High'},
+  {date:'2026-06-17',time:'19:00',title:'FOMC Economic Projections',impact:'High'},
+  {date:'2026-06-17',time:'19:30',title:'FOMC Press Conference',impact:'High'},
+  {date:'2026-07-29',time:'19:00',title:'Federal Funds Rate',impact:'High'},
+  {date:'2026-07-29',time:'19:00',title:'FOMC Statement',impact:'High'},
+  {date:'2026-07-29',time:'19:30',title:'FOMC Press Conference',impact:'High'},
+  {date:'2026-09-16',time:'19:00',title:'Federal Funds Rate',impact:'High'},
+  {date:'2026-09-16',time:'19:00',title:'FOMC Statement',impact:'High'},
+  {date:'2026-09-16',time:'19:00',title:'FOMC Economic Projections',impact:'High'},
+  {date:'2026-09-16',time:'19:30',title:'FOMC Press Conference',impact:'High'},
+  {date:'2026-10-28',time:'19:00',title:'Federal Funds Rate',impact:'High'},
+  {date:'2026-10-28',time:'19:00',title:'FOMC Statement',impact:'High'},
+  {date:'2026-10-28',time:'19:30',title:'FOMC Press Conference',impact:'High'},
+  {date:'2026-12-09',time:'19:00',title:'Federal Funds Rate',impact:'High'},
+  {date:'2026-12-09',time:'19:00',title:'FOMC Statement',impact:'High'},
+  {date:'2026-12-09',time:'19:00',title:'FOMC Economic Projections',impact:'High'},
+  {date:'2026-12-09',time:'19:30',title:'FOMC Press Conference',impact:'High'},
+
+  // ── FOMC Meeting Minutes (3 weeks after meeting) ──
+  {date:'2026-04-08',time:'19:00',title:'FOMC Meeting Minutes',impact:'High'},
+  {date:'2026-05-20',time:'19:00',title:'FOMC Meeting Minutes',impact:'High'},
+  {date:'2026-07-08',time:'19:00',title:'FOMC Meeting Minutes',impact:'High'},
+  {date:'2026-08-19',time:'19:00',title:'FOMC Meeting Minutes',impact:'High'},
+  {date:'2026-10-07',time:'19:00',title:'FOMC Meeting Minutes',impact:'High'},
+  {date:'2026-11-18',time:'19:00',title:'FOMC Meeting Minutes',impact:'High'},
+
+  // ── PCE ──
+  {date:'2026-04-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-05-28',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-06-26',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-07-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-08-28',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-09-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-10-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-11-25',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-12-23',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+
+  // ── GDP ──
+  {date:'2026-04-29',time:'13:30',title:'Prelim GDP q/q',impact:'High'},
+  {date:'2026-04-29',time:'13:30',title:'Prelim GDP Price Index q/q',impact:'Medium'},
+  {date:'2026-05-28',time:'13:30',title:'Prelim GDP q/q',impact:'High'},
+  {date:'2026-07-30',time:'13:30',title:'Advance GDP q/q',impact:'High'},
+  {date:'2026-10-29',time:'13:30',title:'Advance GDP q/q',impact:'High'},
+
+  // ── ADP ──
+  {date:'2026-04-29',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-05-06',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-06-03',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-07-01',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-08-05',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-09-02',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-10-07',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-11-04',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+  {date:'2026-12-02',time:'13:15',title:'ADP Non-Farm Employment Change',impact:'High'},
+
+  // ── JOLTS ──
+  {date:'2026-04-07',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-05-05',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-06-02',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-07-07',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-08-04',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-09-01',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-10-06',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-11-03',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+  {date:'2026-12-01',time:'15:00',title:'JOLTS Job Openings',impact:'High'},
+
+  // ── ISM Manufacturing PMI (first business day of month) ──
+  {date:'2026-04-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-05-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-06-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-07-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-08-03',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-09-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-10-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-11-02',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+  {date:'2026-12-01',time:'15:00',title:'ISM Manufacturing PMI',impact:'High'},
+
+  // ── ISM Services PMI ──
+  {date:'2026-04-06',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-05-05',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-06-03',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-07-08',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-08-05',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-09-03',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-10-05',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-11-04',time:'15:00',title:'ISM Services PMI',impact:'High'},
+  {date:'2026-12-03',time:'15:00',title:'ISM Services PMI',impact:'High'},
+
+  // ── CB Consumer Confidence ──
+  {date:'2026-04-28',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-05-26',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-06-30',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-07-28',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-08-25',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-09-29',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-10-27',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-11-24',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+  {date:'2026-12-22',time:'15:00',title:'CB Consumer Confidence',impact:'Medium'},
+
+  // ── UoM Consumer Sentiment (prelim 2nd Fri, revised last Fri) ──
+  {date:'2026-04-17',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-04-17',time:'15:00',title:'Prelim UoM Inflation Expectations',impact:'Medium'},
+  {date:'2026-04-30',time:'15:00',title:'Revised UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-05-15',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-05-29',time:'15:00',title:'Revised UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-06-12',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-06-26',time:'15:00',title:'Revised UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-07-17',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-08-14',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-09-11',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-10-16',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-11-13',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+  {date:'2026-12-11',time:'15:00',title:'Prelim UoM Consumer Sentiment',impact:'Medium'},
+
+  // ── Flash PMIs (S&P Global, 3rd week of month) ──
+  {date:'2026-04-23',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-04-23',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-05-21',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-05-21',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-06-23',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-06-23',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-07-23',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-07-23',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-08-21',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-08-21',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-09-22',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-09-22',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-10-22',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-10-22',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-11-23',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-11-23',time:'14:45',title:'Flash Services PMI',impact:'High'},
+  {date:'2026-12-16',time:'14:45',title:'Flash Manufacturing PMI',impact:'High'},
+  {date:'2026-12-16',time:'14:45',title:'Flash Services PMI',impact:'High'},
+
+  // ── Durable Goods ──
+  {date:'2026-04-24',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-04-24',time:'13:30',title:'Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-05-27',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-05-27',time:'13:30',title:'Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-06-25',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-07-28',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-08-26',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-09-25',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-10-28',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-11-25',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+  {date:'2026-12-24',time:'13:30',title:'Core Durable Goods Orders m/m',impact:'Medium'},
+
+  // ── Philly Fed Manufacturing Index (3rd Thursday) ──
+  {date:'2026-04-16',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-05-21',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-06-18',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-07-16',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-08-20',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-09-17',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-10-15',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-11-19',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+  {date:'2026-12-17',time:'13:30',title:'Philly Fed Manufacturing Index',impact:'Medium'},
+
+  // ── Empire State Manufacturing Index (15th of month) ──
+  {date:'2026-04-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-05-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-06-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-07-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-08-17',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-09-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-10-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-11-16',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+  {date:'2026-12-15',time:'13:30',title:'Empire State Manufacturing Index',impact:'Medium'},
+
+  // ── New Home Sales ──
+  {date:'2026-03-25',time:'15:00',title:'New Home Sales',impact:'Medium'},
+  {date:'2026-04-23',time:'15:00',title:'New Home Sales',impact:'Medium'},
+  {date:'2026-05-27',time:'15:00',title:'New Home Sales',impact:'Medium'},
+  {date:'2026-06-24',time:'15:00',title:'New Home Sales',impact:'Medium'},
+  {date:'2026-07-24',time:'15:00',title:'New Home Sales',impact:'Medium'},
+  {date:'2026-08-26',time:'15:00',title:'New Home Sales',impact:'Medium'},
+
+  // ── Pending Home Sales ──
+  {date:'2026-03-26',time:'15:00',title:'Pending Home Sales m/m',impact:'Medium'},
+  {date:'2026-04-29',time:'15:00',title:'Pending Home Sales m/m',impact:'Medium'},
+  {date:'2026-05-19',time:'15:00',title:'Pending Home Sales m/m',impact:'Medium'},
+  {date:'2026-06-30',time:'15:00',title:'Pending Home Sales m/m',impact:'Medium'},
+  {date:'2026-07-28',time:'15:00',title:'Pending Home Sales m/m',impact:'Medium'},
+
+  // ── Richmond Manufacturing Index ──
+  {date:'2026-04-21',time:'15:00',title:'Richmond Manufacturing Index',impact:'Medium'},
+  {date:'2026-05-27',time:'15:00',title:'Richmond Manufacturing Index',impact:'Medium'},
+  {date:'2026-06-23',time:'15:00',title:'Richmond Manufacturing Index',impact:'Medium'},
+  {date:'2026-07-28',time:'15:00',title:'Richmond Manufacturing Index',impact:'Medium'},
+
+  // ── Special / Speeches ──
+  {date:'2026-03-21',time:'13:30',title:'Fed Chair Powell Speaks',impact:'High'},
+  {date:'2026-04-16',time:'17:00',title:'Fed Chair Powell Speaks',impact:'High'},
 ];
 
 function _getThisWeekDates(){
@@ -2844,32 +3058,68 @@ function _getThisWeekDates(){
 let _newsData=[];
 let _newsFetched=false;
 
+function _getWeekDatesFrom(offsetWeeks){
+  const now = new Date();
+  const day = now.getDay();
+  const mon = new Date(now);
+  mon.setDate(now.getDate()-(day===0?6:day-1)+(offsetWeeks*7));
+  const dates=[];
+  for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);dates.push(d.toISOString().split('T')[0]);}
+  return dates;
+}
+
+function _buildNewsForWeek(week){
+  const data=[];
+  week.forEach(dateStr=>{
+    US_HOLIDAYS.filter(h=>h.date===dateStr).forEach(h=>{
+      data.push({date:dateStr,time:'',title:h.title,impact:'holiday'});
+    });
+    SCHEDULED_EVENTS.filter(e=>e.date===dateStr).forEach(e=>{
+      data.push({date:dateStr,time:e.time,title:e.title,impact:e.impact});
+    });
+    const dow=new Date(dateStr+'T12:00:00').getDay();
+    if(dow===4&&!data.find(e=>e.date===dateStr&&e.title==='Unemployment Claims')){
+      data.push({date:dateStr,time:'13:30',title:'Unemployment Claims',impact:'High'});
+    }
+    if(dow===3){
+      data.push({date:dateStr,time:'14:30',title:'Crude Oil Inventories',impact:'Medium'});
+    }
+  });
+  return data.sort((a,b)=>a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||''));
+}
+
 function loadNewsCalendar(force){
   if(_newsFetched&&!force){renderNewsSidebar();return;}
   const loadEl=document.getElementById('sidebar-news-loading');
   if(loadEl)loadEl.style.display='none';
-  const week=_getThisWeekDates();
-  _newsData=[];
-  week.forEach(dateStr=>{
-    // Holidays
-    US_HOLIDAYS.filter(h=>h.date===dateStr).forEach(h=>{
-      _newsData.push({date:dateStr,time:'',title:h.title,impact:'holiday'});
-    });
-    // Scheduled events
-    SCHEDULED_EVENTS.filter(e=>e.date===dateStr).forEach(e=>{
-      _newsData.push({date:dateStr,time:e.time,title:e.title,impact:e.impact});
-    });
-    // Weekly: Unemployment Claims every Thursday
-    const dow=new Date(dateStr+'T12:00:00').getDay();
-    if(dow===4&&!_newsData.find(e=>e.date===dateStr&&e.title==='Unemployment Claims')){
-      _newsData.push({date:dateStr,time:'13:30',title:'Unemployment Claims',impact:'High'});
+
+  const now=new Date();
+  const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
+  const ukMins=ukNow.getHours()*60+ukNow.getMinutes();
+  const todayStr=ukNow.toISOString().split('T')[0];
+
+  // Build this week's data
+  let thisWeek=_buildNewsForWeek(_getWeekDatesFrom(0));
+
+  // Check if any high/medium impact events remain this week (today or future, not past)
+  const remaining=thisWeek.filter(e=>{
+    if(e.impact==='holiday') return false;
+    if(e.date<todayStr) return false;
+    if(e.date===todayStr&&e.time){
+      const[h,m]=e.time.split(':').map(Number);
+      if(h*60+m<=ukMins) return false;
     }
-    // Weekly: Oil Inventories every Wednesday
-    if(dow===3){
-      _newsData.push({date:dateStr,time:'14:30',title:'Crude Oil Inventories',impact:'Medium'});
-    }
+    return true;
   });
-  _newsData.sort((a,b)=>a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||''));
+
+  if(remaining.length>0){
+    // Still events this week — show this week
+    _newsData=thisWeek;
+  } else {
+    // Nothing left this week — show next week
+    _newsData=_buildNewsForWeek(_getWeekDatesFrom(1));
+  }
+
   _newsFetched=true;
   renderNewsSidebar();
 }
@@ -2896,9 +3146,9 @@ function renderNewsSidebar(){
   _newsData.forEach(e=>{if(!groups[e.date])groups[e.date]=[];groups[e.date].push(e);});
   const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const cfg={
-    High:{bg:'#1f0f0f',col:'#c06060',border:'#6e2a2a',lbl:'HIGH'},
-    Medium:{bg:'#1f1800',col:'#c4a020',border:'#6e5a00',lbl:'MED'},
-    holiday:{bg:'#111',col:'#555',border:'#222',lbl:'🗓'}
+    High:{bg:'#1f0808',col:'#e05555',border:'#7a1a1a',lbl:'🔴'},
+    Medium:{bg:'#1f1400',col:'#e09020',border:'#7a4a00',lbl:'🟠'},
+    holiday:{bg:'#141414',col:'#888',border:'#2a2a2a',lbl:'🗓'}
   };
 
   bodyEl.innerHTML=Object.keys(groups).sort().map(day=>{
