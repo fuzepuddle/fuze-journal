@@ -2015,11 +2015,14 @@ function renderSessionReports(){
   const reports=(sessionReports[currentProfile]||[]);
   if(!reports.length){el.textContent='No reports yet.';return;}
   const gradeColor={A:'#6abf6a',B:'#6abf6a',C:'#c4a020',D:'#c06060',F:'#c06060'};
-  el.innerHTML=reports.slice(0,10).map(r=>`
+  el.innerHTML=reports.slice(0,20).map(r=>`
     <div style="background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:8px;padding:12px 14px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:13px;color:#aaa">${r.date}</span>
-        <span style="font-size:20px;font-weight:500;color:${gradeColor[r.grade]||'#888'}">${r.grade}</span>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:20px;font-weight:500;color:${gradeColor[r.grade]||'#888'}">${r.grade||'—'}</span>
+          <button onclick="delSessionReport(${r.id})" style="border:none;background:none;cursor:pointer;color:#555;font-size:18px;line-height:1;padding:0 2px" title="Delete">×</button>
+        </div>
       </div>
       <div style="display:flex;gap:16px;font-size:12px;color:#666;margin-bottom:8px">
         <span>Patience ${'★'.repeat(r.patience||0)}</span>
