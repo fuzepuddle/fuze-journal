@@ -3191,7 +3191,7 @@ async function uploadToCloudinary(file, tradeId, tf){
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_PRESET);
   fd.append('folder', 'fuze-journal/'+currentProfile+'/'+tradeId);
-  fd.append('public_id', tf);
+  fd.append('context', 'tf='+tf+'|tradeId='+tradeId);
   try{
     const res = await fetch('https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/image/upload', {
       method:'POST',
