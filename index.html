@@ -130,6 +130,234 @@
   .month-total-card{background:#141414;border:0.5px solid #c4a020;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
   .cal-layout{display:grid;grid-template-columns:1fr 220px;gap:20px}
   @media(max-width:700px){.cal-layout{grid-template-columns:1fr}.cal-metrics{grid-template-columns:1fr 1fr}}
+
+  /* ── MOBILE ── */
+  #mobile-nav{display:none}
+  #mobile-more-menu{display:none}
+
+  @media(max-width:768px){
+    /* Base */
+    body{
+      padding:.75rem .75rem 72px;
+      font-size:14px;
+      border-top:none;
+    }
+
+    /* Hide desktop tabs, show bottom nav */
+    .tabs{display:none !important}
+
+    /* Profile bar */
+    .profile-bar{
+      flex-direction:column;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:1rem;
+      padding-bottom:.75rem;
+    }
+    .profile-bar > div:first-child{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      width:100%;
+    }
+    .profile-btns{
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:5px;
+    }
+    .profile-btn{
+      padding:7px 4px;
+      font-size:11px;
+      text-align:center;
+      border-radius:8px;
+    }
+    h1{font-size:15px}
+    #notif-btn{font-size:10px;padding:4px 8px}
+
+    /* All grids collapse */
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr !important}
+
+    /* Stat grid rows — keep 2 col on mobile for metric cards */
+    #page-stats .grid-4,
+    #page-stats [style*="repeat(6,1fr)"],
+    #page-stats [style*="repeat(4,1fr)"]{
+      grid-template-columns:1fr 1fr !important;
+      display:grid !important;
+    }
+    #page-stats [style*="repeat(5,1fr)"]{
+      grid-template-columns:1fr 1fr !important;
+      display:grid !important;
+    }
+    #page-stats [style*="2fr 1fr"],
+    #page-stats [style*="1fr 2fr"],
+    #page-stats [style*="1fr 1fr 1fr 1fr"],
+    #page-stats [style*="1fr 1fr 1fr"]{
+      grid-template-columns:1fr !important;
+      display:grid !important;
+    }
+
+    /* Log form — hide sidebar, full width form */
+    [style*="grid-template-columns:1fr 320px"]{
+      display:block !important;
+    }
+    #log-news-sidebar{display:none !important}
+    #log-form-col{width:100%}
+
+    /* Timer + calc stack */
+    #session-timer-card + div,
+    [style*="grid-template-columns:1fr 1fr"]{
+      grid-template-columns:1fr !important;
+    }
+
+    /* Session card — collapse to 2 cols */
+    [style*="grid-template-columns:repeat(5,1fr)"]{
+      grid-template-columns:1fr 1fr !important;
+      display:grid !important;
+    }
+
+    /* Cards */
+    .card{padding:.875rem;margin-bottom:10px;border-radius:10px}
+
+    /* Inputs */
+    input[type=date],input[type=number],input[type=text],
+    input[type=time],select,textarea{
+      padding:11px 12px;
+      font-size:15px;
+      border-radius:8px;
+      -webkit-appearance:none;
+    }
+
+    /* Outcome buttons */
+    .outcome-btn{padding:13px 8px;font-size:14px}
+
+    /* Stars */
+    .star{font-size:28px !important}
+
+    /* Buttons */
+    .btn{padding:11px 18px;font-size:14px}
+    .btn-primary{padding:13px 20px;font-size:14px;font-weight:600}
+    .btn-sm{padding:8px 12px;font-size:12px}
+
+    /* Save button full width on mobile */
+    [style*="justify-content:flex-end"][style*="padding-bottom"]{
+      display:grid !important;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:8px;
+    }
+
+    /* Tables — horizontal scroll */
+    .log-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+    .log-table{min-width:640px}
+    .cal-grid{min-width:460px}
+    .cal-layout>div:first-child{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+    /* Metric cards */
+    .metric-val{font-size:20px !important}
+    .metric-lbl{font-size:10px}
+    .metric-card{padding:10px 12px}
+
+    /* Hide weekly sidebar on calendar on mobile */
+    .cal-layout{display:block !important}
+    #cal-weekly{display:none}
+    .month-total-card{margin-top:0}
+
+    /* Prop firm grids */
+    #page-prop .grid-2{grid-template-columns:1fr !important}
+    #page-prop .grid-4{grid-template-columns:1fr 1fr !important}
+
+    /* Weekly review nav */
+    .cal-nav button{padding:8px 12px;font-size:12px}
+
+    /* Mistakes list shorter on mobile */
+    .mistakes-list{max-height:200px}
+
+    /* Charts */
+    canvas{max-height:160px !important}
+
+    /* Stats rows */
+    #s-daily-stats{grid-template-columns:repeat(3,1fr) !important}
+
+    /* Modal full screen on mobile */
+    #edit-modal > div{
+      margin:0 !important;
+      border-radius:0 !important;
+      min-height:100vh;
+      padding:1rem;
+    }
+    #cal-day-popup > div{
+      margin:0 !important;
+      border-radius:0 !important;
+      min-height:100vh;
+    }
+
+    /* Section labels slightly smaller */
+    .section-label{font-size:10px;letter-spacing:.06em}
+
+    /* Bottom nav */
+    #mobile-nav{
+      display:flex;
+      position:fixed;
+      bottom:0;left:0;right:0;
+      height:56px;
+      background:#111111;
+      border-top:0.5px solid #2a2a2a;
+      z-index:9999;
+      align-items:stretch;
+    }
+    .mob-btn{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
+      cursor:pointer;
+      font-size:9px;
+      font-weight:500;
+      letter-spacing:.02em;
+      color:#555;
+      border:none;
+      background:none;
+      font-family:inherit;
+      padding:0;
+      transition:color .15s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .mob-btn .mob-icon{font-size:19px;line-height:1}
+    .mob-btn.active{color:#c9a84c}
+    .mob-btn:active{opacity:.6}
+
+    /* More menu */
+    #mobile-more-menu{
+      display:none;
+      position:fixed;
+      bottom:56px;left:0;right:0;
+      background:#141414;
+      border-top:0.5px solid #2a2a2a;
+      z-index:9998;
+      padding:8px;
+      flex-direction:column;
+      gap:2px;
+      max-height:70vh;
+      overflow-y:auto;
+    }
+    #mobile-more-menu.open{display:flex}
+    .more-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:13px 14px;
+      font-size:14px;
+      color:#e0e0e0;
+      border-radius:8px;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .more-item:active{background:#1e1e1e}
+    .more-item.active-more{color:#c9a84c}
+    .more-item-icon{font-size:18px;width:24px;text-align:center}
+  }
 </style>
 </head>
 <body>
@@ -3102,5 +3330,50 @@ loadAllData().then(()=>{
   <div style="font-size:13px;color:#888">Loading your journal...</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<!-- Mobile bottom nav -->
+<nav id="mobile-nav">
+  <button class="mob-btn active" id="mobnav-log"      onclick="mobNav('log')">      <span class="mob-icon">✍️</span>Log</button>
+  <button class="mob-btn"        id="mobnav-journal"  onclick="mobNav('journal')">  <span class="mob-icon">📒</span>Trades</button>
+  <button class="mob-btn"        id="mobnav-stats"    onclick="mobNav('stats')">    <span class="mob-icon">📈</span>Stats</button>
+  <button class="mob-btn"        id="mobnav-calendar" onclick="mobNav('calendar')"> <span class="mob-icon">📅</span>Cal</button>
+  <button class="mob-btn"        id="mobnav-more"     onclick="toggleMoreMenu()">   <span class="mob-icon">☰</span>More</button>
+</nav>
+
+<!-- More menu -->
+<div id="mobile-more-menu">
+  <div class="more-item" onclick="mobNav('prop')">      <span class="more-item-icon">📊</span>Prop firm</div>
+  <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
+  <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
+  <div class="more-item" onclick="mobNav('playbook')">  <span class="more-item-icon">📖</span>Playbook</div>
+  <div class="more-item" onclick="mobNav('session')">   <span class="more-item-icon">🎯</span>Session report</div>
+</div>
+
+<script>
+// ── Mobile nav ──
+function mobNav(t){
+  document.getElementById('mobile-more-menu').classList.remove('open');
+  showTab(t);
+  document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
+  const main=document.getElementById('mobnav-'+t);
+  if(main)main.classList.add('active');
+  else document.getElementById('mobnav-more').classList.add('active');
+  document.querySelectorAll('.more-item').forEach(el=>el.classList.remove('active-more'));
+  const moreEl=document.querySelector('.more-item[onclick*="'+t+'"]');
+  if(moreEl)moreEl.classList.add('active-more');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleMoreMenu(){
+  const m=document.getElementById('mobile-more-menu');
+  m.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  const menu=document.getElementById('mobile-more-menu');
+  const btn=document.getElementById('mobnav-more');
+  if(menu&&menu.classList.contains('open')&&!menu.contains(e.target)&&btn&&!btn.contains(e.target)){
+    menu.classList.remove('open');
+  }
+});
+</script>
 </body>
 </html>
