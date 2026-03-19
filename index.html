@@ -1377,8 +1377,8 @@ async function saveTrade(){
   if(!risk) missing.push('Risk');
   if(!discRating) missing.push('Discipline stars');
   if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state');
+  const files=window._pendingSSFiles||{};
   if(currentProfile!=='backtesting'){
-    const files=window._pendingSSFiles||{};
     if(!files['1m']) missing.push('1M screenshot');
     if(!files['5m']) missing.push('5M screenshot');
     if(!files['15m']) missing.push('15M screenshot');
