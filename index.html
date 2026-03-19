@@ -3153,8 +3153,12 @@ function _lbRender(){
   const dots=document.getElementById('lb-dots');
   const thumbs=document.getElementById('lb-thumbs');
   if(!img) return;
-  img.style.width=''; img.style.height=''; img.style.left=''; img.style.top='';
-  img.onload=()=>_lbApply();
+  // Keep previous image visible while new one loads to avoid flash
+  img.onload=()=>{
+    img.style.opacity='1';
+    _lbApply();
+  };
+  img.style.opacity='0.3';
   img.src=links[_lbIdx][1];
   dots.innerHTML=links.map((_,i)=>
     '<div style="width:8px;height:8px;border-radius:50%;cursor:pointer;background:'+(i===_lbIdx?'#c9a84c':'#333')+';transition:background .2s" onclick="lbJump('+i+')"></div>'
@@ -3249,8 +3253,8 @@ document.addEventListener('touchmove',function(e){
 document.addEventListener('keydown',function(e){
   const lb=document.getElementById('trade-ss-lightbox');
   if(!lb||lb.style.display==='none') return;
-  if(e.key==='ArrowLeft'&&_lbZoom===1) lbNav(-1);
-  if(e.key==='ArrowRight'&&_lbZoom===1) lbNav(1);
+  if(e.key==='ArrowLeft'){lbNav(-1);}
+  if(e.key==='ArrowRight'){lbNav(1);}
   if(e.key==='Escape') closeTradeLightbox();
   if(e.key==='0'||e.key==='r') lbResetZoom();
 });
