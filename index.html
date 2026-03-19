@@ -2357,6 +2357,197 @@ function scheduleNYReminder(){
   },msUntil);
 }
 
+
+// ── Economic calendar (sidebar) — hardcoded ──
+const US_HOLIDAYS = [
+  {date:'2025-04-18',title:'Good Friday (Early Close)',type:'early_close'},
+  {date:'2025-05-26',title:'Memorial Day — Markets Closed',type:'holiday'},
+  {date:'2025-06-19',title:'Juneteenth — Markets Closed',type:'holiday'},
+  {date:'2025-07-04',title:'Independence Day — Markets Closed',type:'holiday'},
+  {date:'2025-09-01',title:'Labor Day — Markets Closed',type:'holiday'},
+  {date:'2025-11-27',title:'Thanksgiving Day — Markets Closed',type:'holiday'},
+  {date:'2025-11-28',title:'Black Friday (Early Close 19:00 UK)',type:'early_close'},
+  {date:'2025-12-25',title:'Christmas Day — Markets Closed',type:'holiday'},
+  {date:'2026-01-01',title:"New Year's Day — Markets Closed",type:'holiday'},
+  {date:'2026-01-19',title:'MLK Day — Markets Closed',type:'holiday'},
+  {date:'2026-02-16',title:"Presidents' Day — Markets Closed",type:'holiday'},
+  {date:'2026-04-03',title:'Good Friday (Early Close)',type:'early_close'},
+  {date:'2026-05-25',title:'Memorial Day — Markets Closed',type:'holiday'},
+  {date:'2026-06-19',title:'Juneteenth — Markets Closed',type:'holiday'},
+  {date:'2026-07-03',title:'Independence Day (Observed) — Closed',type:'holiday'},
+  {date:'2026-09-07',title:'Labor Day — Markets Closed',type:'holiday'},
+  {date:'2026-11-26',title:'Thanksgiving Day — Markets Closed',type:'holiday'},
+  {date:'2026-11-27',title:'Black Friday (Early Close)',type:'early_close'},
+  {date:'2026-12-25',title:'Christmas Day — Markets Closed',type:'holiday'},
+];
+
+const SCHEDULED_EVENTS = [
+  // NFP
+  {date:'2025-04-04',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-05-02',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-06-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-07-03',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-08-01',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-09-05',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-10-03',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-11-07',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2025-12-05',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-01-09',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-02-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-03-06',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  {date:'2026-04-03',time:'13:30',title:'Non-Farm Payrolls',impact:'High'},
+  // CPI
+  {date:'2025-04-10',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-05-13',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-06-11',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-07-15',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-08-12',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-09-10',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-10-15',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-11-13',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2025-12-10',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2026-01-14',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2026-02-11',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2026-03-11',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  {date:'2026-04-15',time:'13:30',title:'CPI m/m & Core CPI',impact:'High'},
+  // FOMC
+  {date:'2025-05-07',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2025-06-18',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2025-07-30',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2025-09-17',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2025-10-29',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2025-12-10',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2026-01-28',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  {date:'2026-03-18',time:'19:00',title:'FOMC Rate Decision',impact:'High'},
+  // PCE
+  {date:'2025-04-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-05-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-06-27',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-07-31',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-08-29',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-09-26',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-10-31',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-11-26',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2025-12-19',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-01-30',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-02-27',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  {date:'2026-03-27',time:'13:30',title:'Core PCE Price Index m/m',impact:'High'},
+  // PPI
+  {date:'2025-04-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-05-15',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-06-12',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-07-16',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-08-13',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-09-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-10-16',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-11-14',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2025-12-11',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-01-15',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-02-12',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  {date:'2026-03-12',time:'13:30',title:'PPI m/m',impact:'Medium'},
+  // Retail Sales
+  {date:'2025-04-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-05-15',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-06-17',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-07-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-08-15',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-09-12',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-10-17',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-11-14',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2025-12-12',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-01-16',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-02-13',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+  {date:'2026-03-13',time:'13:30',title:'Retail Sales m/m',impact:'High'},
+];
+
+function _getThisWeekDates(){
+  const now = new Date();
+  const day = now.getDay();
+  const mon = new Date(now);
+  mon.setDate(now.getDate()-(day===0?6:day-1));
+  const dates=[];
+  for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);dates.push(d.toISOString().split('T')[0]);}
+  return dates;
+}
+
+let _newsData=[];
+let _newsFetched=false;
+
+function loadNewsCalendar(force){
+  if(_newsFetched&&!force){renderNewsSidebar();return;}
+  const loadEl=document.getElementById('sidebar-news-loading');
+  if(loadEl)loadEl.style.display='none';
+  const week=_getThisWeekDates();
+  _newsData=[];
+  week.forEach(dateStr=>{
+    // Holidays
+    US_HOLIDAYS.filter(h=>h.date===dateStr).forEach(h=>{
+      _newsData.push({date:dateStr,time:'',title:h.title,impact:'holiday'});
+    });
+    // Scheduled events
+    SCHEDULED_EVENTS.filter(e=>e.date===dateStr).forEach(e=>{
+      _newsData.push({date:dateStr,time:e.time,title:e.title,impact:e.impact});
+    });
+    // Weekly: Unemployment Claims every Thursday
+    const dow=new Date(dateStr+'T12:00:00').getDay();
+    if(dow===4&&!_newsData.find(e=>e.date===dateStr&&e.title==='Unemployment Claims')){
+      _newsData.push({date:dateStr,time:'13:30',title:'Unemployment Claims',impact:'High'});
+    }
+    // Weekly: Oil Inventories every Wednesday
+    if(dow===3){
+      _newsData.push({date:dateStr,time:'14:30',title:'Crude Oil Inventories',impact:'Medium'});
+    }
+  });
+  _newsData.sort((a,b)=>a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||''));
+  _newsFetched=true;
+  renderNewsSidebar();
+}
+
+function renderNewsSidebar(){
+  const bodyEl=document.getElementById('sidebar-news-body');
+  const todayBar=document.getElementById('sidebar-news-today-bar');
+  if(!bodyEl)return;
+  const now=new Date();
+  const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
+  const todayStr=ukNow.toISOString().split('T')[0];
+  const ukMins=ukNow.getHours()*60+ukNow.getMinutes();
+
+  // Warning bar — next high impact today
+  if(todayBar){
+    const upcoming=_newsData.filter(e=>e.date===todayStr&&e.impact==='High'&&e.time&&(parseInt(e.time)*60+parseInt(e.time.split(':')[1]))>ukMins);
+    if(upcoming.length){todayBar.style.display='block';todayBar.innerHTML='⚠ <strong>'+upcoming[0].title+'</strong> at '+upcoming[0].time+' UK';}
+    else todayBar.style.display='none';
+  }
+
+  if(!_newsData.length){bodyEl.innerHTML='<div style="padding:20px;text-align:center;color:#555;font-size:12px">No events this week.</div>';return;}
+
+  const groups={};
+  _newsData.forEach(e=>{if(!groups[e.date])groups[e.date]=[];groups[e.date].push(e);});
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const cfg={
+    High:{bg:'#1f0f0f',col:'#c06060',border:'#6e2a2a',lbl:'HIGH'},
+    Medium:{bg:'#1f1800',col:'#c4a020',border:'#6e5a00',lbl:'MED'},
+    holiday:{bg:'#111',col:'#555',border:'#222',lbl:'🗓'}
+  };
+
+  bodyEl.innerHTML=Object.keys(groups).sort().map(day=>{
+    const isToday=day===todayStr;
+    const d=new Date(day+'T12:00:00');
+    const dayLbl=(isToday?'🟡 Today — ':dayNames[d.getDay()]+' ')+d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    const rows=groups[day].map(e=>{
+      const isPast=e.time&&isToday&&(parseInt(e.time)*60+parseInt(e.time.split(':')[1]))<ukMins;
+      const c=cfg[e.impact]||cfg.Medium;
+      return'<div style="padding:7px 12px;border-bottom:0.5px solid #1a1a1a;display:flex;gap:8px;align-items:flex-start;opacity:'+(isPast?'0.38':'1')+'">'
+        +'<span style="flex-shrink:0;font-size:9px;padding:2px 5px;border-radius:3px;background:'+c.bg+';color:'+c.col+';border:0.5px solid '+c.border+';font-weight:600;margin-top:2px">'+c.lbl+'</span>'
+        +'<div><div style="font-size:12px;color:'+(e.impact==='holiday'?'#555':'#e0e0e0')+';line-height:1.3">'+e.title+'</div>'
+        +(e.time?'<div style="font-size:10px;color:#555;font-family:monospace;margin-top:1px">'+e.time+' UK</div>':'')
+        +'</div></div>';
+    }).join('');
+    return'<div style="padding:5px 12px;background:'+(isToday?'#141000':'#0d0d0d')+';border-top:0.5px solid #2a2a2a;border-bottom:0.5px solid #1e1e1e">'
+      +'<span style="font-size:10px;font-weight:600;color:'+(isToday?'#c9a84c':'#555')+'">'+dayLbl+'</span>'
+      +'</div>'+rows;
+  }).join('');
+}
 // ── Missed trades ──
 let missedTrades=[];
 
@@ -2632,7 +2823,7 @@ buildMistakes();
 document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
 loadAllData().then(()=>{
-  loadNewsCalendar();
+  setTimeout(()=>{loadNewsCalendar();},100);
   loadDraft();
   scheduleNYReminder();
   document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
