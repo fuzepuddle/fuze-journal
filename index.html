@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 <title>fuze's ICT Trading Journal ✍️</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -366,6 +366,10 @@
   <div style="display:flex;align-items:center;gap:12px">
     <h1>fuze's ICT Trading Journal ✍️</h1>
     <button id="notif-btn" onclick="requestNotifications()" style="font-size:11px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="font-size:11px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--</span></div>
+      <div style="font-size:11px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇺🇸 <span id="clock-ny" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--</span></div>
+    </div>
   </div>
   <div class="profile-btns">
     <button class="profile-btn active" onclick="switchProfile('challenge',this)">Challenge</button>
@@ -768,8 +772,8 @@
     </div>
   </div>
 
-  <!-- Row 5: Draw success + Best day/bias + Top mistakes -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+  <!-- Row 5: Draw success + Best day/bias + Top mistakes + Trade duration -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Draw success rate</div>
       <div id="s-draws" style="font-size:13px;color:#666">No data</div>
@@ -785,6 +789,10 @@
     <div class="card">
       <div class="section-label">Top mistakes</div>
       <div id="s-mistakes" style="font-size:13px;color:#666">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Trade duration</div>
+      <div id="s-duration" style="font-size:13px;color:#666">No data</div>
     </div>
   </div>
 
@@ -1038,7 +1046,7 @@
     </div>
   </div>
 
-  <div class="card" id="prop-tracker" style="display:none" id="prop-tracker">
+  <div class="card" id="prop-tracker" style="display:none">
     <div class="flex-between" style="margin-bottom:14px">
       <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
       <span style="font-size:12px;color:#555" id="prop-account-lbl"></span>
@@ -2599,8 +2607,7 @@ async function requestNotifications(){
   const permission=await Notification.requestPermission();
   if(permission==='granted'){
     localStorage.setItem('ict_notifs','1');
-    document.getElementById('notif-btn').textContent='Notifications on ✓';
-    document.getElementById('notif-btn').style.color='#6abf6a';
+    _setNotifBtnOn();
     scheduleNYReminder();
     alert('Notifications enabled. You will get a reminder at 14:25 UK when the NY window opens.');
   }
@@ -2941,6 +2948,32 @@ function prefillCalc(){
     calcRisk();
   }
 }
+
+
+// ── Notification button helper ──
+function _setNotifBtnOn(){
+  const nb=document.getElementById('notif-btn');
+  if(nb){nb.textContent='🔔 On ✓';nb.style.color='#6abf6a';}
+}
+
+// ── Live clocks ──
+function updateClocks(){
+  const ukEl=document.getElementById('clock-uk');
+  const nyEl=document.getElementById('clock-ny');
+  if(!ukEl||!nyEl)return;
+  const now=new Date();
+  const uk=now.toLocaleTimeString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  const ny=now.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  ukEl.textContent=uk;
+  nyEl.textContent=ny;
+  const [h,m]=uk.split(':').map(Number);
+  const mins=h*60+m;
+  const inSession=mins>=14*60+30&&mins<16*60+30;
+  ukEl.style.color=inSession?'#6abf6a':'#c9a84c';
+  nyEl.style.color=inSession?'#6abf6a':'#c9a84c';
+}
+setInterval(updateClocks,1000);
+updateClocks();
 
 // ── Missed trades ──
 let missedTrades=[];
