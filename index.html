@@ -3094,39 +3094,75 @@ function _buildNewsForWeek(week){
   return data.sort((a,b)=>a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||''));
 }
 
-function loadNewsCalendar(force){
+async function loadNewsCalendar(force){
   if(_newsFetched&&!force){renderNewsSidebar();return;}
   const loadEl=document.getElementById('sidebar-news-loading');
-  if(loadEl)loadEl.style.display='none';
+  if(loadEl){loadEl.style.display='block';loadEl.textContent='Loading live news...';}
 
   const now=new Date();
   const ukNow=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}));
   const ukMins=ukNow.getHours()*60+ukNow.getMinutes();
   const todayStr=ukNow.toISOString().split('T')[0];
 
-  // Build this week's data
-  let thisWeek=_buildNewsForWeek(_getWeekDatesFrom(0));
-
-  // Check if any high/medium impact events remain this week (today or future, not past)
-  const remaining=thisWeek.filter(e=>{
-    if(e.impact==='holiday') return false;
-    if(e.date<todayStr) return false;
-    if(e.date===todayStr&&e.time){
-      const[h,m]=e.time.split(':').map(Number);
-      if(h*60+m<=ukMins) return false;
+  // Try live ForexFactory feed via Vercel proxy
+  let usedLive=false;
+  try{
+    const res=await fetch('/api/news',{signal:AbortSignal.timeout(6000)});
+    const json=await res.json();
+    if(json.ok&&json.data&&json.data.length){
+      // Parse FF data into our format
+      _newsData=json.data.map(e=>{
+        // FF date is like "03-20-2026 8:30am" or ISO
+        let dateStr='',timeStr='';
+        try{
+          const d=new Date(e.date);
+          dateStr=d.toISOString().split('T')[0];
+          // FF time is like "8:30am" ET
+          if(e.time&&e.time!=='All Day'&&e.time!==''){
+            // Convert to 24h ET time string for _fmtNewsTime
+            const t=new Date('1970-01-01 '+e.time);
+            timeStr=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+          }
+        }catch(ex){}
+        return{
+          date:dateStr,
+          time:timeStr,
+          title:e.title||e.name||'',
+          impact:e.impact||'Low',
+          actual:e.actual||'',
+          forecast:e.forecast||'',
+          previous:e.previous||''
+        };
+      }).filter(e=>e.date&&e.title);
+      usedLive=true;
     }
-    return true;
-  });
-
-  if(remaining.length>0){
-    // Still events this week — show this week
-    _newsData=thisWeek;
-  } else {
-    // Nothing left this week — show next week
-    _newsData=_buildNewsForWeek(_getWeekDatesFrom(1));
+  }catch(err){
+    console.log('Live news failed, using hardcoded:',err.message);
   }
 
+  if(!usedLive){
+    // Fall back to hardcoded calendar
+    let thisWeek=_buildNewsForWeek(_getWeekDatesFrom(0));
+    const remaining=thisWeek.filter(e=>{
+      if(e.impact==='holiday') return false;
+      if(e.date<todayStr) return false;
+      if(e.date===todayStr&&e.time){
+        const[h,m]=e.time.split(':').map(Number);
+        if(h*60+m<=ukMins) return false;
+      }
+      return true;
+    });
+    _newsData=remaining.length>0?thisWeek:_buildNewsForWeek(_getWeekDatesFrom(1));
+  }
+
+  _newsData.sort((a,b)=>a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||''));
+  if(loadEl)loadEl.style.display='none';
   _newsFetched=true;
+
+  // Add live indicator to sidebar header
+  const hdr=document.getElementById('news-source-label');
+  if(hdr)hdr.textContent=usedLive?'🟢 Live':'🟡 Hardcoded';
+
   renderNewsSidebar();
 }
 
