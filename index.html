@@ -1243,6 +1243,7 @@ function applyLoadedData(){
   propSettings=allPropSettings[currentProfile]||{};
   weeklyNotes=allWeeklyNotes[currentProfile]||{};
   missedTrades=allMissedTrades[currentProfile]||[];
+  setTimeout(updateJournalStreak,200);
 }
 
 async function loadAllData(){
@@ -3597,15 +3598,11 @@ function updateJournalStreak(){
   if(!el)return;
   // Get all unique trade dates across ALL profiles + current trades
   const allDates=new Set();
-  try{
-    const stored=JSON.parse(localStorage.getItem('ict_profiles')||'{}');
-    Object.values(stored).forEach(profileTrades=>{
-      (profileTrades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
-    });
-  }catch(e){}
+  // Pull from all profiles in allTrades (already loaded from Supabase)
   Object.values(allTrades||{}).forEach(profileTrades=>{
     (profileTrades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
   });
+  // Also include current profile trades directly
   (trades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
   if(!allDates.size){el.style.display='none';return;}
   // Sort dates descending
