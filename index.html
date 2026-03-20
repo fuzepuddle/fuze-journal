@@ -37,10 +37,10 @@
   .gate.pass{border-color:#3a6e3a;background:#0f1f0f;color:#6abf6a}
   .gate.fail{border-color:#6e2a2a;background:#1f0f0f;color:#c06060}
   .outcome-row{display:flex;gap:8px;margin-bottom:14px}
-  .outcome-btn{flex:1;padding:9px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#0f1a12927;color:#888;transition:all .2s;text-align:center}
-  .outcome-btn.active-win{background:#0f1f0f;border-color:#3a6e3a;color:#6abf6a}
-  .outcome-btn.active-loss{background:#1f0f0f;border-color:#6e2a2a;color:#c06060}
-  .outcome-btn.active-be{background:#1f1800;border-color:#6e5a00;color:#c4a020}
+  .outcome-btn{flex:1;padding:9px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;text-align:center}
+  .outcome-btn.active-win{background:#0a2010;border:2px solid #10b981;color:#10b981;box-shadow:0 0 14px rgba(16,185,129,0.35);font-weight:700;text-shadow:0 0 4px rgba(16,185,129,0.4)}
+  .outcome-btn.active-loss{background:#1f0808;border:2px solid #ef4444;color:#ef4444;box-shadow:0 0 14px rgba(239,68,68,0.35);font-weight:700;text-shadow:0 0 4px rgba(239,68,68,0.4)}
+  .outcome-btn.active-be{background:#1a1400;border:2px solid #f59e0b;color:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,0.35);font-weight:700;text-shadow:0 0 4px rgba(245,158,11,0.4)}
   .outcome-btn.active-skip{background:#1e1e1e;border-color:#888;color:#aaa}
   .stars{display:flex;gap:4px;margin-top:4px}
   .star{font-size:20px;cursor:pointer;color:#1a2e1e;transition:color .15s;line-height:1}
@@ -528,9 +528,9 @@
   <div class="card gap">
     <div class="section-label">Outcome</div>
     <div class="outcome-row">
-      <button class="outcome-btn" onclick="setOutcome('win',this)">Win ✓</button>
-      <button class="outcome-btn" onclick="setOutcome('loss',this)">Loss ✗</button>
-      <button class="outcome-btn" onclick="setOutcome('be',this)">BE</button>
+      <button class="outcome-btn" onclick="setOutcome('win',this)" style="color:#1a5c40;border-color:#1a4a30">Win ✓</button>
+      <button class="outcome-btn" onclick="setOutcome('loss',this)" style="color:#5c1a1a;border-color:#4a1a1a">Loss ✗</button>
+      <button class="outcome-btn" onclick="setOutcome('be',this)" style="color:#5c4a00;border-color:#4a3800">BE</button>
     </div>
     <div class="grid-2">
       <div><label>P&amp;L ($) <span style="color:#777;font-weight:400">— negative for a loss e.g. -120</span></label>
