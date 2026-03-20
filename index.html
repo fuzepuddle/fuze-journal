@@ -365,6 +365,7 @@
 <div class="profile-bar">
   <div style="display:flex;align-items:center;gap:12px">
     <h1>fuze's ICT Trading Journal ✍️</h1>
+    <div id="journal-streak" style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap;display:none"></div>
     <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
     <div style="display:flex;gap:8px;align-items:center">
       <div style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--</span></div>
@@ -1426,6 +1427,7 @@ async function saveTrade(){
   checkPB(trade);
   trades.unshift(trade);
   save();
+  updateJournalStreak();
   try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}
   alert('Saved');
   clearForm();
@@ -3576,6 +3578,53 @@ async function uploadEditSS(file, tradeId, tf){
   }
 }
 
+
+// ── Journal streak ──
+function updateJournalStreak(){
+  const el=document.getElementById('journal-streak');
+  if(!el)return;
+  // Get all unique trade dates across ALL profiles
+  const allDates=new Set();
+  Object.values(allTrades).forEach(profileTrades=>{
+    (profileTrades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
+  });
+  if(!allDates.size){el.style.display='none';return;}
+  // Sort dates descending
+  const sorted=[...allDates].sort((a,b)=>b.localeCompare(a));
+  // Calculate current streak — consecutive trading days (skip weekends)
+  const today=new Date();
+  today.setHours(12,0,0,0);
+  let streak=0;
+  let check=new Date(today);
+  // If no trade today, start checking from yesterday
+  const todayStr=today.toISOString().split('T')[0];
+  if(!allDates.has(todayStr)){
+    check.setDate(check.getDate()-1);
+    // Skip back over weekend
+    while(check.getDay()===0||check.getDay()===6) check.setDate(check.getDate()-1);
+  }
+  // Walk back counting consecutive days with trades
+  let safety=0;
+  while(safety<200){
+    safety++;
+    const dow=check.getDay();
+    // Skip weekends
+    if(dow===0||dow===6){check.setDate(check.getDate()-1);continue;}
+    const dateStr=check.toISOString().split('T')[0];
+    if(allDates.has(dateStr)){
+      streak++;
+      check.setDate(check.getDate()-1);
+    } else {
+      break;
+    }
+  }
+  el.style.display='block';
+  if(streak===0){el.textContent='🔥 Start your streak';el.style.borderColor='#2a2a2a';el.style.color='#888';return;}
+  if(streak>=30){el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#c9a84c';el.style.color='#c9a84c';}
+  else if(streak>=7){el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#6abf6a';el.style.color='#6abf6a';}
+  else{el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#2a2a2a';el.style.color='#aaa';}
+}
+
 // ── Missed trades ──
 let missedTrades=[];
 
@@ -3851,7 +3900,7 @@ buildMistakes();
 document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
 loadAllData().then(()=>{
-  setTimeout(()=>{loadNewsCalendar();},100);
+  setTimeout(()=>{loadNewsCalendar();updateJournalStreak();},100);
   loadDraft();
   scheduleNYReminder();
   document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
