@@ -365,7 +365,7 @@
 <div class="profile-bar">
   <div style="display:flex;align-items:center;gap:12px">
     <h1>fuze's ICT Trading Journal ✍️</h1>
-    <div id="journal-streak" style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap;display:none"></div>
+    <div id="journal-streak" style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🔥 —</div>
     <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
     <div style="display:flex;gap:8px;align-items:center">
       <div style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--</span></div>
@@ -3604,7 +3604,8 @@ function updateJournalStreak(){
   });
   // Also include current profile trades directly
   (trades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
-  if(!allDates.size){el.style.display='none';return;}
+  el.style.display='block';
+  if(!allDates.size){el.textContent='🔥 Start your streak';return;}
   // Sort dates descending
   const sorted=[...allDates].sort((a,b)=>b.localeCompare(a));
   // Calculate current streak — consecutive trading days (skip weekends)
@@ -3917,6 +3918,8 @@ document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
 loadAllData().then(()=>{
   setTimeout(()=>{loadNewsCalendar();updateJournalStreak();},100);
+  setTimeout(updateJournalStreak,1000);
+  setTimeout(updateJournalStreak,3000);
   loadDraft();
   scheduleNYReminder();
   document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
