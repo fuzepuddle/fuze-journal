@@ -19,11 +19,11 @@
   .tab:hover:not(.active){color:#ccc}
   .page{display:none}.page.active{display:block}
   label{font-size:13px;color:#888;display:block;margin-bottom:4px}
-  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0f1a12927;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
-  input[type=date],input[type=time]{background:#0a0f0a;color-scheme:dark}
+  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
+  input[type=date],input[type=time]{background:#0c1510;color-scheme:dark}
   input:focus,select:focus,textarea:focus{border-color:#888}
   textarea{resize:vertical;min-height:64px;line-height:1.5}
-  select option{background:#0f1a12927;color:#e0e0e0}
+  select option{background:#0c1510;color:#e0e0e0}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   .grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -45,7 +45,7 @@
   .stars{display:flex;gap:4px;margin-top:4px}
   .star{font-size:20px;cursor:pointer;color:#1a2e1e;transition:color .15s;line-height:1}
   .star.lit{color:#10b981}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0f1a12927;color:#e0e0e0;transition:all .2s;font-family:inherit}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#e0e0e0;transition:all .2s;font-family:inherit}
   .btn:hover{background:#0f1a12d30}
   .btn-primary{background:#10b981;color:#0a0f0a;border-color:#10b981;font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
   .btn-primary:hover{background:#059669}
@@ -107,7 +107,7 @@
   .cal-title{font-size:22px;font-weight:500}
   .cal-sub{font-size:13px;color:#888;margin-top:2px}
   .cal-nav{display:flex;gap:8px;align-items:center}
-  .cal-nav button{padding:5px 12px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0f1a12927;color:#e0e0e0;cursor:pointer;font-size:13px;font-family:inherit}
+  .cal-nav button{padding:5px 12px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0c1510;color:#e0e0e0;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:#0f1a12d30}
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
@@ -3522,14 +3522,14 @@ loadAllData().then(()=>{
     </div>
     <div style="margin-bottom:12px">
       <label>What happened?</label>
-      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0f1a12927;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="margin-bottom:16px">
       <label>What to improve?</label>
-      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0f1a12927;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0f1a12927;color:#e0e0e0;font-family:inherit">Cancel</button>
+      <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#e0e0e0;font-family:inherit">Cancel</button>
       <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#0a0f0a;font-family:inherit;font-weight:500">Save changes</button>
     </div>
   </div>
