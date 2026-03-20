@@ -396,7 +396,6 @@
 
 <!-- LOG -->
 <div class="page active" id="page-log">
-<div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
 <div id="log-form-col">
 
   <!-- SESSION TIMER + RISK CALC -->
@@ -644,23 +643,6 @@
     <button class="btn" onclick="randomizeTrade()">Randomize</button>
     <button class="btn btn-primary" onclick="saveTrade()">Save →</button>
   </div>
-</div>
-<!-- NEWS SIDEBAR -->
-<div id="log-news-sidebar" style="position:sticky;top:16px">
-  <div class="card" style="padding:0;overflow:hidden">
-    <div style="padding:10px 14px;background:#161616;border-bottom:0.5px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-size:13px;font-weight:500;color:#c9a84c;letter-spacing:.04em">📅 USD NEWS</div>
-        <div style="font-size:13px;color:#777;margin-top:1px">High &amp; medium impact · UK time</div>
-      </div>
-      <button onclick="loadNewsCalendar(true)" style="border:0.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;color:#888;font-size:13px;padding:3px 8px;border-radius:5px;font-family:inherit">↻</button>
-    </div>
-    <div id="sidebar-news-today-bar" style="display:none;padding:8px 12px;background:#1a1600;border-bottom:0.5px solid #6e5a00;font-size:13px;color:#c4a020;line-height:1.4"></div>
-    <div id="sidebar-news-loading" style="padding:20px;text-align:center;color:#777;font-size:13px">Loading...</div>
-    <div id="sidebar-news-error" style="display:none;padding:16px;text-align:center;color:#c06060;font-size:13px"></div>
-    <div id="sidebar-news-body" style="max-height:600px;overflow-y:auto"></div>
-  </div>
-</div>
 </div>
 </div>
 
@@ -1313,7 +1295,7 @@ function showTab(t){
   document.querySelectorAll('.tab').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
   const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
   document.getElementById('page-'+t).classList.add('active');
-  if(t==='log'){loadNewsCalendar();setTimeout(prefillCalc,100);}
+  if(t==='log'){setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
   if(t==='stats')renderStats();
   if(t==='prop'){loadPropSettings();renderProp();}
@@ -3831,7 +3813,7 @@ function switchProfile(p, btn){
   const activeTab=document.querySelector('.tab.active');
   if(activeTab){
     const t=activeTab.getAttribute('data-tab');
-    if(t==='log'){loadNewsCalendar();setTimeout(prefillCalc,100);}
+    if(t==='log'){setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
     else if(t==='stats')renderStats();
     else if(t==='prop'){loadPropSettings();renderProp();}
@@ -3949,7 +3931,7 @@ buildMistakes();
 document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
 loadAllData().then(()=>{
-  setTimeout(()=>{loadNewsCalendar();updateJournalStreak();},100);
+  setTimeout(()=>{updateJournalStreak();},100);
   setTimeout(updateJournalStreak,1000);
   setTimeout(updateJournalStreak,3000);
   loadDraft();
