@@ -3134,7 +3134,7 @@ function _fmtNewsTime(dateStr, timeStr){
     const dt=new Date(dateStr+'T'+timeStr+':00');
     const nyStr=dt.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false});
     const ldnStr=dt.toLocaleTimeString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
-    return nyStr+' NY ('+ldnStr+' LDN)';
+    return nyStr+' NY ('+ldnStr+' UK)';
   }catch(e){return timeStr+' NY';}
 }
 
@@ -3595,11 +3595,18 @@ async function uploadEditSS(file, tradeId, tf){
 function updateJournalStreak(){
   const el=document.getElementById('journal-streak');
   if(!el)return;
-  // Get all unique trade dates across ALL profiles
+  // Get all unique trade dates across ALL profiles + current trades
   const allDates=new Set();
-  Object.values(allTrades).forEach(profileTrades=>{
+  try{
+    const stored=JSON.parse(localStorage.getItem('ict_profiles')||'{}');
+    Object.values(stored).forEach(profileTrades=>{
+      (profileTrades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
+    });
+  }catch(e){}
+  Object.values(allTrades||{}).forEach(profileTrades=>{
     (profileTrades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
   });
+  (trades||[]).forEach(t=>{if(t.date)allDates.add(t.date);});
   if(!allDates.size){el.style.display='none';return;}
   // Sort dates descending
   const sorted=[...allDates].sort((a,b)=>b.localeCompare(a));
