@@ -375,7 +375,6 @@
   <div class="profile-btns">
     <button class="profile-btn active" onclick="switchProfile('challenge',this)">Challenge</button>
     <button class="profile-btn" onclick="switchProfile('funded',this)">Funded</button>
-    <button class="profile-btn" onclick="switchProfile('experiments',this)">Experiments</button>
     <button class="profile-btn" onclick="switchProfile('demo',this)">Demo</button>
   </div>
 </div>
@@ -1193,11 +1192,11 @@
 <script>
 // ── State ──
 let currentProfile='challenge';
-const PROFILES=['challenge','funded','experiments','demo'];
-let allTrades={challenge:[],funded:[],experiments:[],demo:[]};
-let allPropSettings={challenge:{},funded:{},experiments:{},demo:{}};
-let allWeeklyNotes={challenge:{},funded:{},experiments:{},demo:{}};
-let allMissedTrades={challenge:[],funded:[],experiments:[],demo:[]};
+const PROFILES=['challenge','funded','demo'];
+let allTrades={challenge:[],funded:[],demo:[]};
+let allPropSettings={challenge:{},funded:{},demo:{}};
+let allWeeklyNotes={challenge:{},funded:{},demo:{}};
+let allMissedTrades={challenge:[],funded:[],demo:[]};
 let trades=[];let mode='live';let discRating=0;let outcome='';let statsMode='all';
 let propSettings={};let selectedMistakes=[];let propPassedShown=false;let propBlownShown=false;
 
@@ -3126,6 +3125,19 @@ function loadNewsCalendar(force){
   renderNewsSidebar();
 }
 
+function _fmtNewsTime(dateStr, timeStr){
+  if(!timeStr) return '';
+  // timeStr is stored as ET (NY) time e.g. '13:30'
+  // Convert to actual NY and LDN display
+  try{
+    const [h,m]=timeStr.split(':').map(Number);
+    const dt=new Date(dateStr+'T'+timeStr+':00');
+    const nyStr=dt.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false});
+    const ldnStr=dt.toLocaleTimeString('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false});
+    return nyStr+' NY ('+ldnStr+' LDN)';
+  }catch(e){return timeStr+' NY';}
+}
+
 function renderNewsSidebar(){
   const bodyEl=document.getElementById('sidebar-news-body');
   const todayBar=document.getElementById('sidebar-news-today-bar');
@@ -3138,7 +3150,7 @@ function renderNewsSidebar(){
   // Warning bar — next high impact today
   if(todayBar){
     const upcoming=_newsData.filter(e=>e.date===todayStr&&e.impact==='High'&&e.time&&(parseInt(e.time)*60+parseInt(e.time.split(':')[1]))>ukMins);
-    if(upcoming.length){todayBar.style.display='block';todayBar.innerHTML='⚠ <strong>'+upcoming[0].title+'</strong> at '+upcoming[0].time+' UK';}
+    if(upcoming.length){todayBar.style.display='block';todayBar.innerHTML='⚠ <strong>'+upcoming[0].title+'</strong> at '+_fmtNewsTime(upcoming[0].date,upcoming[0].time)+'<br><span style="font-size:12px">Check exact time on ForexFactory</span>';}
     else todayBar.style.display='none';
   }
 
@@ -3163,7 +3175,7 @@ function renderNewsSidebar(){
       return'<div style="padding:7px 12px;border-bottom:0.5px solid #1a1a1a;display:flex;gap:8px;align-items:flex-start;opacity:'+(isPast?'0.38':'1')+'">'
         +'<span style="flex-shrink:0;font-size:13px;padding:2px 5px;border-radius:3px;background:'+c.bg+';color:'+c.col+';border:0.5px solid '+c.border+';font-weight:600;margin-top:2px">'+c.lbl+'</span>'
         +'<div><div style="font-size:13px;color:'+(e.impact==='holiday'?'#555':'#e0e0e0')+';line-height:1.3">'+e.title+'</div>'
-        +(e.time?'<div style="font-size:13px;color:#777;font-family:monospace;margin-top:1px">'+e.time+' UK</div>':'')
+        +(e.time?'<div style="font-size:12px;color:#777;font-family:monospace;margin-top:1px">'+_fmtNewsTime(e.date,e.time)+'</div>':'')
         +'</div></div>';
     }).join('');
     return'<div style="padding:5px 12px;background:'+(isToday?'#141000':'#0d0d0d')+';border-top:0.5px solid #2a2a2a;border-bottom:0.5px solid #1e1e1e">'
