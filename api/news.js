@@ -1,44 +1,40 @@
+const FINNHUB_KEY = 'd6ud2e1r01qp1k9c3l40d6ud2e1r01qp1k9c3l4g';
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=7200');
 
-  const headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Origin': 'https://www.forexfactory.com',
-    'Referer': 'https://www.forexfactory.com/',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'cross-site',
-  };
+  try {
+    // Get date range: today to 7 days ahead
+    const now = new Date();
+    const from = now.toISOString().split('T')[0];
+    const to = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-  // Try with a random cache-busting param to avoid rate limit
-  const cacheBust = Date.now();
-  const urls = [
-    `https://nfs.faireconomy.media/ff_calendar_thisweek.json?t=${cacheBust}`,
-    `https://nfs.faireconomy.media/ff_calendar_thisweek.json`,
-  ];
+    const url = `https://finnhub.io/api/v1/calendar/economic?from=${from}&to=${to}&token=${FINNHUB_KEY}`;
+    const response = await fetch(url);
 
-  for (const url of urls) {
-    try {
-      const response = await fetch(url, { headers });
-      if (!response.ok) {
-        console.log('FF response:', response.status, url);
-        continue;
-      }
-      const data = await response.json();
-      const filtered = data.filter(e =>
-        e.currency === 'USD' &&
-        (e.impact === 'High' || e.impact === 'Medium' || e.impact === 'Low')
-      );
-      return res.status(200).json({ ok: true, data: filtered });
-    } catch (err) {
-      console.log('FF error:', err.message);
-      continue;
-    }
+    if (!response.ok) throw new Error('Finnhub fetch failed: ' + response.status);
+
+    const json = await response.json();
+    const events = json.economicCalendar || [];
+
+    // Filter USD only and map to our format
+    const filtered = events
+      .filter(e => e.country === 'US')
+      .map(e => ({
+        date: e.time ? e.time.split(' ')[0] : e.date,
+        time: e.time ? e.time.split(' ')[1]?.slice(0,5) : '',
+        title: e.event || '',
+        impact: e.impact === 3 ? 'High' : e.impact === 2 ? 'Medium' : 'Low',
+        actual: e.actual != null ? String(e.actual) : '',
+        forecast: e.estimate != null ? String(e.estimate) : '',
+        previous: e.prev != null ? String(e.prev) : '',
+      }))
+      .filter(e => e.title && (e.impact === 'High' || e.impact === 'Medium'));
+
+    return res.status(200).json({ ok: true, data: filtered });
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
   }
-
-  return res.status(429).json({ ok: false, error: 'ForexFactory rate limited' });
 }
