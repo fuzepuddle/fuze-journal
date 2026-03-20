@@ -26,7 +26,7 @@
   select option{background:#1a1a1a;color:#e0e0e0}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .gap{margin-bottom:14px}
   .card{background:#141414;border:0.5px solid #2a2a2a;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
   .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#777;margin-bottom:10px}
@@ -109,7 +109,7 @@
   .cal-nav{display:flex;gap:8px;align-items:center}
   .cal-nav button{padding:5px 12px;border:0.5px solid #2a2a2a;border-radius:6px;background:#1a1a1a;color:#e0e0e0;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:#222}
-  .cal-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
   .cal-grid th{font-size:13px;font-weight:500;color:#888;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
   .cal-grid td{vertical-align:top;border:0.5px solid #2a2a2a;width:14.28%;height:110px;padding:10px 12px;font-size:13px;color:#777;background:#111;cursor:default}
@@ -161,10 +161,12 @@
       justify-content:space-between;
       width:100%;
     }
+    #header-right{display:none !important}
+    #journal-streak{font-size:12px !important;padding:3px 8px !important}
     .profile-btns{
       width:100%;
       display:grid;
-      grid-template-columns:repeat(4,1fr);
+      grid-template-columns:repeat(3,1fr);
       gap:5px;
     }
     .profile-btn{
@@ -363,11 +365,13 @@
 </head>
 <body>
 <div class="profile-bar">
-  <div style="display:flex;align-items:center;gap:12px">
-    <h1>fuze's ICT Trading Journal ✍️</h1>
-    <div id="journal-streak" style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🔥 —</div>
-    <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
-    <div style="display:flex;gap:8px;align-items:center">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+    <div style="display:flex;align-items:center;gap:10px">
+      <h1>fuze's ICT Trading Journal ✍️</h1>
+      <div id="journal-streak" style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🔥 —</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center" id="header-right">
+      <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#141414;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
       <div style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--</span></div>
       <div style="font-size:13px;background:#141414;border:0.5px solid #2a2a2a;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇺🇸 <span id="clock-ny" style="color:#c9a84c;font-weight:500;font-family:monospace">--:--</span></div>
     </div>
