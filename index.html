@@ -362,14 +362,26 @@
 <body>
 <div class="profile-bar">
   <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:8px">
       <h1>fuze's ICT Trading Journal ✍️</h1>
       <div id="journal-streak" style="font-size:13px;background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🔥 —</div>
+      <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0f1a12;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
     </div>
     <div style="display:flex;gap:8px;align-items:center" id="header-right">
-      <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0f1a12;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
-      <div style="font-size:13px;background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#10b981;font-weight:500;font-family:monospace">--:--</span></div>
-      <div style="font-size:13px;background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇺🇸 <span id="clock-ny" style="color:#10b981;font-weight:500;font-family:monospace">--:--</span></div>
+      <div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:8px;padding:6px 14px;white-space:nowrap;display:flex;align-items:center;gap:8px">
+        <span style="font-size:20px">🇬🇧</span>
+        <div>
+          <div style="font-size:10px;color:#777;line-height:1">UK</div>
+          <div id="clock-uk" style="font-size:16px;font-weight:600;font-family:monospace;color:#10b981;line-height:1.2">--:--</div>
+        </div>
+      </div>
+      <div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:8px;padding:6px 14px;white-space:nowrap;display:flex;align-items:center;gap:8px">
+        <span style="font-size:20px">🇺🇸</span>
+        <div>
+          <div style="font-size:10px;color:#777;line-height:1">NY</div>
+          <div id="clock-ny" style="font-size:16px;font-weight:600;font-family:monospace;color:#10b981;line-height:1.2">--:--</div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="profile-btns">
