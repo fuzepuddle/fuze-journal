@@ -7,67 +7,67 @@
 <title>fuze's ICT Trading Journal ✍️</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#070d1a;color:#dce8f8;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid #3b82f6;box-shadow:0 -1px 20px rgba(57,255,20,0.25)}
-  h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:#3b82f6;text-shadow:0 0 16px rgba(57,255,20,0.25)}
-  .profile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:0.5px solid #1e2d45}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d0d0d;color:#e0e0e0;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid #ef4444;box-shadow:0 -1px 20px rgba(57,255,20,0.25)}
+  h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:#ef4444;text-shadow:0 0 16px rgba(57,255,20,0.25)}
+  .profile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:0.5px solid #2a1515}
   .profile-btns{display:flex;gap:6px}
-  .profile-btn{padding:5px 14px;border:0.5px solid #1e2d45;border-radius:20px;cursor:pointer;font-size:13px;background:#0d1525;color:#888;transition:all .2s;font-family:inherit}
-  .profile-btn.active{background:#3b82f6;color:#070d1a;border-color:#3b82f6;font-weight:500;box-shadow:0 0 16px rgba(201,168,76,0.25)}
-  .tabs{display:flex;border-bottom:0.5px solid #1e2d45;margin-bottom:1.5rem;background:linear-gradient(180deg,#070d1a 0%,transparent 100%)}
+  .profile-btn{padding:5px 14px;border:0.5px solid #2a1515;border-radius:20px;cursor:pointer;font-size:13px;background:#130a0a;color:#888;transition:all .2s;font-family:inherit}
+  .profile-btn.active{background:#ef4444;color:#0d0d0d;border-color:#ef4444;font-weight:500;box-shadow:0 0 16px rgba(201,168,76,0.25)}
+  .tabs{display:flex;border-bottom:0.5px solid #2a1515;margin-bottom:1.5rem;background:linear-gradient(180deg,#0d0d0d 0%,transparent 100%)}
   .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:#888;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
-  .tab.active{color:#3b82f6;border-bottom-color:#3b82f6;font-weight:500;text-shadow:0 0 12px rgba(57,255,20,0.25)}
+  .tab.active{color:#ef4444;border-bottom-color:#ef4444;font-weight:500;text-shadow:0 0 12px rgba(57,255,20,0.25)}
   .tab:hover:not(.active){color:#ccc}
   .page{display:none}.page.active{display:block}
   label{font-size:13px;color:#888;display:block;margin-bottom:4px}
-  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:0.5px solid #1e2d45;border-radius:8px;background:#0d1525927;color:#dce8f8;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
-  input[type=date],input[type=time]{background:#070d1a;color-scheme:dark}
+  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:0.5px solid #2a1515;border-radius:8px;background:#130a0a927;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
+  input[type=date],input[type=time]{background:#0d0d0d;color-scheme:dark}
   input:focus,select:focus,textarea:focus{border-color:#888}
   textarea{resize:vertical;min-height:64px;line-height:1.5}
-  select option{background:#0d1525927;color:#dce8f8}
+  select option{background:#130a0a927;color:#e0e0e0}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   .grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .gap{margin-bottom:14px}
-  .card{background:linear-gradient(160deg,#0d1525 0%,#091220 100%);border:0.5px solid #1e2d45;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;box-shadow:0 4px 24px rgba(0,0,0,0.5)}
+  .card{background:linear-gradient(160deg,#130a0a 0%,#0d0d0d 100%);border:0.5px solid #2a1515;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
   .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#777;margin-bottom:10px}
   .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#888;margin-bottom:1px;user-select:none}
-  .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#3b82f6}
+  .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#ef4444}
   .check-group-title{font-size:13px;font-weight:500;color:#aaa;margin:10px 0 4px}
-  .gate{border:0.5px solid #1e2d45;border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:#0d1525927;color:#888}
+  .gate{border:0.5px solid #2a1515;border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:#130a0a927;color:#888}
   .gate.pass{border-color:#3a6e3a;background:#0f1f0f;color:#6abf6a}
   .gate.fail{border-color:#6e2a2a;background:#1f0f0f;color:#c06060}
   .outcome-row{display:flex;gap:8px;margin-bottom:14px}
-  .outcome-btn{flex:1;padding:9px;border:0.5px solid #1e2d45;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#0d1525927;color:#888;transition:all .2s;text-align:center}
+  .outcome-btn{flex:1;padding:9px;border:0.5px solid #2a1515;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#130a0a927;color:#888;transition:all .2s;text-align:center}
   .outcome-btn.active-win{background:#0f1f0f;border-color:#3a6e3a;color:#6abf6a}
   .outcome-btn.active-loss{background:#1f0f0f;border-color:#6e2a2a;color:#c06060}
   .outcome-btn.active-be{background:#1f1800;border-color:#6e5a00;color:#c4a020}
   .outcome-btn.active-skip{background:#1e1e1e;border-color:#888;color:#aaa}
   .stars{display:flex;gap:4px;margin-top:4px}
-  .star{font-size:20px;cursor:pointer;color:#1e2d45;transition:color .15s;line-height:1}
-  .star.lit{color:#3b82f6}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1e2d45;border-radius:8px;cursor:pointer;font-size:13px;background:#0d1525927;color:#dce8f8;transition:all .2s;font-family:inherit}
-  .btn:hover{background:#0d1525d30}
-  .btn-primary{background:#3b82f6;color:#070d1a;border-color:#3b82f6;font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
-  .btn-primary:hover{background:#2563eb}
+  .star{font-size:20px;cursor:pointer;color:#2a1515;transition:color .15s;line-height:1}
+  .star.lit{color:#ef4444}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #2a1515;border-radius:8px;cursor:pointer;font-size:13px;background:#130a0a927;color:#e0e0e0;transition:all .2s;font-family:inherit}
+  .btn:hover{background:#130a0ad30}
+  .btn-primary{background:#ef4444;color:#0d0d0d;border-color:#ef4444;font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
+  .btn-primary:hover{background:#dc2626}
   .btn-sm{padding:5px 12px;font-size:13px}
-  .log-wrap{overflow-x:auto;border:0.5px solid #1e2d45;border-radius:12px}
+  .log-wrap{overflow-x:auto;border:0.5px solid #2a1515;border-radius:12px}
   .log-table{width:100%;border-collapse:collapse;font-size:13px}
-  .log-table th{text-align:left;font-weight:500;color:#777;padding:8px 10px;border-bottom:0.5px solid #1e2d45;white-space:nowrap;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+  .log-table th{text-align:left;font-weight:500;color:#777;padding:8px 10px;border-bottom:0.5px solid #2a1515;white-space:nowrap;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
   .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:#ccc}
   .log-table tr:last-child td{border-bottom:none}
-  .log-table tr:hover td{background:#0a1020}
+  .log-table tr:hover td{background:#160d0d}
   .no-trades{text-align:center;padding:40px;color:#777;font-size:13px}
   .green-bg{background:#0f1f0f;color:#6abf6a;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #2a4a2a}
   .red-bg{background:#1f0f0f;color:#c06060;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #4a2a2a}
   .amber-bg{background:#1f1800;color:#c4a020;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #4a3a00}
-  .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:#888;border:0.5px solid #1e2d45}
-  .metric-card{background:#0d1525;border:0.5px solid #1e2d45;border-radius:8px;padding:12px 14px;text-align:center}
-  .metric-val{font-size:22px;font-weight:500;line-height:1.2;margin-top:4px;color:#dce8f8}
+  .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:#888;border:0.5px solid #2a1515}
+  .metric-card{background:#130a0a;border:0.5px solid #2a1515;border-radius:8px;padding:12px 14px;text-align:center}
+  .metric-val{font-size:22px;font-weight:500;line-height:1.2;margin-top:4px;color:#e0e0e0}
   .metric-lbl{font-size:13px;color:#777}
   .flex-between{display:flex;align-items:center;justify-content:space-between}
   .mode-toggle{display:flex;gap:8px;margin-bottom:16px}
-  .mode-btn{padding:6px 14px;border:0.5px solid #1e2d45;border-radius:20px;cursor:pointer;font-size:13px;background:#0d1525;color:#888;transition:all .2s;font-family:inherit}
-  .mode-btn.active{background:#3b82f6;color:#070d1a;border-color:#3b82f6}
+  .mode-btn{padding:6px 14px;border:0.5px solid #2a1515;border-radius:20px;cursor:pointer;font-size:13px;background:#130a0a;color:#888;transition:all .2s;font-family:inherit}
+  .mode-btn.active{background:#ef4444;color:#0d0d0d;border-color:#ef4444}
   .prog-bar{height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;margin-top:6px}
   .prog-fill{height:100%;border-radius:4px;transition:width .4s,background .3s}
   .hint{font-size:13px;color:#777;margin-top:4px}
@@ -75,10 +75,10 @@
   .danger-bar{border:0.5px solid #6e2a2a;background:#1f0f0f;color:#c06060;border-radius:8px;padding:8px 12px;font-size:13px;margin-top:8px;display:none}
 
   /* Mistakes multi-select styled */
-  .mistakes-list{border:0.5px solid #1e2d45;border-radius:8px;background:#0d1525927;max-height:260px;overflow-y:auto;padding:4px}
+  .mistakes-list{border:0.5px solid #2a1515;border-radius:8px;background:#130a0a927;max-height:260px;overflow-y:auto;padding:4px}
   .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#888;user-select:none;transition:background .15s}
-  .mistake-item:hover{background:#0d1525d30}
-  .mistake-item.selected{background:#1f1f0f;color:#dce8f8;border-left:2px solid #c4a020;padding-left:6px}
+  .mistake-item:hover{background:#130a0ad30}
+  .mistake-item.selected{background:#1f1f0f;color:#e0e0e0;border-left:2px solid #c4a020;padding-left:6px}
   .mistake-item input[type=checkbox]{display:none}
   .mistake-dot{width:8px;height:8px;border-radius:50%;border:1px solid #444;flex-shrink:0;transition:all .15s}
   .mistake-item.selected .mistake-dot{background:#c4a020;border-color:#c4a020}
@@ -87,7 +87,7 @@
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
   .profile-hide{display:none !important}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-  .collapsible-header:hover .collapse-icon{color:#dce8f8}
+  .collapsible-header:hover .collapse-icon{color:#e0e0e0}
   .collapse-icon{font-size:13px;color:#777;transition:transform .2s;display:inline-block}
   .collapse-icon.collapsed{transform:rotate(-90deg)}
   .collapsible-body{transition:none}
@@ -97,7 +97,7 @@
   .glow-red{animation:glow-red 2s ease-in-out infinite}
   .collapsible-body.collapsed{display:none}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-  .collapsible-header:hover .collapse-icon{color:#3b82f6}
+  .collapsible-header:hover .collapse-icon{color:#ef4444}
   .collapse-icon{font-size:13px;color:#777;transition:transform .2s;display:inline-block}
   .collapsed .collapse-icon{transform:rotate(-90deg)}
   .collapsible-body{overflow:hidden;transition:max-height .25s ease}
@@ -107,16 +107,16 @@
   .cal-title{font-size:22px;font-weight:500}
   .cal-sub{font-size:13px;color:#888;margin-top:2px}
   .cal-nav{display:flex;gap:8px;align-items:center}
-  .cal-nav button{padding:5px 12px;border:0.5px solid #1e2d45;border-radius:6px;background:#0d1525927;color:#dce8f8;cursor:pointer;font-size:13px;font-family:inherit}
-  .cal-nav button:hover{background:#0d1525d30}
+  .cal-nav button{padding:5px 12px;border:0.5px solid #2a1515;border-radius:6px;background:#130a0a927;color:#e0e0e0;cursor:pointer;font-size:13px;font-family:inherit}
+  .cal-nav button:hover{background:#130a0ad30}
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
   .cal-grid th{font-size:13px;font-weight:500;color:#888;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
-  .cal-grid td{vertical-align:top;border:0.5px solid #1e2d45;width:14.28%;height:110px;padding:10px 12px;font-size:13px;color:#777;background:#0d1525;cursor:default}
+  .cal-grid td{vertical-align:top;border:0.5px solid #2a1515;width:14.28%;height:110px;padding:10px 12px;font-size:13px;color:#777;background:#130a0a;cursor:default}
   .cal-grid td.weekend{background:#0a0a0a}
-  .cal-grid td.has-trade{background:#0d1525;cursor:pointer}
-  .cal-grid td.has-trade:hover{background:#0d1525927}
-  .cal-grid td.today{border:2px solid #3b82f6 !important;background:#001630 !important}
+  .cal-grid td.has-trade{background:#130a0a;cursor:pointer}
+  .cal-grid td.has-trade:hover{background:#130a0a927}
+  .cal-grid td.today{border:2px solid #ef4444 !important;background:#1a0505 !important}
   .cal-day{font-size:15px;font-weight:500;margin-bottom:8px}
   .cal-pnl{font-size:18px;font-weight:500;margin-bottom:4px}
   .cal-count{font-size:13px;color:#888}
@@ -124,11 +124,11 @@
   .cal-loss{color:#c06060}
   .cal-be{color:#c4a020}
   .weekly-summary{display:flex;flex-direction:column;gap:8px}
-  .week-card{background:#0d1525;border:0.5px solid #1e2d45;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+  .week-card{background:#130a0a;border:0.5px solid #2a1515;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
   .week-lbl{font-size:13px;color:#777;margin-bottom:2px}
   .week-pnl{font-size:17px;font-weight:500}
   .week-trades{font-size:13px;color:#777}
-  .month-total-card{background:#0d1525;border:0.5px solid #c4a020;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+  .month-total-card{background:#130a0a;border:0.5px solid #c4a020;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
   .cal-layout{display:grid;grid-template-columns:1fr 220px;gap:20px}
   @media(max-width:700px){.cal-layout{grid-template-columns:1fr}.cal-metrics{grid-template-columns:1fr 1fr}}
 
@@ -299,8 +299,8 @@
       position:fixed;
       bottom:0;left:0;right:0;
       height:56px;
-      background:#0d1525111;
-      border-top:0.5px solid #1e2d45;
+      background:#130a0a111;
+      border-top:0.5px solid #2a1515;
       z-index:9999;
       align-items:stretch;
     }
@@ -324,7 +324,7 @@
       -webkit-tap-highlight-color:transparent;
     }
     .mob-btn .mob-icon{font-size:19px;line-height:1}
-    .mob-btn.active{color:#3b82f6}
+    .mob-btn.active{color:#ef4444}
     .mob-btn:active{opacity:.6}
 
     /* More menu */
@@ -332,8 +332,8 @@
       display:none;
       position:fixed;
       bottom:56px;left:0;right:0;
-      background:#0d1525;
-      border-top:0.5px solid #1e2d45;
+      background:#130a0a;
+      border-top:0.5px solid #2a1515;
       z-index:9998;
       padding:8px;
       flex-direction:column;
@@ -348,13 +348,13 @@
       gap:12px;
       padding:13px 14px;
       font-size:14px;
-      color:#dce8f8;
+      color:#e0e0e0;
       border-radius:8px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
     }
     .more-item:active{background:#1e1e1e}
-    .more-item.active-more{color:#3b82f6}
+    .more-item.active-more{color:#ef4444}
     .more-item-icon{font-size:18px;width:24px;text-align:center}
   }
 </style>
@@ -364,12 +364,12 @@
   <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
     <div style="display:flex;align-items:center;gap:10px">
       <h1>fuze's ICT Trading Journal ✍️</h1>
-      <div id="journal-streak" style="font-size:13px;background:#0d1525;border:0.5px solid #1e2d45;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🔥 —</div>
+      <div id="journal-streak" style="font-size:13px;background:#130a0a;border:0.5px solid #2a1515;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🔥 —</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center" id="header-right">
-      <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #1e2d45;border-radius:6px;background:#0d1525;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
-      <div style="font-size:13px;background:#0d1525;border:0.5px solid #1e2d45;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#3b82f6;font-weight:500;font-family:monospace">--:--</span></div>
-      <div style="font-size:13px;background:#0d1525;border:0.5px solid #1e2d45;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇺🇸 <span id="clock-ny" style="color:#3b82f6;font-weight:500;font-family:monospace">--:--</span></div>
+      <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #2a1515;border-radius:6px;background:#130a0a;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
+      <div style="font-size:13px;background:#130a0a;border:0.5px solid #2a1515;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇬🇧 <span id="clock-uk" style="color:#ef4444;font-weight:500;font-family:monospace">--:--</span></div>
+      <div style="font-size:13px;background:#130a0a;border:0.5px solid #2a1515;border-radius:6px;padding:4px 10px;color:#888;white-space:nowrap">🇺🇸 <span id="clock-ny" style="color:#ef4444;font-weight:500;font-family:monospace">--:--</span></div>
     </div>
   </div>
   <div class="profile-btns">
@@ -399,9 +399,9 @@
     <div class="card" id="session-timer-card" style="padding:12px 16px;transition:border-color .5s,background .5s">
       <div class="section-label" style="margin-bottom:8px">Session timer</div>
       <div id="timer-label" style="font-size:13px;color:#777;margin-bottom:4px">Loading...</div>
-      <div id="timer-display" style="font-size:28px;font-weight:500;font-family:monospace;color:#3b82f6;letter-spacing:2px">--:--:--</div>
+      <div id="timer-display" style="font-size:28px;font-weight:500;font-family:monospace;color:#ef4444;letter-spacing:2px">--:--:--</div>
       <div id="timer-bar-wrap" style="height:4px;background:#1e1e1e;border-radius:2px;margin-top:10px;overflow:hidden">
-        <div id="timer-bar" style="height:100%;width:0%;background:#3b82f6;border-radius:2px;transition:width 1s linear"></div>
+        <div id="timer-bar" style="height:100%;width:0%;background:#ef4444;border-radius:2px;transition:width 1s linear"></div>
       </div>
       <div id="timer-sub" style="font-size:13px;color:#777;margin-top:4px"></div>
     </div>
@@ -591,7 +591,7 @@
   <div id="screenshots-section" class="card">
     <div class="flex-between" style="margin-bottom:10px">
       <div class="section-label" style="margin-bottom:0">Screenshots</div>
-      <div id="ss-upload-status" style="font-size:13px;color:#3b82f6"></div>
+      <div id="ss-upload-status" style="font-size:13px;color:#ef4444"></div>
     </div>
     <div class="grid-2 gap" style="margin-bottom:8px">
       <div>
@@ -647,7 +647,7 @@
   <div class="flex-between" style="margin-bottom:12px">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="section-label" style="margin-bottom:0">Trade log</div>
-      <span id="trade-count-badge" style="background:#1e1e1e;border:0.5px solid #1e2d45;border-radius:12px;padding:2px 10px;font-size:13px;color:#888"></span>
+      <span id="trade-count-badge" style="background:#1e1e1e;border:0.5px solid #2a1515;border-radius:12px;padding:2px 10px;font-size:13px;color:#888"></span>
     </div>
   </div>
   <div style="margin-bottom:10px">
@@ -666,8 +666,8 @@
       <option value="Bearish">Bearish</option>
       <option value="Chop">Chop</option>
     </select>
-    <button onclick="clearFilters()" style="font-size:13px;padding:5px 10px;border:0.5px solid #1e2d45;border-radius:6px;background:#0d1525927;color:#888;cursor:pointer;font-family:inherit">Clear filters</button>
-    <button onclick="exportCSV()" style="font-size:13px;padding:5px 10px;border:0.5px solid #1e2d45;border-radius:6px;background:#0d1525927;color:#3b82f6;cursor:pointer;font-family:inherit">Export CSV ↓</button>
+    <button onclick="clearFilters()" style="font-size:13px;padding:5px 10px;border:0.5px solid #2a1515;border-radius:6px;background:#130a0a927;color:#888;cursor:pointer;font-family:inherit">Clear filters</button>
+    <button onclick="exportCSV()" style="font-size:13px;padding:5px 10px;border:0.5px solid #2a1515;border-radius:6px;background:#130a0a927;color:#ef4444;cursor:pointer;font-family:inherit">Export CSV ↓</button>
   </div>
   <div class="log-wrap">
     <table class="log-table">
@@ -731,7 +731,7 @@
     <div class="card">
       <div class="section-label">Avg win / loss</div>
       <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;margin-top:6px">
-        <div id="s-wl-ratio" style="font-size:26px;font-weight:500;color:#dce8f8">—</div>
+        <div id="s-wl-ratio" style="font-size:26px;font-weight:500;color:#e0e0e0">—</div>
         <div style="font-size:13px;color:#888">ratio</div>
       </div>
       <div style="position:relative;height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px">
@@ -742,7 +742,7 @@
         <span id="s-avg-win" style="font-size:13px;font-weight:500;color:#6abf6a">—</span>
         <span id="s-avg-loss" style="font-size:13px;font-weight:500;color:#c06060">—</span>
       </div>
-      <div style="border-top:0.5px solid #1e2d45;padding-top:12px">
+      <div style="border-top:0.5px solid #2a1515;padding-top:12px">
         <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:#aaa">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#6abf6a">—</span></div>
         <div class="flex-between"><span style="font-size:13px;color:#aaa">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#c06060">—</span></div>
       </div>
@@ -815,7 +815,7 @@
       <div class="section-label" style="margin-bottom:8px">Monthly goal</div>
       <div style="display:flex;gap:6px;margin-bottom:10px">
         <input type="number" id="goal-input" placeholder="Goal $" style="flex:1;font-size:13px;padding:5px 8px">
-        <button onclick="saveGoal()" style="font-size:13px;padding:5px 10px;border:0.5px solid #3b82f6;border-radius:6px;background:#0d1525;color:#3b82f6;cursor:pointer;font-family:inherit">Set</button>
+        <button onclick="saveGoal()" style="font-size:13px;padding:5px 10px;border:0.5px solid #ef4444;border-radius:6px;background:#130a0a;color:#ef4444;cursor:pointer;font-family:inherit">Set</button>
       </div>
       <div id="s-goal-body" style="font-size:13px;color:#888">Set a goal to track progress.</div>
     </div>
@@ -1086,7 +1086,7 @@
     <div id="prop-danger" class="danger-bar"></div>
 
     <!-- Stats row -->
-    <div style="border-top:0.5px solid #1e2d45;margin-top:16px;padding-top:14px">
+    <div style="border-top:0.5px solid #2a1515;margin-top:16px;padding-top:14px">
       <div class="grid-4">
         <div class="metric-card"><div class="metric-lbl">Live P&amp;L</div><div class="metric-val" id="prop-total-pnl">$0</div></div>
         <div class="metric-card"><div class="metric-lbl">Today's P&amp;L</div><div class="metric-val" id="prop-today-pnl">$0</div></div>
@@ -1103,7 +1103,7 @@
       <div style="display:flex;gap:8px;align-items:center">
         <input type="number" id="payout-amount" placeholder="Amount e.g. 500" style="width:140px;font-size:13px;padding:5px 8px">
         <input type="date" id="payout-date" style="width:140px;font-size:13px;padding:5px 8px">
-        <button onclick="logPayout()" style="font-size:13px;padding:5px 12px;border:0.5px solid #3b82f6;border-radius:6px;background:#0d1525;color:#3b82f6;cursor:pointer;font-family:inherit">Log payout</button>
+        <button onclick="logPayout()" style="font-size:13px;padding:5px 12px;border:0.5px solid #ef4444;border-radius:6px;background:#130a0a;color:#ef4444;cursor:pointer;font-family:inherit">Log payout</button>
       </div>
     </div>
     <div id="payout-list" style="font-size:13px;color:#888">No payouts logged yet.</div>
@@ -1466,8 +1466,8 @@ function renderJournal(){
     const isFav=t.favourite||false;
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:14px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#777;font-size:13px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
-    const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'#1e2d45'};
-    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'#1e2d45')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:13px;color:#888">'+(t.draw||'—')+'</td><td>'+(t.rrPlan||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:13px;color:#888">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#3b82f6">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#777;font-size:14px;padding:2px 6px">×</button></td></tr>';
+    const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'#2a1515'};
+    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'#2a1515')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:13px;color:#888">'+(t.draw||'—')+'</td><td>'+(t.rrPlan||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:13px;color:#888">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#ef4444">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#777;font-size:14px;padding:2px 6px">×</button></td></tr>';
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
@@ -1477,16 +1477,16 @@ function renderJournal(){
         ?'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
           +'<div style="font-size:13px;color:#777">'+s[0]+'</div>'
           +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
-          +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:0.5px solid #1e2d45;cursor:pointer;background:#0d1525" '
-          +'onmouseover="this.style.borderColor=\'#3b82f6\'" onmouseout="this.style.borderColor=\'#1e2d45\'">'
+          +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:0.5px solid #2a1515;cursor:pointer;background:#130a0a" '
+          +'onmouseover="this.style.borderColor=\'#ef4444\'" onmouseout="this.style.borderColor=\'#2a1515\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:#aaa;font-size:13px;text-decoration:none;border:0.5px solid #1e2d45;padding:4px 10px;border-radius:6px;background:#0d1525927">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#aaa;font-size:13px;text-decoration:none;border:0.5px solid #2a1515;padding:4px 10px;border-radius:6px;background:#130a0a927">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#777;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#777;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.improve+'</div></div>':'';
-    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #1e2d45;background:#0d1525927;cursor:pointer;color:#aaa;font-size:13px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
-    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="13" style="padding:12px 16px;background:#080e1c;border-bottom:0.5px solid #1e2d45">'+ssHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
+    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a1515;background:#130a0a927;cursor:pointer;color:#aaa;font-size:13px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="13" style="padding:12px 16px;background:#100808;border-bottom:0.5px solid #2a1515">'+ssHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
 }
@@ -1495,7 +1495,7 @@ function toggleFav(id,btn){
   const t=trades.find(t=>t.id===id);if(!t)return;
   t.favourite=!t.favourite;
   btn.textContent=t.favourite?'★':'☆';
-  btn.style.color=t.favourite?'#3b82f6':'';
+  btn.style.color=t.favourite?'#ef4444':'';
   save();
 }
 
@@ -1511,7 +1511,7 @@ function renderStats(){
   wrEl.textContent=active.length?Math.round(wins.length/active.length*100)+'%':'—';
   wrEl.style.color=active.length?(wins.length/active.length>=0.5?'#6abf6a':'#c06060'):'';
   const wrCard=document.getElementById('s-wr-card');
-  if(wrCard)wrCard.style.background=active.length?(wins.length/active.length>=0.5?'rgba(58,110,58,0.18)':'rgba(110,42,42,0.18)'):'#0d1525';
+  if(wrCard)wrCard.style.background=active.length?(wins.length/active.length>=0.5?'rgba(58,110,58,0.18)':'rgba(110,42,42,0.18)'):'#130a0a';
   const withDisc=f.filter(t=>t.discRating);
   document.getElementById('s-disc').textContent=withDisc.length?'★ '+(withDisc.reduce((s,t)=>s+t.discRating,0)/withDisc.length).toFixed(1):'—';
   const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
@@ -1625,8 +1625,8 @@ function renderEquityChart(allTrades){
       maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return(c.raw>=0?'+$':'-$')+Math.abs(c.raw).toFixed(2);}}}},
       scales:{
-        x:{ticks:{color:'#888',font:{size:13},maxTicksLimit:8,maxRotation:0},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#1e2d45'}},
-        y:{ticks:{color:'#888',font:{size:13},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#1e2d45'}}
+        x:{ticks:{color:'#888',font:{size:13},maxTicksLimit:8,maxRotation:0},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#2a1515'}},
+        y:{ticks:{color:'#888',font:{size:13},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#2a1515'}}
       }
     }
   });
@@ -1670,8 +1670,8 @@ function renderDailyChart(trades){
       maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return(c.raw>=0?'+$':'-$')+Math.abs(c.raw).toFixed(2);}}}},
       scales:{
-        x:{ticks:{color:'#888',font:{size:13}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#1e2d45'}},
-        y:{ticks:{color:'#888',font:{size:13},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#1e2d45'}}
+        x:{ticks:{color:'#888',font:{size:13}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#2a1515'}},
+        y:{ticks:{color:'#888',font:{size:13},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#2a1515'}}
       }
     }
   });
@@ -1680,7 +1680,7 @@ function renderDailyChart(trades){
     const d=data[i];
     const wr=d.wins+d.losses>0?Math.round(d.wins/(d.wins+d.losses)*100)+'%':'—';
     const pColor=d.pnl>0?'#6abf6a':d.pnl<0?'#c06060':'#888';
-    return'<div style="background:#0d1525;border:0.5px solid #1e2d45;border-radius:8px;padding:8px 10px;text-align:center">'
+    return'<div style="background:#130a0a;border:0.5px solid #2a1515;border-radius:8px;padding:8px 10px;text-align:center">'
       +'<div style="font-size:13px;font-weight:500;color:#777;margin-bottom:4px">'+day+'</div>'
       +'<div style="font-size:14px;font-weight:500;color:'+pColor+';margin-bottom:2px">'+(d.pnl>=0?'+':'')+d.pnl.toFixed(2)+'</div>'
       +'<div style="font-size:13px;color:#888">'+d.trades+' trade'+(d.trades!==1?'s':'')+'</div>'
@@ -1963,12 +1963,12 @@ function calDayClick(day){
       +ssLinks.map((s,i)=>'<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'
         +'<div style="font-size:13px;color:#888">'+s[0]+'</div>'
         +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox(\'cal_'+t.id+'\','+i+')" '
-        +'style="width:90px;height:56px;object-fit:cover;border-radius:6px;border:0.5px solid #1e2d45;cursor:pointer;background:#0d1525">'
+        +'style="width:90px;height:56px;object-fit:cover;border-radius:6px;border:0.5px solid #2a1515;cursor:pointer;background:#130a0a">'
         +'</div>').join('')
       +'</div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#777;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#777;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#ccc;line-height:1.6">'+t.improve+'</div></div>':'';
-    return'<div style="background:#0d1525927;border:0.5px solid #1e2d45;border-radius:10px;padding:14px;margin-bottom:10px">'
+    return'<div style="background:#130a0a927;border:0.5px solid #2a1515;border-radius:10px;padding:14px;margin-bottom:10px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
       +'<div style="display:flex;gap:8px;align-items:center">'+(badges[t.outcome]||'')+'<span style="font-size:13px;color:#888">'+(t.instrument||'')+'</span><span style="font-size:13px;color:#888">'+(t.direction||'')+'</span></div>'
       +pnlStr+'</div>'
@@ -2034,7 +2034,7 @@ function openEdit(id){
   document.getElementById('e-narrative').value=t.narrative||'';
   document.getElementById('e-improve').value=t.improve||'';
   eDiscRating=t.discRating||0;
-  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#3b82f6':'#1e2d45';});
+  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#ef4444':'#2a1515';});
   const esSec=document.getElementById('e-ss-section');
   if(esSec)esSec.style.display=currentProfile==='backtesting'?'none':'grid';
   document.getElementById('edit-modal').style.display='block';
@@ -2049,7 +2049,7 @@ function closeEdit(){
 
 function eRateStar(n){
   eDiscRating=n;
-  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<n?'#3b82f6':'#1e2d45';});
+  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<n?'#ef4444':'#2a1515';});
 }
 
 function saveEdit(){
@@ -2196,7 +2196,7 @@ function randomizeTrade(){
     const file=new File([blob],'placeholder.png',{type:'image/png'});
     window._pendingSSFiles[tf]=file;
     const prev=document.getElementById('f-ss-'+tf+'-prev');
-    if(prev) prev.innerHTML='<div style="width:120px;height:36px;background:#0d1525927;border:0.5px solid #1e2d45;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#777;margin-top:4px">📷 placeholder</div>';
+    if(prev) prev.innerHTML='<div style="width:120px;height:36px;background:#130a0a927;border:0.5px solid #2a1515;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#777;margin-top:4px">📷 placeholder</div>';
   });
 
   // Random tags
@@ -2332,7 +2332,7 @@ function renderSessionReports(){
   if(!reports.length){el.textContent='No reports yet.';return;}
   const gradeColor={A:'#6abf6a',B:'#6abf6a',C:'#c4a020',D:'#c06060',F:'#c06060'};
   el.innerHTML=reports.slice(0,20).map(r=>`
-    <div style="background:#0d1525927;border:0.5px solid #1e2d45;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+    <div style="background:#130a0a927;border:0.5px solid #2a1515;border-radius:8px;padding:12px 14px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:13px;color:#aaa">${r.date}</span>
         <div style="display:flex;align-items:center;gap:12px">
@@ -2412,7 +2412,7 @@ function renderBestDayBias(f){
   if(!hasData){el.textContent='No data';return;}
   el.innerHTML='<div style="margin-bottom:10px">'
     +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#777;margin-bottom:4px">Best day</div>'
-    +'<div style="font-size:16px;font-weight:500;color:#3b82f6">'+bestDay+'</div>'
+    +'<div style="font-size:16px;font-weight:500;color:#ef4444">'+bestDay+'</div>'
     +'<div style="font-size:13px;color:#888">'+days.map(d=>'<span style="margin-right:8px;color:'+(dayPnl[d]>=0?'#6abf6a':'#c06060')+'">'+d+' '+(dayPnl[d]>=0?'+$':'-$')+Math.abs(dayPnl[d]).toFixed(0)+'</span>').join('')+'</div>'
     +'</div>'
     +'<div>'
@@ -2486,7 +2486,7 @@ function renderHeatmap(f){
     html+='<tr><td style="padding:4px 8px;color:#aaa;white-space:nowrap">'+draw+'</td>';
     rrOptions.forEach(rr=>{
       const d=grid[draw.trim()+'|'+rr.trim()];
-      if(!d){html+='<td style="padding:4px 8px;text-align:center;color:#1e2d45;background:#070d1a">—</td>';return;}
+      if(!d){html+='<td style="padding:4px 8px;text-align:center;color:#2a1515;background:#0d0d0d">—</td>';return;}
       const wr=Math.round(d.win/d.total*100);
       const bg=wr>=70?'rgba(58,110,58,0.5)':wr>=50?'rgba(58,110,58,0.25)':wr>=30?'rgba(110,90,0,0.25)':'rgba(110,42,42,0.35)';
       const col=wr>=70?'#6abf6a':wr>=50?'#9fd89f':wr>=30?'#c4a020':'#c06060';
@@ -2550,7 +2550,7 @@ function renderMonthlyChart(f){
   monthlyChartInstance=new Chart(canvas,{
     type:'bar',
     data:{labels:months,datasets:[{data:vals,backgroundColor:colors,borderColor:borders,borderWidth:1,borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return(c.raw>=0?'+$':'-$')+Math.abs(c.raw).toFixed(2);}}}},scales:{x:{ticks:{color:'#888',font:{size:13}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#1e2d45'}},y:{ticks:{color:'#888',font:{size:13},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#1e2d45'}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return(c.raw>=0?'+$':'-$')+Math.abs(c.raw).toFixed(2);}}}},scales:{x:{ticks:{color:'#888',font:{size:13}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#2a1515'}},y:{ticks:{color:'#888',font:{size:13},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'#2a1515'}}}}
   });
 }
 
@@ -2599,7 +2599,7 @@ function renderPayouts(){
   if(!list.length){el.textContent='No payouts logged yet.';return;}
   const total=list.reduce((s,p)=>s+p.amount,0);
   el.innerHTML=list.map(p=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#aaa">'+p.date+'</span><span style="font-size:13px;font-weight:500;color:#6abf6a">+$'+p.amount.toLocaleString()+'</span></div>').join('')
-    +'<div style="border-top:0.5px solid #1e2d45;margin-top:8px;padding-top:8px" class="flex-between"><span style="font-size:13px;color:#777">Total paid out</span><span style="font-size:13px;font-weight:500;color:#3b82f6">$'+total.toLocaleString()+'</span></div>';
+    +'<div style="border-top:0.5px solid #2a1515;margin-top:8px;padding-top:8px" class="flex-between"><span style="font-size:13px;color:#777">Total paid out</span><span style="font-size:13px;font-weight:500;color:#ef4444">$'+total.toLocaleString()+'</span></div>';
   // Update MLL floor in prop tracker based on payouts
   renderProp&&renderProp();
 }
@@ -2634,10 +2634,10 @@ function renderTradeDuration(f){
   const avgWinDur=winDurs.length?Math.round(winDurs.reduce((s,t)=>{const[eh,em]=t.entryTime.split(':').map(Number);const[xh,xm]=t.exitTime.split(':').map(Number);return s+(xh*60+xm)-(eh*60+em);},0)/winDurs.length):null;
   const avgLossDur=lossDurs.length?Math.round(lossDurs.reduce((s,t)=>{const[eh,em]=t.entryTime.split(':').map(Number);const[xh,xm]=t.exitTime.split(':').map(Number);return s+(xh*60+xm)-(eh*60+em);},0)/lossDurs.length):null;
   el.innerHTML='<div class="grid-2" style="gap:8px">'
-    +'<div><div style="font-size:13px;color:#777;margin-bottom:2px">Avg duration</div><div style="font-size:18px;font-weight:500;color:#3b82f6">'+avg+'m</div></div>'
+    +'<div><div style="font-size:13px;color:#777;margin-bottom:2px">Avg duration</div><div style="font-size:18px;font-weight:500;color:#ef4444">'+avg+'m</div></div>'
     +'<div><div style="font-size:13px;color:#777;margin-bottom:2px">Range</div><div style="font-size:13px;color:#aaa">'+min+'m — '+max+'m</div></div>'
     +'</div>'
-    +'<div style="margin-top:10px;border-top:0.5px solid #1e2d45;padding-top:10px;display:flex;gap:20px">'
+    +'<div style="margin-top:10px;border-top:0.5px solid #2a1515;padding-top:10px;display:flex;gap:20px">'
     +(avgWinDur?'<span style="font-size:13px;color:#6abf6a">Avg win: '+avgWinDur+'m</span>':'')
     +(avgLossDur?'<span style="font-size:13px;color:#c06060">Avg loss: '+avgLossDur+'m</span>':'')
     +'</div>';
@@ -2672,7 +2672,7 @@ function renderBestRR(f){
     html+='</div>';
   }
   if(wr10!==null||wr20!==null){
-    html+='<div style="border-top:0.5px solid #1e2d45;padding-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#777;margin-bottom:6px">Rolling win rate</div>';
+    html+='<div style="border-top:0.5px solid #2a1515;padding-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#777;margin-bottom:6px">Rolling win rate</div>';
     if(wr10!==null)html+='<div class="flex-between" style="margin-bottom:5px"><span style="font-size:13px;color:#aaa">Last 10 trades</span><span style="font-size:13px;font-weight:500;color:'+(wr10>=50?'#6abf6a':'#c06060')+'">'+wr10+'%</span></div>';
     if(wr20!==null)html+='<div class="flex-between"><span style="font-size:13px;color:#aaa">Last 20 trades</span><span style="font-size:13px;font-weight:500;color:'+(wr20>=50?'#6abf6a':'#c06060')+'">'+wr20+'%</span></div>';
     html+='</div>';
@@ -2782,7 +2782,7 @@ function updateSessionTimer(){
 
   const isWeekend = ny.getDay()===0 || ny.getDay()===6;
 
-  let label='', color='#3b82f6', barPct=0, sub='', display='';
+  let label='', color='#ef4444', barPct=0, sub='', display='';
 
   if(isWeekend || nowSecs >= CLOSE){
     // Weekend or after 11:30 — countdown to next 09:30 NY
@@ -2792,17 +2792,17 @@ function updateSessionTimer(){
     color = '#555';
     barPct = 0;
     sub = '09:30 NY time';
-    if(cardEl){cardEl.style.borderColor='#1e2d45';cardEl.style.background='';}
+    if(cardEl){cardEl.style.borderColor='#2a1515';cardEl.style.background='';}
 
   } else if(nowSecs < OPEN){
     // Before 09:30 — countdown to open
     const secsLeft = OPEN - nowSecs;
     label = 'Until NY open';
     display = _fmt(secsLeft);
-    color = '#3b82f6';
+    color = '#ef4444';
     barPct = Math.max(0, 100 - (secsLeft / (4*3600)) * 100);
     sub = '09:30 AM NY';
-    if(cardEl){cardEl.style.borderColor='#1e2d45';cardEl.style.background='';}
+    if(cardEl){cardEl.style.borderColor='#2a1515';cardEl.style.background='';}
 
   } else if(nowSecs < STOP){
     // 09:30–11:00 — session open, countdown to 11:00
@@ -2857,14 +2857,14 @@ function calcRisk(){
 
   out.innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
-    +'<div style="background:#0d1525927;border:0.5px solid #1e2d45;border-radius:6px;padding:7px 10px">'
+    +'<div style="background:#130a0a927;border:0.5px solid #2a1515;border-radius:6px;padding:7px 10px">'
     +'<div style="font-size:13px;color:#777;margin-bottom:3px">1% risk ($'+risk1pct.toFixed(0)+')</div>'
-    +'<div style="font-size:13px;font-weight:500;color:#3b82f6">'+nq1.toFixed(2)+' NQ</div>'
+    +'<div style="font-size:13px;font-weight:500;color:#ef4444">'+nq1.toFixed(2)+' NQ</div>'
     +'<div style="font-size:13px;color:#888">'+Math.round(mnq1)+' MNQ</div>'
     +'</div>'
-    +'<div style="background:#0d1525927;border:0.5px solid #1e2d45;border-radius:6px;padding:7px 10px">'
+    +'<div style="background:#130a0a927;border:0.5px solid #2a1515;border-radius:6px;padding:7px 10px">'
     +'<div style="font-size:13px;color:#777;margin-bottom:3px">0.5% risk ($'+risk05pct.toFixed(0)+')</div>'
-    +'<div style="font-size:13px;font-weight:500;color:#3b82f6">'+nq05.toFixed(2)+' NQ</div>'
+    +'<div style="font-size:13px;font-weight:500;color:#ef4444">'+nq05.toFixed(2)+' NQ</div>'
     +'<div style="font-size:13px;color:#888">'+Math.round(mnq05)+' MNQ</div>'
     +'</div>'
     +'</div>'
@@ -2900,8 +2900,8 @@ function updateClocks(){
   const [h,m]=uk.split(':').map(Number);
   const mins=h*60+m;
   const inSession=mins>=14*60+30&&mins<16*60+30;
-  ukEl.style.color=inSession?'#6abf6a':'#3b82f6';
-  nyEl.style.color=inSession?'#6abf6a':'#3b82f6';
+  ukEl.style.color=inSession?'#6abf6a':'#ef4444';
+  nyEl.style.color=inSession?'#6abf6a':'#ef4444';
 }
 setInterval(updateClocks,1000);
 updateClocks();
@@ -2985,12 +2985,12 @@ function _lbRender(){
   img.style.opacity='0.3';
   img.src=links[_lbIdx][1];
   dots.innerHTML=links.map((_,i)=>
-    '<div style="width:8px;height:8px;border-radius:50%;cursor:pointer;background:'+(i===_lbIdx?'#3b82f6':'#333')+';transition:background .2s" onclick="lbJump('+i+')"></div>'
+    '<div style="width:8px;height:8px;border-radius:50%;cursor:pointer;background:'+(i===_lbIdx?'#ef4444':'#333')+';transition:background .2s" onclick="lbJump('+i+')"></div>'
   ).join('');
   thumbs.innerHTML=links.map((s,i)=>
     '<div onclick="lbJump('+i+')" style="cursor:pointer;opacity:'+(i===_lbIdx?'1':'0.4')+';transition:opacity .2s">'
-    +'<div style="font-size:13px;color:'+(i===_lbIdx?'#3b82f6':'#555')+';text-align:center;margin-bottom:2px">'+s[0]+'</div>'
-    +'<img src="'+s[1]+'" style="width:64px;height:40px;object-fit:cover;border-radius:5px;border:1.5px solid '+(i===_lbIdx?'#3b82f6':'#1e2d45')+'">'
+    +'<div style="font-size:13px;color:'+(i===_lbIdx?'#ef4444':'#555')+';text-align:center;margin-bottom:2px">'+s[0]+'</div>'
+    +'<img src="'+s[1]+'" style="width:64px;height:40px;object-fit:cover;border-radius:5px;border:1.5px solid '+(i===_lbIdx?'#ef4444':'#2a1515')+'">'
     +'</div>'
   ).join('');
 }
@@ -3175,10 +3175,10 @@ function updateJournalStreak(){
     else break;
   }
   el.style.display='block';
-  if(streak===0){el.textContent='🔥 Start your streak';el.style.borderColor='#1e2d45';el.style.color='#888';return;}
-  if(streak>=30){el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#3b82f6';el.style.color='#3b82f6';}
+  if(streak===0){el.textContent='🔥 Start your streak';el.style.borderColor='#2a1515';el.style.color='#888';return;}
+  if(streak>=30){el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#ef4444';el.style.color='#ef4444';}
   else if(streak>=7){el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#6abf6a';el.style.color='#6abf6a';}
-  else{el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#1e2d45';el.style.color='#aaa';}
+  else{el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#2a1515';el.style.color='#aaa';}
 }
 
 // ── Missed trades ──
@@ -3439,7 +3439,7 @@ function checkPB(trade){
   if(trade.pnl>prevBest&&prevBest>0)launchConfetti();
 }
 function launchConfetti(){
-  const colors=['#3b82f6','#6abf6a','#e0e0e0','#c4a020'];
+  const colors=['#ef4444','#6abf6a','#e0e0e0','#c4a020'];
   for(let i=0;i<80;i++){
     const el=document.createElement('div');
     el.style.cssText='position:fixed;top:-10px;left:'+Math.random()*100+'vw;width:8px;height:8px;background:'+colors[Math.floor(Math.random()*colors.length)]+';border-radius:2px;z-index:99999;pointer-events:none;animation:fall '+(1.5+Math.random()*2)+'s linear forwards';
@@ -3468,7 +3468,7 @@ loadAllData().then(()=>{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
-  <div style="background:#0d1525;border:0.5px solid #1e2d45;border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
+  <div style="background:#130a0a;border:0.5px solid #2a1515;border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
       <div style="font-size:15px;font-weight:500">Edit trade</div>
       <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:#888;font-size:20px;padding:0 4px">×</button>
@@ -3501,11 +3501,11 @@ loadAllData().then(()=>{
     <div style="margin-bottom:12px">
       <label>Discipline</label>
       <div style="display:flex;gap:4px;margin-top:4px" id="e-stars">
-        <span class="star" onclick="eRateStar(1)" style="font-size:20px;cursor:pointer;color:#1e2d45;line-height:1">★</span>
-        <span class="star" onclick="eRateStar(2)" style="font-size:20px;cursor:pointer;color:#1e2d45;line-height:1">★</span>
-        <span class="star" onclick="eRateStar(3)" style="font-size:20px;cursor:pointer;color:#1e2d45;line-height:1">★</span>
-        <span class="star" onclick="eRateStar(4)" style="font-size:20px;cursor:pointer;color:#1e2d45;line-height:1">★</span>
-        <span class="star" onclick="eRateStar(5)" style="font-size:20px;cursor:pointer;color:#1e2d45;line-height:1">★</span>
+        <span class="star" onclick="eRateStar(1)" style="font-size:20px;cursor:pointer;color:#2a1515;line-height:1">★</span>
+        <span class="star" onclick="eRateStar(2)" style="font-size:20px;cursor:pointer;color:#2a1515;line-height:1">★</span>
+        <span class="star" onclick="eRateStar(3)" style="font-size:20px;cursor:pointer;color:#2a1515;line-height:1">★</span>
+        <span class="star" onclick="eRateStar(4)" style="font-size:20px;cursor:pointer;color:#2a1515;line-height:1">★</span>
+        <span class="star" onclick="eRateStar(5)" style="font-size:20px;cursor:pointer;color:#2a1515;line-height:1">★</span>
       </div>
     </div>
 
@@ -3522,15 +3522,15 @@ loadAllData().then(()=>{
     </div>
     <div style="margin-bottom:12px">
       <label>What happened?</label>
-      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #1e2d45;border-radius:8px;background:#0d1525927;color:#dce8f8;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #2a1515;border-radius:8px;background:#130a0a927;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="margin-bottom:16px">
       <label>What to improve?</label>
-      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1e2d45;border-radius:8px;background:#0d1525927;color:#dce8f8;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #2a1515;border-radius:8px;background:#130a0a927;color:#e0e0e0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1e2d45;border-radius:8px;cursor:pointer;font-size:13px;background:#0d1525927;color:#dce8f8;font-family:inherit">Cancel</button>
-      <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#070d1a;font-family:inherit;font-weight:500">Save changes</button>
+      <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #2a1515;border-radius:8px;cursor:pointer;font-size:13px;background:#130a0a927;color:#e0e0e0;font-family:inherit">Cancel</button>
+      <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#0d0d0d;font-family:inherit;font-weight:500">Save changes</button>
     </div>
   </div>
 </div>
@@ -3542,7 +3542,7 @@ loadAllData().then(()=>{
     <div style="font-size:22px;font-weight:500;color:#6abf6a;margin-bottom:8px">Profit target hit!</div>
     <div style="font-size:14px;color:#aaa;margin-bottom:6px" id="popup-passed-name"></div>
     <div style="font-size:13px;color:#888;margin-bottom:24px">You've reached your profit target. Time to request your payout and get funded. Keep the same discipline on the funded account.</div>
-    <button onclick="document.getElementById('popup-passed').style.display='none'" style="padding:10px 28px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#dce8f8;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Let's go 🚀</button>
+    <button onclick="document.getElementById('popup-passed').style.display='none'" style="padding:10px 28px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#e0e0e0;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Let's go 🚀</button>
   </div>
 </div>
 
@@ -3552,15 +3552,15 @@ loadAllData().then(()=>{
     <div style="font-size:22px;font-weight:500;color:#c06060;margin-bottom:8px">Account blown</div>
     <div style="font-size:14px;color:#aaa;margin-bottom:6px" id="popup-blown-name"></div>
     <div style="font-size:13px;color:#888;margin-bottom:24px">You've hit the max drawdown limit. Review your mistakes, tighten up the model, and come back stronger. Every blown account is a lesson.</div>
-    <button onclick="document.getElementById('popup-blown').style.display='none'" style="padding:10px 28px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#dce8f8;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Back to the drawing board</button>
+    <button onclick="document.getElementById('popup-blown').style.display='none'" style="padding:10px 28px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#e0e0e0;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Back to the drawing board</button>
   </div>
 </div>
 
 <!-- Calendar day popup -->
 <div id="cal-day-popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
-  <div style="background:#0d1525;border:0.5px solid #1e2d45;border-radius:14px;max-width:560px;width:100%;padding:1.5rem">
+  <div style="background:#130a0a;border:0.5px solid #2a1515;border-radius:14px;max-width:560px;width:100%;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:500;color:#3b82f6" id="cal-popup-date"></div>
+      <div style="font-size:16px;font-weight:500;color:#ef4444" id="cal-popup-date"></div>
       <button onclick="document.getElementById('cal-day-popup').style.display='none'" style="border:none;background:none;cursor:pointer;color:#888;font-size:20px">×</button>
     </div>
     <div id="cal-popup-body"></div>
@@ -3568,7 +3568,7 @@ loadAllData().then(()=>{
 </div>
 
 <div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,13,13,0.95);z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:16px">
-  <div style="width:36px;height:36px;border:3px solid #1e2d45;border-top-color:#3b82f6;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+  <div style="width:36px;height:36px;border:3px solid #2a1515;border-top-color:#ef4444;border-radius:50%;animation:spin 0.8s linear infinite"></div>
   <div style="font-size:13px;color:#888">Loading your journal...</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
@@ -3581,17 +3581,17 @@ loadAllData().then(()=>{
     <div style="display:flex;gap:8px;align-items:center" id="lb-thumbs"></div>
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:13px;color:#888" id="lb-zoom-label">100%</span>
-      <button onclick="lbResetZoom()" style="border:0.5px solid #1e2d45;background:#0d1525927;cursor:pointer;color:#888;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
+      <button onclick="lbResetZoom()" style="border:0.5px solid #2a1515;background:#130a0a927;cursor:pointer;color:#888;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
       <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:#888;font-size:26px;line-height:1;padding:2px 6px">×</button>
     </div>
   </div>
   <!-- Main image area -->
   <div style="display:flex;align-items:center;gap:0;flex:1;min-height:0;position:relative">
-    <button onclick="lbNav(-1)" id="lb-prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1e2d45;background:rgba(20,20,20,0.85);cursor:pointer;color:#dce8f8;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0d1525d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8249;</button>
+    <button onclick="lbNav(-1)" id="lb-prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #2a1515;background:rgba(20,20,20,0.85);cursor:pointer;color:#e0e0e0;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#130a0ad30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8249;</button>
     <div id="lb-img-wrap" style="flex:1;height:100%;overflow:hidden;position:relative;cursor:grab">
       <img id="lb-main-img" src="" style="position:absolute;transform-origin:0 0;user-select:none;pointer-events:none;display:block;border-radius:6px">
     </div>
-    <button onclick="lbNav(1)" id="lb-next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1e2d45;background:rgba(20,20,20,0.85);cursor:pointer;color:#dce8f8;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0d1525d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8250;</button>
+    <button onclick="lbNav(1)" id="lb-next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #2a1515;background:rgba(20,20,20,0.85);cursor:pointer;color:#e0e0e0;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#130a0ad30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8250;</button>
   </div>
   <!-- Bottom dots -->
   <div style="display:flex;gap:8px;justify-content:center;padding:10px 0;flex-shrink:0" id="lb-dots"></div>
