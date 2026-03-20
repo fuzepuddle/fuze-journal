@@ -3613,31 +3613,23 @@ function updateJournalStreak(){
   // Sort dates descending
   const sorted=[...allDates].sort((a,b)=>b.localeCompare(a));
   // Calculate current streak — consecutive trading days (skip weekends)
-  const today=new Date();
-  today.setHours(12,0,0,0);
+  // Use UK date to avoid timezone issues
+  const _ukToday=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/London'}));
+  const todayStr=_ukToday.getFullYear()+'-'+String(_ukToday.getMonth()+1).padStart(2,'0')+'-'+String(_ukToday.getDate()).padStart(2,'0');
   let streak=0;
-  let check=new Date(today);
-  // If no trade today, start checking from yesterday
-  const todayStr=today.toISOString().split('T')[0];
+  // Start from today, or last weekday if no trade today
+  let checkDate=new Date(_ukToday);
   if(!allDates.has(todayStr)){
-    check.setDate(check.getDate()-1);
-    // Skip back over weekend
-    while(check.getDay()===0||check.getDay()===6) check.setDate(check.getDate()-1);
+    checkDate.setDate(checkDate.getDate()-1);
+    while(checkDate.getDay()===0||checkDate.getDay()===6) checkDate.setDate(checkDate.getDate()-1);
   }
-  // Walk back counting consecutive days with trades
   let safety=0;
   while(safety<200){
     safety++;
-    const dow=check.getDay();
-    // Skip weekends
-    if(dow===0||dow===6){check.setDate(check.getDate()-1);continue;}
-    const dateStr=check.toISOString().split('T')[0];
-    if(allDates.has(dateStr)){
-      streak++;
-      check.setDate(check.getDate()-1);
-    } else {
-      break;
-    }
+    if(checkDate.getDay()===0||checkDate.getDay()===6){checkDate.setDate(checkDate.getDate()-1);continue;}
+    const ds=checkDate.getFullYear()+'-'+String(checkDate.getMonth()+1).padStart(2,'0')+'-'+String(checkDate.getDate()).padStart(2,'0');
+    if(allDates.has(ds)){streak++;checkDate.setDate(checkDate.getDate()-1);}
+    else break;
   }
   el.style.display='block';
   if(streak===0){el.textContent='🔥 Start your streak';el.style.borderColor='#2a2a2a';el.style.color='#888';return;}
