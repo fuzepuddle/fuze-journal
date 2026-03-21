@@ -2702,7 +2702,12 @@ function randomizeTrade(){
   document.querySelectorAll('.check-item input[type=checkbox]').forEach(b=>{b.checked=true;});
   if(rOutcome==='loss'){const checkboxes=[...document.querySelectorAll('.check-item input[type=checkbox]')];const failIdx=Math.floor(Math.random()*(checkboxes.length-2))+2;checkboxes[failIdx].checked=false;}
   updateChecks();
+  // Show placeholder thumbnails without uploading
   window._pendingSSFiles={};
+  ['1m','5m','15m','1h','4h'].forEach(tf=>{
+    const prev=document.getElementById('f-ss-'+tf+'-prev');
+    if(prev)prev.innerHTML='<div style="width:120px;height:75px;background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin-top:4px"><span style="font-size:18px">📷</span><span style="font-size:11px;color:#555">'+tf.toUpperCase()+' placeholder</span></div>';
+  });
   const narratives=['Price swept '+draw+', displaced '+direction.toLowerCase()+' on 15M. Clean 5M FVG left behind. Slow retrace to midpoint, V-shape recovery. 1M BOS confirmed toward draw.','Clean NY open. '+bias+' bias confirmed on 1H. Displacement into '+draw+' with strong momentum. FVG tapped perfectly, entered on 1M close.','London left '+draw+' untapped. NY session opened with displacement toward it. Retrace was corrective, entered on 1M BOS close.'];
   document.getElementById('f-narrative').value=narratives[Math.floor(Math.random()*narratives.length)];
   const mainMistake=randMistakes.length?randMistakes[0]:null;
