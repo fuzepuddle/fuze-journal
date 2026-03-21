@@ -1316,7 +1316,7 @@ function showTab(t){
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
   if(t==='playbook')loadPlaybook();
-  if(t==='session'){document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];renderSessionReports();}
+  if(t==='session'){const _srD=document.getElementById('sr-date');if(_srD)_srD.value=new Date().toISOString().split('T')[0];renderSessionReports&&renderSessionReports();}
 }
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
