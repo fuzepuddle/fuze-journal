@@ -677,7 +677,7 @@
       <thead>
         <tr>
           <th>Date</th><th>Instr.</th><th>Bias</th><th>Dir</th>
-          <th>Draw</th><th>RR plan</th><th>RR got</th><th>P&amp;L</th><th>Risk</th>
+          <th>Draw</th><th>RR got</th><th>P&amp;L</th><th>Risk</th>
           <th>Outcome</th><th>Disc.</th><th></th>
         </tr>
       </thead>
@@ -1020,7 +1020,7 @@ let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
 let trades=[];let mode='live';let discRating=0;let outcome='';let monthlyGoals={};
 let weeklyNotes={};
-let propSettings={};let selectedMistakes=[];let propPassedShown=false;let propBlownShown=false;
+let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
   {cat:'Session / Timing',items:['Outside NY window','Entered after 16:00 UK','Didn\'t close at 16:30','Took second trade in session']},
@@ -1141,6 +1141,8 @@ function showTab(t){
   if(t==='weekly')renderWeekly();
   if(t==='playbook')loadPlaybook();
   if(t==='presession')loadPresession();
+  // Close any open popups on tab switch
+  const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
@@ -2364,7 +2366,6 @@ function switchProfile(p, btn){
   propSettings=allPropSettings[currentProfile]||{};
   weeklyNotes=allWeeklyNotes[currentProfile]||{};
   missedTrades=allMissedTrades[currentProfile]||[];
-  propPassedShown=false;propBlownShown=false;
   // Destroy all chart instances so they redraw cleanly
   if(equityChartInstance){equityChartInstance.destroy();equityChartInstance=null;}
   if(dailyChartInstance){dailyChartInstance.destroy();dailyChartInstance=null;}
@@ -2574,7 +2575,6 @@ loadAllData().then(()=>{
       <div><label>HTF draw</label><select id="e-draw"><option value="">—</option><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Midnight Open</option><option>EQH</option><option>EQL</option><option>Breaker High</option><option>Breaker Low</option><option>1H FVG</option><option>4H FVG</option><option>Daily FVG</option><option>Breakaway Gap</option><option>5M FVG</option><option>15M FVG</option><option>Data H/L</option><option>NWOG</option><option>NDOG</option><option>OTE Zone</option></select></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>RR planned</label><select id="e-rr"><option value="">—</option><option>1:1</option><option>1:1.25</option><option>1:1.5</option><option>1:1.75</option><option>1:2</option></select></div>
       <div><label>RR achieved</label><select id="e-actual-rr"><option value="">—</option><option>1:1</option><option>1:1.25</option><option>1:1.5</option><option>1:1.75</option><option>1:2</option><option>Partials</option><option>0 (BE)</option><option>-1R (full loss)</option></select></div>
       <div><label>Outcome</label><select id="e-outcome"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
     </div>
@@ -2618,27 +2618,6 @@ loadAllData().then(()=>{
       <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;font-family:inherit">Cancel</button>
       <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#0a0f0a;font-family:inherit;font-weight:500">Save changes</button>
     </div>
-  </div>
-</div>
-
-<!-- Prop firm popups -->
-<div id="popup-passed" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#0f1f0f;border:1px solid #3a6e3a;border-radius:16px;padding:2.5rem;max-width:440px;width:90%;text-align:center">
-    <div style="font-size:48px;margin-bottom:12px">🏆</div>
-    <div style="font-size:22px;font-weight:500;color:#6abf6a;margin-bottom:8px">Profit target hit!</div>
-    <div style="font-size:14px;color:#e0e0e0;margin-bottom:6px" id="popup-passed-name"></div>
-    <div style="font-size:13px;color:#aaa;margin-bottom:24px">You've reached your profit target. Time to request your payout and get funded. Keep the same discipline on the funded account.</div>
-    <button onclick="document.getElementById('popup-passed').style.display='none'" style="padding:10px 28px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Let's go 🚀</button>
-  </div>
-</div>
-
-<div id="popup-blown" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#1f0f0f;border:1px solid #6e2a2a;border-radius:16px;padding:2.5rem;max-width:440px;width:90%;text-align:center">
-    <div style="font-size:48px;margin-bottom:12px">📉</div>
-    <div style="font-size:22px;font-weight:500;color:#c06060;margin-bottom:8px">Account blown</div>
-    <div style="font-size:14px;color:#e0e0e0;margin-bottom:6px" id="popup-blown-name"></div>
-    <div style="font-size:13px;color:#aaa;margin-bottom:24px">You've hit the max drawdown limit. Review your mistakes, tighten up the model, and come back stronger. Every blown account is a lesson.</div>
-    <button onclick="document.getElementById('popup-blown').style.display='none'" style="padding:10px 28px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Back to the drawing board</button>
   </div>
 </div>
 
