@@ -1155,13 +1155,35 @@ async function loadAllData(){
     if(missed_d&&typeof missed_d==='object')allMissedTrades=missed_d;
     if(goals_d&&typeof goals_d==='object')monthlyGoals=goals_d;
     if(playbook_d&&typeof playbook_d==='object')playbookData=playbook_d;
-    if(sessions_d&&typeof sessions_d==='object')sessionReports=sessions_d;
     if(payouts_d&&typeof payouts_d==='object')payouts=payouts_d;
     const ps_d=await supaGet('ict_presession').catch(()=>null);
     if(ps_d&&typeof ps_d==='object')presessionData=ps_d;
     const nn_d=await supaGet('ict_nonneg').catch(()=>null);
     if(nn_d&&typeof nn_d==='object')psNonNeg=nn_d;
   }catch(e){console.error('Load error',e);}
+  // Fallback: if Supabase blocked (file:// origin), read from localStorage
+  try{
+    if(!allTrades||!Object.values(allTrades).some(a=>a.length)){
+      const lt=localStorage.getItem('ict_profiles');
+      if(lt)allTrades=JSON.parse(lt);
+    }
+    if(!allPropSettings||!Object.keys(allPropSettings).some(k=>Object.keys(allPropSettings[k]||{}).length)){
+      const lp=localStorage.getItem('ict_prop_profiles');
+      if(lp)allPropSettings=JSON.parse(lp);
+    }
+    if(!allWeeklyNotes||!Object.keys(allWeeklyNotes).some(k=>Object.keys(allWeeklyNotes[k]||{}).length)){
+      const lw=localStorage.getItem('ict_weekly_profiles');
+      if(lw)allWeeklyNotes=JSON.parse(lw);
+    }
+    if(!allMissedTrades||!Object.values(allMissedTrades).some(a=>a.length)){
+      const lm=localStorage.getItem('ict_missed_profiles');
+      if(lm)allMissedTrades=JSON.parse(lm);
+    }
+    if(!monthlyGoals||!Object.keys(monthlyGoals).length){
+      const lg=localStorage.getItem('ict_goals');
+      if(lg)monthlyGoals=JSON.parse(lg);
+    }
+  }catch(e){console.error('localStorage fallback error',e);}
   applyLoadedData();
   applyProfileUI();
   if(loadingEl)loadingEl.style.display='none';
@@ -2213,64 +2235,6 @@ async function loadPlaybook(){
 }
 function savePlaybook(){}
 
-// ── Session report card ──
-let sessionReports={};
-let srRatings={patience:0,discipline:0,execution:0,psychology:0};
-
-function saveSessionReportsStore(){try{localStorage.setItem('ict_session_reports',JSON.stringify(sessionReports));}catch(e){}supaSet('ict_session_reports',sessionReports);}
-function srRate(key,n){
-  srRatings[key]=n;
-  document.querySelectorAll('#sr-'+key+'-stars .star').forEach((s,i)=>s.classList.toggle('lit',i<n));
-}
-function saveSessionReport(){
-  const date=document.getElementById('sr-date').value;
-  const grade=document.getElementById('sr-grade').value;
-  if(!date||!grade){alert('Add date and grade');return;}
-  if(!sessionReports[currentProfile])sessionReports[currentProfile]=[];
-  sessionReports[currentProfile].unshift({
-    id:Date.now(),date,grade,
-    patience:srRatings.patience,discipline:srRatings.discipline,
-    execution:srRatings.execution,psychology:srRatings.psychology,
-    well:document.getElementById('sr-well').value,
-    fix:document.getElementById('sr-fix').value,
-  });
-  saveSessionReportsStore();
-  ['sr-date','sr-grade','sr-well','sr-fix'].forEach(id=>document.getElementById(id).value='');
-  srRatings={patience:0,discipline:0,execution:0,psychology:0};
-  renderSessionReports();
-  alert('Report saved ✓');
-}
-function delSessionReport(id){
-  if(!confirm('Delete this report?'))return;
-  sessionReports[currentProfile]=(sessionReports[currentProfile]||[]).filter(r=>r.id!==id);
-  saveSessionReportsStore();
-  renderSessionReports();
-}
-function renderSessionReports(){
-  const el=document.getElementById('sr-list');
-  if(!el)return;
-  const reports=(sessionReports[currentProfile]||[]);
-  if(!reports.length){el.textContent='No reports yet.';return;}
-  const gradeColor={A:'#6abf6a',B:'#6abf6a',C:'#c4a020',D:'#c06060',F:'#c06060'};
-  el.innerHTML=reports.slice(0,20).map(r=>`
-    <div style="background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:13px;color:#e0e0e0">${r.date}</span>
-        <div style="display:flex;align-items:center;gap:12px">
-          <span style="font-size:20px;font-weight:500;color:${gradeColor[r.grade]||'#888'}">${r.grade||'—'}</span>
-          <button onclick="delSessionReport(${r.id})" style="border:none;background:none;cursor:pointer;color:#999;font-size:18px;line-height:1;padding:0 2px" title="Delete">×</button>
-        </div>
-      </div>
-      <div style="display:flex;gap:16px;font-size:13px;color:#aaa;margin-bottom:8px">
-        <span>Patience ${'★'.repeat(r.patience||0)}</span>
-        <span>Discipline ${'★'.repeat(r.discipline||0)}</span>
-        <span>Execution ${'★'.repeat(r.execution||0)}</span>
-        <span>Psychology ${'★'.repeat(r.psychology||0)}</span>
-      </div>
-      ${r.well?`<div style="font-size:13px;color:#aaa;margin-bottom:4px">✓ ${r.well}</div>`:''}
-      ${r.fix?`<div style="font-size:13px;color:#c06060">→ ${r.fix}</div>`:''}
-    </div>`).join('');
-}
 
 // ── Export to CSV ──
 function exportCSV(){
@@ -3280,7 +3244,6 @@ function switchProfile(p, btn){
   propPassedShown=false;propBlownShown=false;
   // Destroy all chart instances so they redraw cleanly
   if(equityChartInstance){equityChartInstance.destroy();equityChartInstance=null;}
-  srRatings={patience:0,discipline:0,execution:0,psychology:0};
   if(dailyChartInstance){dailyChartInstance.destroy();dailyChartInstance=null;}
   if(window._outChart){window._outChart.destroy();window._outChart=null;}
   if(monthlyChartInstance){monthlyChartInstance.destroy();monthlyChartInstance=null;}
