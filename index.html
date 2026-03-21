@@ -1474,6 +1474,8 @@ function openEdit(id){
   document.getElementById('e-ss-4h').value=t.ss4h||'';
   document.getElementById('e-narrative').value=t.narrative||'';
   document.getElementById('e-improve').value=t.improve||'';
+  const eMom=document.getElementById('e-momentum');if(eMom)eMom.value=t.momentum||'';
+  const eSim=document.getElementById('e-similar');if(eSim)eSim.value=t.similar||'';
   eDiscRating=t.discRating||0;
   document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#10b981':'#1a2e1e';});
   const esSec=document.getElementById('e-ss-section');
@@ -1523,6 +1525,8 @@ function saveEdit(){
     tags:[],
     narrative:document.getElementById('e-narrative').value,
     improve:document.getElementById('e-improve').value,
+    momentum:(document.getElementById('e-momentum')||{}).value||'',
+    similar:(document.getElementById('e-similar')||{}).value||'',
   };
   save();closeEdit();renderJournal();
 }
@@ -2787,9 +2791,13 @@ loadAllData().then(()=>{
       <label>What happened?</label>
       <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
-    <div style="margin-bottom:16px">
+    <div style="margin-bottom:12px">
       <label>What to improve?</label>
       <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive</option><option>Strong but slowing</option><option>Slowing</option><option>Grinding</option><option>Stalled</option></select></div>
+      <div><label>Similar past trade</label><input type="text" id="e-similar" placeholder="e.g. 2025-03-14 — same draw"></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;font-family:inherit">Cancel</button>
