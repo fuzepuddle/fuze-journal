@@ -1120,6 +1120,68 @@ function loadPropSettings(){
   if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
   if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
 }
+function renderProp(){
+  const tracker=document.getElementById('prop-tracker');
+  const empty=document.getElementById('prop-empty');
+  if(!propSettings.target){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
+  if(tracker)tracker.style.display='block';
+  if(empty)empty.style.display='none';
+  document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop firm tracker';
+  document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+propSettings.account.toLocaleString()+' account':'';
+  const liveTrades=trades.filter(t=>t.mode==='live'&&t.pnl!=null);
+  const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
+  const account=propSettings.account||0;
+  const maxddAmt=propSettings.maxdd||0;
+  const mllFloor=account-maxddAmt;
+  const currentBalance=account+totalPnl;
+  const bufferRemaining=parseFloat((currentBalance-mllFloor).toFixed(2));
+  const today=new Date().toISOString().split('T')[0];
+  const todayPnl=liveTrades.filter(t=>t.date===today).reduce((s,t)=>s+(t.pnl||0),0);
+  const todayLoss=todayPnl<0?Math.abs(todayPnl):0;
+  const liveWins=liveTrades.filter(t=>t.pnl>0).length;
+  const liveLosses=liveTrades.filter(t=>t.pnl<0).length;
+  // Profit bar
+  const profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
+  document.getElementById('prop-profit-lbl').textContent='$'+totalPnl.toLocaleString()+' / $'+propSettings.target.toLocaleString();
+  document.getElementById('prop-profit-bar').style.width=profitPct+'%';
+  document.getElementById('prop-profit-bar').style.background=totalPnl<0?'#6e2a2a':profitPct>80?'#5aae5a':'#3a6e3a';
+  document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
+  // Drawdown bar
+  const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
+  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString()+' · MLL floor: $'+mllFloor.toLocaleString();
+  document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
+  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt?'#c06060':'#3a6e3a';
+  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining before MLL floor';
+  // DDL bar
+  const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
+  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / -$'+propSettings.ddl.toLocaleString()+' limit';
+  document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
+  document.getElementById('prop-ddl-bar').style.background=todayPnl<0?'#c06060':'#3a6e3a';
+  // Metric cards
+  const tpEl=document.getElementById('prop-total-pnl');
+  tpEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();
+  tpEl.style.color=totalPnl>=0?'#6abf6a':'#c06060';
+  const tdEl=document.getElementById('prop-today-pnl');
+  tdEl.textContent=(todayPnl>=0?'+$':'-$')+Math.abs(todayPnl).toLocaleString();
+  tdEl.style.color=todayPnl>=0?'#6abf6a':'#c06060';
+  document.getElementById('prop-wins').textContent=liveWins;
+  document.getElementById('prop-losses').textContent=liveLosses;
+  // Warnings
+  const warn=document.getElementById('prop-warn');
+  const danger=document.getElementById('prop-danger');
+  if(warn)warn.style.display='none';
+  if(danger)danger.style.display='none';
+  if(ddlPct>=100&&danger){danger.style.display='block';danger.textContent='⚠ Daily loss limit hit — stop trading for today.';}
+  else if(ddlPct>=80&&warn){warn.style.display='block';warn.textContent='⚠ Approaching daily loss limit ('+Math.round(ddlPct)+'% used) — be careful.';}
+  if(bufferRemaining<=0&&danger){danger.style.display='block';danger.textContent='⛔ MLL floor hit — account blown.';}
+  else if(bufferRemaining<maxddAmt*0.2&&ddlPct<100&&warn){warn.style.display='block';warn.textContent='⚠ Less than 20% of drawdown buffer remaining — protect the account.';}
+  // Glow
+  if(tracker){
+    tracker.classList.remove('glow-green','glow-red');
+    if(totalPnl>=propSettings.target*0.8&&propSettings.target>0)tracker.classList.add('glow-green');
+    else if(bufferRemaining<maxddAmt*0.3&&maxddAmt>0)tracker.classList.add('glow-red');
+  }
+}
 
 // ── Build mistakes list ──
 function buildMistakes(){
