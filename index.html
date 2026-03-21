@@ -774,8 +774,8 @@
     </div>
   </div>
 
-  <!-- Row 5: Draw success + Best day/bias + Top mistakes + Trade duration -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+  <!-- Row 5: Draw success + Best day/bias + Top mistakes -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Draw success rate</div>
       <div id="s-draws" style="font-size:13px;color:#aaa">No data</div>
@@ -784,12 +784,22 @@
       <div class="section-label">Best day &amp; bias</div>
       <div id="s-bestday" style="font-size:13px;color:#aaa">No data</div>
     </div>
-
     <div class="card">
       <div class="section-label">Top mistakes</div>
       <div id="s-mistakes" style="font-size:13px;color:#aaa">No data</div>
     </div>
+  </div>
 
+  <!-- Row 6: Long vs Short + Discipline vs outcome -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="card">
+      <div class="section-label">Long vs Short</div>
+      <div id="s-longshort" style="font-size:13px;color:#aaa">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Discipline vs outcome</div>
+      <div id="s-disc-corr" style="font-size:13px;color:#aaa">No data</div>
+    </div>
   </div>
 
 
@@ -1603,6 +1613,8 @@ function renderStats(){
   renderBestDayBias(f);
   renderMonthlyChart(f);
   renderMomentumStats(f);
+  renderLongShort(f);
+  renderDiscCorr(f);
   const tiltEl=document.getElementById('s-tilt');
   if(tiltEl){
     const recent=f.filter(t=>t.pnl!=null).sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id)).slice(0,5);
@@ -1796,7 +1808,66 @@ function renderBestDayBias(f){
 
 // ── RR × Draw heatmap ──
 
-// ── AI trade analysis ──
+// ── Long vs Short win rate ──
+function renderLongShort(f){
+  const el=document.getElementById('s-longshort');if(!el)return;
+  const dirs={Long:{win:0,loss:0,be:0,pnl:0},Short:{win:0,loss:0,be:0,pnl:0}};
+  f.filter(t=>t.direction&&t.outcome).forEach(t=>{
+    const d=dirs[t.direction];if(!d)return;
+    d[t.outcome]=(d[t.outcome]||0)+1;
+    if(t.pnl!=null)d.pnl+=t.pnl;
+  });
+  const rows=Object.entries(dirs).filter(([,d])=>d.win+d.loss+d.be>0);
+  if(!rows.length){el.textContent='No data';return;}
+  el.innerHTML=rows.map(([dir,d])=>{
+    const total=d.win+d.loss+d.be;
+    const wr=total?Math.round(d.win/total*100):0;
+    const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
+    const pnlCol=d.pnl>=0?'#6abf6a':'#c06060';
+    return'<div style="margin-bottom:12px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+      +'<span style="font-size:14px;font-weight:500;color:#e0e0e0">'+dir+'</span>'
+      +'<span style="font-size:14px;font-weight:500;color:'+col+'">'+wr+'% WR</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;margin-bottom:4px">'
+      +'<span style="font-size:13px;color:#6abf6a">'+d.win+' W</span>'
+      +'<span style="font-size:13px;color:#c06060">'+d.loss+' L</span>'
+      +'<span style="font-size:13px;color:#c4a020">'+d.be+' BE</span>'
+      +'<span style="font-size:13px;color:#888">· '+total+' trades</span>'
+      +'</div>'
+      +'<div style="font-size:13px;color:'+pnlCol+'">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(2)+'</div>'
+      +'</div>';
+  }).join('<div style="border-top:0.5px solid #1a2e1e;margin-bottom:12px"></div>');
+}
+
+// ── Discipline vs outcome correlation ──
+function renderDiscCorr(f){
+  const el=document.getElementById('s-disc-corr');if(!el)return;
+  const withDisc=f.filter(t=>t.discRating&&t.outcome);
+  if(!withDisc.length){el.textContent='No data';return;}
+  // Group by discipline rating
+  const groups={};
+  withDisc.forEach(t=>{
+    const r=t.discRating;
+    if(!groups[r])groups[r]={win:0,loss:0,be:0,total:0,pnl:0};
+    groups[r].total++;
+    groups[r][t.outcome]=(groups[r][t.outcome]||0)+1;
+    if(t.pnl!=null)groups[r].pnl+=t.pnl;
+  });
+  const sorted=Object.entries(groups).sort((a,b)=>Number(b[0])-Number(a[0]));
+  el.innerHTML=sorted.map(([stars,d])=>{
+    const wr=Math.round(d.win/d.total*100);
+    const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
+    const pnlCol=d.pnl>=0?'#6abf6a':'#c06060';
+    return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+      +'<span style="font-size:13px;color:#10b981">'+'★'.repeat(Number(stars))+'</span>'
+      +'<div style="display:flex;gap:12px;align-items:center">'
+      +'<span style="font-size:13px;color:#888">'+d.total+' trades</span>'
+      +'<span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'% WR</span>'
+      +'<span style="font-size:13px;color:'+pnlCol+'">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</span>'
+      +'</div></div>';
+  }).join('');
+}
 async function analyzeTradeAI(){
   const btn=document.getElementById('ai-analyze-btn');
   const out=document.getElementById('ai-analysis-out');
