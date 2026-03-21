@@ -1316,6 +1316,7 @@ async function saveTrade(){
     const saveBtn = document.querySelector('[onclick="saveTrade()"]');
     if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Uploading...';}
     for(const tf of tfs){
+      if(files[tf]==='placeholder') continue;
       if(statusEl) statusEl.textContent = 'Uploading '+tf.toUpperCase()+'...';
       const url = await uploadToCloudinary(files[tf], tradeId, tf);
       if(url) ssUrls[tf] = url;
@@ -2705,6 +2706,7 @@ function randomizeTrade(){
   // Show placeholder thumbnails without uploading
   window._pendingSSFiles={};
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
+    window._pendingSSFiles[tf]='placeholder';
     const prev=document.getElementById('f-ss-'+tf+'-prev');
     if(prev)prev.innerHTML='<div style="width:120px;height:75px;background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin-top:4px"><span style="font-size:18px">📷</span><span style="font-size:11px;color:#555">'+tf.toUpperCase()+' placeholder</span></div>';
   });
