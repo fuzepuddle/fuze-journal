@@ -643,6 +643,7 @@
 
   <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:1rem">
     <button class="btn" onclick="clearForm()">Clear</button>
+    <button class="btn" onclick="randomizeTrade()">Randomize</button>
     <button class="btn btn-primary" onclick="saveTrade()">Save →</button>
   </div>
 </div>
@@ -1362,7 +1363,7 @@ function renderJournal(){
     const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#aaa;line-height:1.6">'+t.similar+'</div></div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
-    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #1a2e1e;background:#0f1a12927;cursor:pointer;color:#e0e0e0;font-size:13px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
+    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#0d0d0d;cursor:pointer;color:#666;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
     const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="13" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+ssHtml+prethoughtHtml+momentumHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
@@ -2965,10 +2966,71 @@ document.addEventListener('keydown',function(e){
   const activeTab=document.querySelector('.tab.active');
   const tab=activeTab?activeTab.getAttribute('data-tab'):'';
   if(e.key==='s'&&tab==='log'){e.preventDefault();saveTrade();}
+  if(e.key==='r'&&tab==='log'){e.preventDefault();randomizeTrade();}
 });
 
 
 // ── Confetti on new PB ──
+function randomizeTrade(){
+  const direction=Math.random()>0.5?'Long':'Short';
+  const bullishDraws=['PDH','CDH','Asia High','London High','EQH','1H FVG'];
+  const bearishDraws=['PDL','CDL','Asia Low','London Low','EQL','1H FVG'];
+  const draws=direction==='Long'?bullishDraws:bearishDraws;
+  const draw=draws[Math.floor(Math.random()*draws.length)];
+  const bias=direction==='Long'?'Bullish':'Bearish';
+  const outcomes=['win','loss','be'];
+  const outcomeWeights=[0.55,0.30,0.15];
+  let r=Math.random(),cumW=0,rOutcome='win';
+  for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
+  const rrActualOptions=rOutcome==='win'?['1:1','1:1.25','1:1.5','1:1.75','1:2']:rOutcome==='loss'?['-1R (full loss)']:['0 (BE)'];
+  const rrActual=rrActualOptions[Math.floor(Math.random()*rrActualOptions.length)];
+  const pnlBase=Math.floor(Math.random()*400)+50;
+  const pnl=rOutcome==='win'?pnlBase:rOutcome==='loss'?-pnlBase:0;
+  const emotions=['Neutral ✓','Patient / waiting','FOMO / chasing','Neutral ✓','Neutral ✓'];
+  const risks=['1','0.5'];
+  let rDate;
+  do{const daysAgo=Math.floor(Math.random()*90);rDate=new Date();rDate.setDate(rDate.getDate()-daysAgo);}
+  while(rDate.getDay()===0||rDate.getDay()===6);
+  document.getElementById('f-date').value=rDate.toISOString().split('T')[0];
+  const entryTimes=['14:30','14:45','15:00','15:15','15:30','15:45'];
+  const entryT=entryTimes[Math.floor(Math.random()*entryTimes.length)];
+  document.getElementById('f-entry-time').value=entryT;
+  const exitEl=document.getElementById('f-exit-time');
+  if(exitEl){const [h,m]=entryT.split(':').map(Number);const exitMins=h*60+m+Math.floor(Math.random()*45)+5;exitEl.value=Math.floor(exitMins/60)+':'+String(exitMins%60).padStart(2,'0');}
+  document.getElementById('f-bias').value=bias;
+  document.getElementById('f-direction').value=direction;
+  document.getElementById('f-draw').value=draw;
+  document.getElementById('f-actual-rr').value=rrActual;
+  document.getElementById('f-pnl').value=pnl;
+  document.getElementById('f-risk').value=risks[Math.floor(Math.random()*risks.length)];
+  document.getElementById('f-emotion').value=emotions[Math.floor(Math.random()*emotions.length)];
+  outcome=rOutcome;
+  document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
+  const outcomeMap={win:0,loss:1,be:2};
+  document.querySelectorAll('.outcome-btn')[outcomeMap[rOutcome]].classList.add('active-'+rOutcome);
+  const disc=rOutcome==='win'?Math.floor(Math.random()*3)+3:Math.floor(Math.random()*3)+1;
+  discRating=disc;
+  document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<disc));
+  const lossMistakePools={displacement:['Displacement weaker than retrace','No clear BOS on displacement'],retrace:['Violent retrace ignored','Retrace stronger than displacement'],confirmation:['No 1M close confirmation','BOS not driving toward draw'],management:['Didn\'t move to BE','Stop too tight — wicked out'],psychology:['Forced the setup','FOMO — chased price']};
+  const beMistakePools={management:['Didn\'t move to BE','Closed early — TP not reached'],draw:['Unclear draw on liquidity','Multiple competing draws']};
+  let randMistakes=[];
+  if(rOutcome==='loss'){const pools=Object.values(lossMistakePools);const numMistakes=Math.floor(Math.random()*2)+1;for(let i=0;i<numMistakes;i++){const pool=pools[Math.floor(Math.random()*pools.length)];const pick=pool[Math.floor(Math.random()*pool.length)];if(!randMistakes.includes(pick))randMistakes.push(pick);}}
+  else if(rOutcome==='be'){const pools=Object.values(beMistakePools);const pool=pools[Math.floor(Math.random()*pools.length)];randMistakes=[pool[Math.floor(Math.random()*pool.length)]];}
+  selectedMistakes=randMistakes;
+  document.querySelectorAll('.mistake-item').forEach(el=>{const label=el.querySelector('span');if(label&&randMistakes.includes(label.textContent)){el.classList.add('selected');}else{el.classList.remove('selected');}});
+  document.getElementById('mistake-count').textContent=randMistakes.length?'('+randMistakes.length+' selected)':'';
+  document.querySelectorAll('.check-item input[type=checkbox]').forEach(b=>{b.checked=true;});
+  if(rOutcome==='loss'){const checkboxes=[...document.querySelectorAll('.check-item input[type=checkbox]')];const failIdx=Math.floor(Math.random()*(checkboxes.length-2))+2;checkboxes[failIdx].checked=false;}
+  updateChecks();
+  if(!window._pendingSSFiles)window._pendingSSFiles={};
+  const _pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,2,0,0,0,144,119,83,222,0,0,0,12,73,68,65,84,8,215,99,248,207,192,0,0,0,2,0,1,226,33,188,51,0,0,0,0,73,69,78,68,174,66,96,130]);
+  ['1m','5m','15m','1h','4h'].forEach(tf=>{const blob=new Blob([_pngBytes],{type:'image/png'});const file=new File([blob],'placeholder.png',{type:'image/png'});window._pendingSSFiles[tf]=file;const prev=document.getElementById('f-ss-'+tf+'-prev');if(prev)prev.innerHTML='<div style="width:120px;height:36px;background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#999;margin-top:4px">📷 placeholder</div>';});
+  const narratives=['Price swept '+draw+', displaced '+direction.toLowerCase()+' on 15M. Clean 5M FVG left behind. Slow retrace to midpoint, V-shape recovery. 1M BOS confirmed toward draw.','Clean NY open. '+bias+' bias confirmed on 1H. Displacement into '+draw+' with strong momentum. FVG tapped perfectly, entered on 1M close.','London left '+draw+' untapped. NY session opened with displacement toward it. Retrace was corrective, entered on 1M BOS close.'];
+  document.getElementById('f-narrative').value=narratives[Math.floor(Math.random()*narratives.length)];
+  const mainMistake=randMistakes.length?randMistakes[0]:null;
+  document.getElementById('f-improve').value=rOutcome==='loss'&&mainMistake?'Key issue: '+mainMistake+'. Review this step before next entry.':rOutcome==='be'&&mainMistake?'Partial execution: '+mainMistake+'.':'Execution was clean. Continue following model.';
+}
+
 function checkPB(trade){
   if(!trade.pnl||trade.pnl<=0)return;
   const prev=trades.filter(t=>t.id!==trade.id&&t.pnl>0);
