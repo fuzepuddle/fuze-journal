@@ -7,7 +7,7 @@
 <title>fuze's ICT Trading Journal ✍️</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#f0f0f0;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid #10b981;box-shadow:0 -1px 20px rgba(57,255,20,0.25)}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#ffffff;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid #10b981;box-shadow:0 -1px 20px rgba(57,255,20,0.25)}
   h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:#10b981;text-shadow:0 0 16px rgba(57,255,20,0.25)}
   .profile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:0.5px solid #1a2e1e}
   .profile-btns{display:flex;gap:6px}
@@ -16,14 +16,14 @@
   .tabs{display:flex;border-bottom:0.5px solid #1a2e1e;margin-bottom:1.5rem;background:linear-gradient(180deg,#0a0f0a 0%,transparent 100%)}
   .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:#aaa;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
   .tab.active{color:#10b981;border-bottom-color:#10b981;font-weight:500;text-shadow:0 0 12px rgba(57,255,20,0.25)}
-  .tab:hover:not(.active){color:#e8e8e8}
+  .tab:hover:not(.active){color:#f5f5f5}
   .page{display:none}.page.active{display:block}
   label{font-size:13px;color:#aaa;display:block;margin-bottom:4px}
-  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#f0f0f0;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
+  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#ffffff;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
   input[type=date],input[type=time]{background:#0c1510;color-scheme:dark}
   input:focus,select:focus,textarea:focus{border-color:#aaa}
   textarea{resize:vertical;min-height:64px;line-height:1.5}
-  select option{background:#0c1510;color:#f0f0f0}
+  select option{background:#0c1510;color:#ffffff}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   .grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -32,7 +32,7 @@
   .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#999;margin-bottom:10px}
   .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#aaa;margin-bottom:1px;user-select:none}
   .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#10b981}
-  .check-group-title{font-size:13px;font-weight:500;color:#c8c8c8;margin:10px 0 4px}
+  .check-group-title{font-size:13px;font-weight:500;color:#e0e0e0;margin:10px 0 4px}
   .gate{border:0.5px solid #1a2e1e;border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:#0f1a12927;color:#aaa}
   .gate.pass{border-color:#3a6e3a;background:#0f1f0f;color:#6abf6a}
   .gate.fail{border-color:#6e2a2a;background:#1f0f0f;color:#c06060}
@@ -41,11 +41,11 @@
   .outcome-btn.active-win{background:#0a2010;border:2px solid #10b981;color:#10b981;box-shadow:0 0 14px rgba(16,185,129,0.35);font-weight:700;text-shadow:0 0 4px rgba(16,185,129,0.4)}
   .outcome-btn.active-loss{background:#1f0808;border:2px solid #ef4444;color:#ef4444;box-shadow:0 0 14px rgba(239,68,68,0.35);font-weight:700;text-shadow:0 0 4px rgba(239,68,68,0.4)}
   .outcome-btn.active-be{background:#1a1400;border:2px solid #f59e0b;color:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,0.35);font-weight:700;text-shadow:0 0 4px rgba(245,158,11,0.4)}
-  .outcome-btn.active-skip{background:#1e1e1e;border-color:#aaa;color:#c8c8c8}
+  .outcome-btn.active-skip{background:#1e1e1e;border-color:#aaa;color:#e0e0e0}
   .stars{display:flex;gap:4px;margin-top:4px}
   .star{font-size:20px;cursor:pointer;color:#1a2e1e;transition:color .15s;line-height:1}
   .star.lit{color:#10b981}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#f0f0f0;transition:all .2s;font-family:inherit}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;transition:all .2s;font-family:inherit}
   .btn:hover{background:#0f1a12d30}
   .btn-primary{background:#10b981;color:#0a0f0a;border-color:#10b981;font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
   .btn-primary:hover{background:#059669}
@@ -53,7 +53,7 @@
   .log-wrap{overflow-x:auto;border:0.5px solid #1a2e1e;border-radius:12px}
   .log-table{width:100%;border-collapse:collapse;font-size:13px}
   .log-table th{text-align:left;font-weight:500;color:#999;padding:8px 10px;border-bottom:0.5px solid #1a2e1e;white-space:nowrap;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
-  .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:#e8e8e8}
+  .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:#f5f5f5}
   .log-table tr:last-child td{border-bottom:none}
   .log-table tr:hover td{background:#0c1510}
   .no-trades{text-align:center;padding:40px;color:#999;font-size:13px}
@@ -62,7 +62,7 @@
   .amber-bg{background:#1f1800;color:#c4a020;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #4a3a00}
   .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:#aaa;border:0.5px solid #1a2e1e}
   .metric-card{background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:8px;padding:12px 14px;text-align:center}
-  .metric-val{font-size:22px;font-weight:500;line-height:1.2;margin-top:4px;color:#f0f0f0}
+  .metric-val{font-size:22px;font-weight:500;line-height:1.2;margin-top:4px;color:#ffffff}
   .metric-lbl{font-size:13px;color:#999}
   .flex-between{display:flex;align-items:center;justify-content:space-between}
   .mode-toggle{display:flex;gap:8px;margin-bottom:16px}
@@ -78,7 +78,7 @@
   .mistakes-list{border:0.5px solid #1a2e1e;border-radius:8px;background:#0f1a12927;max-height:260px;overflow-y:auto;padding:4px}
   .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#aaa;user-select:none;transition:background .15s}
   .mistake-item:hover{background:#0f1a12d30}
-  .mistake-item.selected{background:#1f1f0f;color:#f0f0f0;border-left:2px solid #c4a020;padding-left:6px}
+  .mistake-item.selected{background:#1f1f0f;color:#ffffff;border-left:2px solid #c4a020;padding-left:6px}
   .mistake-item input[type=checkbox]{display:none}
   .mistake-dot{width:8px;height:8px;border-radius:50%;border:1px solid #444;flex-shrink:0;transition:all .15s}
   .mistake-item.selected .mistake-dot{background:#c4a020;border-color:#c4a020}
@@ -87,7 +87,7 @@
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
   .profile-hide{display:none !important}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-  .collapsible-header:hover .collapse-icon{color:#f0f0f0}
+  .collapsible-header:hover .collapse-icon{color:#ffffff}
   .collapse-icon{font-size:13px;color:#999;transition:transform .2s;display:inline-block}
   .collapse-icon.collapsed{transform:rotate(-90deg)}
   .collapsible-body{transition:none}
@@ -107,12 +107,12 @@
   .cal-title{font-size:22px;font-weight:500}
   .cal-sub{font-size:13px;color:#aaa;margin-top:2px}
   .cal-nav{display:flex;gap:8px;align-items:center}
-  .cal-nav button{padding:5px 12px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0c1510;color:#f0f0f0;cursor:pointer;font-size:13px;font-family:inherit}
+  .cal-nav button{padding:5px 12px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0c1510;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:#0f1a12d30}
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
   .cal-grid th{font-size:13px;font-weight:500;color:#aaa;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
-  .cal-grid td{vertical-align:top;border:0.5px solid #1a2e1e;width:14.28%;height:110px;padding:10px 12px;font-size:13px;color:#999;background:#0f1a12;cursor:default}
+  .cal-grid td{vertical-align:top;border:0.5px solid #1a2e1e;width:14.28%;height:110px;padding:10px 12px;font-size:13px;color:#999;background:#0a0a0a;cursor:default}
   .cal-grid td.weekend{background:#0a0a0a}
   .cal-grid td.has-trade{background:#0f1a12;cursor:pointer}
   .cal-grid td.has-trade:hover{background:#0f1a12927}
@@ -348,7 +348,7 @@
       gap:12px;
       padding:13px 14px;
       font-size:14px;
-      color:#f0f0f0;
+      color:#ffffff;
       border-radius:8px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
@@ -743,7 +743,7 @@
     <div class="card">
       <div class="section-label">Avg win / loss</div>
       <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;margin-top:6px">
-        <div id="s-wl-ratio" style="font-size:26px;font-weight:500;color:#f0f0f0">—</div>
+        <div id="s-wl-ratio" style="font-size:26px;font-weight:500;color:#ffffff">—</div>
         <div style="font-size:13px;color:#aaa">ratio</div>
       </div>
       <div style="position:relative;height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px">
@@ -755,8 +755,8 @@
         <span id="s-avg-loss" style="font-size:13px;font-weight:500;color:#c06060">—</span>
       </div>
       <div style="border-top:0.5px solid #1a2e1e;padding-top:12px">
-        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:#c8c8c8">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#6abf6a">—</span></div>
-        <div class="flex-between"><span style="font-size:13px;color:#c8c8c8">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#c06060">—</span></div>
+        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:#e0e0e0">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#6abf6a">—</span></div>
+        <div class="flex-between"><span style="font-size:13px;color:#e0e0e0">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#c06060">—</span></div>
       </div>
     </div>
     <div class="card">
@@ -880,7 +880,7 @@
     <div class="flex-between" style="margin-top:10px">
       <button id="ai-analyze-btn" onclick="analyzeTradeAI()" class="btn btn-primary">Analyse with AI</button>
     </div>
-    <div id="ai-analysis-out" style="margin-top:14px;font-size:13px;color:#e8e8e8;line-height:1.7;white-space:pre-wrap"></div>
+    <div id="ai-analysis-out" style="margin-top:14px;font-size:13px;color:#f5f5f5;line-height:1.7;white-space:pre-wrap"></div>
   </div>
 </div>
 
@@ -1068,7 +1068,7 @@
     <!-- Profit progress -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:#c8c8c8">Profit target</span>
+        <span style="font-size:13px;color:#e0e0e0">Profit target</span>
         <span style="font-size:13px;font-weight:500" id="prop-profit-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-profit-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -1078,7 +1078,7 @@
     <!-- Drawdown -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:#c8c8c8">Max drawdown used</span>
+        <span style="font-size:13px;color:#e0e0e0">Max drawdown used</span>
         <span style="font-size:13px;font-weight:500" id="prop-dd-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-dd-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -1088,7 +1088,7 @@
     <!-- Daily loss -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:#c8c8c8">Today's P&amp;L vs daily limit</span>
+        <span style="font-size:13px;color:#e0e0e0">Today's P&amp;L vs daily limit</span>
         <span style="font-size:13px;font-weight:500" id="prop-ddl-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-ddl-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -1492,12 +1492,12 @@ function renderJournal(){
           +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:0.5px solid #1a2e1e;cursor:pointer;background:#0f1a12" '
           +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'#1a2e1e\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:#c8c8c8;font-size:13px;text-decoration:none;border:0.5px solid #1a2e1e;padding:4px 10px;border-radius:6px;background:#0f1a12927">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#e0e0e0;font-size:13px;text-decoration:none;border:0.5px solid #1a2e1e;padding:4px 10px;border-radius:6px;background:#0f1a12927">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#e8e8e8;line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#e8e8e8;line-height:1.6">'+t.improve+'</div></div>':'';
-    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #1a2e1e;background:#0f1a12927;cursor:pointer;color:#c8c8c8;font-size:13px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
+    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
+    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #1a2e1e;background:#0f1a12927;cursor:pointer;color:#e0e0e0;font-size:13px;padding:4px 10px;border-radius:6px;margin-top:12px">Edit trade</button>';
     const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="13" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+ssHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
@@ -1546,19 +1546,19 @@ function renderStats(){
         data:{labels:['Wins','Losses','Break-even'],datasets:[{data:[c.win,c.loss,c.be],backgroundColor:['rgba(58,110,58,0.85)','rgba(110,42,42,0.85)','rgba(110,90,0,0.85)'],borderColor:['#6abf6a','#c06060','#c4a020'],borderWidth:1.5,hoverOffset:4}]},
         options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+' ('+Math.round(ctx.raw/total*100)+'%)';}}}}},
       });
-      if(outLegend)outLegend.innerHTML=[['Wins',c.win,'#6abf6a','rgba(58,110,58,0.85)'],['Losses',c.loss,'#c06060','rgba(110,42,42,0.85)'],['BE',c.be,'#c4a020','rgba(110,90,0,0.85)']].map(([l,v,tc,bg])=>'<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:'+bg+';border:1px solid '+tc+'"></span><span style="color:#c8c8c8">'+l+' <strong style="color:'+tc+'">'+v+'</strong></span></span>').join('');
+      if(outLegend)outLegend.innerHTML=[['Wins',c.win,'#6abf6a','rgba(58,110,58,0.85)'],['Losses',c.loss,'#c06060','rgba(110,42,42,0.85)'],['BE',c.be,'#c4a020','rgba(110,90,0,0.85)']].map(([l,v,tc,bg])=>'<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:'+bg+';border:1px solid '+tc+'"></span><span style="color:#e0e0e0">'+l+' <strong style="color:'+tc+'">'+v+'</strong></span></span>').join('');
     }
   }
   const em={};f.forEach(t=>{if(t.emotion)em[t.emotion]=(em[t.emotion]||0)+1;});
   const eEl=document.getElementById('s-emotions');
   const es=Object.entries(em).sort((a,b)=>b[1]-a[1]);
   if(!es.length){eEl.textContent='No data';}
-  else eEl.innerHTML=es.map(function(e){return'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#c8c8c8">'+e[0]+'</span><span class="badge">'+e[1]+'</span></div>';}).join('');
+  else eEl.innerHTML=es.map(function(e){return'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#e0e0e0">'+e[0]+'</span><span class="badge">'+e[1]+'</span></div>';}).join('');
   const mm={};f.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
   const mEl=document.getElementById('s-mistakes');
   const sorted=Object.entries(mm).sort((a,b)=>b[1]-a[1]);
   if(!sorted.length){mEl.innerHTML='None recorded';mEl.style.color='#6abf6a';}
-  else mEl.innerHTML=sorted.slice(0,6).map(function(e){return'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#c8c8c8">'+e[0]+'</span><span class="red-bg">'+e[1]+'x</span></div>';}).join('');
+  else mEl.innerHTML=sorted.slice(0,6).map(function(e){return'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#e0e0e0">'+e[0]+'</span><span class="red-bg">'+e[1]+'x</span></div>';}).join('');
   // Avg win/loss bar
   const winTrades=active.filter(t=>t.pnl!=null&&t.pnl>0);
   const lossTrades=active.filter(t=>t.pnl!=null&&t.pnl<0);
@@ -1818,7 +1818,7 @@ function renderProp(){
           const barW=Math.min(100,pct)+'%';
           return'<div style="margin-bottom:10px">'
             +'<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
-            +'<span style="font-size:13px;color:#c8c8c8">'+t.date+' · '+t.draw+'</span>'
+            +'<span style="font-size:13px;color:#e0e0e0">'+t.date+' · '+t.draw+'</span>'
             +'<span style="font-size:13px;font-weight:500;color:'+(over?'#c06060':'#6abf6a')+'">$'+t.pnl.toFixed(2)+' ('+pct+'% of target)'+(over?' ⚠':'')+'</span>'
             +'</div>'
             +'<div style="height:6px;background:#1e1e1e;border-radius:3px;overflow:hidden">'
@@ -1926,7 +1926,7 @@ function renderCalendar(){
     for(let col=0;col<7;col++){
       if((row===0&&col<firstDay)||day>daysInMonth){
         const isWeekendEmpty=col===0||col===6;
-        html+='<td'+(isWeekendEmpty?' class="weekend"':'')+' style="'+(isWeekendEmpty?'background:#0a0a0a;':'')+'">'+'</td>';
+        html+='<td'+(isWeekendEmpty?' class="weekend"':'')+' style="background:#0a0a0a;">'+'</td>';
       } else {
         const d=dayMap[day];
         const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===day;
@@ -1940,7 +1940,7 @@ function renderCalendar(){
         if(d){
           const pColor=d.pnl>0?'#6abf6a':d.pnl<0?'#c06060':'#c4a020';
           const bg=d.pnl>0?'rgba(58,110,58,0.2)':d.pnl<0&&d.losses>d.bes?'rgba(110,42,42,0.2)':'rgba(110,90,0,0.1)';
-          inner='<div class="cal-day" style="color:#c8c8c8">'+day+'</div><div class="cal-pnl" style="color:'+pColor+'">'+(d.pnl>=0?'+':'')+d.pnl.toFixed(2)+'</div><div class="cal-count">'+d.trades+' trade'+(d.trades>1?'s':'')+'</div>';
+          inner='<div class="cal-day" style="color:#e0e0e0">'+day+'</div><div class="cal-pnl" style="color:'+pColor+'">'+(d.pnl>=0?'+':'')+d.pnl.toFixed(2)+'</div><div class="cal-count">'+d.trades+' trade'+(d.trades>1?'s':'')+'</div>';
           html+='<td class="'+cls+'" style="background:'+bg+'"  onclick="calDayClick('+day+')">'+inner+'</td>';
           weekPnl+=d.pnl;weekTrades+=d.trades;
         } else {
@@ -1978,8 +1978,8 @@ function calDayClick(day){
         +'style="width:90px;height:56px;object-fit:cover;border-radius:6px;border:0.5px solid #1a2e1e;cursor:pointer;background:#0f1a12">'
         +'</div>').join('')
       +'</div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#e8e8e8;line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#e8e8e8;line-height:1.6">'+t.improve+'</div></div>':'';
+    const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
     return'<div style="background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:10px;padding:14px;margin-bottom:10px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
       +'<div style="display:flex;gap:8px;align-items:center">'+(badges[t.outcome]||'')+'<span style="font-size:13px;color:#aaa">'+(t.instrument||'')+'</span><span style="font-size:13px;color:#aaa">'+(t.direction||'')+'</span></div>'
@@ -2346,7 +2346,7 @@ function renderSessionReports(){
   el.innerHTML=reports.slice(0,20).map(r=>`
     <div style="background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:8px;padding:12px 14px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:13px;color:#c8c8c8">${r.date}</span>
+        <span style="font-size:13px;color:#e0e0e0">${r.date}</span>
         <div style="display:flex;align-items:center;gap:12px">
           <span style="font-size:20px;font-weight:500;color:${gradeColor[r.grade]||'#888'}">${r.grade||'—'}</span>
           <button onclick="delSessionReport(${r.id})" style="border:none;background:none;cursor:pointer;color:#999;font-size:18px;line-height:1;padding:0 2px" title="Delete">×</button>
@@ -2398,7 +2398,7 @@ function renderDrawStats(f){
     const wr=Math.round(d.win/d.total*100);
     const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
     return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
-      +'<span style="font-size:13px;color:#c8c8c8">'+draw+'</span>'
+      +'<span style="font-size:13px;color:#e0e0e0">'+draw+'</span>'
       +'<div style="display:flex;align-items:center;gap:8px">'
       +'<span style="font-size:13px;color:#999">'+d.total+' trades</span>'
       +'<span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'%</span>'
@@ -2464,7 +2464,7 @@ function renderGoal(f){
     ?'<div style="height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:'+pct+'%;background:'+barCol+';border-radius:4px;transition:width .4s"></div></div>'
     :'';
   el.innerHTML='<div class="flex-between" style="margin-bottom:6px">'
-    +'<span style="font-size:13px;color:#c8c8c8">'+monthKey+'</span>'
+    +'<span style="font-size:13px;color:#e0e0e0">'+monthKey+'</span>'
     +'<span style="font-size:13px;font-weight:500;color:'+col+'">'+(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2)+' / $'+goal.toLocaleString()+'</span>'
     +'</div>'
     +barHtml
@@ -2495,7 +2495,7 @@ function renderHeatmap(f){
   rrOptions.forEach(rr=>{html+='<th style="padding:4px 8px;color:#aaa;text-align:center;min-width:'+cellW+'px">'+rr+'</th>';});
   html+='</tr>';
   usedDraws.forEach(draw=>{
-    html+='<tr><td style="padding:4px 8px;color:#c8c8c8;white-space:nowrap">'+draw+'</td>';
+    html+='<tr><td style="padding:4px 8px;color:#e0e0e0;white-space:nowrap">'+draw+'</td>';
     rrOptions.forEach(rr=>{
       const d=grid[draw.trim()+'|'+rr.trim()];
       if(!d){html+='<td style="padding:4px 8px;text-align:center;color:#1a2e1e;background:#0a0f0a">—</td>';return;}
@@ -2588,7 +2588,7 @@ function renderTags(f){
   f.forEach(t=>(t.tags||[]).forEach(tag=>{if(tag)tagMap[tag]=(tagMap[tag]||0)+1;}));
   const sorted=Object.entries(tagMap).sort((a,b)=>b[1]-a[1]);
   if(!sorted.length){el.innerHTML='<span style="color:#999;font-size:13px">No tags yet — add tags when logging trades</span>';return;}
-  el.innerHTML=sorted.slice(0,8).map(([k,v])=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#c8c8c8">'+k+'</span><span class="badge">'+v+'</span></div>').join('');
+  el.innerHTML=sorted.slice(0,8).map(([k,v])=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#e0e0e0">'+k+'</span><span class="badge">'+v+'</span></div>').join('');
 }
 
 // ── Payout tracker ──
@@ -2610,7 +2610,7 @@ function renderPayouts(){
   const list=(payouts[currentProfile]||[]).sort((a,b)=>b.date.localeCompare(a.date));
   if(!list.length){el.textContent='No payouts logged yet.';return;}
   const total=list.reduce((s,p)=>s+p.amount,0);
-  el.innerHTML=list.map(p=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#c8c8c8">'+p.date+'</span><span style="font-size:13px;font-weight:500;color:#6abf6a">+$'+p.amount.toLocaleString()+'</span></div>').join('')
+  el.innerHTML=list.map(p=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#e0e0e0">'+p.date+'</span><span style="font-size:13px;font-weight:500;color:#6abf6a">+$'+p.amount.toLocaleString()+'</span></div>').join('')
     +'<div style="border-top:0.5px solid #1a2e1e;margin-top:8px;padding-top:8px" class="flex-between"><span style="font-size:13px;color:#999">Total paid out</span><span style="font-size:13px;font-weight:500;color:#10b981">$'+total.toLocaleString()+'</span></div>';
   // Update MLL floor in prop tracker based on payouts
   renderProp&&renderProp();
@@ -2647,7 +2647,7 @@ function renderTradeDuration(f){
   const avgLossDur=lossDurs.length?Math.round(lossDurs.reduce((s,t)=>{const[eh,em]=t.entryTime.split(':').map(Number);const[xh,xm]=t.exitTime.split(':').map(Number);return s+(xh*60+xm)-(eh*60+em);},0)/lossDurs.length):null;
   el.innerHTML='<div class="grid-2" style="gap:8px">'
     +'<div><div style="font-size:13px;color:#999;margin-bottom:2px">Avg duration</div><div style="font-size:18px;font-weight:500;color:#10b981">'+avg+'m</div></div>'
-    +'<div><div style="font-size:13px;color:#999;margin-bottom:2px">Range</div><div style="font-size:13px;color:#c8c8c8">'+min+'m — '+max+'m</div></div>'
+    +'<div><div style="font-size:13px;color:#999;margin-bottom:2px">Range</div><div style="font-size:13px;color:#e0e0e0">'+min+'m — '+max+'m</div></div>'
     +'</div>'
     +'<div style="margin-top:10px;border-top:0.5px solid #1a2e1e;padding-top:10px;display:flex;gap:20px">'
     +(avgWinDur?'<span style="font-size:13px;color:#6abf6a">Avg win: '+avgWinDur+'m</span>':'')
@@ -2679,14 +2679,14 @@ function renderBestRR(f){
     html+=rrSorted.slice(0,4).map(([rr,d])=>{
       const wr=Math.round(d.win/d.total*100);
       const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
-      return'<div class="flex-between" style="margin-bottom:5px"><span style="font-size:13px;color:#c8c8c8">'+rr+'</span><span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'% ('+d.win+'/'+d.total+')</span></div>';
+      return'<div class="flex-between" style="margin-bottom:5px"><span style="font-size:13px;color:#e0e0e0">'+rr+'</span><span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'% ('+d.win+'/'+d.total+')</span></div>';
     }).join('');
     html+='</div>';
   }
   if(wr10!==null||wr20!==null){
     html+='<div style="border-top:0.5px solid #1a2e1e;padding-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:6px">Rolling win rate</div>';
-    if(wr10!==null)html+='<div class="flex-between" style="margin-bottom:5px"><span style="font-size:13px;color:#c8c8c8">Last 10 trades</span><span style="font-size:13px;font-weight:500;color:'+(wr10>=50?'#6abf6a':'#c06060')+'">'+wr10+'%</span></div>';
-    if(wr20!==null)html+='<div class="flex-between"><span style="font-size:13px;color:#c8c8c8">Last 20 trades</span><span style="font-size:13px;font-weight:500;color:'+(wr20>=50?'#6abf6a':'#c06060')+'">'+wr20+'%</span></div>';
+    if(wr10!==null)html+='<div class="flex-between" style="margin-bottom:5px"><span style="font-size:13px;color:#e0e0e0">Last 10 trades</span><span style="font-size:13px;font-weight:500;color:'+(wr10>=50?'#6abf6a':'#c06060')+'">'+wr10+'%</span></div>';
+    if(wr20!==null)html+='<div class="flex-between"><span style="font-size:13px;color:#e0e0e0">Last 20 trades</span><span style="font-size:13px;font-weight:500;color:'+(wr20>=50?'#6abf6a':'#c06060')+'">'+wr20+'%</span></div>';
     html+='</div>';
   }
   el.innerHTML=html;
@@ -3303,9 +3303,9 @@ function renderStreaks(trades){
   });
   curType=active[active.length-1].outcome;
   const curColor=curType==='win'?'#6abf6a':'#c06060';
-  el.innerHTML='<div class="flex-between" style="margin-bottom:8px"><span style="color:#c8c8c8">Current streak</span><span style="font-weight:500;color:'+curColor+'">'+curStreak+' '+curType+(curStreak>1?'s':'')+'</span></div>'
-    +'<div class="flex-between" style="margin-bottom:8px"><span style="color:#c8c8c8">Longest win streak</span><span style="font-weight:500;color:#6abf6a">'+maxWin+'</span></div>'
-    +'<div class="flex-between"><span style="color:#c8c8c8">Longest loss streak</span><span style="font-weight:500;color:#c06060">'+maxLoss+'</span></div>';
+  el.innerHTML='<div class="flex-between" style="margin-bottom:8px"><span style="color:#e0e0e0">Current streak</span><span style="font-weight:500;color:'+curColor+'">'+curStreak+' '+curType+(curStreak>1?'s':'')+'</span></div>'
+    +'<div class="flex-between" style="margin-bottom:8px"><span style="color:#e0e0e0">Longest win streak</span><span style="font-weight:500;color:#6abf6a">'+maxWin+'</span></div>'
+    +'<div class="flex-between"><span style="color:#e0e0e0">Longest loss streak</span><span style="font-weight:500;color:#c06060">'+maxLoss+'</span></div>';
 }
 
 // ── Time of day performance ──
@@ -3324,7 +3324,7 @@ function renderTimeOfDay(trades){
   el.innerHTML=Object.entries(slots).map(([k,v])=>{
     const avg=v.n?v.pnl/v.n:0;
     const col=avg>0?'#6abf6a':avg<0?'#c06060':'#888';
-    return'<div class="flex-between" style="margin-bottom:8px"><span style="color:#c8c8c8;font-size:13px">'+k+'</span><span style="font-size:13px;color:'+col+'">'+(v.n?v.n+' trades · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0):'No data')+'</span></div>';
+    return'<div class="flex-between" style="margin-bottom:8px"><span style="color:#e0e0e0;font-size:13px">'+k+'</span><span style="font-size:13px;color:'+col+'">'+(v.n?v.n+' trades · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0):'No data')+'</span></div>';
   }).join('');
 }
 
@@ -3547,14 +3547,14 @@ loadAllData().then(()=>{
     </div>
     <div style="margin-bottom:12px">
       <label>What happened?</label>
-      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#f0f0f0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="margin-bottom:16px">
       <label>What to improve?</label>
-      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#f0f0f0;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#f0f0f0;font-family:inherit">Cancel</button>
+      <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;font-family:inherit">Cancel</button>
       <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#0a0f0a;font-family:inherit;font-weight:500">Save changes</button>
     </div>
   </div>
@@ -3565,9 +3565,9 @@ loadAllData().then(()=>{
   <div style="background:#0f1f0f;border:1px solid #3a6e3a;border-radius:16px;padding:2.5rem;max-width:440px;width:90%;text-align:center">
     <div style="font-size:48px;margin-bottom:12px">🏆</div>
     <div style="font-size:22px;font-weight:500;color:#6abf6a;margin-bottom:8px">Profit target hit!</div>
-    <div style="font-size:14px;color:#c8c8c8;margin-bottom:6px" id="popup-passed-name"></div>
+    <div style="font-size:14px;color:#e0e0e0;margin-bottom:6px" id="popup-passed-name"></div>
     <div style="font-size:13px;color:#aaa;margin-bottom:24px">You've reached your profit target. Time to request your payout and get funded. Keep the same discipline on the funded account.</div>
-    <button onclick="document.getElementById('popup-passed').style.display='none'" style="padding:10px 28px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#f0f0f0;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Let's go 🚀</button>
+    <button onclick="document.getElementById('popup-passed').style.display='none'" style="padding:10px 28px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Let's go 🚀</button>
   </div>
 </div>
 
@@ -3575,9 +3575,9 @@ loadAllData().then(()=>{
   <div style="background:#1f0f0f;border:1px solid #6e2a2a;border-radius:16px;padding:2.5rem;max-width:440px;width:90%;text-align:center">
     <div style="font-size:48px;margin-bottom:12px">📉</div>
     <div style="font-size:22px;font-weight:500;color:#c06060;margin-bottom:8px">Account blown</div>
-    <div style="font-size:14px;color:#c8c8c8;margin-bottom:6px" id="popup-blown-name"></div>
+    <div style="font-size:14px;color:#e0e0e0;margin-bottom:6px" id="popup-blown-name"></div>
     <div style="font-size:13px;color:#aaa;margin-bottom:24px">You've hit the max drawdown limit. Review your mistakes, tighten up the model, and come back stronger. Every blown account is a lesson.</div>
-    <button onclick="document.getElementById('popup-blown').style.display='none'" style="padding:10px 28px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#f0f0f0;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Back to the drawing board</button>
+    <button onclick="document.getElementById('popup-blown').style.display='none'" style="padding:10px 28px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:500;font-family:inherit">Back to the drawing board</button>
   </div>
 </div>
 
@@ -3612,11 +3612,11 @@ loadAllData().then(()=>{
   </div>
   <!-- Main image area -->
   <div style="display:flex;align-items:center;gap:0;flex:1;min-height:0;position:relative">
-    <button onclick="lbNav(-1)" id="lb-prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#f0f0f0;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0f1a12d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8249;</button>
+    <button onclick="lbNav(-1)" id="lb-prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#ffffff;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0f1a12d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8249;</button>
     <div id="lb-img-wrap" style="flex:1;height:100%;overflow:hidden;position:relative;cursor:grab">
       <img id="lb-main-img" src="" style="position:absolute;transform-origin:0 0;user-select:none;pointer-events:none;display:block;border-radius:6px">
     </div>
-    <button onclick="lbNav(1)" id="lb-next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#f0f0f0;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0f1a12d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8250;</button>
+    <button onclick="lbNav(1)" id="lb-next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#ffffff;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0f1a12d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8250;</button>
   </div>
   <!-- Bottom dots -->
   <div style="display:flex;gap:8px;justify-content:center;padding:10px 0;flex-shrink:0" id="lb-dots"></div>
