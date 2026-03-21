@@ -1261,7 +1261,7 @@ async function saveTrade(){
   const bias=document.getElementById('f-bias').value;
   const direction=document.getElementById('f-direction').value;
   const draw=document.getElementById('f-draw').value;
-  const rrPlan=document.getElementById('f-rr').value;
+  const rrPlan='';
   const rrActual=document.getElementById('f-actual-rr').value;
   const pnlRaw=document.getElementById('f-pnl').value;
   const risk=document.getElementById('f-risk').value;
@@ -1932,25 +1932,21 @@ function openEdit(id){
   editingId=id;
   document.getElementById('e-date').value=t.date||'';
   document.getElementById('e-mode').value=t.mode||'live';
-  document.getElementById('e-instrument').value=t.instrument||'NQ / MNQ';
   document.getElementById('e-bias').value=t.bias||'';
   document.getElementById('e-direction').value=t.direction||'';
   document.getElementById('e-draw').value=t.draw||'';
-  document.getElementById('e-rr').value=t.rrPlan||'';
   document.getElementById('e-actual-rr').value=t.rrActual||'';
   document.getElementById('e-outcome').value=t.outcome||'';
   document.getElementById('e-pnl').value=t.pnl!=null?t.pnl:'';
   document.getElementById('e-risk').value=t.risk||'';
   document.getElementById('e-entry-time').value=t.entryTime||'';
   if(document.getElementById('e-exit-time'))document.getElementById('e-exit-time').value=t.exitTime||'';
-  document.getElementById('e-session').value=t.session||'';
   document.getElementById('e-emotion').value=t.emotion||'';
   document.getElementById('e-ss-1m').value=t.ss1m||'';
   document.getElementById('e-ss-5m').value=t.ss5m||'';
   document.getElementById('e-ss-15m').value=t.ss15m||'';
   document.getElementById('e-ss-1h').value=t.ss1h||'';
   document.getElementById('e-ss-4h').value=t.ss4h||'';
-  document.getElementById('e-tags').value=(t.tags||[]).join(', ');
   document.getElementById('e-narrative').value=t.narrative||'';
   document.getElementById('e-improve').value=t.improve||'';
   eDiscRating=t.discRating||0;
@@ -1981,18 +1977,18 @@ function saveEdit(){
     ...trades[idx],
     date:document.getElementById('e-date').value,
     mode:document.getElementById('e-mode').value,
-    instrument:document.getElementById('e-instrument').value,
+    instrument:'NQ/MNQ',
     bias:document.getElementById('e-bias').value,
     direction:document.getElementById('e-direction').value,
     draw:document.getElementById('e-draw').value,
-    rrPlan:document.getElementById('e-rr').value,
+    rrPlan:'',
     rrActual:document.getElementById('e-actual-rr').value,
     outcome:document.getElementById('e-outcome').value,
     pnl:pnlRaw!==''?parseFloat(pnlRaw):null,
     risk:document.getElementById('e-risk').value,
     entryTime:document.getElementById('e-entry-time').value,
     exitTime:(document.getElementById('e-exit-time')||{}).value||'',
-    session:document.getElementById('e-session').value,
+    session:'',
     emotion:document.getElementById('e-emotion').value,
     discRating:eDiscRating,
     ss1m:document.getElementById('e-ss-1m').value,
@@ -2000,7 +1996,7 @@ function saveEdit(){
     ss15m:document.getElementById('e-ss-15m').value,
     ss1h:document.getElementById('e-ss-1h').value,
     ss4h:document.getElementById('e-ss-4h').value,
-    tags:(document.getElementById('e-tags').value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean),
+    tags:[],
     narrative:document.getElementById('e-narrative').value,
     improve:document.getElementById('e-improve').value,
   };
@@ -2037,17 +2033,14 @@ function randomizeTrade(){
     rDate=new Date();rDate.setDate(rDate.getDate()-daysAgo);
   } while(rDate.getDay()===0||rDate.getDay()===6);
   document.getElementById('f-date').value=rDate.toISOString().split('T')[0];
-  document.getElementById('f-instrument').value=instruments[Math.floor(Math.random()*instruments.length)];
   const entryTimes=['14:30','14:45','15:00','15:15','15:30','15:45'];
   const entryT=entryTimes[Math.floor(Math.random()*entryTimes.length)];
   document.getElementById('f-entry-time').value=entryT;
   const exitEl=document.getElementById('f-exit-time');
   if(exitEl){const [h,m]=entryT.split(':').map(Number);const exitMins=h*60+m+Math.floor(Math.random()*45)+5;exitEl.value=Math.floor(exitMins/60)+':'+String(exitMins%60).padStart(2,'0');}
-  document.getElementById('f-session').value=sessions[Math.floor(Math.random()*sessions.length)];
   document.getElementById('f-bias').value=bias;
   document.getElementById('f-direction').value=direction;
   document.getElementById('f-draw').value=draw;
-  const rrEl=document.getElementById('f-rr');if(rrEl)rrEl.value=rrPlan;
   document.getElementById('f-actual-rr').value=rrActual;
   document.getElementById('f-pnl').value=pnl;
   document.getElementById('f-risk').value=risks[Math.floor(Math.random()*risks.length)];
@@ -2124,8 +2117,6 @@ function randomizeTrade(){
   const numTags=Math.floor(Math.random()*2)+1;
   const randTags=[];
   for(let i=0;i<numTags;i++){const t=allTags[Math.floor(Math.random()*allTags.length)][0];if(!randTags.includes(t))randTags.push(t);}
-  const tagsEl=document.getElementById('f-tags');
-  if(tagsEl)tagsEl.value=randTags.join(', ');
 
   // Set notes
   const narratives=[
@@ -3358,13 +3349,13 @@ missedTrades=allMissedTrades[currentProfile]||[];
 function saveDraft(){
   const draft={
     date:document.getElementById('f-date').value,
-    instrument:document.getElementById('f-instrument').value,
+    instrument:'NQ/MNQ',
     entryTime:document.getElementById('f-entry-time').value,
-    session:document.getElementById('f-session').value,
+    session:'',
     bias:document.getElementById('f-bias').value,
     direction:document.getElementById('f-direction').value,
     draw:document.getElementById('f-draw').value,
-    rrPlan:document.getElementById('f-rr').value,
+    rrPlan:'',
     rrActual:document.getElementById('f-actual-rr').value,
     pnl:document.getElementById('f-pnl').value,
     risk:document.getElementById('f-risk').value,
@@ -3389,7 +3380,6 @@ function loadDraft(){
       const el=document.getElementById('f-'+k.replace(/([A-Z])/g,'-$1').toLowerCase());
       if(el&&draft[k])el.value=draft[k];
     });
-    document.getElementById('f-rr').value=draft.rrPlan||'';
     document.getElementById('f-actual-rr').value=draft.rrActual||'';
     if(draft.outcome){
       outcome=draft.outcome;
