@@ -1193,6 +1193,7 @@ let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
 let trades=[];let mode='live';let discRating=0;let outcome='';let statsMode='all';
+let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];let propPassedShown=false;let propBlownShown=false;
 
 const MISTAKES=[
@@ -1307,7 +1308,6 @@ function showTab(t){
   document.querySelectorAll('.page').forEach(el=>{if(el.id)el.classList.remove('active');});
   document.querySelectorAll('.tab').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
   const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
-  document.getElementById('page-'+t).classList.add('active');
   if(t==='log'){setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
   if(t==='stats')renderStats();
@@ -1317,6 +1317,7 @@ function showTab(t){
   if(t==='weekly')renderWeekly();
   if(t==='playbook')loadPlaybook();
   if(t==='session'){const _srD=document.getElementById('sr-date');if(_srD)_srD.value=new Date().toISOString().split('T')[0];renderSessionReports&&renderSessionReports();}
+  if(t==='presession')loadPresession();
 }
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
@@ -1441,7 +1442,6 @@ function clearForm(){
     if(prev)prev.innerHTML='';
   });
   window._pendingSSFiles={};
-  pendingSS={};
   document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
@@ -1614,7 +1614,6 @@ function renderEquityChart(allTrades){
   const canvas=document.getElementById('s-equity-chart');
   if(!canvas)return;
   if(equityChartInstance){equityChartInstance.destroy();equityChartInstance=null;}
-  srRatings={patience:0,discipline:0,execution:0,psychology:0};
   if(typeof Chart==='undefined'){setTimeout(()=>renderEquityChart(allTrades),300);return;}
   if(!data.length){
     const ctx=canvas.getContext('2d');
@@ -2266,7 +2265,7 @@ function renderKeyMetrics(f){
   const lwEl=document.getElementById('s-largestwin');
   if(lwEl){lwEl.textContent=largestWin!=null?'+$'+largestWin.toFixed(2):'—';lwEl.style.color='#6abf6a';}
   const llEl=document.getElementById('s-largestloss');
-  if(llEl){lwEl&&(llEl.textContent=largestLoss!=null?'-$'+largestLoss.toFixed(2):'—');llEl.style.color='#c06060';}
+  if(llEl){llEl.textContent=largestLoss!=null?'-$'+largestLoss.toFixed(2):'—';llEl.style.color='#c06060';}
 
   // Tilt meter — 2+ consecutive losses
   const tiltEl=document.getElementById('s-tilt');
@@ -3325,7 +3324,6 @@ function renderMissed(){
 function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();}
 
 // ── Weekly review ──
-let weeklyNotes={};
 let currentWeekOffset=0;
 
 function saveWeeklyStore(){
@@ -3386,7 +3384,7 @@ function renderStreaks(trades){
   const el=document.getElementById('s-streaks');
   const active=trades.filter(t=>t.outcome==='win'||t.outcome==='loss').sort((a,b)=>a.date.localeCompare(b.date)||(a.id-b.id));
   if(!active.length){el.textContent='No data';return;}
-  let curStreak=1,curType=active[0].outcome,maxWin=0,maxLoss=0,tempW=0,tempL=0;
+  let curStreak=1,curType=active[0].outcome,maxWin=active[0].outcome==='win'?1:0,maxLoss=active[0].outcome==='loss'?1:0,tempW=0,tempL=0;
   active.forEach((t,i)=>{
     if(i===0){if(t.outcome==='win')tempW=1;else tempL=1;return;}
     if(t.outcome===active[i-1].outcome){curStreak++;}else{curStreak=1;}
