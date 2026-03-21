@@ -1069,8 +1069,6 @@ function applyLoadedData(){
 }
 
 async function loadAllData(){
-  const loadingEl=document.getElementById('loading-overlay');
-  if(loadingEl)loadingEl.style.display='flex';
   try{
     const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_playbook','ict_session_reports'];
     const results=await Promise.all(keys.map(k=>supaGet(k)));
@@ -1091,7 +1089,6 @@ async function loadAllData(){
     renderJournal&&renderJournal();
   }catch(e){console.error('Init error',e);}
   finally{
-    if(loadingEl)loadingEl.style.display='none';
   }
 }
 function save(){
@@ -2656,11 +2653,9 @@ loadAllData().then(()=>{
   </div>
 </div>
 
-<div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,13,13,0.95);z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:16px">
-  <div style="width:36px;height:36px;border:3px solid #1a2e1e;border-top-color:#10b981;border-radius:50%;animation:spin 0.8s linear infinite"></div>
   <div style="font-size:13px;color:#aaa">Loading your journal...</div>
 </div>
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<style></style>
 
 
 <!-- Screenshot Lightbox -->
