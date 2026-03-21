@@ -1072,9 +1072,9 @@ async function loadAllData(){
   const loadingEl=document.getElementById('loading-overlay');
   if(loadingEl)loadingEl.style.display='flex';
   try{
-    const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_goals','ict_playbook','ict_session_reports'];
+    const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_playbook','ict_session_reports'];
     const results=await Promise.all(keys.map(k=>supaGet(k)));
-    const [trades_d,prop_d,weekly_d,missed_d,goals_d,playbook_d,sessions_d]=results;
+    const [trades_d,prop_d,weekly_d,missed_d,playbook_d,sessions_d]=results;
     if(trades_d&&typeof trades_d==='object')allTrades=trades_d;
     if(prop_d&&typeof prop_d==='object')allPropSettings=prop_d;
     if(weekly_d&&typeof weekly_d==='object')allWeeklyNotes=weekly_d;
@@ -1085,25 +1085,6 @@ async function loadAllData(){
     const nn_d=await supaGet('ict_nonneg').catch(()=>null);
     if(nn_d&&typeof nn_d==='object')psNonNeg=nn_d;
   }catch(e){console.error('Load error',e);}
-  // Fallback: if Supabase blocked (file:// origin), read from localStorage
-  try{
-    if(!allTrades||!Object.values(allTrades).some(a=>a.length)){
-      const lt=localStorage.getItem('ict_profiles');
-      if(lt)allTrades=JSON.parse(lt);
-    }
-    if(!allPropSettings||!Object.keys(allPropSettings).some(k=>Object.keys(allPropSettings[k]||{}).length)){
-      const lp=localStorage.getItem('ict_prop_profiles');
-      if(lp)allPropSettings=JSON.parse(lp);
-    }
-    if(!allWeeklyNotes||!Object.keys(allWeeklyNotes).some(k=>Object.keys(allWeeklyNotes[k]||{}).length)){
-      const lw=localStorage.getItem('ict_weekly_profiles');
-      if(lw)allWeeklyNotes=JSON.parse(lw);
-    }
-    if(!allMissedTrades||!Object.values(allMissedTrades).some(a=>a.length)){
-      const lm=localStorage.getItem('ict_missed_profiles');
-      if(lm)allMissedTrades=JSON.parse(lm);
-    }
-  }catch(e){console.error('localStorage fallback error',e);}
   applyLoadedData();
   applyProfileUI();
   if(loadingEl)loadingEl.style.display='none';
