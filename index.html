@@ -932,10 +932,7 @@
         </select>
       </div>
     </div>
-    <div class="grid-2">
-      <div><label>Consistency rule (%)</label><input type="number" id="p-consistency" placeholder="e.g. 40" min="1" max="100" step="1"></div>
-      <div style="display:flex;align-items:flex-end;padding-bottom:2px"><span style="font-size:13px;color:#999">No single trade can exceed this % of total profit target. Leave blank to disable.</span></div>
-    </div>
+
   </div>
 
   <div class="card" id="prop-tracker" style="display:none">
@@ -1567,7 +1564,6 @@ function loadPropSettings(){
   if(propSettings.maxdd)document.getElementById('p-maxdd').value=propSettings.maxdd;
   if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
   if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
-  if(propSettings.consistency)document.getElementById('p-consistency').value=propSettings.consistency;
 }
 function savePropSettings(){
   propSettings={
@@ -1576,8 +1572,7 @@ function savePropSettings(){
     target:parseFloat(document.getElementById('p-target').value)||0,
     maxdd:parseFloat(document.getElementById('p-maxdd').value)||0,
     ddl:parseFloat(document.getElementById('p-ddl').value)||0,
-    ddtype:document.getElementById('p-ddtype').value,
-    consistency:parseFloat(document.getElementById('p-consistency').value)||40
+    ddtype:document.getElementById('p-ddtype').value
   };
   propPassedShown=false;propBlownShown=false;saveProp();renderProp();
 }
