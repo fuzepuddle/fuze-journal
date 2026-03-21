@@ -1085,10 +1085,14 @@ async function loadAllData(){
     const nn_d=await supaGet('ict_nonneg').catch(()=>null);
     if(nn_d&&typeof nn_d==='object')psNonNeg=nn_d;
   }catch(e){console.error('Load error',e);}
-  applyLoadedData();
-  applyProfileUI();
-  if(loadingEl)loadingEl.style.display='none';
-  renderJournal&&renderJournal();
+  try{
+    applyLoadedData();
+    applyProfileUI();
+    renderJournal&&renderJournal();
+  }catch(e){console.error('Init error',e);}
+  finally{
+    if(loadingEl)loadingEl.style.display='none';
+  }
 }
 function save(){
   allTrades[currentProfile]=trades;
