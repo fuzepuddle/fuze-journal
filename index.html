@@ -1096,6 +1096,22 @@ function save(){
   try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
   supaSet('ict_profiles',allTrades);
 }
+function del(id){
+  const t=trades.find(t=>t.id===id);
+  if(!t)return;
+  const label=t.date+(t.draw?' · '+t.draw:'')+(t.outcome?' · '+t.outcome:'');
+  if(!confirm('Delete trade: '+label+'?\n\nThis cannot be undone.'))return;
+  trades=trades.filter(t=>t.id!==id);
+  save();renderJournal();
+}
+function toggleFav(id,btn){
+  const t=trades.find(t=>t.id===id);
+  if(!t)return;
+  t.favourite=!t.favourite;
+  btn.textContent=t.favourite?'★':'☆';
+  btn.style.color=t.favourite?'#f59e0b':'#999';
+  save();
+}
 function saveProp(){
   allPropSettings[currentProfile]=propSettings;
   try{localStorage.setItem('ict_prop_profiles',JSON.stringify(allPropSettings));}catch(e){}
