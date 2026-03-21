@@ -1101,6 +1101,25 @@ function saveProp(){
   try{localStorage.setItem('ict_prop_profiles',JSON.stringify(allPropSettings));}catch(e){}
   supaSet('ict_prop_profiles',allPropSettings);
 }
+function savePropSettings(){
+  propSettings={
+    name:document.getElementById('p-name').value,
+    account:parseFloat(document.getElementById('p-account').value)||0,
+    target:parseFloat(document.getElementById('p-target').value)||0,
+    maxdd:parseFloat(document.getElementById('p-maxdd').value)||0,
+    ddl:parseFloat(document.getElementById('p-ddl').value)||0,
+    ddtype:document.getElementById('p-ddtype').value,
+  };
+  saveProp();renderProp();
+}
+function loadPropSettings(){
+  if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
+  if(propSettings.account)document.getElementById('p-account').value=propSettings.account;
+  if(propSettings.target)document.getElementById('p-target').value=propSettings.target;
+  if(propSettings.maxdd)document.getElementById('p-maxdd').value=propSettings.maxdd;
+  if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
+  if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
+}
 
 // ── Build mistakes list ──
 function buildMistakes(){
