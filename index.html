@@ -695,12 +695,7 @@
 <!-- STATS -->
 <div class="page" id="page-stats">
   <!-- Filter bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div class="mode-toggle" id="stats-toggle" style="margin-bottom:0">
-      <button class="mode-btn active" onclick="setStatsMode('all',this)">All</button>
-      <button class="mode-btn" onclick="setStatsMode('live',this)">Live</button>
-      <button class="mode-btn" onclick="setStatsMode('backtest',this)">Backtest</button>
-    </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
     <div id="s-tilt"></div>
   </div>
 
@@ -1093,7 +1088,7 @@ let allTrades={challenge:[],funded:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
-let trades=[];let mode='live';let discRating=0;let outcome='';let statsMode='all';
+let trades=[];let mode='live';let discRating=0;let outcome='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];let propPassedShown=false;let propBlownShown=false;
 
@@ -1243,7 +1238,6 @@ function showTab(t){
 }
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
-function setStatsMode(m,btn){statsMode=m;document.querySelectorAll('#stats-toggle .mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderStats();}
 
 // ── Checklist ──
 function toggle(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateChecks();}}
@@ -1445,8 +1439,6 @@ function toggleFav(id,btn){
 // ── Stats ──
 function renderStats(){
   let f=trades;
-  if(statsMode==='live')f=f.filter(t=>t.mode==='live');
-  if(statsMode==='backtest')f=f.filter(t=>t.mode==='backtest');
   const active=f;
   document.getElementById('s-total').textContent=active.length;
   const wins=active.filter(t=>t.outcome==='win');
@@ -1523,7 +1515,7 @@ function setEqMode(m,btn){
   eqMode=m;
   document.querySelectorAll('#page-stats .mode-toggle .mode-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const f=trades.filter(t=>t.mode===statsMode||statsMode==='all'?true:t.mode===statsMode);
+  const f=trades;
   renderEquityChart(f);
 }
 
