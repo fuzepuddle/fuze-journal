@@ -1405,23 +1405,14 @@ function renderJournal(){
         :'<a href="'+s[1]+'" target="_blank" style="color:#e0e0e0;font-size:13px;text-decoration:none;border:0.5px solid #1a2e1e;padding:4px 10px;border-radius:6px;background:#0f1a12927">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
-    return'<div style="background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:10px;padding:14px;margin-bottom:10px">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-      +'<div style="display:flex;gap:8px;align-items:center">'+(badges[t.outcome]||'')+'<span style="font-size:13px;color:#aaa">'+(t.instrument||'')+'</span><span style="font-size:13px;color:#aaa">'+(t.direction||'')+'</span></div>'
-      +pnlStr+'</div>'
-      +'<div style="display:flex;gap:16px;font-size:13px;color:#aaa">'
-      +'<span>Draw: '+(t.draw||'—')+'</span>'
-      +'<span>RR: '+(t.rrActual||'—')+'</span>'
-      +'<span>Risk: '+(t.risk?t.risk+'%':'—')+'</span>'
-      +'<span>Disc: '+(t.discRating?'★'.repeat(t.discRating):'—')+'</span>'
-      +'</div>'
-      +ssHtml+narrativeHtml+improveHtml
-      +'</div>';
+    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
+    const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Momentum at entry</div><div style="font-size:13px;color:'+(t.momentum.includes('Aggressive')?'#6abf6a':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#c06060':'#c4a020')+'">'+t.momentum+'</div></div>':'';
+    const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#aaa;line-height:1.6">'+t.similar+'</div></div>':'';
+    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#0d0d0d;cursor:pointer;color:#666;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+ssHtml+momentumHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
+    return mainRow+detailRow;
   }).join('');
-  const popup=document.getElementById('cal-day-popup');
-  popup.style.display='flex';
 }
 
 
