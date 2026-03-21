@@ -176,7 +176,6 @@
       border-radius:8px;
     }
     h1{font-size:15px}
-    #notif-btn{font-size:13px;padding:4px 8px}
 
     /* All grids collapse */
     .grid-2,.grid-3,.grid-4{grid-template-columns:1fr !important}
@@ -365,7 +364,6 @@
     <div style="display:flex;align-items:center;gap:8px">
       <h1>fuze's ICT Trading Journal ✍️</h1>
       <div id="journal-streak" style="font-size:13px;background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:6px;padding:4px 10px;color:#aaa;white-space:nowrap">🔥 —</div>
-      <button id="notif-btn" onclick="requestNotifications()" style="font-size:13px;padding:4px 10px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0f1a12;color:#aaa;cursor:pointer;font-family:inherit;white-space:nowrap">🔔 14:25 reminder</button>
     </div>
     <div style="display:flex;gap:8px;align-items:center;margin-right:16px" id="header-right">
       <div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:8px;padding:6px 14px;white-space:nowrap;display:flex;align-items:center;gap:8px">
@@ -1218,7 +1216,6 @@ function showTab(t){
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
   if(t==='playbook')loadPlaybook();
-  if(t==='session'){const _srD=document.getElementById('sr-date');if(_srD)_srD.value=new Date().toISOString().split('T')[0];renderSessionReports&&renderSessionReports();}
   if(t==='presession')loadPresession();
 }
 
@@ -2570,40 +2567,8 @@ function renderBestRR(f){
   el.innerHTML=html;
 }
 
-// ── Push notifications ──
-async function requestNotifications(){
-  if(!('Notification' in window)){alert('Notifications not supported in this browser');return;}
-  const permission=await Notification.requestPermission();
-  if(permission==='granted'){
-    localStorage.setItem('ict_notifs','1');
-    _setNotifBtnOn();
-    scheduleNYReminder();
-    alert('Notifications enabled. You will get a reminder at 14:25 UK when the NY window opens.');
-  }
-}
-function scheduleNYReminder(){
-  if(localStorage.getItem('ict_notifs')!=='1')return;
-  if(!('Notification' in window)||Notification.permission!=='granted')return;
-  const now=new Date();
-  // Calculate next 14:25 UK time
-  const target=new Date();
-  target.setHours(14,25,0,0);
-  if(target<=now)target.setDate(target.getDate()+1);
-  // Skip weekends
-  while(target.getDay()===0||target.getDay()===6)target.setDate(target.getDate()+1);
-  const msUntil=target-now;
-  setTimeout(()=>{
-    new Notification('fuze\'s Journal — NY window opens in 5 mins 🟡',{
-      body:'14:30 UK — check your draw, get ready.',
-      icon:'/favicon.ico'
-    });
-    // Schedule next day
-    setTimeout(scheduleNYReminder,60000);
-  },msUntil);
-}
 
 
-// ── Economic calendar (sidebar) — hardcoded ──
 
 
 
@@ -2784,11 +2749,7 @@ function prefillCalc(){
 }
 
 
-// ── Notification button helper ──
-function _setNotifBtnOn(){
-  const nb=document.getElementById('notif-btn');
-  if(nb){nb.textContent='🔔 On ✓';nb.style.color='#6abf6a';}
-}
+
 
 // ── Live clocks ──
 function updateClocks(){
@@ -3448,9 +3409,6 @@ loadAllData().then(()=>{
   setTimeout(updateJournalStreak,1000);
   setTimeout(updateJournalStreak,3000);
   loadDraft();
-  scheduleNYReminder();
-  document.getElementById('sr-date').value=new Date().toISOString().split('T')[0];
-  try{if(localStorage.getItem('ict_notifs')==='1'&&typeof Notification!=='undefined'&&Notification.permission==='granted'){const nb=document.getElementById('notif-btn');if(nb){nb.textContent='🔔 Reminders on ✓';nb.style.color='#6abf6a';}}}catch(e){}
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
