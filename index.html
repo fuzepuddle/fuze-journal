@@ -400,6 +400,7 @@
   <div class="tab" onclick="showTab('weekly')" data-tab="weekly">Weekly review</div>
   <div class="tab" onclick="showTab('playbook')" data-tab="playbook">Playbook</div>
   <div class="tab" onclick="showTab('session')" data-tab="session">Session report</div>
+  <div class="tab" onclick="showTab('presession')" data-tab="presession">Pre-session</div>
 </div>
 
 <!-- LOG -->
@@ -1255,6 +1256,10 @@ async function loadAllData(){
     if(playbook_d&&typeof playbook_d==='object')playbookData=playbook_d;
     if(sessions_d&&typeof sessions_d==='object')sessionReports=sessions_d;
     if(payouts_d&&typeof payouts_d==='object')payouts=payouts_d;
+    const ps_d=await supaGet('ict_presession').catch(()=>null);
+    if(ps_d&&typeof ps_d==='object')presessionData=ps_d;
+    const nn_d=await supaGet('ict_nonneg').catch(()=>null);
+    if(nn_d&&typeof nn_d==='object')psNonNeg=nn_d;
   }catch(e){console.error('Load error',e);}
   applyLoadedData();
   applyProfileUI();
@@ -3206,6 +3211,93 @@ function updateJournalStreak(){
   else{el.textContent='🔥 '+streak+' day streak';el.style.borderColor='#1a2e1e';el.style.color='#aaa';}
 }
 
+
+// ── Pre-session review ──
+let presessionData = {};  // { profile: [{id,date,category,lesson,rule}] }
+let psNonNeg = {};        // { profile: string }
+
+function savePresessionStore(){
+  try{localStorage.setItem('ict_presession',JSON.stringify(presessionData));}catch(e){}
+  supaSet('ict_presession', presessionData);
+}
+function saveNonNegStore(){
+  try{localStorage.setItem('ict_nonneg',JSON.stringify(psNonNeg));}catch(e){}
+  supaSet('ict_nonneg', psNonNeg);
+}
+
+function savePresessionReminder(){
+  const cat = document.getElementById('ps-category').value;
+  const date = document.getElementById('ps-date').value;
+  const lesson = document.getElementById('ps-lesson').value.trim();
+  const rule = document.getElementById('ps-rule').value.trim();
+  if(!cat || !lesson){alert('Please select a category and describe what went wrong.');return;}
+  if(!presessionData[currentProfile]) presessionData[currentProfile]=[];
+  presessionData[currentProfile].unshift({id:Date.now(),date,category:cat,lesson,rule});
+  savePresessionStore();
+  document.getElementById('ps-category').value='';
+  document.getElementById('ps-date').value='';
+  document.getElementById('ps-lesson').value='';
+  document.getElementById('ps-rule').value='';
+  renderPresession();
+}
+
+function delPresessionReminder(id){
+  if(!confirm('Remove this reminder?'))return;
+  presessionData[currentProfile]=(presessionData[currentProfile]||[]).filter(r=>r.id!==id);
+  savePresessionStore();
+  renderPresession();
+}
+
+function saveNonNeg(){
+  const val=document.getElementById('ps-nonneg').value;
+  psNonNeg[currentProfile]=val;
+  saveNonNegStore();
+}
+
+function renderPresession(){
+  const el=document.getElementById('ps-list');
+  const countEl=document.getElementById('ps-count');
+  if(!el)return;
+  const list=(presessionData[currentProfile]||[]);
+  if(countEl) countEl.textContent='('+list.length+')';
+  if(!list.length){el.innerHTML='<div style="padding:20px;text-align:center;color:#555">No reminders pinned yet.<br><span style="font-size:12px">Add trades where you made mistakes to read before each session.</span></div>';return;}
+
+  const catColors={
+    'Forced entry — no clear setup':'#ef4444',
+    'FOMO — chased price':'#ef4444',
+    'Emotional after loss':'#ef4444',
+    'Overtraded':'#ef4444',
+    'Ignored HTF bias':'#f59e0b',
+    'Entered during chop':'#f59e0b',
+    'No displacement':'#f59e0b',
+    'Moved SL / gave back profit':'#f59e0b',
+    'Ignored news/event':'#f59e0b',
+    'Outside NY window':'#f59e0b',
+  };
+
+  el.innerHTML=list.map(r=>{
+    const col=catColors[r.category]||'#aaa';
+    return `<div style="background:#0a0a0a;border:0.5px solid #1a2e1e;border-left:3px solid ${col};border-radius:8px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <span style="font-size:11px;font-weight:600;color:${col};text-transform:uppercase;letter-spacing:.06em">${r.category}</span>
+          ${r.date?`<span style="font-size:11px;color:#555;margin-left:8px">${r.date}</span>`:''}
+        </div>
+        <button onclick="delPresessionReminder(${r.id})" style="border:none;background:none;cursor:pointer;color:#555;font-size:16px;padding:0 4px;line-height:1">×</button>
+      </div>
+      <div style="font-size:13px;color:#fff;margin-bottom:6px;line-height:1.5">⚠ ${r.lesson}</div>
+      ${r.rule?`<div style="font-size:12px;color:#10b981;line-height:1.5">✓ ${r.rule}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function loadPresession(){
+  // Load non-negotiables
+  const nn=document.getElementById('ps-nonneg');
+  if(nn) nn.value=psNonNeg[currentProfile]||'';
+  renderPresession();
+}
+
 // ── Missed trades ──
 let missedTrades=[];
 
@@ -3623,6 +3715,70 @@ loadAllData().then(()=>{
   <div style="text-align:center;font-size:13px;color:#aaa;padding-bottom:8px">← → navigate · scroll to zoom · drag to pan · Esc close</div>
 </div>
 
+
+<!-- PRE-SESSION REVIEW -->
+<div class="page" id="page-presession">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+
+    <!-- Left: Add reminder trade -->
+    <div>
+      <div class="card">
+        <div class="section-label" style="margin-bottom:12px">Add reminder trade</div>
+        <p style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.6">Pin trades that show your worst mistakes — read these <strong style="color:#ffffff">15 mins before every session</strong> to jog your memory.</p>
+        <div style="margin-bottom:10px">
+          <label>Mistake category</label>
+          <select id="ps-category">
+            <option value="">Select category</option>
+            <option>Forced entry — no clear setup</option>
+            <option>Ignored HTF bias</option>
+            <option>Entered during chop</option>
+            <option>No displacement</option>
+            <option>FOMO — chased price</option>
+            <option>Moved SL / gave back profit</option>
+            <option>Emotional after loss</option>
+            <option>Overtraded</option>
+            <option>Ignored news/event</option>
+            <option>Outside NY window</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div style="margin-bottom:10px">
+          <label>Trade date (from your journal)</label>
+          <input type="date" id="ps-date">
+        </div>
+        <div style="margin-bottom:10px">
+          <label>What went wrong?</label>
+          <textarea id="ps-lesson" placeholder="Be specific — what thought process caused the mistake?" style="min-height:80px"></textarea>
+        </div>
+        <div style="margin-bottom:14px">
+          <label>What to do instead</label>
+          <textarea id="ps-rule" placeholder="The rule you should follow in this situation..." style="min-height:60px"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="savePresessionReminder()" style="width:100%">Pin reminder →</button>
+      </div>
+
+      <!-- Daily affirmations -->
+      <div class="card">
+        <div class="section-label" style="margin-bottom:10px">My non-negotiables</div>
+        <p style="font-size:13px;color:#aaa;margin-bottom:10px;line-height:1.6">Your hard rules — read before every session.</p>
+        <textarea id="ps-nonneg" placeholder="e.g. I will not trade without a clear HTF draw&#10;I will not enter without displacement&#10;I will move to BE immediately after entry&#10;I will close all trades at 11:00 NY..." style="min-height:140px" oninput="saveNonNeg()"></textarea>
+      </div>
+    </div>
+
+    <!-- Right: Pinned reminders -->
+    <div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="section-label" style="margin-bottom:0">📌 Pinned reminders <span id="ps-count" style="font-size:12px;color:#777;font-weight:400"></span></div>
+          <div style="font-size:12px;color:#777">Read before every session</div>
+        </div>
+        <div id="ps-list" style="font-size:13px;color:#777">No reminders pinned yet.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
   <button class="mob-btn active" id="mobnav-log"      onclick="mobNav('log')">      <span class="mob-icon">✍️</span>Log</button>
@@ -3639,6 +3795,7 @@ loadAllData().then(()=>{
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
   <div class="more-item" onclick="mobNav('playbook')">  <span class="more-item-icon">📖</span>Playbook</div>
   <div class="more-item" onclick="mobNav('session')">   <span class="more-item-icon">🎯</span>Session report</div>
+  <div class="more-item" onclick="mobNav('presession')"> <span class="more-item-icon">🧠</span>Pre-session review</div>
 </div>
 
 <script>
