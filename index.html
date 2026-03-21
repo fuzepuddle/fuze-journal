@@ -770,7 +770,10 @@
         <div class="section-label">Time of day</div>
         <div id="s-timeofday" style="font-size:13px;color:#aaa">No data</div>
       </div>
-
+      <div class="card" style="flex:1">
+        <div class="section-label">Emotional state</div>
+        <div id="s-emotions" style="font-size:13px;color:#aaa">No data</div>
+      </div>
     </div>
   </div>
 
@@ -792,23 +795,9 @@
 
   </div>
 
-  <!-- Row 6: Checklist compliance + Tags + Emotions + Goal -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
 
 
-    <div class="card">
-      <div class="section-label">Emotional state</div>
-      <div id="s-emotions" style="font-size:13px;color:#aaa">No data</div>
-    </div>
 
-  </div>
-
-  <!-- Row 7: Heatmap full width -->
-  <div class="card">
-    <div class="section-label" style="margin-bottom:8px">RR × draw heatmap</div>
-    <div style="font-size:13px;color:#999;margin-bottom:10px">Win rate % for each draw + RR combination</div>
-    <div id="s-heatmap" style="overflow-x:auto"></div>
-  </div>
   <!-- Hidden metric-card id for pnl card compat -->
   <div id="s-pnl-card" style="display:none"></div>
 </div>
@@ -1440,7 +1429,6 @@ function renderStats(){
   renderKeyMetrics(f);
   renderDrawStats(f);
   renderBestDayBias(f);
-  renderHeatmap(f);
   renderMonthlyChart(f);
 }
 
@@ -2038,49 +2026,6 @@ function renderBestDayBias(f){
 // ── Goal tracker ──
 
 // ── RR × Draw heatmap ──
-function renderHeatmap(f){
-  const el=document.getElementById('s-heatmap');if(!el)return;
-  const grid={};
-  const allRR=new Set();const allDraws=new Set();
-  f.filter(t=>t.draw&&t.rrPlan&&t.outcome&&t.outcome!=='skip').forEach(t=>{
-    const draw=t.draw.trim();const rr=t.rrPlan.trim();
-    allDraws.add(draw);allRR.add(rr);
-    const key=draw+'|'+rr;
-    if(!grid[key])grid[key]={win:0,total:0};
-    grid[key].total++;
-    if(t.outcome==='win')grid[key].win++;
-  });
-  const rrOrder=['1:1','1:1.25','1:1.5','1:1.75','1:2'];
-  const rrOptions=rrOrder.filter(r=>allRR.has(r));
-  const drawOrder=['PDH','PDL','CDH','CDL','Asia High','Asia Low','London High','London Low','EQH','EQL','1H FVG','Data H/L'];
-  const usedDraws=drawOrder.filter(d=>allDraws.has(d));
-  if(!usedDraws.length||!rrOptions.length){el.innerHTML='<span style="font-size:13px;color:#999">No data yet — log trades with draws and RR to populate</span>';return;}
-  const cellW=52;
-  let html='<table style="border-collapse:collapse;font-size:13px">';
-  html+='<tr><th style="padding:4px 8px;color:#999;text-align:left;min-width:90px"></th>';
-  rrOptions.forEach(rr=>{html+='<th style="padding:4px 8px;color:#aaa;text-align:center;min-width:'+cellW+'px">'+rr+'</th>';});
-  html+='</tr>';
-  usedDraws.forEach(draw=>{
-    html+='<tr><td style="padding:4px 8px;color:#e0e0e0;white-space:nowrap">'+draw+'</td>';
-    rrOptions.forEach(rr=>{
-      const d=grid[draw.trim()+'|'+rr.trim()];
-      if(!d){html+='<td style="padding:4px 8px;text-align:center;color:#1a2e1e;background:#0a0f0a">—</td>';return;}
-      const wr=Math.round(d.win/d.total*100);
-      const bg=wr>=70?'rgba(58,110,58,0.5)':wr>=50?'rgba(58,110,58,0.25)':wr>=30?'rgba(110,90,0,0.25)':'rgba(110,42,42,0.35)';
-      const col=wr>=70?'#6abf6a':wr>=50?'#9fd89f':wr>=30?'#c4a020':'#c06060';
-      html+='<td style="padding:4px 8px;text-align:center;background:'+bg+';border-radius:4px;font-weight:500;color:'+col+'" title="'+d.win+'/'+d.total+' trades">'+wr+'%</td>';
-    });
-    html+='</tr>';
-  });
-  html+='</table>';
-  html+='<div style="display:flex;gap:12px;margin-top:10px;font-size:13px;color:#aaa">'
-    +'<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(58,110,58,0.5)"></span>70%+</span>'
-    +'<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(58,110,58,0.25)"></span>50–69%</span>'
-    +'<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(110,90,0,0.25)"></span>30–49%</span>'
-    +'<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(110,42,42,0.35)"></span>&lt;30%</span>'
-    +'</div>';
-  el.innerHTML=html;
-}
 
 // ── AI trade analysis ──
 async function analyzeTradeAI(){
