@@ -839,6 +839,10 @@
         <div class="section-label">Emotional state</div>
         <div id="s-emotions" style="font-size:13px;color:#aaa">No data</div>
       </div>
+      <div class="card" style="flex:1">
+        <div class="section-label">Momentum at entry</div>
+        <div id="s-momentum" style="font-size:13px;color:#aaa">No data</div>
+      </div>
     </div>
   </div>
 
@@ -1087,7 +1091,7 @@ let allTrades={challenge:[],funded:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
-let trades=[];let mode='live';let discRating=0;let outcome='';let monthlyGoals={};
+let trades=[];let mode='live';let discRating=0;let outcome='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
 
@@ -1865,6 +1869,7 @@ let calYear=new Date().getFullYear();
 let calMonth=new Date().getMonth();
 
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMonth();renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 
 function renderCalendar(){
@@ -1988,9 +1993,7 @@ function calDayClick(dateStr){
   popup.style.display='flex';
 }
 
-// ── Goal tracker ──
 
-// ── RR × Draw heatmap ──
 
 // ── Long vs Short win rate ──
 function renderLongShort(f){
@@ -2053,14 +2056,10 @@ function renderDiscCorr(f){
   }).join('');
 }
 
-// ── Checklist compliance ──
-
-// ── Tags breakdown ──
-
-// ── Payout tracker ──
 
 
-// ── Collapse/expand ──
+
+
 function toggleCollapse(id){
   const body=document.getElementById(id);
   const header=body?body.previousElementSibling:null;
@@ -2070,9 +2069,7 @@ function toggleCollapse(id){
   if(icon)icon.classList.toggle('collapsed',collapsed);
 }
 
-// ── Trade duration on stats ──
 
-// ── Best RR analysis + Rolling win rate ──
 
 
 
@@ -2280,7 +2277,7 @@ updateClocks();
 
 // ── Simple screenshot lightbox ──
 function openSSLightbox(url){
-  let lb = document.getElementById('ss-lightbox');
+  let lb = document.getElementById('trade-ss-lightbox');
   if(!lb){
     lb = document.createElement('div');
     lb.id = 'ss-lightbox';
@@ -2294,7 +2291,7 @@ function openSSLightbox(url){
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox(){
-  const lb = document.getElementById('ss-lightbox');
+  const lb = document.getElementById('trade-ss-lightbox');
   if(lb){ lb.style.display = 'none'; document.body.style.overflow = ''; }
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); });
@@ -2857,7 +2854,6 @@ function renderTimeOfDay(trades){
   }).join('');
 }
 
-// ── Hook into renderStats ──
 
 
 // showTab handles all tabs directly
