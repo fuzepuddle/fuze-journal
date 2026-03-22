@@ -112,7 +112,7 @@
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
   .cal-grid th{font-size:13px;font-weight:500;color:#aaa;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
-  .cal-grid td{vertical-align:top;border:0.5px solid #1a2e1e;width:14.28%;height:110px;padding:10px 12px;font-size:13px;color:#999;background:#0a0a0a;cursor:default}
+  .cal-grid td{vertical-align:top;border:0.5px solid #1a2e1e;width:14.28%;height:130px;padding:10px 12px;font-size:13px;color:#999;background:#0a0a0a;cursor:default}
   .cal-grid td.weekend{background:#0a0a0a}
   .cal-grid td.has-trade{background:#0f1a12;cursor:pointer}
   .cal-grid td.has-trade:hover{background:#0f1a12927}
@@ -1911,11 +1911,11 @@ function renderCalendar(){
       let inner='<div style="font-size:13px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
       if(d){
         const pnlCol=d.pnl>0?'#6abf6a':d.pnl<0?'#c06060':'#c4a020';
-        inner+='<div style="font-size:13px;font-weight:500;color:'+pnlCol+';margin-top:4px">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
+        inner+='<div style="font-size:18px;font-weight:600;color:'+pnlCol+';margin-top:6px;line-height:1">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
         inner+='<div style="display:flex;gap:3px;margin-top:4px;flex-wrap:wrap">';
-        if(d.wins)inner+='<span style="font-size:11px;background:rgba(58,110,58,0.5);color:#6abf6a;border-radius:3px;padding:1px 5px">'+d.wins+'W</span>';
-        if(d.losses)inner+='<span style="font-size:11px;background:rgba(110,42,42,0.5);color:#c06060;border-radius:3px;padding:1px 5px">'+d.losses+'L</span>';
-        if(d.be)inner+='<span style="font-size:11px;background:rgba(110,90,0,0.5);color:#c4a020;border-radius:3px;padding:1px 5px">'+d.be+'BE</span>';
+        if(d.wins)inner+='<span style="font-size:13px;font-weight:500;background:rgba(58,110,58,0.5);color:#6abf6a;border-radius:4px;padding:2px 7px">'+d.wins+'W</span>';
+        if(d.losses)inner+='<span style="font-size:13px;font-weight:500;background:rgba(110,42,42,0.5);color:#c06060;border-radius:4px;padding:2px 7px">'+d.losses+'L</span>';
+        if(d.be)inner+='<span style="font-size:13px;font-weight:500;background:rgba(110,90,0,0.5);color:#c4a020;border-radius:4px;padding:2px 7px">'+d.be+'BE</span>';
         inner+='</div>';
       }
       const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
