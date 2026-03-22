@@ -555,7 +555,7 @@
       </div>
     </div>
     <div class="gap" id="emotion-field">
-      <label>Emotional state</label>
+      <label>Emotional state <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— before entry</span></label>
       <select id="f-emotion">
         <option value="">—</option>
         <option>Neutral ✓</option>
@@ -566,6 +566,21 @@
         <option>Anxious / hesitant</option>
         <option>Distracted</option>
         <option>Tired / low energy</option>
+      </select>
+    </div>
+    <div class="gap">
+      <label>Emotional state <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— after close</span></label>
+      <select id="f-emotion-post">
+        <option value="">—</option>
+        <option>Satisfied ✓</option>
+        <option>Calm / indifferent</option>
+        <option>Frustrated</option>
+        <option>Relieved</option>
+        <option>Overconfident / euphoric</option>
+        <option>Revenge urge</option>
+        <option>Regret (closed too early)</option>
+        <option>Regret (held too long)</option>
+        <option>Shaken / doubting model</option>
       </select>
     </div>
     <div>
@@ -901,6 +916,14 @@
     <div style="display:flex;justify-content:flex-end">
       <button class="btn btn-primary" onclick="saveWeeklyNotes()">Save notes →</button>
     </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="section-label" style="margin-bottom:10px">Emotional pattern this week</div>
+    <div id="w-emotion-breakdown" style="font-size:13px;color:#aaa">No trades this week.</div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="section-label" style="margin-bottom:10px">vs last week</div>
+    <div id="w-emotion-compare" style="font-size:13px;color:#aaa">No comparison data yet.</div>
   </div>
 </div>
 
@@ -1344,6 +1367,7 @@ async function saveTrade(){
     session:'',
     bias, direction, draw, rrActual, pnl, outcome, discRating,
     emotion:document.getElementById('f-emotion')?document.getElementById('f-emotion').value:'',
+    emotionPost:document.getElementById('f-emotion-post')?document.getElementById('f-emotion-post').value:'',
     mistakes:[...selectedMistakes],
     momentum:document.getElementById('f-momentum').value,
     similar:document.getElementById('f-similar').value,
@@ -1366,7 +1390,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum','f-emotion-post'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -1434,10 +1458,11 @@ function renderJournal(){
       +'</div></div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
     const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
+    const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Emotion after close</div><div style="font-size:13px;color:#aaa">'+t.emotionPost+'</div></div>':'';
     const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Momentum at entry</div><div style="font-size:13px;color:'+(t.momentum.includes('Aggressive')?'#6abf6a':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#c06060':'#c4a020')+'">'+t.momentum+'</div></div>':'';
     const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#aaa;line-height:1.6">'+t.similar+'</div></div>':'';
     const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#0d0d0d;cursor:pointer;color:#666;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
-    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+ssHtml+momentumHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+ssHtml+momentumHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
 }
@@ -1487,6 +1512,7 @@ function openEdit(id){
   document.getElementById('e-improve').value=t.improve||'';
   const eMom=document.getElementById('e-momentum');if(eMom)eMom.value=t.momentum||'';
   const eSim=document.getElementById('e-similar');if(eSim)eSim.value=t.similar||'';
+  const eEmP=document.getElementById('e-emotion-post');if(eEmP)eEmP.value=t.emotionPost||'';
   eDiscRating=t.discRating||0;
   document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#10b981':'#1a2e1e';});
   const esSec=document.getElementById('e-ss-section');
@@ -1538,6 +1564,7 @@ function saveEdit(){
     improve:document.getElementById('e-improve').value,
     momentum:(document.getElementById('e-momentum')||{}).value||'',
     similar:(document.getElementById('e-similar')||{}).value||'',
+    emotionPost:(document.getElementById('e-emotion-post')||{}).value||'',
   };
   save();closeEdit();renderJournal();
 }
@@ -2603,6 +2630,61 @@ function renderWeekly(){
   document.getElementById('w-well').value=saved.well||'';
   document.getElementById('w-improve').value=saved.improve||'';
   document.getElementById('w-focus').value=saved.focus||'';
+
+  // Emotional pattern this week
+  const brkEl=document.getElementById('w-emotion-breakdown');
+  const cmpEl=document.getElementById('w-emotion-compare');
+  const emotMap={};
+  weekTrades.forEach(t=>{
+    if(t.emotion){emotMap[t.emotion]=(emotMap[t.emotion]||0)+1;}
+    if(t.emotionPost){const k=t.emotionPost+' (after)';emotMap[k]=(emotMap[k]||0)+1;}
+  });
+  const emotEntries=Object.entries(emotMap).sort((a,b)=>b[1]-a[1]);
+  if(!emotEntries.length){
+    if(brkEl)brkEl.textContent='No emotional data logged this week.';
+  } else {
+    if(brkEl)brkEl.innerHTML=emotEntries.map(([e,c])=>{
+      const isNeg=e.includes('FOMO')||e.includes('Revenge')||e.includes('Overconfident')||e.includes('Frustrated')||e.includes('Shaken')||e.includes('Regret')||e.includes('Anxious');
+      const isPos=e.includes('Neutral')||e.includes('Satisfied')||e.includes('Patient')||e.includes('Calm');
+      const col=isPos?'#6abf6a':isNeg?'#c06060':'#c4a020';
+      return'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
+        +'<span style="font-size:13px;color:'+col+'">'+e+'</span>'
+        +'<span class="badge">'+c+'x</span></div>';
+    }).join('');
+  }
+
+  // vs last week
+  const{mon:lastMon,fri:lastFri,key:lastKey}=getWeekDates(currentWeekOffset-1);
+  const lastMonStr=lastMon.toISOString().split('T')[0];
+  const lastFriStr=lastFri.toISOString().split('T')[0];
+  const lastWeekTrades=trades.filter(t=>t.date>=lastMonStr&&t.date<=lastFriStr&&t.mode==='live');
+  const lastEmotMap={};
+  lastWeekTrades.forEach(t=>{
+    if(t.emotion)lastEmotMap[t.emotion]=(lastEmotMap[t.emotion]||0)+1;
+    if(t.emotionPost){const k=t.emotionPost+' (after)';lastEmotMap[k]=(lastEmotMap[k]||0)+1;}
+  });
+  if(!lastWeekTrades.length){
+    if(cmpEl)cmpEl.textContent='No data from last week.';
+  } else {
+    const thisWeekTop=emotEntries[0];
+    const lastWeekTop=Object.entries(lastEmotMap).sort((a,b)=>b[1]-a[1])[0];
+    const thisWR=active.length?Math.round(wins.length/active.length*100):null;
+    const lastActive=lastWeekTrades.filter(t=>t.outcome!=='skip');
+    const lastWins=lastActive.filter(t=>t.outcome==='win');
+    const lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
+    const lastPnl=lastWeekTrades.reduce((s,t)=>s+(t.pnl||0),0);
+    const wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
+    const pnlDiff=pnl-lastPnl;
+    if(cmpEl)cmpEl.innerHTML=
+      '<div style="margin-bottom:8px"><span style="color:#999;font-size:13px">Dominant emotion: </span>'
+      +'<span style="color:#e0e0e0">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
+      +' <span style="color:#555;font-size:13px">vs last week: </span>'
+      +'<span style="color:#e0e0e0">'+(lastWeekTop?lastWeekTop[0]:'—')+'</span></div>'
+      +(wrDiff!=null?'<div style="margin-bottom:6px"><span style="color:#999;font-size:13px">Win rate: </span>'
+      +'<span style="color:'+(wrDiff>=0?'#6abf6a':'#c06060')+'">'+(wrDiff>=0?'+':'')+wrDiff+'% vs last week</span></div>':'')
+      +'<div><span style="color:#999;font-size:13px">P&L: </span>'
+      +'<span style="color:'+(pnlDiff>=0?'#6abf6a':'#c06060')+'">'+(pnlDiff>=0?'+$':'-$')+Math.abs(pnlDiff).toFixed(2)+' vs last week</span></div>';
+  }
 }
 function saveWeeklyNotes(){
   const{key}=getWeekDates(currentWeekOffset);
@@ -2808,6 +2890,8 @@ function randomizeTrade(){
   document.getElementById('f-pnl').value=pnl;
   document.getElementById('f-risk').value=risks[Math.floor(Math.random()*risks.length)];
   document.getElementById('f-emotion').value=emotions[Math.floor(Math.random()*emotions.length)];
+  const postEmotions=['Satisfied ✓','Calm / indifferent','Frustrated','Relieved','Overconfident / euphoric'];
+  document.getElementById('f-emotion-post').value=rOutcome==='win'?postEmotions[Math.floor(Math.random()*2)]:rOutcome==='loss'?postEmotions[2+Math.floor(Math.random()*2)]:postEmotions[1];
   outcome=rOutcome;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   const outcomeMap={win:0,loss:1,be:2};
@@ -2928,6 +3012,7 @@ loadAllData().then(()=>{
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive</option><option>Strong but slowing</option><option>Slowing</option><option>Grinding</option><option>Stalled</option></select></div>
       <div><label>Similar past trade</label><input type="text" id="e-similar" placeholder="e.g. 2025-03-14 — same draw"></div>
+      <div><label>Emotion after close</label><select id="e-emotion-post" style="width:100%"><option value="">—</option><option>Satisfied ✓</option><option>Calm / indifferent</option><option>Frustrated</option><option>Relieved</option><option>Overconfident / euphoric</option><option>Revenge urge</option><option>Regret (closed too early)</option><option>Regret (held too long)</option><option>Shaken / doubting model</option></select></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;font-family:inherit">Cancel</button>
