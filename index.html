@@ -1952,18 +1952,25 @@ function renderCalendar(){
       if(isToday)cls+=' today';
       if(isWeekend)cls+=' weekend';
       if(d)cls+=' has-trade';
+      // Determine cell background based on day outcome
+      let cellBg='';
+      if(d&&!isToday){
+        if(d.pnl>0)cellBg='background:rgba(58,110,58,0.18);';
+        else if(d.pnl<0)cellBg='background:rgba(110,42,42,0.18);';
+        else cellBg='background:rgba(110,90,0,0.12);';
+      }
       let inner='<div style="font-size:13px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
       if(d){
         const pnlCol=d.pnl>0?'#6abf6a':d.pnl<0?'#c06060':'#c4a020';
-        inner+='<div style="font-size:18px;font-weight:600;color:'+pnlCol+';margin-top:6px;line-height:1">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
-        inner+='<div style="display:flex;gap:3px;margin-top:4px;flex-wrap:wrap">';
-        if(d.wins)inner+='<span style="font-size:13px;font-weight:500;background:rgba(58,110,58,0.5);color:#6abf6a;border-radius:4px;padding:2px 7px">'+d.wins+'W</span>';
-        if(d.losses)inner+='<span style="font-size:13px;font-weight:500;background:rgba(110,42,42,0.5);color:#c06060;border-radius:4px;padding:2px 7px">'+d.losses+'L</span>';
-        if(d.be)inner+='<span style="font-size:13px;font-weight:500;background:rgba(110,90,0,0.5);color:#c4a020;border-radius:4px;padding:2px 7px">'+d.be+'BE</span>';
+        inner+='<div style="font-size:20px;font-weight:700;color:'+pnlCol+';margin-top:6px;line-height:1">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
+        inner+='<div style="display:flex;gap:3px;margin-top:6px;flex-wrap:wrap">';
+        if(d.wins)inner+='<span style="font-size:13px;font-weight:600;background:rgba(58,110,58,0.6);color:#6abf6a;border-radius:4px;padding:3px 8px">'+d.wins+'W</span>';
+        if(d.losses)inner+='<span style="font-size:13px;font-weight:600;background:rgba(110,42,42,0.6);color:#c06060;border-radius:4px;padding:3px 8px">'+d.losses+'L</span>';
+        if(d.be)inner+='<span style="font-size:13px;font-weight:600;background:rgba(110,90,0,0.6);color:#c4a020;border-radius:4px;padding:3px 8px">'+d.be+'BE</span>';
         inner+='</div>';
       }
       const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
-      html+='<td class="'+cls.trim()+'" '+click+'>'+inner+'</td>';
+      html+='<td class="'+cls.trim()+'" style="'+cellBg+'" '+click+'>'+inner+'</td>';
       day++;
     }
     html+='</tr>';
