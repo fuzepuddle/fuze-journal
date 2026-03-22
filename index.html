@@ -142,7 +142,7 @@
   @media(max-width:768px){
     /* Base */
     body{
-      padding:.75rem .75rem calc(80px + env(safe-area-inset-bottom,0px));
+      padding:.75rem .75rem calc(72px + env(safe-area-inset-bottom,0px));
       font-size:14px;
       border-top:none;
       max-width:100%;
@@ -321,13 +321,11 @@
       display:flex;
       position:fixed;
       bottom:0;left:0;right:0;
-      height:60px;
+      height:64px;
       padding-bottom:env(safe-area-inset-bottom,0px);
-      background:rgba(10,15,10,0.97);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
-      border-top:0.5px solid #1a2e1e;
-      z-index:9999;
+      background:rgba(8,12,8,0.98);
+      border-top:1px solid #1e3320;
+      z-index:99999;
       align-items:stretch;
     }
     .mob-btn{
@@ -336,30 +334,34 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:3px;
+      gap:2px;
       cursor:pointer;
-      font-size:11px;
-      font-weight:500;
-      letter-spacing:.02em;
-      color:#666;
+      font-size:10px;
+      font-weight:600;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+      color:#555;
       border:none;
       background:none;
       font-family:inherit;
-      padding:0;
-      transition:color .15s;
+      padding:6px 0;
+      transition:color .15s, transform .1s;
       -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
       min-width:0;
+      user-select:none;
+      -webkit-user-select:none;
     }
-    .mob-btn .mob-icon{font-size:22px;line-height:1}
+    .mob-btn .mob-icon{font-size:24px;line-height:1;display:block}
     .mob-btn.active{color:#10b981}
-    .mob-btn.active .mob-icon{transform:scale(1.1)}
-    .mob-btn:active{opacity:.5;transform:scale(.94)}
+    .mob-btn.active .mob-icon{transform:scale(1.15)}
+    .mob-btn:active{opacity:.5}
 
     /* More menu — slides up */
     #mobile-more-menu{
       display:none;
       position:fixed;
-      bottom:calc(60px + env(safe-area-inset-bottom,0px));left:0;right:0;
+      bottom:calc(64px + env(safe-area-inset-bottom,0px));left:0;right:0;
       background:#0d1a0f;
       border-top:0.5px solid #1a2e1e;
       border-radius:16px 16px 0 0;
@@ -384,12 +386,15 @@
       display:flex;
       align-items:center;
       gap:14px;
-      padding:15px 16px;
-      font-size:15px;
+      padding:16px 18px;
+      font-size:16px;
       color:#e0e0e0;
       border-radius:10px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+      user-select:none;
+      -webkit-user-select:none;
     }
     .more-item:active{background:#1a2e1e}
     .more-item.active-more{color:#10b981;background:rgba(16,185,129,0.08)}
@@ -819,8 +824,7 @@
       <div class="flex-between" style="margin-bottom:12px">
         <div class="section-label" style="margin-bottom:0">Cumulative P&amp;L</div>
         <div class="mode-toggle" style="margin-bottom:0">
-          <button class="mode-btn active" id="eq-mode-live" onclick="setEqMode('live',this)" style="padding:3px 10px;font-size:13px">Live</button>
-          <button class="mode-btn" id="eq-mode-backtest" onclick="setEqMode('backtest',this)" style="padding:3px 10px;font-size:13px">Backtest</button>
+
         </div>
       </div>
       <div style="position:relative;width:100%;height:220px"><canvas id="s-equity-chart"></canvas></div>
@@ -1680,17 +1684,10 @@ function saveEdit(){
 }
 
 // ── Stats ──
-let eqMode='live';
 let equityChartInstance=null;
 let dailyChartInstance=null;
 let monthlyChartInstance=null;
 
-function setEqMode(m,btn){
-  eqMode=m;
-  document.querySelectorAll('#page-stats .mode-toggle .mode-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderEquityChart(trades);
-}
 
 function renderStats(){
   const f=trades;
@@ -1749,7 +1746,7 @@ function renderStats(){
   const msorted=Object.entries(mm).sort((a,b)=>b[1]-a[1]);
   if(!msorted.length){mEl.innerHTML='None recorded';mEl.style.color='#6abf6a';}
   else mEl.innerHTML=msorted.slice(0,6).map(e=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#e0e0e0">'+e[0]+'</span><span class="red-bg">'+e[1]+'x</span></div>').join('');
-  renderEquityChart(f);
+  renderEquityChart(trades);
   renderDailyChart(f);
   renderStreaks(f.filter(t=>t.outcome!=='skip'));
   renderTimeOfDay(f);
@@ -1770,7 +1767,7 @@ function renderStats(){
 }
 
 function renderEquityChart(allTrades){
-  const filtered=allTrades.filter(t=>t.mode===eqMode&&t.pnl!=null&&t.date).sort((a,b)=>a.date.localeCompare(b.date)||(a.id-b.id));
+  const filtered=allTrades.filter(t=>t.pnl!=null&&t.date).sort((a,b)=>a.date.localeCompare(b.date)||(a.id-b.id));
   const dayMap={};filtered.forEach(t=>{dayMap[t.date]=(dayMap[t.date]||0)+t.pnl;});
   const days=Object.keys(dayMap).sort();let cumPnl=0;
   const data=days.map(d=>{cumPnl+=dayMap[d];return parseFloat(cumPnl.toFixed(2));});
@@ -3383,17 +3380,28 @@ function mobNav(t){
   document.querySelectorAll('.more-item').forEach(el=>el.classList.remove('active-more'));
   const moreEl=document.querySelector('.more-item[onclick*="'+t+'"]');
   if(moreEl)moreEl.classList.add('active-more');
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'instant'});
 }
 function toggleMoreMenu(){
   const m=document.getElementById('mobile-more-menu');
   m.classList.toggle('open');
+  document.getElementById('mobnav-more').classList.toggle('active', m.classList.contains('open'));
 }
+// Close more menu on outside tap
+document.addEventListener('touchstart',function(e){
+  const menu=document.getElementById('mobile-more-menu');
+  const btn=document.getElementById('mobnav-more');
+  if(menu&&menu.classList.contains('open')&&!menu.contains(e.target)&&btn&&!btn.contains(e.target)){
+    menu.classList.remove('open');
+    btn.classList.remove('active');
+  }
+},{passive:true});
 document.addEventListener('click',function(e){
   const menu=document.getElementById('mobile-more-menu');
   const btn=document.getElementById('mobnav-more');
   if(menu&&menu.classList.contains('open')&&!menu.contains(e.target)&&btn&&!btn.contains(e.target)){
     menu.classList.remove('open');
+    btn.classList.remove('active');
   }
 });
 </script>
