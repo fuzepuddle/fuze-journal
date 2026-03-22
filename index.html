@@ -1557,6 +1557,11 @@ function setEqMode(m,btn){
 
 function renderStats(){
   const f=trades;
+  // Reset all metric cards first so stale data never shows
+  ['s-pnl','s-wr','s-total','s-disc','s-profitfactor','s-expectancy'].forEach(id=>{
+    const el=document.getElementById(id);if(el){el.textContent='—';el.style.color='';}
+  });
+  document.getElementById('s-total').textContent='0';
   document.getElementById('s-total').textContent=f.length;
   const wins=f.filter(t=>t.outcome==='win');
   const wrEl=document.getElementById('s-wr');
@@ -1574,6 +1579,9 @@ function renderStats(){
   const outLegend=document.getElementById('s-outcomes-legend');
   if(window._outChart){window._outChart.destroy();window._outChart=null;}
   if(monthlyChartInstance){monthlyChartInstance.destroy();monthlyChartInstance=null;}
+  // Clear legend so it doesn't show stale data from previous profile
+  const outLegendClear=document.getElementById('s-outcomes-legend');
+  if(outLegendClear)outLegendClear.innerHTML='';
   if(outCanvas&&f.length&&typeof Chart!=='undefined'){
     const c={win:0,loss:0,be:0};f.forEach(t=>{if(c[t.outcome]!==undefined)c[t.outcome]++;});
     const total=c.win+c.loss+c.be;
