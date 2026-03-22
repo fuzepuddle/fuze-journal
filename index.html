@@ -1284,6 +1284,34 @@ function renderProp(){
     if(totalPnl>=propSettings.target*0.8&&propSettings.target>0)tracker.classList.add('glow-green');
     else if(bufferRemaining<maxddAmt*0.3&&maxddAmt>0)tracker.classList.add('glow-red');
   }
+  // Popups — only show once per profile per target amount
+  const passedKey='prop_passed_'+currentProfile+'_'+propSettings.target;
+  const blownKey='prop_blown_'+currentProfile+'_'+propSettings.maxdd;
+  const firmName=propSettings.name||'your eval';
+  if(totalPnl>=propSettings.target&&propSettings.target>0){
+    try{
+      if(!localStorage.getItem(passedKey)){
+        document.getElementById('popup-passed-name').textContent=firmName+' · +$'+totalPnl.toLocaleString();
+        const el=document.getElementById('popup-passed');if(el)el.style.display='flex';
+      }
+    }catch(e){}
+  }
+  if(bufferRemaining<=0&&maxddAmt>0){
+    try{
+      if(!localStorage.getItem(blownKey)){
+        document.getElementById('popup-blown-name').textContent=firmName+' · $'+totalPnl.toLocaleString();
+        const el=document.getElementById('popup-blown');if(el)el.style.display='flex';
+      }
+    }catch(e){}
+  }
+}
+function closePassedPopup(){
+  const el=document.getElementById('popup-passed');if(el)el.style.display='none';
+  try{localStorage.setItem('prop_passed_'+currentProfile+'_'+(propSettings.target||''),'1');}catch(e){}
+}
+function closeBlownPopup(){
+  const el=document.getElementById('popup-blown');if(el)el.style.display='none';
+  try{localStorage.setItem('prop_blown_'+currentProfile+'_'+(propSettings.maxdd||''),'1');}catch(e){}
 }
 
 // ── Build mistakes list ──
@@ -3214,6 +3242,28 @@ loadAllData().then(()=>{
       <button onclick="closeEdit()" style="padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;font-family:inherit">Cancel</button>
       <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#0a0f0a;font-family:inherit;font-weight:500">Save changes</button>
     </div>
+  </div>
+</div>
+
+<!-- Prop firm passed popup -->
+<div id="popup-passed" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;flex-direction:column">
+  <div style="background:#0a1a0e;border:1px solid #3a6e3a;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
+    <div style="font-size:48px;margin-bottom:16px">🏆</div>
+    <div style="font-size:22px;font-weight:600;color:#6abf6a;margin-bottom:8px">Challenge passed!</div>
+    <div style="font-size:14px;color:#e0e0e0;margin-bottom:6px" id="popup-passed-name"></div>
+    <div style="font-size:13px;color:#aaa;margin-bottom:28px;line-height:1.6">You hit the profit target. The discipline, the patience, the process — it all showed. Now go get that funded account.</div>
+    <button onclick="closePassedPopup()" style="padding:12px 32px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Let's go 🚀</button>
+  </div>
+</div>
+
+<!-- Prop firm blown popup -->
+<div id="popup-blown" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;flex-direction:column">
+  <div style="background:#1a0a0a;border:1px solid #6e2a2a;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
+    <div style="font-size:48px;margin-bottom:16px">📉</div>
+    <div style="font-size:22px;font-weight:600;color:#c06060;margin-bottom:8px">Account blown</div>
+    <div style="font-size:14px;color:#e0e0e0;margin-bottom:6px" id="popup-blown-name"></div>
+    <div style="font-size:13px;color:#aaa;margin-bottom:28px;line-height:1.6">You hit the max drawdown limit. Go through your journal, find the patterns, fix the holes in the model. Every blown account is a lesson — make sure you learn it.</div>
+    <button onclick="closeBlownPopup()" style="padding:12px 32px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Back to the drawing board</button>
   </div>
 </div>
 
