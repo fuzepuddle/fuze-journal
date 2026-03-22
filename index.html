@@ -632,11 +632,23 @@
       <label>Momentum / price speed at entry</label>
       <select id="f-momentum">
         <option value="">—</option>
-        <option>Aggressive / clean displacement</option>
-        <option>Strong but slowing slightly</option>
-        <option>Slowing / losing volume</option>
-        <option>Grinding / choppy</option>
-        <option>Stalled / no momentum</option>
+        <optgroup label="Strong">
+          <option>Aggressive expansion — strong displacement</option>
+          <option>Strong but starting to slow</option>
+          <option>Moderate — steady push</option>
+        </optgroup>
+        <optgroup label="Weak / mixed">
+          <option>Slowing — losing volume</option>
+          <option>Grinding — small candles, slow grind</option>
+          <option>Choppy — back and forth</option>
+          <option>Stalled — no directional momentum</option>
+        </optgroup>
+        <optgroup label="Retrace character">
+          <option>V-shape recovery off FVG</option>
+          <option>Slow corrective retrace — textbook</option>
+          <option>Violent retrace — entered anyway</option>
+          <option>Price consolidating inside FVG</option>
+        </optgroup>
       </select>
     </div>
     <div class="gap">
@@ -1056,14 +1068,14 @@ let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
-  {cat:'Session / Timing',items:['Outside NY window','Entered after 16:00 UK','Didn\'t close at 16:30','Took second trade in session']},
-  {cat:'Draw',items:['Unclear draw on liquidity','Multiple competing draws','Draw already taken / tapped','Price through draw, not toward it']},
-  {cat:'Context',items:['HTF structure misread','Traded into chop / ranging market','Small candles — no momentum']},
-  {cat:'Displacement',items:['Displacement weaker than retrace','No clear BOS on displacement','5M FVG formed in chop, not displacement','No 5M FVG left behind']},
-  {cat:'Retrace',items:['Violent retrace ignored','Retrace stronger than displacement','Entered too early — no retrace waited']},
-  {cat:'Confirmation',items:['No 1M close confirmation','BOS not driving toward draw','Entered on candle open not close']},
-  {cat:'Stop / Management',items:['Unprotected stop loss','Stop too tight — wicked out','Didn\'t move to BE','Moved stop against trade','Closed early — TP not reached']},
-  {cat:'Psychology',items:['Forced the setup','FOMO — chased price','Traded on emotion / revenge','Deviated from model rules','Ignored draw taken rule (barcode)']}
+  {cat:'Session / Timing',items:['Outside NY window','Entered after 16:00 UK','Didn\'t close at 16:30','Took second trade in session','Entered during news event','Traded during low liquidity open','Held through hard close time']},
+  {cat:'Draw',items:['Unclear draw on liquidity','Multiple competing draws','Draw already taken / tapped','Price through draw, not toward it','Targeted too far draw — skipped nearer one','Draw was stacked — targeted the last one','Draw was on wrong timeframe']},
+  {cat:'Context',items:['HTF structure misread','Traded into chop / ranging market','Small candles — no momentum','Traded against higher timeframe trend','4H and 1H misaligned','Entered during consolidation, not expansion','Ignored obvious opposing HTF level nearby']},
+  {cat:'Displacement',items:['Displacement weaker than retrace','No clear BOS on displacement','5M FVG formed in chop, not displacement','No 5M FVG left behind','Displacement was a single candle wick — not a move','FVG was too large — low quality imbalance','Displacement was on wrong timeframe']},
+  {cat:'Retrace',items:['Violent retrace ignored','Retrace stronger than displacement','Entered too early — no retrace waited','Retrace went through entire FVG','Price consolidated inside FVG instead of tapping','Chased price after FVG was missed','Entered on a spike, not a clean retrace']},
+  {cat:'Confirmation',items:['No 1M close confirmation','BOS not driving toward draw','Entered on candle open not close','BOS was a wick, not a close','Confirmation candle was too large — bad entry price','Entered on momentum, not on structure','Mistook a liquidity grab for confirmation']},
+  {cat:'Stop / Management',items:['Unprotected stop loss','Stop too tight — wicked out','Didn\'t move to BE','Moved stop against trade','Closed early — TP not reached','Removed stop entirely','Moved BE back to entry after being ahead','Didn\'t trail after BE was hit','Took partial profit then let runner go to loss']},
+  {cat:'Psychology',items:['Forced the setup','FOMO — chased price','Traded on emotion / revenge','Deviated from model rules','Ignored draw taken rule (barcode)','Traded to make back a loss','Overconfident after a winning streak','Felt pressure to trade — no valid setup','Second-guessed the entry and waited too long','Convinced myself the setup was valid when it wasn\'t']}
 ];
 
 const SUPA_URL='https://ksjwlisoggcahzhzngfq.supabase.co';
@@ -1838,6 +1850,127 @@ function renderBestDayBias(f){
     +'</div>';
 }
 
+
+// ── Calendar ──
+let calYear=new Date().getFullYear();
+let calMonth=new Date().getMonth();
+
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+
+function renderCalendar(){
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const titleEl=document.getElementById('cal-month-title');
+  if(titleEl)titleEl.textContent=monthNames[calMonth]+' '+calYear;
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date().toISOString().split('T')[0];
+  // Build day map from trades
+  const dayMap={};
+  trades.filter(t=>t.pnl!=null&&t.date).forEach(t=>{
+    const d=t.date.slice(0,7)===(calYear+'-'+String(calMonth+1).padStart(2,'0'))?t.date:null;
+    if(!d)return;
+    if(!dayMap[d])dayMap[d]={pnl:0,trades:[],wins:0,losses:0,be:0};
+    dayMap[d].pnl+=t.pnl;
+    dayMap[d].trades.push(t);
+    if(t.outcome==='win')dayMap[d].wins++;
+    else if(t.outcome==='loss')dayMap[d].losses++;
+    else if(t.outcome==='be')dayMap[d].be++;
+  });
+  // Update month stats
+  const monthStr=calYear+'-'+String(calMonth+1).padStart(2,'0');
+  const monthTrades=trades.filter(t=>t.date&&t.date.startsWith(monthStr));
+  const monthPnl=monthTrades.reduce((s,t)=>s+(t.pnl||0),0);
+  const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
+  const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
+  const mPnlEl=document.getElementById('cal-m-pnl');
+  if(mPnlEl){mPnlEl.textContent=(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2);mPnlEl.style.color=monthPnl>=0?'#6abf6a':'#c06060';}
+  const mTradesEl=document.getElementById('cal-m-trades');if(mTradesEl)mTradesEl.textContent=monthTotal;
+  const mWrEl=document.getElementById('cal-m-wr');if(mWrEl)mWrEl.textContent=monthTotal?Math.round(monthWins/monthTotal*100)+'%':'—';
+  const mWlEl=document.getElementById('cal-m-wl');if(mWlEl)mWlEl.textContent=monthTrades.filter(t=>t.outcome==='win').length+' / '+monthTrades.filter(t=>t.outcome==='loss').length;
+  // Build grid
+  const tbody=document.getElementById('cal-body');
+  if(!tbody)return;
+  let html='';
+  let day=1;
+  const startOffset=(firstDay+6)%7; // Monday-first
+  for(let row=0;row<6;row++){
+    if(day>daysInMonth)break;
+    html+='<tr>';
+    for(let col=0;col<7;col++){
+      const cellNum=row*7+col;
+      if(cellNum<startOffset||day>daysInMonth){html+='<td class="weekend"></td>';continue;}
+      const dateStr=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+      const d=dayMap[dateStr];
+      const isToday=dateStr===today;
+      const isWeekend=col>=5;
+      let cls='';
+      if(isToday)cls+=' today';
+      if(isWeekend)cls+=' weekend';
+      if(d)cls+=' has-trade';
+      let inner='<div style="font-size:13px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
+      if(d){
+        const pnlCol=d.pnl>0?'#6abf6a':d.pnl<0?'#c06060':'#c4a020';
+        inner+='<div style="font-size:13px;font-weight:500;color:'+pnlCol+';margin-top:4px">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
+        inner+='<div style="display:flex;gap:3px;margin-top:4px;flex-wrap:wrap">';
+        if(d.wins)inner+='<span style="font-size:11px;background:rgba(58,110,58,0.5);color:#6abf6a;border-radius:3px;padding:1px 5px">'+d.wins+'W</span>';
+        if(d.losses)inner+='<span style="font-size:11px;background:rgba(110,42,42,0.5);color:#c06060;border-radius:3px;padding:1px 5px">'+d.losses+'L</span>';
+        if(d.be)inner+='<span style="font-size:11px;background:rgba(110,90,0,0.5);color:#c4a020;border-radius:3px;padding:1px 5px">'+d.be+'BE</span>';
+        inner+='</div>';
+      }
+      const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
+      html+='<td class="'+cls.trim()+'" '+click+'>'+inner+'</td>';
+      day++;
+    }
+    html+='</tr>';
+  }
+  tbody.innerHTML=html;
+}
+
+function calDayClick(dateStr){
+  const dayTrades=trades.filter(t=>t.date===dateStr);
+  if(!dayTrades.length)return;
+  const popup=document.getElementById('cal-day-popup');
+  const body=document.getElementById('cal-popup-body');
+  const title=document.getElementById('cal-popup-date');
+  if(!popup||!body)return;
+  if(title)title.textContent=new Date(dateStr+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const badges={win:'<span class="green-bg">Win</span>',loss:'<span class="red-bg">Loss</span>',be:'<span class="amber-bg">BE</span>'};
+  const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
+  body.innerHTML=dayTrades.map(t=>{
+    const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#6abf6a">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#c06060">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#c4a020">$0</span>'):'—';
+    const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
+    window._ssStore=window._ssStore||{};
+    window._ssStore[t.id]=ssLinks;
+    const ssHtml=ssLinks.length?'<div style="margin-bottom:'+(t.narrative||t.improve?'14px':'4px')+'">'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      +ssLinks.map((s,i)=>_isCDN(s[1])
+        ?'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
+          +'<div style="font-size:13px;color:#999">'+s[0]+'</div>'
+          +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
+          +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:0.5px solid #1a2e1e;cursor:pointer;background:#0f1a12" '
+          +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'#1a2e1e\'">'
+          +'</div>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#e0e0e0;font-size:13px;text-decoration:none;border:0.5px solid #1a2e1e;padding:4px 10px;border-radius:6px;background:#0f1a12">'+s[0]+' ↗</a>'
+      ).join('')
+      +'</div></div>':'';
+    const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.improve+'</div></div>':'';
+    return'<div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:10px;padding:14px;margin-bottom:10px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+      +'<div style="display:flex;gap:8px;align-items:center">'+(badges[t.outcome]||'')+'<span style="font-size:13px;color:#aaa">'+(t.direction||'')+'</span></div>'
+      +pnlStr+'</div>'
+      +'<div style="display:flex;gap:16px;font-size:13px;color:#aaa;flex-wrap:wrap">'
+      +'<span>Draw: '+(t.draw||'—')+'</span>'
+      +'<span>RR: '+(t.rrActual||'—')+'</span>'
+      +'<span>Risk: '+(t.risk?t.risk+'%':'—')+'</span>'
+      +'<span>Disc: '+(t.discRating?'★'.repeat(t.discRating):'—')+'</span>'
+      +'</div>'
+      +ssHtml+narrativeHtml+improveHtml
+      +'</div>';
+  }).join('');
+  popup.style.display='flex';
+}
 
 // ── Goal tracker ──
 
@@ -3010,7 +3143,7 @@ loadAllData().then(()=>{
       <textarea id="e-improve" style="width:100%;padding:8px 10px;border:0.5px solid #1a2e1e;border-radius:8px;background:#0c1510;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive</option><option>Strong but slowing</option><option>Slowing</option><option>Grinding</option><option>Stalled</option></select></div>
+      <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive expansion — strong displacement</option><option>Strong but starting to slow</option><option>Moderate — steady push</option><option>Slowing — losing volume</option><option>Grinding — small candles, slow grind</option><option>Choppy — back and forth</option><option>Stalled — no directional momentum</option><option>V-shape recovery off FVG</option><option>Slow corrective retrace — textbook</option><option>Violent retrace — entered anyway</option><option>Price consolidating inside FVG</option></select></div>
       <div><label>Similar past trade</label><input type="text" id="e-similar" placeholder="e.g. 2025-03-14 — same draw"></div>
       <div><label>Emotion after close</label><select id="e-emotion-post" style="width:100%"><option value="">—</option><option>Satisfied ✓</option><option>Calm / indifferent</option><option>Frustrated</option><option>Relieved</option><option>Overconfident / euphoric</option><option>Revenge urge</option><option>Regret (closed too early)</option><option>Regret (held too long)</option><option>Shaken / doubting model</option></select></div>
     </div>
