@@ -382,9 +382,9 @@
     </div>
   </div>
   <div class="profile-btns">
-    <button class="profile-btn active" onclick="switchProfile('challenge',this)">Challenge</button>
-    <button class="profile-btn" onclick="switchProfile('funded',this)">Funded</button>
-    <button class="profile-btn" onclick="switchProfile('demo',this)">Demo</button>
+    <button class="profile-btn" onclick="switchProfile('challenge',this)" id="pbtn-challenge">Challenge</button>
+    <button class="profile-btn" onclick="switchProfile('funded',this)" id="pbtn-funded">Funded</button>
+    <button class="profile-btn" onclick="switchProfile('demo',this)" id="pbtn-demo">Demo</button>
   </div>
 </div>
 <div class="tabs">
@@ -1087,7 +1087,7 @@
 
 <script>
 // ── State ──
-let currentProfile='challenge';
+let currentProfile=(()=>{try{return localStorage.getItem('ict_last_profile')||'challenge';}catch(e){return 'challenge';}})();
 const PROFILES=['challenge','funded','demo'];
 let allTrades={challenge:[],funded:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},demo:{}};
@@ -2894,6 +2894,7 @@ function applyProfileUI(){
 
 function switchProfile(p, btn){
   currentProfile=p;
+  try{localStorage.setItem('ict_last_profile',p);}catch(e){}
   document.querySelectorAll('.profile-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   trades=allTrades[currentProfile]||[];
@@ -3101,6 +3102,11 @@ function launchConfetti(){
 
 // ── Init ──
 buildMistakes();
+// Activate the correct profile button based on restored profile
+document.querySelectorAll('.profile-btn').forEach(btn=>{
+  const id=btn.id.replace('pbtn-','');
+  if(id===currentProfile)btn.classList.add('active');
+});
 document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
 loadAllData().then(()=>{
@@ -3322,7 +3328,6 @@ loadAllData().then(()=>{
   <div class="more-item" onclick="mobNav('prop')">      <span class="more-item-icon">📊</span>Prop firm</div>
   <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
-  <div class="more-item" onclick="mobNav('session')">   <span class="more-item-icon">🎯</span>Session report</div>
   <div class="more-item" onclick="mobNav('presession')"> <span class="more-item-icon">🧠</span>Pre-session review</div>
 </div>
 
