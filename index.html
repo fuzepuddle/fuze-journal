@@ -819,34 +819,36 @@
     </div>
   </div>
 
-  <!-- Row 4: Daily P&L bar + Streaks + TOD -->
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px">
+  <!-- Row 4: Daily P&L full width -->
+  <div style="margin-bottom:12px">
     <div class="card">
       <div class="section-label" style="margin-bottom:12px">Daily P&amp;L — Mon to Fri</div>
       <div style="position:relative;width:100%;height:180px"><canvas id="s-daily-chart"></canvas></div>
       <div id="s-daily-stats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px"></div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="card" style="flex:1">
-        <div class="section-label">Streaks</div>
-        <div id="s-streaks" style="font-size:13px;color:#aaa">No data</div>
-      </div>
-      <div class="card" style="flex:1">
-        <div class="section-label">Time of day</div>
-        <div id="s-timeofday" style="font-size:13px;color:#aaa">No data</div>
-      </div>
-      <div class="card" style="flex:1">
-        <div class="section-label">Emotional state</div>
-        <div id="s-emotions" style="font-size:13px;color:#aaa">No data</div>
-      </div>
-      <div class="card" style="flex:1">
-        <div class="section-label">Momentum at entry</div>
-        <div id="s-momentum" style="font-size:13px;color:#aaa">No data</div>
-      </div>
+  </div>
+
+  <!-- Row 5: Streaks + Time of day + Emotional state + Momentum -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="card">
+      <div class="section-label">Streaks</div>
+      <div id="s-streaks" style="font-size:13px;color:#aaa">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Time of day</div>
+      <div id="s-timeofday" style="font-size:13px;color:#aaa">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Emotional state</div>
+      <div id="s-emotions" style="font-size:13px;color:#aaa">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Momentum at entry</div>
+      <div id="s-momentum" style="font-size:13px;color:#aaa">No data</div>
     </div>
   </div>
 
-  <!-- Row 5: Draw success + Best day/bias + Top mistakes -->
+  <!-- Row 6: Draw success + Best day/bias + Top mistakes -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Draw success rate</div>
