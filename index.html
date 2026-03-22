@@ -1834,6 +1834,27 @@ function renderKeyMetrics(f){
   }
 }
 
+function renderDrawStats(f){
+  const el=document.getElementById('s-draws');if(!el)return;
+  const draws={};
+  f.filter(t=>t.draw&&t.outcome).forEach(t=>{
+    if(!draws[t.draw])draws[t.draw]={win:0,total:0};
+    draws[t.draw].total++;
+    if(t.outcome==='win')draws[t.draw].win++;
+  });
+  const sorted=Object.entries(draws).sort((a,b)=>b[1].total-a[1].total);
+  if(!sorted.length){el.textContent='No data';return;}
+  el.innerHTML=sorted.slice(0,6).map(([draw,d])=>{
+    const wr=Math.round(d.win/d.total*100);
+    const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
+    return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
+      +'<span style="font-size:13px;color:#e0e0e0">'+draw+'</span>'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:13px;color:#999">'+d.total+' trades</span>'
+      +'<span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'%</span>'
+      +'</div></div>';
+  }).join('');
+}
 
 function renderBestDayBias(f){
   const el=document.getElementById('s-bestday');if(!el)return;
