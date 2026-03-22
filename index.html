@@ -1383,7 +1383,9 @@ async function saveTrade(){
   if(pnlRaw==='') missing.push('P&L');
   if(!risk) missing.push('Risk');
   if(!discRating) missing.push('Discipline stars');
-  if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state');
+  if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state (before entry)');
+  if(document.getElementById('f-emotion-post')&&!document.getElementById('f-emotion-post').value) missing.push('Emotional state (after close)');
+  if(document.getElementById('f-momentum')&&!document.getElementById('f-momentum').value) missing.push('Momentum at entry');
   const files=window._pendingSSFiles||{};
   if(currentProfile!=='backtesting'){
     if(!files['1m']) missing.push('1M screenshot');
@@ -3067,6 +3069,18 @@ function randomizeTrade(){
   document.getElementById('f-emotion').value=emotions[Math.floor(Math.random()*emotions.length)];
   const postEmotions=['Satisfied ✓','Calm / indifferent','Frustrated','Relieved','Overconfident / euphoric'];
   document.getElementById('f-emotion-post').value=rOutcome==='win'?postEmotions[Math.floor(Math.random()*2)]:rOutcome==='loss'?postEmotions[2+Math.floor(Math.random()*2)]:postEmotions[1];
+  const momentumOptions=[
+    'Aggressive expansion — strong displacement',
+    'Strong but starting to slow',
+    'Moderate — steady push',
+    'Slowing — losing volume',
+    'V-shape recovery off FVG',
+    'Slow corrective retrace — textbook',
+    'Grinding — small candles, slow grind',
+  ];
+  // Weight toward good momentum on wins, weaker on losses
+  const momPool=rOutcome==='win'?momentumOptions.slice(0,5):rOutcome==='loss'?momentumOptions.slice(2):momentumOptions;
+  document.getElementById('f-momentum').value=momPool[Math.floor(Math.random()*momPool.length)];
   outcome=rOutcome;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   const outcomeMap={win:0,loss:1,be:2};
