@@ -1247,7 +1247,7 @@ function showTab(t){
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
   if(t==='playbook')loadPlaybook();
-  if(t==='presession')loadPresession();
+  if(t==='presession'){loadPresession();renderQOTD();}
   // Close any open popups on tab switch
   const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
@@ -2400,6 +2400,50 @@ function updateJournalStreak(){
 }
 
 
+// ── Quote of the day ──
+const QUOTES = [
+  {q:"Is it really a risk if the risk is leaving behind a life you hate?",a:"Unknown"},
+  {q:"Most people won't put in the work to be great. That's not sad — that's your edge.",a:"Unknown"},
+  {q:"The Huracan doesn't care about your feelings. It cares about your consistency.",a:"Unknown"},
+  {q:"You are one good habit away from a completely different life.",a:"Unknown"},
+  {q:"The people who tell you it can't be done are usually the ones who never tried.",a:"Unknown"},
+  {q:"You don't get what you wish for. You get what you work for.",a:"Unknown"},
+  {q:"Pain is temporary. A blown challenge is temporary. Quitting is permanent.",a:"Unknown"},
+  {q:"Everyone wants the result. Almost nobody wants the process. The process is the advantage.",a:"Unknown"},
+  {q:"The market will test your patience before it rewards your discipline.",a:"Unknown"},
+  {q:"Your future self is watching you through your memories. Trade for them.",a:"Unknown"},
+  {q:"It's supposed to be hard. If it wasn't hard, everyone would do it. The hard is what makes it worth it.",a:"Jimmy Dugan"},
+  {q:"Win or lose, everybody gets what they want out of the market. Some people seem to like to lose, so they win by losing money.",a:"Ed Seykota"},
+  {q:"I'm always thinking about losing money as opposed to making money. Don't focus on making money, focus on protecting what you have.",a:"Paul Tudor Jones"},
+  {q:"The elements of good trading are: cutting losses, cutting losses, and cutting losses.",a:"Ed Seykota"},
+  {q:"After spending many years making and losing millions, it never was my thinking that made me money. It always was my sitting.",a:"Jesse Livermore"},
+  {q:"If you personalize losses, you can't trade.",a:"Bruce Kovner"},
+  {q:"Losers average losers.",a:"Paul Tudor Jones"},
+  {q:"The market is never wrong — opinions often are.",a:"Jesse Livermore"},
+  {q:"There is only one side of the market — not the bull side or the bear side, but the right side.",a:"Jesse Livermore"},
+  {q:"One day the people who didn't believe in you will tell everyone how they knew you.",a:"Unknown"},
+  {q:"You didn't come this far to only come this far.",a:"Unknown"},
+  {q:"The version of you that drives the Huracan doesn't skip setups. He trusts the model.",a:"Unknown"},
+  {q:"Discipline is choosing between what you want now and what you want most.",a:"Unknown"},
+  {q:"Every professional was once a beginner who refused to quit.",a:"Unknown"},
+  {q:"Missed setup = correct execution. Say it until you believe it.",a:"Unknown"},
+  {q:"The draw taken rule is not a restriction. It is the market telling you it's done. Listen.",a:"Unknown"},
+  {q:"16:30 UK. Not when you're up. Not when you're down. That's the rule. Rules exist because emotions don't.",a:"Unknown"},
+  {q:"You are not in competition with anyone else. Your only opponent is yesterday's version of you.",a:"Unknown"},
+  {q:"The session where you took zero trades because the setup wasn't there — that is also a winning session.",a:"Unknown"},
+  {q:"One day this will all be a story you tell. Make it a good one.",a:"Unknown"},
+];
+function renderQOTD(){
+  const el=document.getElementById('qotd-text');
+  const auth=document.getElementById('qotd-author');
+  if(!el)return;
+  // Deterministic by day so it doesn't change on refresh
+  const day=Math.floor(Date.now()/86400000);
+  const q=QUOTES[day%QUOTES.length];
+  el.textContent='\u201C'+q.q+'\u201D';
+  auth.textContent=q.a!=='Unknown'?'\u2014 '+q.a:'';
+}
+
 // ── Pre-session review ──
 let presessionData = {};  // { profile: [{id,date,category,lesson,rule}] }
 let psNonNeg = {};        // { profile: string }
@@ -2933,6 +2977,14 @@ loadAllData().then(()=>{
 
 <!-- PRE-SESSION REVIEW -->
 <div class="page" id="page-presession">
+
+  <!-- QOTD -->
+  <div class="card" id="qotd-card" style="margin-bottom:16px;border-left:3px solid #10b981;padding:16px 20px">
+    <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#10b981;margin-bottom:10px">Quote of the day</div>
+    <div id="qotd-text" style="font-size:15px;color:#e0e0e0;line-height:1.7;font-style:italic"></div>
+    <div id="qotd-author" style="font-size:13px;color:#555;margin-top:8px"></div>
+  </div>
+
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
 
     <!-- Left: Add reminder trade -->
