@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0f0a">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 <title>fuze's ICT Trading Journal ✍️</title>
@@ -139,20 +142,21 @@
   @media(max-width:768px){
     /* Base */
     body{
-      padding:.75rem .75rem 72px;
+      padding:.75rem .75rem calc(80px + env(safe-area-inset-bottom,0px));
       font-size:14px;
       border-top:none;
+      max-width:100%;
     }
 
     /* Hide desktop tabs, show bottom nav */
     .tabs{display:none !important}
 
-    /* Profile bar */
+    /* Profile bar — compact horizontal */
     .profile-bar{
       flex-direction:column;
       align-items:flex-start;
-      gap:10px;
-      margin-bottom:1rem;
+      gap:8px;
+      margin-bottom:.875rem;
       padding-bottom:.75rem;
     }
     .profile-bar > div:first-child{
@@ -161,7 +165,17 @@
       justify-content:space-between;
       width:100%;
     }
-    #header-right{display:none !important}
+    #header-right{
+      display:flex !important;
+      gap:6px;
+      width:100%;
+      justify-content:flex-end;
+    }
+    /* Compact clocks on mobile */
+    #header-right .clock-widget{
+      padding:4px 8px;
+      font-size:12px;
+    }
     #journal-streak{font-size:12px !important;padding:3px 8px !important}
     .profile-btns{
       width:100%;
@@ -170,20 +184,21 @@
       gap:5px;
     }
     .profile-btn{
-      padding:7px 4px;
+      padding:9px 4px;
       font-size:13px;
       text-align:center;
       border-radius:8px;
     }
     h1{font-size:15px}
 
-    /* All grids collapse */
+    /* All grids collapse to 1 col */
     .grid-2,.grid-3,.grid-4{grid-template-columns:1fr !important}
 
-    /* Stat grid rows — keep 2 col on mobile for metric cards */
-    #page-stats .grid-4,
+    /* Stats — 2 col for metric cards */
     #page-stats [style*="repeat(6,1fr)"],
-    #page-stats [style*="repeat(4,1fr)"]{
+    #page-stats [style*="repeat(4,1fr)"],
+    #page-stats [style*="1fr 1fr 1fr 1fr"],
+    #page-stats [style*="1fr 1fr 1fr"]{
       grid-template-columns:1fr 1fr !important;
       display:grid !important;
     }
@@ -192,23 +207,17 @@
       display:grid !important;
     }
     #page-stats [style*="2fr 1fr"],
-    #page-stats [style*="1fr 2fr"],
-    #page-stats [style*="1fr 1fr 1fr 1fr"],
-    #page-stats [style*="1fr 1fr 1fr"]{
+    #page-stats [style*="1fr 2fr"]{
       grid-template-columns:1fr !important;
       display:grid !important;
     }
 
-    /* Log form — hide sidebar, full width form */
+    /* Log form */
     #log-form-col{width:100%}
+    [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
 
-    /* Timer + calc stack */
-    #session-timer-card + div,
-    [style*="grid-template-columns:1fr 1fr"]{
-      grid-template-columns:1fr !important;
-    }
-
-    /* Session card — collapse to 2 cols */
+    /* Session date/time row — keep 2 col */
+    .grid-2{grid-template-columns:1fr 1fr !important}
     [style*="grid-template-columns:repeat(5,1fr)"]{
       grid-template-columns:1fr 1fr !important;
       display:grid !important;
@@ -217,27 +226,27 @@
     /* Cards */
     .card{padding:.875rem;margin-bottom:10px;border-radius:10px}
 
-    /* Inputs */
+    /* Inputs — larger tap targets */
     input[type=date],input[type=number],input[type=text],
     input[type=time],select,textarea{
-      padding:11px 12px;
-      font-size:15px;
+      padding:13px 12px;
+      font-size:16px;
       border-radius:8px;
       -webkit-appearance:none;
     }
 
-    /* Outcome buttons */
-    .outcome-btn{padding:13px 8px;font-size:14px}
+    /* Outcome buttons — bigger on mobile */
+    .outcome-btn{padding:16px 8px;font-size:15px;border-radius:10px}
 
     /* Stars */
-    .star{font-size:28px !important}
+    .star{font-size:30px !important}
 
     /* Buttons */
-    .btn{padding:11px 18px;font-size:14px}
-    .btn-primary{padding:13px 20px;font-size:14px;font-weight:600}
-    .btn-sm{padding:8px 12px;font-size:13px}
+    .btn{padding:12px 18px;font-size:14px}
+    .btn-primary{padding:14px 20px;font-size:15px;font-weight:600;border-radius:10px}
+    .btn-sm{padding:9px 14px;font-size:13px}
 
-    /* Save button full width on mobile */
+    /* Save/Clear/Randomize row — full width buttons */
     [style*="justify-content:flex-end"][style*="padding-bottom"]{
       display:grid !important;
       grid-template-columns:1fr 1fr 1fr;
@@ -246,36 +255,39 @@
 
     /* Tables — horizontal scroll */
     .log-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
-    .log-table{min-width:640px}
-    .cal-grid{min-width:460px}
+    .log-table{min-width:600px}
+    .cal-grid{min-width:380px}
     .cal-layout>div:first-child{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+    /* Calendar cells */
+    .cal-grid td{height:90px;padding:7px 8px}
 
     /* Metric cards */
     .metric-val{font-size:20px !important}
-    .metric-lbl{font-size:13px}
+    .metric-lbl{font-size:12px}
     .metric-card{padding:10px 12px}
 
-    /* Hide weekly sidebar on calendar on mobile */
-    .cal-layout{display:block !important}
-    .month-total-card{margin-top:0}
-
-    /* Prop firm grids */
+    /* Prop firm */
     #page-prop .grid-2{grid-template-columns:1fr !important}
     #page-prop .grid-4{grid-template-columns:1fr 1fr !important}
 
-    /* Weekly review nav */
-    .cal-nav button{padding:8px 12px;font-size:13px}
+    /* Weekly/cal nav */
+    .cal-nav button{padding:10px 14px;font-size:14px}
 
-    /* Mistakes list shorter on mobile */
-    .mistakes-list{max-height:200px}
+    /* Mistakes list */
+    .mistakes-list{max-height:180px}
 
-    /* Charts */
+    /* Charts — sensible height */
     canvas{max-height:160px !important}
-
-    /* Stats rows */
     #s-daily-stats{grid-template-columns:repeat(3,1fr) !important}
 
-    /* Modal full screen on mobile */
+    /* Presession grid */
+    #page-presession [style*="1fr 1fr"]{grid-template-columns:1fr !important}
+
+    /* Weekly notes grid */
+    #page-weekly [style*="1fr 1fr"]{grid-template-columns:1fr !important}
+
+    /* Edit modal — full screen */
     #edit-modal > div{
       margin:0 !important;
       border-radius:0 !important;
@@ -288,16 +300,32 @@
       min-height:100vh;
     }
 
-    /* Section labels slightly smaller */
-    .section-label{font-size:13px;letter-spacing:.06em}
+    /* Popups — full width on mobile */
+    #popup-passed > div,
+    #popup-blown > div{
+      margin:16px;
+      padding:28px 24px;
+      max-width:100%;
+      border-radius:12px;
+    }
+
+    /* Section labels */
+    .section-label{font-size:12px;letter-spacing:.05em}
+
+    /* QOTD card */
+    #qotd-card{padding:14px 16px}
+    #qotd-text{font-size:14px}
 
     /* Bottom nav */
     #mobile-nav{
       display:flex;
       position:fixed;
       bottom:0;left:0;right:0;
-      height:56px;
-      background:#0f1a12111;
+      height:60px;
+      padding-bottom:env(safe-area-inset-bottom,0px);
+      background:rgba(10,15,10,0.97);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
       border-top:0.5px solid #1a2e1e;
       z-index:9999;
       align-items:stretch;
@@ -308,52 +336,64 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:2px;
+      gap:3px;
       cursor:pointer;
-      font-size:13px;
+      font-size:11px;
       font-weight:500;
       letter-spacing:.02em;
-      color:#999;
+      color:#666;
       border:none;
       background:none;
       font-family:inherit;
       padding:0;
       transition:color .15s;
       -webkit-tap-highlight-color:transparent;
+      min-width:0;
     }
-    .mob-btn .mob-icon{font-size:19px;line-height:1}
+    .mob-btn .mob-icon{font-size:22px;line-height:1}
     .mob-btn.active{color:#10b981}
-    .mob-btn:active{opacity:.6}
+    .mob-btn.active .mob-icon{transform:scale(1.1)}
+    .mob-btn:active{opacity:.5;transform:scale(.94)}
 
-    /* More menu */
+    /* More menu — slides up */
     #mobile-more-menu{
       display:none;
       position:fixed;
-      bottom:56px;left:0;right:0;
-      background:#0f1a12;
+      bottom:calc(60px + env(safe-area-inset-bottom,0px));left:0;right:0;
+      background:#0d1a0f;
       border-top:0.5px solid #1a2e1e;
+      border-radius:16px 16px 0 0;
       z-index:9998;
-      padding:8px;
+      padding:8px 8px 12px;
       flex-direction:column;
       gap:2px;
-      max-height:70vh;
+      max-height:60vh;
       overflow-y:auto;
+      box-shadow:0 -4px 24px rgba(0,0,0,0.5);
+    }
+    #mobile-more-menu::before{
+      content:'';
+      display:block;
+      width:36px;height:4px;
+      background:#2a3a2a;
+      border-radius:2px;
+      margin:4px auto 10px;
     }
     #mobile-more-menu.open{display:flex}
     .more-item{
       display:flex;
       align-items:center;
-      gap:12px;
-      padding:13px 14px;
-      font-size:14px;
-      color:#ffffff;
-      border-radius:8px;
+      gap:14px;
+      padding:15px 16px;
+      font-size:15px;
+      color:#e0e0e0;
+      border-radius:10px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
     }
-    .more-item:active{background:#1e1e1e}
-    .more-item.active-more{color:#10b981}
-    .more-item-icon{font-size:18px;width:24px;text-align:center}
+    .more-item:active{background:#1a2e1e}
+    .more-item.active-more{color:#10b981;background:rgba(16,185,129,0.08)}
+    .more-item-icon{font-size:20px;width:28px;text-align:center}
   }
 </style>
 </head>
