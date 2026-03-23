@@ -2049,7 +2049,7 @@ function renderCalendar(){
         if(d.be)inner+='<span style="font-size:13px;font-weight:600;background:rgba(110,90,0,0.6);color:#c4a020;border-radius:4px;padding:3px 8px">'+d.be+'BE</span>';
         inner+='</div>';
       }
-      const click=d?'onclick="calDayClick('${dateStr}')"':'';
+      const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
       html+='<td class="'+cls.trim()+'" style="'+cellBg+'" '+click+'>'+inner+'</td>';
       day++;
     }
@@ -2440,7 +2440,7 @@ function openSSLightbox(url){
   let lb = document.getElementById('trade-ss-lightbox');
   if(!lb){
     lb = document.createElement('div');
-    lb.id = 'trade-ss-lightbox';
+    lb.id = 'ss-lightbox';
     lb.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out';
     lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#aaa;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
     lb.addEventListener('click', closeLightbox);
@@ -2716,7 +2716,7 @@ const QUOTES = [
   {q:"Most people won't put in the work to be great. That's not sad — that's your edge.",a:"Unknown"},
   {q:"The Huracan doesn't care about your feelings. It cares about your consistency.",a:"Unknown"},
   {q:"You are one good habit away from a completely different life.",a:"Unknown"},
-  {q:"The people who tell you it can't be done are usually the ones who never tried.",a:"Unknown"},",a:"Unknown"},
+  {q:"The people who tell you it can't be done are usually the ones who never tried.",a:"Unknown"},
   {q:"You don't get what you wish for. You get what you work for.",a:"Unknown"},
   {q:"Pain is temporary. A blown challenge is temporary. Quitting is permanent.",a:"Unknown"},
   {q:"Everyone wants the result. Almost nobody wants the process. The process is the advantage.",a:"Unknown"},
