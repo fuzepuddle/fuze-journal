@@ -2049,7 +2049,7 @@ function renderCalendar(){
         if(d.be)inner+='<span style="font-size:13px;font-weight:600;background:rgba(110,90,0,0.6);color:#c4a020;border-radius:4px;padding:3px 8px">'+d.be+'BE</span>';
         inner+='</div>';
       }
-      const click=d?'onclick="calDayClick('${dateStr}')"':'';
+      const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
       html+='<td class="'+cls.trim()+'" style="'+cellBg+'" '+click+'>'+inner+'</td>';
       day++;
     }
