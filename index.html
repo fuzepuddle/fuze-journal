@@ -3217,6 +3217,21 @@ function randomizeTrade(){
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   const outcomeMap={win:0,loss:1,be:2};
   document.querySelectorAll('.outcome-btn')[outcomeMap[rOutcome]].classList.add('active-'+rOutcome);
+
+  // Randomize trade classification and update the UI like a real click
+  const classKeys=['valid-good','valid-bad','invalid'];
+  const classWeights=rOutcome==='win'?[0.85,0.12,0.03]:rOutcome==='be'?[0.65,0.25,0.10]:[0.35,0.45,0.20];
+  let rc=Math.random(), cumC=0, picked='valid-good';
+  for(let i=0;i<classKeys.length;i++){cumC+=classWeights[i];if(rc<cumC){picked=classKeys[i];break;}}
+  tradeClass=picked;
+  const btnMap={
+    'valid-good':document.getElementById('tclass-valid-good'),
+    'valid-bad':document.getElementById('tclass-valid-bad'),
+    'invalid':document.getElementById('tclass-invalid'),
+  };
+  const pickedBtn=btnMap[picked];
+  if(pickedBtn) setTradeClass(picked, pickedBtn);
+
   const disc=rOutcome==='win'?Math.floor(Math.random()*3)+3:Math.floor(Math.random()*3)+1;
   discRating=disc;
   document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<disc));
