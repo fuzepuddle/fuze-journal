@@ -36,7 +36,7 @@
   .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#aaa;margin-bottom:1px;user-select:none}
   .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#10b981}
   .check-group-title{font-size:13px;font-weight:500;color:#e0e0e0;margin:10px 0 4px}
-  .gate{border:0.5px solid #1a2e1e;border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:#0f1a12927;color:#aaa}
+  .gate{border:0.5px solid #1a2e1e;border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:rgba(15,26,18,0.58);color:#aaa}
   .gate.pass{border-color:#3a6e3a;background:#0f1f0f;color:#6abf6a}
   .gate.fail{border-color:#6e2a2a;background:#1f0f0f;color:#c06060}
   .outcome-row{display:flex;gap:8px;margin-bottom:14px}
@@ -49,7 +49,7 @@
   .star{font-size:20px;cursor:pointer;color:#1a2e1e;transition:color .15s;line-height:1}
   .star.lit{color:#10b981}
   .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;transition:all .2s;font-family:inherit}
-  .btn:hover{background:#0f1a12d30}
+  .btn:hover{background:rgba(15,26,18,0.82)}
   .btn-primary{background:#10b981;color:#0a0f0a;border-color:#10b981;font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
   .btn-primary:hover{background:#059669}
   .btn-sm{padding:5px 12px;font-size:13px}
@@ -78,9 +78,9 @@
   .danger-bar{border:0.5px solid #6e2a2a;background:#1f0f0f;color:#c06060;border-radius:8px;padding:8px 12px;font-size:13px;margin-top:8px;display:none}
 
   /* Mistakes multi-select styled */
-  .mistakes-list{border:0.5px solid #1a2e1e;border-radius:8px;background:#0f1a12927;max-height:260px;overflow-y:auto;padding:4px}
+  .mistakes-list{border:0.5px solid #1a2e1e;border-radius:8px;background:rgba(15,26,18,0.58);max-height:260px;overflow-y:auto;padding:4px}
   .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#aaa;user-select:none;transition:background .15s}
-  .mistake-item:hover{background:#0f1a12d30}
+  .mistake-item:hover{background:rgba(15,26,18,0.82)}
   .mistake-item.selected{background:#1f1f0f;color:#ffffff;border-left:2px solid #c4a020;padding-left:6px}
   .mistake-item input[type=checkbox]{display:none}
   .mistake-dot{width:8px;height:8px;border-radius:50%;border:1px solid #444;flex-shrink:0;transition:all .15s}
@@ -111,14 +111,14 @@
   .cal-sub{font-size:13px;color:#aaa;margin-top:2px}
   .cal-nav{display:flex;gap:8px;align-items:center}
   .cal-nav button{padding:5px 12px;border:0.5px solid #1a2e1e;border-radius:6px;background:#0c1510;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
-  .cal-nav button:hover{background:#0f1a12d30}
+  .cal-nav button:hover{background:rgba(15,26,18,0.82)}
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
   .cal-grid th{font-size:13px;font-weight:500;color:#aaa;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
   .cal-grid td{vertical-align:top;border:0.5px solid #1a2e1e;width:14.28%;height:130px;padding:10px 12px;font-size:13px;color:#999;background:#0a0a0a;cursor:default}
   .cal-grid td.weekend{background:#0a0a0a}
   .cal-grid td.has-trade{background:#0f1a12;cursor:pointer}
-  .cal-grid td.has-trade:hover{background:#0f1a12927}
+  .cal-grid td.has-trade:hover{background:rgba(15,26,18,0.58)}
   .cal-grid td.today{border:2px solid #10b981 !important;background:#0a1f10 !important}
   .cal-day{font-size:15px;font-weight:500;margin-bottom:8px}
   .cal-pnl{font-size:18px;font-weight:500;margin-bottom:4px}
@@ -233,6 +233,7 @@
       font-size:16px;
       border-radius:8px;
       -webkit-appearance:none;
+      appearance:none;
     }
 
     /* Outcome buttons — bigger on mobile */
@@ -1561,6 +1562,13 @@ function clearForm(){
   document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
+  tradeClass='';
+  document.querySelectorAll('.tclass-btn').forEach(b=>{
+    b.style.background='#0c1510';
+    b.style.borderColor='#1a2e1e';
+    b.style.color='#555';
+    b.querySelectorAll('span').forEach(s=>s.style.color='#444');
+  });
   selectedMistakes=[];
   buildMistakes();
   document.getElementById('mistake-count').textContent='';
@@ -1614,7 +1622,7 @@ function renderJournal(){
           +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:0.5px solid #1a2e1e;cursor:pointer;background:#0f1a12" '
           +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'#1a2e1e\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:#e0e0e0;font-size:13px;text-decoration:none;border:0.5px solid #1a2e1e;padding:4px 10px;border-radius:6px;background:#0f1a12927">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#e0e0e0;font-size:13px;text-decoration:none;border:0.5px solid #1a2e1e;padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
     const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#f5f5f5;line-height:1.6">'+t.narrative+'</div></div>':'';
@@ -1700,6 +1708,23 @@ function saveEdit(){
   const idx=trades.findIndex(t=>t.id===editingId);
   if(idx===-1)return;
   const pnlRaw=document.getElementById('e-pnl').value;
+  const missing=[];
+  if(!document.getElementById('e-date').value) missing.push('Date');
+  if(!document.getElementById('e-entry-time').value) missing.push('Entry time');
+  if(!(document.getElementById('e-exit-time')||{}).value) missing.push('Exit time');
+  if(!document.getElementById('e-bias').value) missing.push('Bias');
+  if(!document.getElementById('e-direction').value) missing.push('Direction');
+  if(!document.getElementById('e-draw').value) missing.push('Draw');
+  if(!document.getElementById('e-actual-rr').value) missing.push('RR achieved');
+  if(!document.getElementById('e-outcome').value) missing.push('Outcome (Win/Loss/BE)');
+  if(!(document.getElementById('e-tradeClass')||{}).value) missing.push('Trade classification');
+  if(pnlRaw==='') missing.push('P&L');
+  if(!document.getElementById('e-risk').value) missing.push('Risk');
+  if(!eDiscRating) missing.push('Discipline stars');
+  if(document.getElementById('e-emotion')&&!document.getElementById('e-emotion').value) missing.push('Emotional state');
+  if(document.getElementById('e-emotion-post')&&!document.getElementById('e-emotion-post').value) missing.push('Emotional state (after close)');
+  if(document.getElementById('e-momentum')&&!document.getElementById('e-momentum').value) missing.push('Momentum at entry');
+  if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   trades[idx]={
     ...trades[idx],
     date:document.getElementById('e-date').value,
@@ -2390,12 +2415,12 @@ function calcRisk(){
 
   out.innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
-    +'<div style="background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:6px;padding:7px 10px">'
+    +'<div style="background:rgba(15,26,18,0.58);border:0.5px solid #1a2e1e;border-radius:6px;padding:7px 10px">'
     +'<div style="font-size:13px;color:#999;margin-bottom:3px">1% risk ($'+risk1pct.toFixed(0)+')</div>'
     +'<div style="font-size:13px;font-weight:500;color:#10b981">'+nq1.toFixed(2)+' NQ</div>'
     +'<div style="font-size:13px;color:#aaa">'+Math.round(mnq1)+' MNQ</div>'
     +'</div>'
-    +'<div style="background:#0f1a12927;border:0.5px solid #1a2e1e;border-radius:6px;padding:7px 10px">'
+    +'<div style="background:rgba(15,26,18,0.58);border:0.5px solid #1a2e1e;border-radius:6px;padding:7px 10px">'
     +'<div style="font-size:13px;color:#999;margin-bottom:3px">0.5% risk ($'+risk05pct.toFixed(0)+')</div>'
     +'<div style="font-size:13px;font-weight:500;color:#10b981">'+nq05.toFixed(2)+' NQ</div>'
     +'<div style="font-size:13px;color:#aaa">'+Math.round(mnq05)+' MNQ</div>'
@@ -3379,17 +3404,17 @@ loadAllData().then(()=>{
     <div style="display:flex;gap:8px;align-items:center" id="lb-thumbs"></div>
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:13px;color:#aaa" id="lb-zoom-label">100%</span>
-      <button onclick="lbResetZoom()" style="border:0.5px solid #1a2e1e;background:#0f1a12927;cursor:pointer;color:#aaa;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
+      <button onclick="lbResetZoom()" style="border:0.5px solid #1a2e1e;background:rgba(15,26,18,0.58);cursor:pointer;color:#aaa;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
       <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:#aaa;font-size:26px;line-height:1;padding:2px 6px">×</button>
     </div>
   </div>
   <!-- Main image area -->
   <div style="display:flex;align-items:center;gap:0;flex:1;min-height:0;position:relative">
-    <button onclick="lbNav(-1)" id="lb-prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#ffffff;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0f1a12d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8249;</button>
+    <button onclick="lbNav(-1)" id="lb-prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#ffffff;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='rgba(15,26,18,0.82)'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8249;</button>
     <div id="lb-img-wrap" style="flex:1;height:100%;overflow:hidden;position:relative;cursor:grab">
       <img id="lb-main-img" src="" style="position:absolute;transform-origin:0 0;user-select:none;pointer-events:none;display:block;border-radius:6px">
     </div>
-    <button onclick="lbNav(1)" id="lb-next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#ffffff;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='#0f1a12d30'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8250;</button>
+    <button onclick="lbNav(1)" id="lb-next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;border:0.5px solid #1a2e1e;background:rgba(20,20,20,0.85);cursor:pointer;color:#ffffff;font-size:32px;padding:12px 14px;border-radius:8px;line-height:1;transition:background .15s" onmouseover="this.style.background='rgba(15,26,18,0.82)'" onmouseout="this.style.background='rgba(20,20,20,0.85)'">&#8250;</button>
   </div>
   <!-- Bottom dots -->
   <div style="display:flex;gap:8px;justify-content:center;padding:10px 0;flex-shrink:0" id="lb-dots"></div>
