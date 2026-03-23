@@ -316,6 +316,16 @@
     #qotd-card{padding:14px 16px}
     #qotd-text{font-size:14px}
 
+    /* Trade classification buttons */
+    #trade-class-row {
+      grid-template-columns: 1fr !important;
+      gap: 6px !important;
+    }
+    .tclass-btn {
+      padding: 12px 10px !important;
+      font-size: 13px !important;
+    }
+
     /* Bottom nav */
     #mobile-nav{
       display:flex;
@@ -621,6 +631,14 @@
         </select>
       </div>
     </div>
+    <div style="margin-top:14px">
+      <label style="margin-bottom:6px">Trade classification</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px" id="trade-class-row">
+        <button type="button" class="tclass-btn" onclick="setTradeClass('valid-good',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">✅ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">good execution</span></button>
+        <button type="button" class="tclass-btn" onclick="setTradeClass('valid-bad',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">⚠️ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">bad execution</span></button>
+        <button type="button" class="tclass-btn" onclick="setTradeClass('invalid',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">❌ Invalid setup<br><span style="font-weight:400;font-size:11px;color:#444">shouldn't have taken</span></button>
+      </div>
+    </div>
 
   </div>
 
@@ -923,6 +941,14 @@
 
 
 
+  <!-- Trade classification breakdown -->
+  <div style="margin-bottom:12px">
+    <div class="card">
+      <div class="section-label" style="margin-bottom:12px">Valid vs invalid setup breakdown</div>
+      <div id="s-class-stats" style="font-size:13px;color:#aaa">No classifications logged yet — tag your trades as valid/invalid when logging.</div>
+    </div>
+  </div>
+
   <!-- Hidden metric-card id for pnl card compat -->
   <div id="s-pnl-card" style="display:none"></div>
 </div>
@@ -1137,7 +1163,7 @@ let allTrades={challenge:[],funded:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
-let trades=[];let mode='live';let discRating=0;let outcome='';
+let trades=[];let mode='live';let discRating=0;let outcome='';let tradeClass='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
 
@@ -1405,6 +1431,8 @@ function rateStar(n){discRating=n;document.querySelectorAll('#stars-disc .star')
 function setOutcome(type,btn){
   outcome=type;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
+  tradeClass='';
+  document.querySelectorAll('.tclass-btn').forEach(b=>{b.style.background='#0c1510';b.style.borderColor='#1a2e1e';b.style.color='#555';b.querySelectorAll('span').forEach(s=>s.style.color='#444');});
   btn.classList.add('active-'+type);
   const pnlField=document.getElementById('f-pnl');
   const cur=pnlField.value;
@@ -1417,6 +1445,22 @@ function setOutcome(type,btn){
   } else {
     pnlField.placeholder='e.g. 250 or -120';
   }
+}
+
+// ── Trade classification ──
+function setTradeClass(type, btn){
+  tradeClass=type;
+  document.querySelectorAll('.tclass-btn').forEach(b=>{
+    b.style.background='#0c1510';
+    b.style.borderColor='#1a2e1e';
+    b.querySelectorAll('span').forEach(s=>s.style.color='#444');
+  });
+  const colors={'valid-good':['#0a2010','#10b981','#6abf6a'],'valid-bad':['#1a1400','#f59e0b','#c4a020'],'invalid':['#1f0808','#ef4444','#c06060']};
+  const [bg,border,text]=colors[type]||['#0c1510','#1a2e1e','#555'];
+  btn.style.background=bg;
+  btn.style.borderColor=border;
+  btn.style.color=text;
+  btn.querySelectorAll('span').forEach(s=>s.style.color=text);
 }
 
 // ── Save trade ──
@@ -1490,6 +1534,7 @@ async function saveTrade(){
     ss1m:ssUrls['1m']||'', ss5m:ssUrls['5m']||'',
     ss15m:ssUrls['15m']||'', ss1h:ssUrls['1h']||'', ss4h:ssUrls['4h']||'',
     risk,
+    tradeClass,
     tags:[],
     checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
     checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length
@@ -1545,6 +1590,7 @@ function renderJournal(){
   if(!f.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   const badges={win:'<span class="green-bg">Win</span>',loss:'<span class="red-bg">Loss</span>',be:'<span class="amber-bg">BE</span>'};
+  const classBadges={'valid-good':'<span style="background:#0a2010;color:#10b981;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #1a5c35;white-space:nowrap">✅ valid</span>','valid-bad':'<span style="background:#1a1400;color:#c4a020;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #4a3a00;white-space:nowrap">⚠️ bad exec</span>','invalid':'<span style="background:#1f0808;color:#c06060;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #4a2a2a;white-space:nowrap">❌ invalid</span>'};
   const biasCol={Bullish:'#6abf6a',Bearish:'#c06060',Chop:'#c4a020'};
   tbody.innerHTML=f.map(t=>{
     const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#6abf6a">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#c06060">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#c4a020">$0</span>'):'—';
@@ -1575,8 +1621,9 @@ function renderJournal(){
     const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Emotion after close</div><div style="font-size:13px;color:#aaa">'+t.emotionPost+'</div></div>':'';
     const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Momentum at entry</div><div style="font-size:13px;color:'+(t.momentum.includes('Aggressive')?'#6abf6a':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#c06060':'#c4a020')+'">'+t.momentum+'</div></div>':'';
     const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#aaa;line-height:1.6">'+t.similar+'</div></div>':'';
-    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#0d0d0d;cursor:pointer;color:#666;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
-    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+ssHtml+momentumHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
+    const classBadgeHtml=t.tradeClass?'<div style="margin-bottom:10px">'+( classBadges[t.tradeClass]||'')+'</div>':'';
+    const editBtn='<button onclick="openEdit('+t.id+')'" style="border:0.5px solid #2a2a2a;background:#0d0d0d;cursor:pointer;color:#666;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#090e0a;border-bottom:0.5px solid #1a2e1e">'+classBadgeHtml+ssHtml+momentumHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
 }
@@ -1617,6 +1664,7 @@ function openEdit(id){
   document.getElementById('e-entry-time').value=t.entryTime||'';
   if(document.getElementById('e-exit-time'))document.getElementById('e-exit-time').value=t.exitTime||'';
   document.getElementById('e-emotion').value=t.emotion||'';
+  const eTc=document.getElementById('e-tradeClass');if(eTc)eTc.value=t.tradeClass||'';
   document.getElementById('e-ss-1m').value=t.ss1m||'';
   document.getElementById('e-ss-5m').value=t.ss5m||'';
   document.getElementById('e-ss-15m').value=t.ss15m||'';
@@ -1679,6 +1727,7 @@ function saveEdit(){
     momentum:(document.getElementById('e-momentum')||{}).value||'',
     similar:(document.getElementById('e-similar')||{}).value||'',
     emotionPost:(document.getElementById('e-emotion-post')||{}).value||'',
+    tradeClass:(document.getElementById('e-tradeClass')||{}).value||'',
   };
   save();closeEdit();renderJournal();
 }
@@ -1757,6 +1806,7 @@ function renderStats(){
   renderMomentumStats(f);
   renderLongShort(f);
   renderDiscCorr(f);
+  renderClassStats(f);
   const tiltEl=document.getElementById('s-tilt');
   if(tiltEl){
     const recent=f.filter(t=>t.pnl!=null).sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id)).slice(0,5);
@@ -1999,7 +2049,7 @@ function renderCalendar(){
         if(d.be)inner+='<span style="font-size:13px;font-weight:600;background:rgba(110,90,0,0.6);color:#c4a020;border-radius:4px;padding:3px 8px">'+d.be+'BE</span>';
         inner+='</div>';
       }
-      const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
+      const click=d?'onclick="calDayClick('${dateStr}')"':'';
       html+='<td class="'+cls.trim()+'" style="'+cellBg+'" '+click+'>'+inner+'</td>';
       day++;
     }
@@ -2118,7 +2168,57 @@ function renderDiscCorr(f){
 
 
 
+function renderClassStats(f){
+  const el=document.getElementById('s-class-stats');if(!el)return;
+  const withClass=f.filter(t=>t.tradeClass&&t.outcome);
+  if(!withClass.length){el.innerHTML='<span style="font-size:13px;color:#999">No classifications logged yet — tag your trades as valid/invalid when logging.</span>';return;}
+  const groups={'valid-good':{label:'✅ Valid + good exec',win:0,loss:0,be:0,total:0,pnl:0},'valid-bad':{label:'⚠️ Valid + bad exec',win:0,loss:0,be:0,total:0,pnl:0},'invalid':{label:'❌ Invalid setup',win:0,loss:0,be:0,total:0,pnl:0}};
+  withClass.forEach(t=>{
+    const g=groups[t.tradeClass];if(!g)return;
+    g.total++;
+    g[t.outcome]=(g[t.outcome]||0)+1;
+    if(t.pnl!=null)g.pnl+=t.pnl;
+  });
+  const allTotal=withClass.length;
+  el.innerHTML=Object.entries(groups).filter(([,g])=>g.total>0).map(([key,g])=>{
+    const wr=g.win+g.loss>0?Math.round(g.win/(g.win+g.loss)*100):0;
+    const wrCol=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
+    const pnlCol=g.pnl>=0?'#6abf6a':'#c06060';
+    const pct=Math.round(g.total/allTotal*100);
+    const barColors={'valid-good':'#10b981','valid-bad':'#f59e0b','invalid':'#ef4444'};
+    const barCol=barColors[key]||'#888';
+    return '<div style="margin-bottom:14px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+      +'<span style="font-size:13px;font-weight:500;color:#e0e0e0">'+g.label+'</span>'
+      +'<span style="font-size:13px;color:#888">'+g.total+' trades ('+pct+'%)</span>'
+      +'</div>'
+      +'<div style="height:4px;background:#1e1e1e;border-radius:2px;margin-bottom:8px;overflow:hidden">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+barCol+';border-radius:2px;transition:width .4s"></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:16px;flex-wrap:wrap">'
+      +'<span style="font-size:13px;color:'+wrCol+'">'+wr+'% WR</span>'
+      +'<span style="font-size:13px;color:#6abf6a">'+g.win+'W</span>'
+      +'<span style="font-size:13px;color:#c06060">'+g.loss+'L</span>'
+      +'<span style="font-size:13px;color:#c4a020">'+g.be+'BE</span>'
+      +'<span style="font-size:13px;color:'+pnlCol+'">'+(g.pnl>=0?'+$':'-$')+Math.abs(g.pnl).toFixed(0)+'</span>'
+      +'</div>'
+      +'</div>';
+  }).join('<div style="border-top:0.5px solid #1a2e1e;margin-bottom:14px"></div>');
 
+  // Key insight callout
+  const validGood=groups['valid-good'];
+  const invalid=groups['invalid'];
+  if(validGood.total>=3&&invalid.total>=3){
+    const vgWr=validGood.win+validGood.loss>0?Math.round(validGood.win/(validGood.win+validGood.loss)*100):0;
+    const invWr=invalid.win+invalid.loss>0?Math.round(invalid.win/(invalid.win+invalid.loss)*100):0;
+    const diff=vgWr-invWr;
+    if(diff>0){
+      el.innerHTML+='<div style="background:#0a1f10;border:0.5px solid #1a5c35;border-radius:8px;padding:10px 14px;margin-top:4px;font-size:13px;color:#6abf6a">💡 Your valid+good setups win '+diff+'% more than your invalid trades. Your edge is real — the issue is taking bad setups.</div>';
+    } else if(diff<0){
+      el.innerHTML+='<div style="background:#1f0f0f;border:0.5px solid #6e2a2a;border-radius:8px;padding:10px 14px;margin-top:4px;font-size:13px;color:#c06060">⚠ Your invalid trades are outperforming your valid ones. Review your model — something may need adjusting.</div>';
+    }
+  }
+}
 
 function toggleCollapse(id){
   const body=document.getElementById(id);
@@ -2340,7 +2440,7 @@ function openSSLightbox(url){
   let lb = document.getElementById('trade-ss-lightbox');
   if(!lb){
     lb = document.createElement('div');
-    lb.id = 'ss-lightbox';
+    lb.id = 'trade-ss-lightbox';
     lb.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out';
     lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#aaa;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
     lb.addEventListener('click', closeLightbox);
@@ -2616,7 +2716,7 @@ const QUOTES = [
   {q:"Most people won't put in the work to be great. That's not sad — that's your edge.",a:"Unknown"},
   {q:"The Huracan doesn't care about your feelings. It cares about your consistency.",a:"Unknown"},
   {q:"You are one good habit away from a completely different life.",a:"Unknown"},
-  {q:"The people who tell you it can't be done are usually the ones who never tried.",a:"Unknown"},
+  {q:"The people who tell you it can't be done are usually the ones who never tried.",a:"Unknown"},",a:"Unknown"},
   {q:"You don't get what you wish for. You get what you work for.",a:"Unknown"},
   {q:"Pain is temporary. A blown challenge is temporary. Quitting is permanent.",a:"Unknown"},
   {q:"Everyone wants the result. Almost nobody wants the process. The process is the advantage.",a:"Unknown"},
@@ -3172,6 +3272,15 @@ loadAllData().then(()=>{
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>RR achieved</label><select id="e-actual-rr"><option value="">—</option><option>1:1</option><option>1:1.05</option><option>1:1.1</option><option>1:1.15</option><option>1:1.2</option><option>1:1.25</option><option>1:1.3</option><option>1:1.35</option><option>1:1.4</option><option>1:1.45</option><option>1:1.5</option><option>1:1.55</option><option>1:1.6</option><option>1:1.65</option><option>1:1.7</option><option>1:1.75</option><option>1:1.8</option><option>1:1.85</option><option>1:1.9</option><option>1:1.95</option><option>1:2</option><option>1:2.05</option><option>1:2.1</option><option>1:2.15</option><option>1:2.2</option><option>1:2.25</option><option>1:2.3</option><option>1:2.35</option><option>1:2.4</option><option>1:2.45</option><option>1:2.5</option><option>1:2.55</option><option>1:2.6</option><option>1:2.65</option><option>1:2.7</option><option>1:2.75</option><option>1:2.8</option><option>1:2.85</option><option>1:2.9</option><option>1:2.95</option><option>1:3</option><option>0 (BE)</option><option>-0.25R</option><option>-0.5R</option><option>-0.75R</option><option>-1R (full loss)</option></select></div>
       <div><label>Outcome</label><select id="e-outcome"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="margin-bottom:6px">Trade classification</label>
+      <select id="e-tradeClass" style="width:100%">
+        <option value="">—</option>
+        <option value="valid-good">✅ Valid setup — good execution</option>
+        <option value="valid-bad">⚠️ Valid setup — bad execution</option>
+        <option value="invalid">❌ Invalid setup — shouldn't have taken</option>
+      </select>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>P&L ($)</label><input type="number" id="e-pnl" step="1"></div>
