@@ -1599,7 +1599,7 @@ function renderJournal(){
   if(!f.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   const badges={win:'<span class="green-bg">Win</span>',loss:'<span class="red-bg">Loss</span>',be:'<span class="amber-bg">BE</span>'};
-  const classBadges={'valid-good':'<span style="background:#0a2010;color:#10b981;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #1a5c35;white-space:nowrap">✅ valid</span>','valid-bad':'<span style="background:#1a1400;color:#c4a020;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #4a3a00;white-space:nowrap">⚠️ bad exec</span>','invalid':'<span style="background:#1f0808;color:#c06060;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #4a2a2a;white-space:nowrap">❌ invalid</span>'};
+  const classBadges={'valid-good':'<span style="background:#0a2010;color:#10b981;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #1a5c35;white-space:nowrap">✅ VALID</span>','valid-bad':'<span style="background:#1a1400;color:#c4a020;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #4a3a00;white-space:nowrap">⚠️ BAD EXEC</span>','invalid':'<span style="background:#1f0808;color:#c06060;padding:2px 6px;border-radius:4px;font-size:11px;border:0.5px solid #4a2a2a;white-space:nowrap">❌ INVALID</span>'};
   const biasCol={Bullish:'#6abf6a',Bearish:'#c06060',Chop:'#c4a020'};
   tbody.innerHTML=f.map(t=>{
     const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#6abf6a">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#c06060">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#c4a020">$0</span>'):'—';
