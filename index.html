@@ -3405,5 +3405,590 @@ document.addEventListener('click',function(e){
   }
 });
 </script>
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  fuze's ICT Journal — Mobile Patch                      ║
+  ║  Paste this block immediately before </body>             ║
+  ║  in your journal HTML file                               ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+
+<style>
+/* ═══════════════════════════════════════════════
+   MOBILE PATCH  ·  @media max-width: 768px
+   All rules use !important to override inline
+   styles that couldn't be reached via the base CSS
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── 1. SESSION TIMER — stack vertically ── */
+  #page-log > #log-form-col > div:first-child {
+    grid-template-columns: 1fr !important;
+  }
+  #session-timer-card {
+    order: 2; /* risk calc first on mobile */
+  }
+
+  /* ── 2. SESSION DATE/TIME — 1 col, not 3 ── */
+  #page-log .card > div[style*="repeat(3,1fr)"],
+  #page-log .card > div[style*="repeat(3, 1fr)"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* Date row specifically */
+  #page-log .card div[style*="grid-template-columns:repeat(3,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── 3. TRADE SETUP — 3-col grid ── */
+  #page-log .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── 4. CHECKLIST — bigger tap targets ── */
+  .check-item {
+    padding: 10px 4px !important;
+    font-size: 14px !important;
+  }
+  .check-item input[type=checkbox] {
+    width: 20px !important;
+    height: 20px !important;
+    margin-top: 0 !important;
+  }
+  #checklist-body .check-group-title {
+    font-size: 13px !important;
+    margin: 14px 0 6px !important;
+  }
+
+  /* ── 5. OUTCOME BUTTONS — taller, easier tap ── */
+  .outcome-row {
+    gap: 10px !important;
+  }
+  .outcome-btn {
+    padding: 18px 8px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  /* ── 6. STARS — bigger ── */
+  .star {
+    font-size: 32px !important;
+    padding: 4px !important;
+  }
+
+  /* ── 7. MISTAKES LIST — bigger tap targets ── */
+  .mistake-item {
+    padding: 10px 10px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    gap: 10px !important;
+  }
+  .mistake-dot {
+    width: 11px !important;
+    height: 11px !important;
+    flex-shrink: 0 !important;
+  }
+  .mistakes-list {
+    max-height: 320px !important;
+  }
+
+  /* ── 8. SCREENSHOTS — 1 col ── */
+  #screenshots-section .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+  #screenshots-section input[type=file] {
+    font-size: 14px !important;
+    padding: 10px 8px !important;
+  }
+
+  /* ── 9. SAVE/CLEAR/RANDOMIZE ROW ── */
+  #page-log [style*="justify-content:flex-end"][style*="padding-bottom"] {
+    display: flex !important;
+    gap: 8px !important;
+    flex-direction: column !important;
+  }
+  #page-log [style*="justify-content:flex-end"][style*="padding-bottom"] .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    font-size: 15px !important;
+  }
+
+  /* ── 10. EDIT MODAL — fix 3-col grid ── */
+  #edit-modal > div {
+    border-radius: 0 !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    overflow-y: auto !important;
+  }
+  #edit-modal div[style*="repeat(3,1fr)"],
+  #edit-modal div[style*="repeat(3, 1fr)"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+  #edit-modal div[style*="1fr 1fr 1fr"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+  #e-ss-section {
+    grid-template-columns: 1fr !important;
+  }
+  #edit-modal div[style*="justify-content:flex-end"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  #edit-modal div[style*="justify-content:flex-end"] button {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+  }
+  #edit-modal .grid-2,
+  #edit-modal div[style*="1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── 11. CALENDAR ── */
+  .cal-metrics {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .cal-grid td {
+    height: 72px !important;
+    padding: 5px 6px !important;
+  }
+  .cal-day {
+    font-size: 12px !important;
+    margin-bottom: 4px !important;
+  }
+  .cal-pnl {
+    font-size: 14px !important;
+  }
+  .cal-grid th {
+    font-size: 11px !important;
+    padding: 6px 0 !important;
+  }
+  /* Calendar popup — full screen on mobile */
+  #cal-day-popup {
+    padding: 0 !important;
+  }
+  #cal-day-popup > div {
+    border-radius: 0 !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  /* ── 12. STATS — fix inline grid styles ── */
+  /* Tilt bar */
+  #s-tilt {
+    width: 100% !important;
+    margin-bottom: 12px !important;
+  }
+  /* Charts */
+  #page-stats canvas {
+    max-height: 180px !important;
+  }
+  /* Equity + outcomes */
+  #page-stats div[style*="2fr 1fr"],
+  #page-stats div[style*="1fr 2fr"] {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+  /* Avg win/loss + monthly */
+  #page-stats div[style*="1fr 2fr"] {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+  /* 4-col stat rows */
+  #page-stats div[style*="repeat(4,1fr)"],
+  #page-stats div[style*="1fr 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+    display: grid !important;
+  }
+  /* 3-col rows */
+  #page-stats div[style*="1fr 1fr 1fr"]:not(.grid-3) {
+    grid-template-columns: 1fr 1fr !important;
+    display: grid !important;
+  }
+  /* Long/short + disc rows */
+  #page-stats div[style*="1fr 1fr"]:not(.grid-2) {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+
+  /* ── 13. PROP FIRM ── */
+  #page-prop div[style*="1fr 1fr"],
+  #page-prop .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+  #page-prop div[style*="repeat(4,1fr)"],
+  #page-prop .grid-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* ── 14. WEEKLY REVIEW — grid ── */
+  #page-weekly div[style*="1fr 1fr"],
+  #page-weekly .grid-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* ── 15. PRESESSION — grid ── */
+  #page-presession div[style*="1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+
+  /* ── 16. MISSED TRADES — full table scroll ── */
+  #page-missed .log-wrap {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .log-table {
+    min-width: 540px !important;
+  }
+
+  /* ── 17. PROFILE BUTTONS — cleaner ── */
+  .profile-btns {
+    display: flex !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  .profile-btn {
+    flex: 1 !important;
+    padding: 10px 4px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+    text-align: center !important;
+  }
+
+  /* ── 18. RISK CALCULATOR ── */
+  #calc-output > div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* ── 19. LIGHTBOX — full screen & touch ── */
+  #trade-ss-lightbox {
+    touch-action: none !important;
+  }
+  #lb-thumbs {
+    gap: 6px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 2px !important;
+  }
+  #lb-thumbs > div img {
+    width: 52px !important;
+    height: 34px !important;
+  }
+  #lb-prev, #lb-next {
+    padding: 10px 10px !important;
+    font-size: 26px !important;
+  }
+
+  /* ── 20. MOBILE NAV — safe area + polish ── */
+  #mobile-nav {
+    border-top: 1px solid #1a2e1e !important;
+    background: rgba(8, 12, 8, 0.97) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+  .mob-btn {
+    font-size: 9px !important;
+    letter-spacing: 0.02em !important;
+  }
+  .mob-btn .mob-icon {
+    font-size: 22px !important;
+  }
+
+  /* ── 21. MORE MENU — backdrop ── */
+  #mobile-more-menu {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  .more-item {
+    padding: 14px 18px !important;
+    font-size: 15px !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── 22. CARDS — breathing room ── */
+  .card {
+    padding: 14px !important;
+    margin-bottom: 10px !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── 23. GENERAL INPUTS — no zoom on iOS ── */
+  input[type=date],
+  input[type=number],
+  input[type=text],
+  input[type=time],
+  select,
+  textarea {
+    font-size: 16px !important; /* prevents iOS auto-zoom */
+    border-radius: 10px !important;
+  }
+
+  /* ── 24. SECTION LABELS ── */
+  .section-label {
+    font-size: 11px !important;
+    letter-spacing: 0.07em !important;
+  }
+
+  /* ── 25. TIMER DISPLAY ── */
+  #timer-display {
+    font-size: 26px !important;
+    letter-spacing: 1px !important;
+  }
+
+  /* ── 26. METRIC CARDS ── */
+  .metric-val {
+    font-size: 20px !important;
+  }
+  .metric-lbl {
+    font-size: 11px !important;
+  }
+
+  /* ── 27. CLOCK WIDGETS — header right ── */
+  #header-right {
+    gap: 5px !important;
+  }
+  #header-right > div {
+    padding: 5px 8px !important;
+    gap: 6px !important;
+  }
+  #clock-uk, #clock-ny {
+    font-size: 14px !important;
+  }
+  #header-right > div > div:first-child {
+    font-size: 9px !important;
+  }
+
+  /* ── 28. COLLAPSIBLE HEADERS ── */
+  .collapsible-header {
+    padding: 4px 0 !important;
+    min-height: 40px !important;
+    align-items: center !important;
+  }
+  .collapse-icon {
+    font-size: 16px !important;
+    padding: 6px !important;
+  }
+
+  /* ── 29. JOURNAL SEARCH BAR ── */
+  #journal-search {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  #page-journal > div[style*="gap:8px"] {
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  #page-journal select {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  /* ── 30. JOURNAL TABLE ── */
+  .log-table td,
+  .log-table th {
+    padding: 10px 8px !important;
+    font-size: 12px !important;
+  }
+  /* Favour button column — make delete/edit reachable */
+  .log-table td:last-child {
+    white-space: nowrap !important;
+  }
+
+  /* ── 31. POPUPS — centered on mobile ── */
+  #popup-passed > div,
+  #popup-blown > div {
+    margin: 20px !important;
+    padding: 32px 24px !important;
+    max-width: calc(100% - 40px) !important;
+    border-radius: 14px !important;
+  }
+
+  /* ── 32. WEEKLY REVIEW SAVE BTN ── */
+  #page-weekly div[style*="justify-content:flex-end"] {
+    display: flex !important;
+  }
+  #page-weekly div[style*="justify-content:flex-end"] .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── 33. PRE-SESSION QOTD ── */
+  #qotd-text {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+  }
+
+  /* ── 34. GATE (checklist verdict) ── */
+  .gate {
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* ── 35. OUTCOME BADGE CHIPS ── */
+  .green-bg, .red-bg, .amber-bg, .badge {
+    font-size: 12px !important;
+    padding: 3px 7px !important;
+  }
+
+  /* ── 36. BODY padding for bottom nav ── */
+  body {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 12px)) !important;
+  }
+}
+
+/* Extra-small screens (phones < 380px) */
+@media (max-width: 380px) {
+  .outcome-btn {
+    font-size: 14px !important;
+    padding: 14px 4px !important;
+  }
+  #clock-uk, #clock-ny {
+    font-size: 12px !important;
+  }
+  h1 {
+    font-size: 13px !important;
+  }
+  .profile-btn {
+    font-size: 11px !important;
+  }
+}
+</style>
+
+<script>
+/* ═══════════════════════════════════════════════
+   MOBILE PATCH — JS FIXES
+   ═══════════════════════════════════════════════ */
+(function() {
+  'use strict';
+
+  /* 1. Prevent double-fire on checklist checkboxes.
+        The parent div has onclick="toggle(this)" but clicking
+        the checkbox itself fires both. On mobile this causes
+        the checkbox to toggle twice (appearing not to work).  */
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.check-item').forEach(function(item) {
+      item.addEventListener('click', function(e) {
+        // If the click target IS the checkbox, don't let the parent
+        // div's onclick also fire — it would double-toggle
+        if (e.target.type === 'checkbox') {
+          e.stopPropagation();
+          updateChecks();
+        }
+      });
+    });
+  });
+
+  /* 2. iOS momentum scrolling on the mistakes list */
+  document.addEventListener('DOMContentLoaded', function() {
+    var ml = document.getElementById('mistakes-list');
+    if (ml) {
+      ml.style.webkitOverflowScrolling = 'touch';
+      ml.style.overflowY = 'auto';
+    }
+  });
+
+  /* 3. Close cal-day-popup by tapping the dark backdrop */
+  document.addEventListener('DOMContentLoaded', function() {
+    var popup = document.getElementById('cal-day-popup');
+    if (popup) {
+      popup.addEventListener('click', function(e) {
+        if (e.target === popup) {
+          popup.style.display = 'none';
+        }
+      });
+    }
+  });
+
+  /* 4. Close edit-modal by tapping the dark backdrop */
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('edit-modal');
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          if (typeof closeEdit === 'function') closeEdit();
+        }
+      });
+    }
+  });
+
+  /* 5. Swipe left/right in the screenshot lightbox */
+  (function() {
+    var touchStartX = 0;
+    var touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', function(e) {
+      var lb = document.getElementById('trade-ss-lightbox');
+      if (!lb || lb.style.display === 'none') return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+      if (Math.abs(dx) > 60 && dy < 80) {
+        if (typeof lbNav === 'function') {
+          lbNav(dx < 0 ? 1 : -1);
+        }
+      }
+    }, { passive: true });
+  })();
+
+  /* 6. Prevent scroll behind modals when open */
+  function lockScroll() { document.body.style.overflow = 'hidden'; }
+  function unlockScroll() { document.body.style.overflow = ''; }
+
+  /* 7. Add 'active' visual feedback on mobile tap for buttons */
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn, .outcome-btn, .mob-btn, .profile-btn').forEach(function(btn) {
+      btn.addEventListener('touchstart', function() {
+        btn.style.opacity = '0.75';
+      }, { passive: true });
+      btn.addEventListener('touchend', function() {
+        btn.style.opacity = '';
+      }, { passive: true });
+      btn.addEventListener('touchcancel', function() {
+        btn.style.opacity = '';
+      }, { passive: true });
+    });
+  });
+
+  /* 8. Auto-scroll to top of form when switching tabs on mobile */
+  var origShowTab = window.showTab;
+  if (typeof origShowTab === 'function') {
+    window.showTab = function(t) {
+      origShowTab(t);
+      if (window.innerWidth <= 768) {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    };
+  }
+
+  /* 9. Fix iOS date input — pre-fill today if empty when tapped */
+  document.addEventListener('DOMContentLoaded', function() {
+    var dateInputs = document.querySelectorAll('input[type=date]');
+    dateInputs.forEach(function(inp) {
+      inp.addEventListener('focus', function() {
+        if (!inp.value) {
+          inp.value = new Date().toISOString().split('T')[0];
+        }
+      });
+    });
+  });
+
+  /* 10. Make mistake-cat rows non-interactive (stop accidental taps) */
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.mistake-cat').forEach(function(el) {
+      el.style.pointerEvents = 'none';
+      el.style.userSelect = 'none';
+    });
+  });
+
+})();
+</script>
 </body>
 </html>
