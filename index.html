@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0f0a">
@@ -635,9 +636,9 @@
     <div style="margin-top:14px">
       <label style="margin-bottom:6px">Trade classification</label>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px" id="trade-class-row">
-        <button type="button" class="tclass-btn" onclick="setTradeClass('valid-good',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">✅ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">good execution</span></button>
-        <button type="button" class="tclass-btn" onclick="setTradeClass('valid-bad',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">⚠️ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">bad execution</span></button>
-        <button type="button" class="tclass-btn" onclick="setTradeClass('invalid',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">❌ Invalid setup<br><span style="font-weight:400;font-size:11px;color:#444">shouldn't have taken</span></button>
+        <button type="button" id="tclass-valid-good" class="tclass-btn" onclick="setTradeClass('valid-good',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">✅ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">good execution</span></button>
+        <button type="button" id="tclass-valid-bad" class="tclass-btn" onclick="setTradeClass('valid-bad',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">⚠️ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">bad execution</span></button>
+        <button type="button" id="tclass-invalid" class="tclass-btn" onclick="setTradeClass('invalid',this)" style="padding:10px 6px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">❌ Invalid setup<br><span style="font-weight:400;font-size:11px;color:#444">shouldn't have taken</span></button>
       </div>
     </div>
 
@@ -1233,8 +1234,6 @@ async function loadAllData(){
     applyProfileUI();
     renderJournal&&renderJournal();
   }catch(e){console.error('Init error',e);}
-  finally{
-  }
 }
 function save(){
   allTrades[currentProfile]=trades;
@@ -3229,7 +3228,13 @@ function randomizeTrade(){
     'valid-bad':document.getElementById('tclass-valid-bad'),
     'invalid':document.getElementById('tclass-invalid'),
   };
-  const pickedBtn=btnMap[picked];
+  let pickedBtn=btnMap[picked];
+  if(!pickedBtn){
+    const row=document.getElementById('trade-class-row');
+    const btns=row?row.querySelectorAll('.tclass-btn'):[];
+    const ix=classKeys.indexOf(picked);
+    if(btns[ix]) pickedBtn=btns[ix];
+  }
   if(pickedBtn) setTradeClass(picked, pickedBtn);
 
   const disc=rOutcome==='win'?Math.floor(Math.random()*3)+3:Math.floor(Math.random()*3)+1;
