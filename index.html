@@ -412,9 +412,34 @@
     .more-item.active-more{color:#10b981;background:rgba(16,185,129,0.08)}
     .more-item-icon{font-size:20px;width:28px;text-align:center}
   }
+  /* Auth gate — blocks the app until signed in */
+  #auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(6,10,8,0.96);display:none;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+  #auth-overlay.auth-show{display:flex}
+  #auth-overlay .auth-card{max-width:400px;width:100%;padding:24px;border:0.5px solid #1a2e1e;border-radius:12px;background:#0f1a12}
+  #auth-overlay input{margin-bottom:12px}
+  #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 </style>
 </head>
 <body>
+<div id="auth-overlay" class="auth-show" aria-live="polite">
+  <div class="auth-card">
+    <div class="section-label" style="margin-bottom:14px">Sign in</div>
+    <p style="font-size:13px;color:#888;margin-bottom:14px;line-height:1.5">Your cloud backup is tied to your account. Without signing in, data is only on this device (localStorage).</p>
+    <div id="auth-checking" style="font-size:14px;color:#aaa;margin-bottom:8px">Checking session…</div>
+    <div id="auth-form-wrap" style="display:none">
+      <label>Email</label>
+      <input type="email" id="auth-email" autocomplete="username" placeholder="you@email.com">
+      <label>Password</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="••••••••">
+      <div id="auth-msg" style="font-size:13px;color:#c06060;margin-bottom:4px;min-height:1.3em"></div>
+      <div class="auth-actions">
+        <button type="button" class="btn btn-primary" style="width:100%;justify-content:center" onclick="authSignIn()">Sign in</button>
+        <button type="button" class="btn" style="width:100%;justify-content:center" onclick="authSignUp()">Create account</button>
+      </div>
+      <p style="font-size:11px;color:#555;margin-top:14px;line-height:1.5">In Supabase: run the SQL from the comment in this file (search for <code style="font-size:10px;color:#777">FUZE_JOURNAL_RLS_SQL</code>), then disable public sign-ups under Authentication → Providers after your account exists.</p>
+    </div>
+  </div>
+</div>
 <div class="profile-bar">
   <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
     <div style="display:flex;align-items:center;gap:8px">
@@ -442,6 +467,7 @@
     <button class="profile-btn" onclick="switchProfile('challenge',this)" id="pbtn-challenge">Challenge</button>
     <button class="profile-btn" onclick="switchProfile('funded',this)" id="pbtn-funded">Funded</button>
     <button class="profile-btn" onclick="switchProfile('demo',this)" id="pbtn-demo">Demo</button>
+    <button type="button" id="auth-signout-btn" class="profile-btn" onclick="authSignOut()" title="Sign out" style="margin-left:4px;display:none">Out</button>
   </div>
 </div>
 <div class="tabs">
@@ -1157,6 +1183,40 @@
   </div>
 </div>
 
+<!--
+FUZE_JOURNAL_RLS_SQL — Run in Supabase → SQL Editor (after creating your account in the app):
+
+1) Inspect table "misc" constraints. If "key" is UNIQUE alone, drop only that unique constraint (keep the real primary key), e.g.:
+   ALTER TABLE misc DROP CONSTRAINT IF EXISTS misc_key_key;
+
+2) Add owner column and tie rows to auth.users:
+   ALTER TABLE misc ADD COLUMN IF NOT EXISTS user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE;
+
+3) Backfill YOUR uuid from Dashboard → Authentication → Users, OR wipe cloud rows:
+   UPDATE misc SET user_id = 'PASTE-YOUR-USER-UUID-HERE'::uuid WHERE user_id IS NULL;
+   -- or: DELETE FROM misc;
+
+4) Default + enforce:
+   ALTER TABLE misc ALTER COLUMN user_id SET DEFAULT auth.uid();
+   ALTER TABLE misc ALTER COLUMN user_id SET NOT NULL;
+
+5) One row per user per key (required for upsert):
+   CREATE UNIQUE INDEX IF NOT EXISTS misc_user_id_key_idx ON misc(user_id, key);
+
+6) Row Level Security:
+   ALTER TABLE misc ENABLE ROW LEVEL SECURITY;
+   DROP POLICY IF EXISTS misc_select_own ON misc;
+   DROP POLICY IF EXISTS misc_insert_own ON misc;
+   DROP POLICY IF EXISTS misc_update_own ON misc;
+   DROP POLICY IF EXISTS misc_delete_own ON misc;
+   CREATE POLICY misc_select_own ON misc FOR SELECT USING (auth.uid() = user_id);
+   CREATE POLICY misc_insert_own ON misc FOR INSERT WITH CHECK (auth.uid() = user_id);
+   CREATE POLICY misc_update_own ON misc FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+   CREATE POLICY misc_delete_own ON misc FOR DELETE USING (auth.uid() = user_id);
+
+Then: Authentication → Providers → Email → disable "Allow new users" after your account exists.
+-->
+
 <script>
 // ── State ──
 let currentProfile=(()=>{try{return localStorage.getItem('ict_last_profile')||'challenge';}catch(e){return 'challenge';}})();
@@ -1183,14 +1243,81 @@ const MISTAKES=[
 const SUPA_URL='https://ksjwlisoggcahzhzngfq.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzandsaXNvZ2djYWh6aHpuZ2ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NDIwMDksImV4cCI6MjA4OTIxODAwOX0.I0b-qCneLRHYv__XCVGW3IVPsGL9EfvimiaOIEHdHVA';
 
+const SB_LS_AT='fuze_sb_access';
+const SB_LS_RT='fuze_sb_refresh';
+let sbAccessToken=null;
+let sbRefreshToken=null;
+
+function loadSbSession(){
+  try{
+    sbAccessToken=localStorage.getItem(SB_LS_AT);
+    sbRefreshToken=localStorage.getItem(SB_LS_RT);
+  }catch(e){}
+}
+function saveSbSession(at,rt){
+  sbAccessToken=at;
+  if(rt) sbRefreshToken=rt;
+  try{
+    if(at) localStorage.setItem(SB_LS_AT,at);
+    if(rt) localStorage.setItem(SB_LS_RT,rt);
+  }catch(e){}
+}
+function clearSbSession(){
+  sbAccessToken=null;
+  sbRefreshToken=null;
+  try{
+    localStorage.removeItem(SB_LS_AT);
+    localStorage.removeItem(SB_LS_RT);
+  }catch(e){}
+}
+
+async function sbVerifyAccessToken(){
+  if(!sbAccessToken) return false;
+  try{
+    const r=await fetch(SUPA_URL+'/auth/v1/user',{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+sbAccessToken}});
+    return r.ok;
+  }catch(e){return false;}
+}
+
+async function sbRefreshAccessToken(){
+  if(!sbRefreshToken) return false;
+  try{
+    const r=await fetch(SUPA_URL+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      headers:{apikey:SUPA_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:sbRefreshToken})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){clearSbSession();return false;}
+    saveSbSession(j.access_token,j.refresh_token||sbRefreshToken);
+    return true;
+  }catch(e){clearSbSession();return false;}
+}
+
+async function sbAuthFetch(url,init){
+  const base=init||{};
+  const hdrs=new Headers(base.headers||{});
+  hdrs.set('apikey',SUPA_KEY);
+  hdrs.set('Authorization','Bearer '+(sbAccessToken||SUPA_KEY));
+  let res=await fetch(url,{...base,headers:hdrs});
+  if(res.status===401&&sbRefreshToken){
+    if(await sbRefreshAccessToken()){
+      const h2=new Headers(base.headers||{});
+      h2.set('apikey',SUPA_KEY);
+      h2.set('Authorization','Bearer '+sbAccessToken);
+      res=await fetch(url,{...base,headers:h2});
+    }
+  }
+  return res;
+}
+
 async function supaGet(key){
   try{
-    const r=await fetch(SUPA_URL+'/rest/v1/misc?key=eq.'+encodeURIComponent(key)+'&select=data',{
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-    });
-    if(!r.ok)return null;
+    if(!sbAccessToken) return null;
+    const r=await sbAuthFetch(SUPA_URL+'/rest/v1/misc?key=eq.'+encodeURIComponent(key)+'&select=data',{});
+    if(!r.ok) return null;
     const d=await r.json();
-    if(!d||!d[0])return null;
+    if(!d||!d[0]) return null;
     const raw=d[0].data;
     if(typeof raw==='string'){try{return JSON.parse(raw);}catch(e){return null;}}
     return raw;
@@ -1198,13 +1325,113 @@ async function supaGet(key){
 }
 
 async function supaSet(key,data){
+  if(!sbAccessToken) return;
+  const opts={
+    method:'POST',
+    headers:{'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+    body:JSON.stringify({key,data,updated_at:new Date().toISOString()})
+  };
   try{
-    await fetch(SUPA_URL+'/rest/v1/misc',{
-      method:'POST',
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-      body:JSON.stringify({key,data,updated_at:new Date().toISOString()})
-    });
+    let r=await sbAuthFetch(SUPA_URL+'/rest/v1/misc?on_conflict=user_id,key',opts);
+    if(r.ok) return;
+    if(r.status===400||r.status===404||r.status===406||r.status===409)
+      await sbAuthFetch(SUPA_URL+'/rest/v1/misc',opts);
   }catch(e){}
+}
+
+function authShowForm(msg){
+  const checking=document.getElementById('auth-checking');
+  const formWrap=document.getElementById('auth-form-wrap');
+  const ov=document.getElementById('auth-overlay');
+  if(checking) checking.style.display='none';
+  if(formWrap) formWrap.style.display='block';
+  if(ov) ov.classList.add('auth-show');
+  const m=document.getElementById('auth-msg');
+  if(m&&msg) m.textContent=msg;
+}
+
+function authHideOverlay(){
+  const ov=document.getElementById('auth-overlay');
+  if(ov) ov.classList.remove('auth-show');
+}
+
+async function onAuthSuccess(){
+  authHideOverlay();
+  const sob=document.getElementById('auth-signout-btn');
+  if(sob) sob.style.display='';
+  const fDateEl=document.getElementById('f-date');
+  const mDateEl=document.getElementById('m-date');
+  const today=new Date().toISOString().split('T')[0];
+  if(fDateEl) fDateEl.value=today;
+  if(mDateEl) mDateEl.value=today;
+  await loadAllData();
+  setTimeout(()=>{updateJournalStreak();},100);
+  setTimeout(updateJournalStreak,1000);
+  setTimeout(updateJournalStreak,3000);
+  loadDraft();
+}
+
+async function authSignIn(){
+  const email=(document.getElementById('auth-email')||{}).value.trim();
+  const password=(document.getElementById('auth-password')||{}).value;
+  const msgEl=document.getElementById('auth-msg');
+  if(msgEl) msgEl.textContent='';
+  if(!email||!password){if(msgEl) msgEl.textContent='Enter email and password.';return;}
+  try{
+    const r=await fetch(SUPA_URL+'/auth/v1/token?grant_type=password',{
+      method:'POST',
+      headers:{apikey:SUPA_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(msgEl) msgEl.textContent=j.error_description||j.msg||j.message||'Sign in failed';
+      return;
+    }
+    saveSbSession(j.access_token,j.refresh_token);
+    await onAuthSuccess();
+  }catch(e){
+    if(msgEl) msgEl.textContent='Network error';
+  }
+}
+
+async function authSignUp(){
+  const email=(document.getElementById('auth-email')||{}).value.trim();
+  const password=(document.getElementById('auth-password')||{}).value;
+  const msgEl=document.getElementById('auth-msg');
+  if(msgEl) msgEl.textContent='';
+  if(!email||!password){if(msgEl) msgEl.textContent='Enter email and password.';return;}
+  try{
+    const r=await fetch(SUPA_URL+'/auth/v1/signup',{
+      method:'POST',
+      headers:{apikey:SUPA_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(msgEl) msgEl.textContent=j.error_description||j.msg||j.message||'Sign up failed';
+      return;
+    }
+    if(j.access_token){
+      saveSbSession(j.access_token,j.refresh_token);
+      await onAuthSuccess();
+      return;
+    }
+    if(j.session&&j.session.access_token){
+      saveSbSession(j.session.access_token,j.session.refresh_token);
+      await onAuthSuccess();
+      return;
+    }
+    if(msgEl) msgEl.textContent='If email confirmation is on, check your inbox. Or disable it in Supabase → Authentication → Providers → Email.';
+  }catch(e){
+    if(msgEl) msgEl.textContent='Network error';
+  }
+}
+
+function authSignOut(){
+  if(!confirm('Sign out on this device?')) return;
+  clearSbSession();
+  location.reload();
 }
 
 function applyLoadedData(){
@@ -3290,19 +3517,43 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
   const id=btn.id.replace('pbtn-','');
   if(id===currentProfile)btn.classList.add('active');
 });
-{
-  const fDateEl=document.getElementById('f-date');
-  const mDateEl=document.getElementById('m-date');
-  const today=new Date().toISOString().split('T')[0];
-  if(fDateEl)fDateEl.value=today;
-  if(mDateEl)mDateEl.value=today;
-}
-loadAllData().then(()=>{
-  setTimeout(()=>{updateJournalStreak();},100);
-  setTimeout(updateJournalStreak,1000);
-  setTimeout(updateJournalStreak,3000);
-  loadDraft();
-});
+(function journalAuthBoot(){
+  loadSbSession();
+  const ov=document.getElementById('auth-overlay');
+  const checking=document.getElementById('auth-checking');
+  const formWrap=document.getElementById('auth-form-wrap');
+  if(ov) ov.classList.add('auth-show');
+  if(checking) checking.style.display='block';
+  if(formWrap) formWrap.style.display='none';
+
+  (async function(){
+    if(sbAccessToken){
+      let ok=await sbVerifyAccessToken();
+      if(!ok) ok=await sbRefreshAccessToken();
+      if(sbAccessToken&&ok){
+        if(checking) checking.style.display='none';
+        authHideOverlay();
+        const fDateEl=document.getElementById('f-date');
+        const mDateEl=document.getElementById('m-date');
+        const today=new Date().toISOString().split('T')[0];
+        if(fDateEl) fDateEl.value=today;
+        if(mDateEl) mDateEl.value=today;
+        const sob=document.getElementById('auth-signout-btn');
+        if(sob) sob.style.display='';
+        await loadAllData();
+        setTimeout(()=>{updateJournalStreak();},100);
+        setTimeout(updateJournalStreak,1000);
+        setTimeout(updateJournalStreak,3000);
+        loadDraft();
+        return;
+      }
+      clearSbSession();
+    }
+    if(checking) checking.style.display='none';
+    if(formWrap) formWrap.style.display='block';
+    if(ov) ov.classList.add('auth-show');
+  })();
+})();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
