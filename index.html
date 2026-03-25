@@ -1183,6 +1183,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <!--
 FUZE_JOURNAL_RLS_SQL — Run in Supabase → SQL Editor (after creating your account in the app):
 
@@ -1372,8 +1373,8 @@ async function onAuthSuccess(){
 }
 
 async function authSignIn(){
-  const email=(document.getElementById('auth-email')||{}).value.trim();
-  const password=(document.getElementById('auth-password')||{}).value;
+  const email=String((document.getElementById('auth-email')||{}).value||'').trim();
+  const password=String((document.getElementById('auth-password')||{}).value||'');
   const msgEl=document.getElementById('auth-msg');
   if(msgEl) msgEl.textContent='';
   if(!email||!password){if(msgEl) msgEl.textContent='Enter email and password.';return;}
@@ -1396,8 +1397,8 @@ async function authSignIn(){
 }
 
 async function authSignUp(){
-  const email=(document.getElementById('auth-email')||{}).value.trim();
-  const password=(document.getElementById('auth-password')||{}).value;
+  const email=String((document.getElementById('auth-email')||{}).value||'').trim();
+  const password=String((document.getElementById('auth-password')||{}).value||'');
   const msgEl=document.getElementById('auth-msg');
   if(msgEl) msgEl.textContent='';
   if(!email||!password){if(msgEl) msgEl.textContent='Enter email and password.';return;}
@@ -1444,9 +1445,9 @@ function applyLoadedData(){
 
 async function loadAllData(){
   try{
-    const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_session_reports'];
+    const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles'];
     const results=await Promise.all(keys.map(k=>supaGet(k)));
-    const [trades_d,prop_d,weekly_d,missed_d,sessions_d]=results;
+    const [trades_d,prop_d,weekly_d,missed_d]=results;
     if(trades_d&&typeof trades_d==='object')allTrades=trades_d;
     if(prop_d&&typeof prop_d==='object')allPropSettings=prop_d;
     if(weekly_d&&typeof weekly_d==='object')allWeeklyNotes=weekly_d;
@@ -3499,15 +3500,18 @@ function checkPB(trade){
 }
 function launchConfetti(){
   const colors=['#10b981','#6abf6a','#e0e0e0','#c4a020'];
+  if(!document.getElementById('fuze-confetti-keyframes')){
+    const style=document.createElement('style');
+    style.id='fuze-confetti-keyframes';
+    style.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+    document.head.appendChild(style);
+  }
   for(let i=0;i<80;i++){
     const el=document.createElement('div');
     el.style.cssText='position:fixed;top:-10px;left:'+Math.random()*100+'vw;width:8px;height:8px;background:'+colors[Math.floor(Math.random()*colors.length)]+';border-radius:2px;z-index:99999;pointer-events:none;animation:fall '+(1.5+Math.random()*2)+'s linear forwards';
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),4000);
   }
-  const style=document.createElement('style');
-  style.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}';
-  document.head.appendChild(style);
 }
 
 // ── Init ──
@@ -3555,7 +3559,6 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
   })();
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
   <div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
@@ -3783,12 +3786,13 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
 <script>
 // ── Mobile nav ──
 function mobNav(t){
-  document.getElementById('mobile-more-menu').classList.remove('open');
+  const mm=document.getElementById('mobile-more-menu');
+  if(mm) mm.classList.remove('open');
   showTab(t);
   document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
   const main=document.getElementById('mobnav-'+t);
   if(main)main.classList.add('active');
-  else document.getElementById('mobnav-more').classList.add('active');
+  else{const mb=document.getElementById('mobnav-more');if(mb) mb.classList.add('active');}
   document.querySelectorAll('.more-item').forEach(el=>el.classList.remove('active-more'));
   const moreEl=document.querySelector('.more-item[onclick*="'+t+'"]');
   if(moreEl)moreEl.classList.add('active-more');
@@ -3796,8 +3800,10 @@ function mobNav(t){
 }
 function toggleMoreMenu(){
   const m=document.getElementById('mobile-more-menu');
+  const nav=document.getElementById('mobnav-more');
+  if(!m||!nav) return;
   m.classList.toggle('open');
-  document.getElementById('mobnav-more').classList.toggle('active', m.classList.contains('open'));
+  nav.classList.toggle('active', m.classList.contains('open'));
 }
 // Close more menu on outside tap
 document.addEventListener('touchstart',function(e){
@@ -3817,13 +3823,6 @@ document.addEventListener('click',function(e){
   }
 });
 </script>
-<!--
-  ╔══════════════════════════════════════════════════════════╗
-  ║  fuze's ICT Journal — Mobile Patch                      ║
-  ║  Paste this block immediately before </body>             ║
-  ║  in your journal HTML file                               ║
-  ╚══════════════════════════════════════════════════════════╝
--->
 
 <style>
 /* ═══════════════════════════════════════════════
