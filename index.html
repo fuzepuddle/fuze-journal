@@ -28,13 +28,16 @@
   #theme-toggle-btn:hover{filter:brightness(1.15)}
   .cp-title{font-size:12px;font-weight:600;color:#e0e0e0;margin-bottom:12px;letter-spacing:.04em}
   /* Colour spectrum canvas */
-  #cp-spectrum{width:100%;height:140px;border-radius:8px;cursor:crosshair;display:block;position:relative}
-  #cp-spectrum-wrap{position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden}
-  #cp-cursor{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.8);pointer-events:none;transform:translate(-50%,-50%);top:20%;left:80%}
+  #cp-spectrum{width:228px;height:140px;border-radius:8px;cursor:crosshair;display:block}
+  #cp-spectrum-wrap{position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden;height:140px;background:#000}
+  #cp-cursor{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.5);pointer-events:none;transform:translate(-50%,-50%);top:20%;left:80%;z-index:2}
   /* Hue slider */
-  #cp-hue{width:100%;height:12px;border-radius:6px;cursor:pointer;display:block;margin-bottom:10px;outline:none;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
-  #cp-hue::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #ccc;box-shadow:0 1px 4px rgba(0,0,0,0.5);cursor:pointer}
-  #cp-hue::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #ccc;cursor:pointer}
+  #cp-hue-wrap{margin-bottom:10px;padding:6px 0}
+  #cp-hue{width:100%;height:14px;border-radius:7px;cursor:pointer;display:block;outline:none;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%);border:none}
+  #cp-hue::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #aaa;box-shadow:0 1px 6px rgba(0,0,0,0.6);cursor:pointer;margin-top:-3px}
+  #cp-hue::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #aaa;box-shadow:0 1px 6px rgba(0,0,0,0.6);cursor:pointer;border:none}
+  #cp-hue::-webkit-slider-runnable-track{height:14px;border-radius:7px}
+  #cp-hue::-moz-range-track{height:14px;border-radius:7px;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)}
   /* Hex input row */
   .cp-hex-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
   #cp-preview{width:28px;height:28px;border-radius:6px;flex-shrink:0;border:1px solid #333}
@@ -3717,22 +3720,20 @@ function cpDrawSpectrum() {
 
 function cpSizeCanvas() {
   const canvas = document.getElementById('cp-spectrum');
-  const wrap = document.getElementById('cp-spectrum-wrap');
-  if(!canvas || !wrap) return;
-  // Set actual pixel dimensions to match CSS layout size
-  const w = wrap.getBoundingClientRect().width || 228;
-  canvas.width = Math.round(w);
+  if(!canvas) return;
+  // Match the CSS pixel size exactly
+  canvas.width = 228;
   canvas.height = 140;
   cpDrawSpectrum();
 }
 
 function cpUpdateCursor() {
   const cursor = document.getElementById('cp-cursor');
-  const wrap = document.getElementById('cp-spectrum-wrap');
-  if(!cursor || !wrap) return;
-  const W = wrap.getBoundingClientRect().width || 228;
-  const H = 140;
-  // Position in CSS pixels relative to wrap
+  const canvas = document.getElementById('cp-spectrum');
+  if(!cursor || !canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width || 228;
+  const H = rect.height || 140;
   cursor.style.left = (cpSat * W) + 'px';
   cursor.style.top  = ((1 - cpVal) * H) + 'px';
 }
@@ -3754,10 +3755,11 @@ function cpPickFromCanvas(clientX, clientY) {
   const canvas = document.getElementById('cp-spectrum');
   if(!canvas) return;
   const rect = canvas.getBoundingClientRect();
+  // Normalise to 0-1 using CSS rect (display) dimensions
   const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
   const y = Math.max(0, Math.min(clientY - rect.top,  rect.height));
   cpSat = x / rect.width;
-  cpVal = 1 - y / rect.height;
+  cpVal = 1 - (y / rect.height);
   cpUpdateCursor();
   cpUpdatePreview();
   cpLiveApply();
@@ -3932,9 +3934,11 @@ document.addEventListener('click', function(e){
   }
 });
 
-buildThemePanel();
-loadSavedTheme();
-renderQOTD();
+document.addEventListener('DOMContentLoaded', function() {
+  buildThemePanel();
+  loadSavedTheme();
+  renderQOTD();
+});
 </script>
 
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
@@ -4154,7 +4158,9 @@ renderQOTD();
   </div>
 
   <!-- Hue slider -->
-  <input type="range" id="cp-hue" min="0" max="360" value="157">
+  <div id="cp-hue-wrap">
+    <input type="range" id="cp-hue" min="0" max="360" value="157">
+  </div>
 
   <!-- Hex + preview + apply -->
   <div class="cp-hex-row">
