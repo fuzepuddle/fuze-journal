@@ -612,22 +612,23 @@
       <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:13px;color:#999">0 / 10</span><span class="collapse-icon">▼</span></div>
     </div>
     <div id="checklist-body" class="collapsible-body">
-    <div class="check-group-title">Allowed?</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Within NY window (14:30–16:00 UK)</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>News clear, no pending event</span></div>
-    <div class="check-group-title">HTF draw (1H)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clear untapped draw identified</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Price moving toward it, not through it</span></div>
-    <div class="check-group-title">Context (4H/1H)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Structure aligned, momentum candles, no chop</span></div>
-    <div class="check-group-title">Displacement (15M)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Strong BOS toward draw, 5M FVG left behind</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement stronger than retrace</span></div>
-    <div class="check-group-title">FVG + retrace (5M)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>5M FVG identified from displacement — clean imbalance</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Slow/corrective retrace into FVG</span></div>
-    <div class="check-group-title">Confirmation (1M)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>BOS driving toward draw, waited for candle close</span></div>
+    <div class="check-group-title">1️⃣ Can I Trade?</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Within NY window (14:30–16:00 UK) — hard close 16:30</span></div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>No major news pending</span></div>
+    <div class="check-group-title">2️⃣ Where Is Price Going? (1H)</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clear untapped target — prev high/low, session high/low, or gap</span></div>
+    <div class="check-group-title">3️⃣ Bigger Picture (4H/1H)</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Structure &amp; momentum point toward target — no chop, no small candles</span></div>
+    <div class="check-group-title">4️⃣ Strong Displacement? (15M) 🔥</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Strong push toward target breaking structure</span></div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement visibly stronger than the pullback</span></div>
+    <div class="check-group-title">5️⃣ Clean Gap Left? (5M) 🎯</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement left a clean price gap toward target — not formed in chop</span></div>
+    <div class="check-group-title">6️⃣ Pullback Slow &amp; Weak? (5M)</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Price retraces slowly and calmly into the gap — not fast or aggressive</span></div>
+    <div class="check-group-title">7️⃣ Confirmation &amp; Entry (1M) 🚀</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>1M mini trend (HH + HL) forms in gap, price reacts out of gap</span></div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Last higher low marked — entered on 1M candle close only</span></div>
     <div id="gate" class="gate">Complete checklist to see verdict</div>
     </div>
   </div>
