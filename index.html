@@ -10,16 +10,37 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 <title>fuze's ICT Trading Journal ✍️</title>
 <style>
+  .qotd-log-card{border-left:3px solid var(--accent) !important}
+  :root {
+    --accent: #10b981;
+    --accent-rgb: 16,185,129;
+    --accent-glow: rgba(16,185,129,0.25);
+    --accent-dim: #059669;
+    --accent-dark: #0a2010;
+    --border-accent: #1a2e1e;
+    --bg-card: #0f1a12;
+  }
+
+  /* Theme customizer panel */
+  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#0f1a12;border:0.5px solid var(--border-accent);border-radius:12px;padding:14px 16px;width:220px;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+  #theme-panel.open{display:block}
+  #theme-toggle-btn{position:fixed;bottom:16px;right:16px;z-index:9999;width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:background .2s}
+  #theme-toggle-btn:hover{background:var(--accent-dim)}
+  .theme-swatch-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+  .theme-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;flex-shrink:0}
+  .theme-swatch:hover,.theme-swatch.active{border-color:#fff;transform:scale(1.15)}
+  .theme-label{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.07em;margin-top:10px;margin-bottom:0}
+
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#ffffff;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid #10b981;box-shadow:0 -1px 20px rgba(57,255,20,0.25)}
-  h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:#10b981;text-shadow:0 0 16px rgba(57,255,20,0.25)}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#ffffff;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid var(--accent);box-shadow:0 -1px 20px var(--accent-glow)}
+  h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:var(--accent);text-shadow:0 0 16px var(--accent-glow)}
   .profile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:0.5px solid #1a2e1e}
   .profile-btns{display:flex;gap:6px}
   .profile-btn{padding:5px 14px;border:0.5px solid #1a2e1e;border-radius:20px;cursor:pointer;font-size:13px;background:#0f1a12;color:#aaa;transition:all .2s;font-family:inherit}
-  .profile-btn.active{background:#10b981;color:#0a0f0a;border-color:#10b981;font-weight:500;box-shadow:0 0 16px rgba(201,168,76,0.25)}
+  .profile-btn.active{background:var(--accent);color:#0a0f0a;border-color:var(--accent);font-weight:500;box-shadow:0 0 16px rgba(201,168,76,0.25)}
   .tabs{display:flex;border-bottom:0.5px solid #1a2e1e;margin-bottom:1.5rem;background:linear-gradient(180deg,#0a0f0a 0%,transparent 100%)}
   .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:#aaa;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
-  .tab.active{color:#10b981;border-bottom-color:#10b981;font-weight:500;text-shadow:0 0 12px rgba(57,255,20,0.25)}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;text-shadow:0 0 12px var(--accent-glow)}
   .tab:hover:not(.active){color:#f5f5f5}
   .page{display:none}.page.active{display:block}
   label{font-size:13px;color:#aaa;display:block;margin-bottom:4px}
@@ -35,23 +56,23 @@
   .card{background:linear-gradient(160deg,#0f1a12 0%,#0a0f0a 100%);border:0.5px solid #1a2e1e;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
   .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#999;margin-bottom:10px}
   .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#aaa;margin-bottom:1px;user-select:none}
-  .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#10b981}
+  .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:var(--accent)}
   .check-group-title{font-size:13px;font-weight:500;color:#e0e0e0;margin:10px 0 4px}
   .gate{border:0.5px solid #1a2e1e;border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:rgba(15,26,18,0.58);color:#aaa}
   .gate.pass{border-color:#3a6e3a;background:#0f1f0f;color:#6abf6a}
   .gate.fail{border-color:#6e2a2a;background:#1f0f0f;color:#c06060}
   .outcome-row{display:flex;gap:8px;margin-bottom:14px}
   .outcome-btn{flex:1;padding:9px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#0c1510;color:#555;transition:all .2s;text-align:center}
-  .outcome-btn.active-win{background:#0a2010;border:2px solid #10b981;color:#10b981;box-shadow:0 0 14px rgba(16,185,129,0.35);font-weight:700;text-shadow:0 0 4px rgba(16,185,129,0.4)}
+  .outcome-btn.active-win{background:#0a2010;border:2px solid var(--accent);color:var(--accent);box-shadow:0 0 14px rgba(var(--accent-rgb),0.35);font-weight:700;text-shadow:0 0 4px rgba(var(--accent-rgb),0.4)}
   .outcome-btn.active-loss{background:#1f0808;border:2px solid #ef4444;color:#ef4444;box-shadow:0 0 14px rgba(239,68,68,0.35);font-weight:700;text-shadow:0 0 4px rgba(239,68,68,0.4)}
   .outcome-btn.active-be{background:#1a1400;border:2px solid #f59e0b;color:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,0.35);font-weight:700;text-shadow:0 0 4px rgba(245,158,11,0.4)}
   .outcome-btn.active-skip{background:#1e1e1e;border-color:#aaa;color:#e0e0e0}
   .stars{display:flex;gap:4px;margin-top:4px}
   .star{font-size:20px;cursor:pointer;color:#1a2e1e;transition:color .15s;line-height:1}
-  .star.lit{color:#10b981}
+  .star.lit{color:var(--accent)}
   .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:0.5px solid #1a2e1e;border-radius:8px;cursor:pointer;font-size:13px;background:#0c1510;color:#ffffff;transition:all .2s;font-family:inherit}
   .btn:hover{background:rgba(15,26,18,0.82)}
-  .btn-primary{background:#10b981;color:#0a0f0a;border-color:#10b981;font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
+  .btn-primary{background:var(--accent);color:#0a0f0a;border-color:var(--accent);font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
   .btn-primary:hover{background:#059669}
   .btn-sm{padding:5px 12px;font-size:13px}
   .log-wrap{overflow-x:auto;border:0.5px solid #1a2e1e;border-radius:12px}
@@ -71,7 +92,7 @@
   .flex-between{display:flex;align-items:center;justify-content:space-between}
   .mode-toggle{display:flex;gap:8px;margin-bottom:16px}
   .mode-btn{padding:6px 14px;border:0.5px solid #1a2e1e;border-radius:20px;cursor:pointer;font-size:13px;background:#0f1a12;color:#aaa;transition:all .2s;font-family:inherit}
-  .mode-btn.active{background:#10b981;color:#0a0f0a;border-color:#10b981}
+  .mode-btn.active{background:var(--accent);color:#0a0f0a;border-color:var(--accent)}
   .prog-bar{height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;margin-top:6px}
   .prog-fill{height:100%;border-radius:4px;transition:width .4s,background .3s}
   .hint{font-size:13px;color:#999;margin-top:4px}
@@ -101,7 +122,7 @@
   .glow-red{animation:glow-red 2s ease-in-out infinite}
   .collapsible-body.collapsed{display:none}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-  .collapsible-header:hover .collapse-icon{color:#10b981}
+  .collapsible-header:hover .collapse-icon{color:var(--accent)}
   .collapse-icon{font-size:13px;color:#999;transition:transform .2s;display:inline-block}
   .collapsed .collapse-icon{transform:rotate(-90deg)}
   .collapsible-body{overflow:hidden;transition:max-height .25s ease}
@@ -120,7 +141,7 @@
   .cal-grid td.weekend{background:#0a0a0a}
   .cal-grid td.has-trade{background:#0f1a12;cursor:pointer}
   .cal-grid td.has-trade:hover{background:rgba(15,26,18,0.58)}
-  .cal-grid td.today{border:2px solid #10b981 !important;background:#0a1f10 !important}
+  .cal-grid td.today{border:2px solid var(--accent) !important;background:#0a1f10 !important}
   .cal-day{font-size:15px;font-weight:500;margin-bottom:8px}
   .cal-pnl{font-size:18px;font-weight:500;margin-bottom:4px}
   .cal-count{font-size:13px;color:#aaa}
@@ -365,7 +386,7 @@
       -webkit-user-select:none;
     }
     .mob-btn .mob-icon{font-size:24px;line-height:1;display:block}
-    .mob-btn.active{color:#10b981}
+    .mob-btn.active{color:var(--accent)}
     .mob-btn.active .mob-icon{transform:scale(1.15)}
     .mob-btn:active{opacity:.5}
 
@@ -409,7 +430,7 @@
       -webkit-user-select:none;
     }
     .more-item:active{background:#1a2e1e}
-    .more-item.active-more{color:#10b981;background:rgba(16,185,129,0.08)}
+    .more-item.active-more{color:var(--accent);background:rgba(var(--accent-rgb),0.08)}
     .more-item-icon{font-size:20px;width:28px;text-align:center}
   }
   /* Auth gate — blocks the app until signed in */
@@ -451,14 +472,14 @@
         <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCA2MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIGZpbGw9IiMwMTIxNjkiLz4KICA8cGF0aCBkPSJNMCwwIEw2MCw0MCBNNjAsMCBMMCw0MCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjgiLz4KICA8cGF0aCBkPSJNMCwwIEw2MCw0MCBNNjAsMCBMMCw0MCIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjUiLz4KICA8cGF0aCBkPSJNMzAsMCBWNDAgTTAsMjAgSDYwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMTIiLz4KICA8cGF0aCBkPSJNMzAsMCBWNDAgTTAsMjAgSDYwIiBzdHJva2U9IiNDODEwMkUiIHN0cm9rZS13aWR0aD0iOCIvPgo8L3N2Zz4=" width="28" height="18" style="border-radius:2px;vertical-align:middle">
         <div>
           <div style="font-size:10px;color:#999;line-height:1">UK</div>
-          <div id="clock-uk" style="font-size:16px;font-weight:600;font-family:monospace;color:#10b981;line-height:1.2">--:--</div>
+          <div id="clock-uk" style="font-size:16px;font-weight:600;font-family:monospace;color:var(--accent);line-height:1.2">--:--</div>
         </div>
       </div>
       <div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:8px;padding:6px 14px;white-space:nowrap;display:flex;align-items:center;gap:8px">
         <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCA2MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB5PSIwIiB3aWR0aD0iNjAiIGhlaWdodD0iMyIgZmlsbD0iI0IyMjIzNCIvPgogIDxyZWN0IHk9IjYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIzIiBmaWxsPSIjQjIyMjM0Ii8+CiAgPHJlY3QgeT0iMTIiIHdpZHRoPSI2MCIgaGVpZ2h0PSIzIiBmaWxsPSIjQjIyMjM0Ii8+CiAgPHJlY3QgeT0iMTgiIHdpZHRoPSI2MCIgaGVpZ2h0PSIzIiBmaWxsPSIjQjIyMjM0Ii8+CiAgPHJlY3QgeT0iMjQiIHdpZHRoPSI2MCIgaGVpZ2h0PSIzIiBmaWxsPSIjQjIyMjM0Ii8+CiAgPHJlY3QgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIzIiBmaWxsPSIjQjIyMjM0Ii8+CiAgPHJlY3QgeT0iMzYiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0IiBmaWxsPSIjQjIyMjM0Ii8+CiAgPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjIyIiBmaWxsPSIjM0MzQjZFIi8+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxjaXJjbGUgY3g9IjEwIiBjeT0iNCIgcj0iMS41IiBmaWxsPSIjZmZmIi8+CiAgPGNpcmNsZSBjeD0iMTYiIGN5PSI0IiByPSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8Y2lyY2xlIGN4PSIyMiIgY3k9IjQiIHI9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxjaXJjbGUgY3g9IjciIGN5PSI4IiByPSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8Y2lyY2xlIGN4PSIxMyIgY3k9IjgiIHI9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxjaXJjbGUgY3g9IjE5IiBjeT0iOCIgcj0iMS41IiBmaWxsPSIjZmZmIi8+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjEyIiByPSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8Y2lyY2xlIGN4PSIxMCIgY3k9IjEyIiByPSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjEyIiByPSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8Y2lyY2xlIGN4PSIyMiIgY3k9IjEyIiByPSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8Y2lyY2xlIGN4PSI3IiBjeT0iMTYiIHI9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxjaXJjbGUgY3g9IjEzIiBjeT0iMTYiIHI9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxjaXJjbGUgY3g9IjE5IiBjeT0iMTYiIHI9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxjaXJjbGUgY3g9IjQiIGN5PSIyMCIgcj0iMS41IiBmaWxsPSIjZmZmIi8+CiAgPGNpcmNsZSBjeD0iMTAiIGN5PSIyMCIgcj0iMS41IiBmaWxsPSIjZmZmIi8+CiAgPGNpcmNsZSBjeD0iMTYiIGN5PSIyMCIgcj0iMS41IiBmaWxsPSIjZmZmIi8+CiAgPGNpcmNsZSBjeD0iMjIiIGN5PSIyMCIgcj0iMS41IiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==" width="28" height="18" style="border-radius:2px;vertical-align:middle">
         <div>
           <div style="font-size:10px;color:#999;line-height:1">NY</div>
-          <div id="clock-ny" style="font-size:16px;font-weight:600;font-family:monospace;color:#10b981;line-height:1.2">--:--</div>
+          <div id="clock-ny" style="font-size:16px;font-weight:600;font-family:monospace;color:var(--accent);line-height:1.2">--:--</div>
         </div>
       </div>
     </div>
@@ -478,12 +499,21 @@
   <div class="tab" onclick="showTab('calendar')" data-tab="calendar">Calendar</div>
   <div class="tab" onclick="showTab('missed')" data-tab="missed">Missed trades</div>
   <div class="tab" onclick="showTab('weekly')" data-tab="weekly">Weekly review</div>
-  <div class="tab" onclick="showTab('presession')" data-tab="presession">Pre-session</div>
 </div>
 
 <!-- LOG -->
 <div class="page active" id="page-log">
 <div id="log-form-col">
+
+  <!-- QOTD on Log page -->
+  <div class="card qotd-log-card" id="qotd-card-log" style="margin-bottom:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px">
+    <div style="font-size:20px;line-height:1;margin-top:2px">💬</div>
+    <div style="flex:1">
+      <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Quote of the day</div>
+      <div id="qotd-text" style="font-size:13px;color:#e0e0e0;line-height:1.6;font-style:italic"></div>
+      <div id="qotd-author" style="font-size:12px;color:#555;margin-top:4px"></div>
+    </div>
+  </div>
 
   <!-- SESSION TIMER + RISK CALC -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -492,7 +522,7 @@
       <div id="timer-label" style="font-size:13px;color:#999;margin-bottom:4px">Loading...</div>
       <div id="timer-display" style="font-size:28px;font-weight:500;font-family:monospace;color:#fff;letter-spacing:2px">--:--:--</div>
       <div id="timer-bar-wrap" style="height:4px;background:#1e1e1e;border-radius:2px;margin-top:10px;overflow:hidden">
-        <div id="timer-bar" style="height:100%;width:0%;background:#10b981;border-radius:2px;transition:width 1s linear"></div>
+        <div id="timer-bar" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1s linear"></div>
       </div>
       <div id="timer-sub" style="font-size:13px;color:#999;margin-top:4px"></div>
     </div>
@@ -589,7 +619,7 @@
   <div class="card gap">
     <div class="section-label">Outcome</div>
     <div class="outcome-row">
-      <button class="outcome-btn" onclick="setOutcome('win',this)" style="color:#10b981;border-color:#0d4a30;opacity:0.5">Win ✓</button>
+      <button class="outcome-btn" onclick="setOutcome('win',this)" style="color:var(--accent);border-color:#0d4a30;opacity:0.5">Win ✓</button>
       <button class="outcome-btn" onclick="setOutcome('loss',this)" style="color:#ef4444;border-color:#6e1a1a;opacity:0.5">Loss ✗</button>
       <button class="outcome-btn" onclick="setOutcome('be',this)" style="color:#f59e0b;border-color:#6e5000;opacity:0.5">BE</button>
     </div>
@@ -672,7 +702,7 @@
   <div id="screenshots-section" class="card">
     <div class="flex-between" style="margin-bottom:10px">
       <div class="section-label" style="margin-bottom:0">Screenshots</div>
-      <div id="ss-upload-status" style="font-size:13px;color:#10b981"></div>
+      <div id="ss-upload-status" style="font-size:13px;color:var(--accent)"></div>
     </div>
     <div class="grid-2 gap" style="margin-bottom:8px">
       <div>
@@ -1582,7 +1612,8 @@ function showTab(t){
   if(t==='calendar')renderCalendar();
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
-  if(t==='presession'){loadPresession();renderQOTD();}
+  if(t==='presession'){loadPresession();}
+  // Always render QOTD since it's on the log page now
   // Close any open popups on tab switch
   const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
@@ -2356,7 +2387,7 @@ function renderDiscCorr(f){
     const col=wr>=60?'#6abf6a':wr>=40?'#c4a020':'#c06060';
     const pnlCol=d.pnl>=0?'#6abf6a':'#c06060';
     return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-      +'<span style="font-size:13px;color:#10b981">'+'★'.repeat(Number(stars))+'</span>'
+      +'<span style="font-size:13px;color:var(--accent)">'+'★'.repeat(Number(stars))+'</span>'
       +'<div style="display:flex;gap:12px;align-items:center">'
       +'<span style="font-size:13px;color:#888">'+d.total+' trades</span>'
       +'<span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'% WR</span>'
@@ -3553,6 +3584,149 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
     if(ov) ov.classList.add('auth-show');
   })();
 })();
+
+// ── Theme customizer ──
+const THEME_SWATCHES = [
+  {name:'Emerald',   hex:'#10b981', rgb:'16,185,129',  dim:'#059669', dark:'#0a2010', border:'#1a2e1e', bgCard:'#0f1a12'},
+  {name:'Cyan',      hex:'#06b6d4', rgb:'6,182,212',   dim:'#0891b2', dark:'#031d22', border:'#0e2a2e', bgCard:'#071a1e'},
+  {name:'Blue',      hex:'#3b82f6', rgb:'59,130,246',  dim:'#2563eb', dark:'#0a1428', border:'#1a2840', bgCard:'#0c1828'},
+  {name:'Purple',    hex:'#a855f7', rgb:'168,85,247',  dim:'#9333ea', dark:'#1a0a28', border:'#2e1a40', bgCard:'#150c28'},
+  {name:'Rose',      hex:'#f43f5e', rgb:'244,63,94',   dim:'#e11d48', dark:'#280a10', border:'#401a20', bgCard:'#200a10'},
+  {name:'Amber',     hex:'#f59e0b', rgb:'245,158,11',  dim:'#d97706', dark:'#201400', border:'#3a2a00', bgCard:'#181000'},
+  {name:'White',     hex:'#e5e5e5', rgb:'229,229,229', dim:'#cccccc', dark:'#1a1a1a', border:'#2a2a2a', bgCard:'#131313'},
+];
+const BG_SWATCHES = [
+  {name:'Black',   bg:'#0a0f0a'},
+  {name:'Dark',    bg:'#080808'},
+  {name:'Navy',    bg:'#07080f'},
+  {name:'Charcoal',bg:'#0d0d0d'},
+];
+
+let themeOpen = false;
+
+function applyTheme(t, bg, save=true){
+  const r = document.documentElement.style;
+  r.setProperty('--accent',      t.hex);
+  r.setProperty('--accent-rgb',  t.rgb);
+  r.setProperty('--accent-glow', `rgba(${t.rgb},0.22)`);
+  r.setProperty('--accent-dim',  t.dim);
+  r.setProperty('--accent-dark', t.dark);
+  r.setProperty('--border-accent', t.border);
+  r.setProperty('--bg-card',     t.bgCard);
+  document.body.style.background = bg || '#0a0f0a';
+  document.body.style.borderTopColor = t.hex;
+  // Update theme toggle button colour
+  const btn = document.getElementById('theme-toggle-btn');
+  if(btn) btn.style.background = t.hex;
+  // Mark active swatches
+  document.querySelectorAll('#swatch-row .theme-swatch').forEach(s=>{
+    s.classList.toggle('active', s.dataset.hex === t.hex);
+  });
+  document.querySelectorAll('#bg-swatch-row .theme-swatch').forEach(s=>{
+    s.classList.toggle('active', s.dataset.bg === (bg||'#0a0f0a'));
+  });
+  if(save){
+    try{ localStorage.setItem('ict_theme', JSON.stringify({hex:t.hex, bg: bg||'#0a0f0a'})); }catch(e){}
+  }
+}
+
+function applyCustomHex(val){
+  val = val.trim();
+  if(!/^#[0-9a-fA-F]{6}$/.test(val)) return;
+  // Parse RGB
+  const bigint = parseInt(val.slice(1), 16);
+  const r2 = (bigint >> 16) & 255;
+  const g2 = (bigint >> 8) & 255;
+  const b2 = bigint & 255;
+  const dim = '#' + [r2*0.85, g2*0.85, b2*0.85].map(x=>Math.round(x).toString(16).padStart(2,'0')).join('');
+  const darkR = Math.round(r2*0.06), darkG = Math.round(g2*0.1), darkB = Math.round(b2*0.06);
+  const dark = '#' + [darkR,darkG,darkB].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const borderR = Math.round(r2*0.1), borderG = Math.round(g2*0.18), borderB = Math.round(b2*0.12);
+  const border = '#' + [borderR,borderG,borderB].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const bgCardR = Math.round(r2*0.06+4), bgCardG = Math.round(g2*0.1+2), bgCardB = Math.round(b2*0.07+2);
+  const bgCard = '#' + [bgCardR,bgCardG,bgCardB].map(x=>Math.min(255,x).toString(16).padStart(2,'0')).join('');
+  const custom = {hex:val, rgb:`${r2},${g2},${b2}`, dim, dark, border, bgCard};
+  const savedBg = (()=>{try{const s=JSON.parse(localStorage.getItem('ict_theme')||'{}');return s.bg||'#0a0f0a';}catch(e){return '#0a0f0a';}})();
+  applyTheme(custom, savedBg);
+}
+
+function toggleThemePanel(){
+  themeOpen = !themeOpen;
+  const p = document.getElementById('theme-panel');
+  if(p) p.classList.toggle('open', themeOpen);
+}
+
+function buildThemePanel(){
+  const sr = document.getElementById('swatch-row');
+  const bgr = document.getElementById('bg-swatch-row');
+  if(!sr || !bgr) return;
+  sr.innerHTML = '';
+  bgr.innerHTML = '';
+  THEME_SWATCHES.forEach(t=>{
+    const s = document.createElement('div');
+    s.className = 'theme-swatch';
+    s.style.background = t.hex;
+    s.dataset.hex = t.hex;
+    s.title = t.name;
+    s.onclick = ()=>{
+      const savedBg = (()=>{try{const d=JSON.parse(localStorage.getItem('ict_theme')||'{}');return d.bg||'#0a0f0a';}catch(e){return '#0a0f0a';}})();
+      applyTheme(t, savedBg);
+      const hex = document.getElementById('custom-hex');
+      if(hex) hex.value = t.hex;
+    };
+    sr.appendChild(s);
+  });
+  BG_SWATCHES.forEach(bg=>{
+    const s = document.createElement('div');
+    s.className = 'theme-swatch';
+    s.style.background = bg.bg;
+    s.style.border = '1.5px solid #333';
+    s.dataset.bg = bg.bg;
+    s.title = bg.name;
+    s.onclick = ()=>{
+      const savedHex = (()=>{try{const d=JSON.parse(localStorage.getItem('ict_theme')||'{}');return d.hex||'#10b981';}catch(e){return '#10b981';}})();
+      const t = THEME_SWATCHES.find(x=>x.hex===savedHex) || THEME_SWATCHES[0];
+      applyTheme(t, bg.bg);
+    };
+    bgr.appendChild(s);
+  });
+}
+
+function loadSavedTheme(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('ict_theme')||'null');
+    if(!saved) return;
+    const t = THEME_SWATCHES.find(x=>x.hex===saved.hex);
+    if(t){
+      applyTheme(t, saved.bg||'#0a0f0a', false);
+      const hex = document.getElementById('custom-hex');
+      if(hex) hex.value = t.hex;
+    } else if(saved.hex){
+      // Custom colour
+      const inp = document.getElementById('custom-hex');
+      if(inp){ inp.value = saved.hex; applyCustomHex(saved.hex); }
+    }
+    // Re-mark bg swatch
+    document.querySelectorAll('#bg-swatch-row .theme-swatch').forEach(s=>{
+      s.classList.toggle('active', s.dataset.bg === (saved.bg||'#0a0f0a'));
+    });
+  }catch(e){}
+}
+
+// Close theme panel when clicking outside
+document.addEventListener('click', function(e){
+  const p = document.getElementById('theme-panel');
+  const btn = document.getElementById('theme-toggle-btn');
+  if(p && themeOpen && !p.contains(e.target) && btn && !btn.contains(e.target)){
+    themeOpen = false;
+    p.classList.remove('open');
+  }
+});
+
+// Init theme on load
+buildThemePanel();
+loadSavedTheme();
+renderQOTD();
 </script>
 
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
@@ -3571,7 +3745,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
 <div>
-  <label>RR achieved <span id="e-rr-auto" style="color:#10b981;font-size:12px;margin-left:6px"></span></label>
+  <label>RR achieved <span id="e-rr-auto" style="color:var(--accent);font-size:12px;margin-left:6px"></span></label>
   <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="font-family:monospace" oninput="this.dataset.autoFilled='0'">
 </div>      <div><label>Outcome</label><select id="e-outcome"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
     </div>
@@ -3658,7 +3832,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
 <div id="cal-day-popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
   <div style="background:#0f1a12;border:0.5px solid #1a2e1e;border-radius:14px;max-width:560px;width:100%;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:500;color:#10b981" id="cal-popup-date"></div>
+      <div style="font-size:16px;font-weight:500;color:var(--accent)" id="cal-popup-date"></div>
       <button onclick="document.getElementById('cal-day-popup').style.display='none'" style="border:none;background:none;cursor:pointer;color:#aaa;font-size:20px">×</button>
     </div>
     <div id="cal-popup-body"></div>
@@ -3693,15 +3867,8 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
 </div>
 
 
-<!-- PRE-SESSION REVIEW -->
+<!-- PRE-SESSION REVIEW (hidden tab, content kept for pinned reminders) -->
 <div class="page" id="page-presession">
-
-  <!-- QOTD -->
-  <div class="card" id="qotd-card" style="margin-bottom:16px;border-left:3px solid #10b981;padding:16px 20px">
-    <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#10b981;margin-bottom:10px">Quote of the day</div>
-    <div id="qotd-text" style="font-size:15px;color:#e0e0e0;line-height:1.7;font-style:italic"></div>
-    <div id="qotd-author" style="font-size:13px;color:#555;margin-top:8px"></div>
-  </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
 
@@ -3763,6 +3930,22 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
   </div>
 </div>
 
+<!-- THEME CUSTOMIZER -->
+<button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
+<div id="theme-panel">
+  <div style="font-size:12px;font-weight:600;color:#e0e0e0;margin-bottom:10px;letter-spacing:.04em">Customise theme</div>
+  <div class="theme-label">Accent colour</div>
+  <div class="theme-swatch-row" id="swatch-row"></div>
+  <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+    <label style="font-size:12px;color:#777;white-space:nowrap">Custom hex</label>
+    <input type="text" id="custom-hex" placeholder="#10b981" maxlength="7"
+      style="flex:1;padding:5px 8px;font-size:12px;border:0.5px solid #2a2a2a;border-radius:6px;background:#0a0f0a;color:#fff;font-family:monospace"
+      oninput="applyCustomHex(this.value)">
+  </div>
+  <div class="theme-label" style="margin-top:12px">Background</div>
+  <div class="theme-swatch-row" id="bg-swatch-row"></div>
+</div>
+
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
   <button class="mob-btn active" id="mobnav-log"      onclick="mobNav('log')">      <span class="mob-icon">✍️</span>Log</button>
@@ -3777,7 +3960,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
   <div class="more-item" onclick="mobNav('prop')">      <span class="more-item-icon">📊</span>Prop firm</div>
   <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
-  <div class="more-item" onclick="mobNav('presession')"> <span class="more-item-icon">🧠</span>Pre-session review</div>
+
 </div>
 
 <script>
