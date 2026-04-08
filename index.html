@@ -14,46 +14,83 @@
   :root {
     --accent: #10b981;
     --accent-rgb: 16,185,129;
-    --accent-glow: rgba(16,185,129,0.25);
+    --accent-glow: rgba(16,185,129,0.22);
     --accent-dim: #059669;
-    --accent-dark: #0a2010;
-    --border-accent: #1a2e1e;
+    --accent-dark: rgba(16,185,129,0.08);
+    --border-accent: rgba(16,185,129,0.2);
     --bg-card: #0f1a12;
+    --color-bg: #0a0f0a;
+    --color-text: #ffffff;
+    --color-cards: #0f1a12;
+    --color-timer: #10b981;
+    --color-check: #10b981;
+    --color-win: #10b981;
+    --color-win-bg: rgba(16,185,129,0.08);
+    --color-win-border: rgba(16,185,129,0.3);
+    --color-win-dim: #0a7a55;
   }
+  /* Per-section variable bindings */
+  body { color: var(--color-text) }
+  .card { background: linear-gradient(160deg, var(--color-cards) 0%, var(--color-bg) 100%) !important }
+  #clock-uk, #clock-ny { color: var(--color-timer) !important }
+  #timer-bar { background: var(--color-timer) !important }
+  #timer-display { color: var(--color-text) }
+  .gate.pass { color: var(--color-check) !important; border-color: var(--color-check) !important }
+  .check-item input[type=checkbox] { accent-color: var(--color-check) !important }
+  .outcome-btn.active-win { background: var(--color-win-bg) !important; border-color: var(--color-win) !important; color: var(--color-win) !important }
+  .green-bg { background: var(--color-win-bg) !important; color: var(--color-win) !important; border-color: var(--color-win-border) !important }
+  .cal-win { color: var(--color-win) !important }
+  .star.lit { color: var(--color-win) !important }
 
-  /* Theme customizer panel */
-  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#111;border:0.5px solid #2a2a2a;border-radius:14px;padding:16px;width:260px;display:none;box-shadow:0 12px 40px rgba(0,0,0,0.8)}
-  #theme-panel.open{display:block}
+  /* ── Theme customizer ── */
+  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#111;border:1px solid #2a2a2a;border-radius:14px;width:290px;display:none;box-shadow:0 12px 40px rgba(0,0,0,0.85);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  #theme-panel.open{display:flex;flex-direction:column}
   #theme-toggle-btn{position:fixed;bottom:16px;right:16px;z-index:9999;width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:background .2s}
   #theme-toggle-btn:hover{filter:brightness(1.15)}
-  .cp-title{font-size:12px;font-weight:600;color:#e0e0e0;margin-bottom:12px;letter-spacing:.04em}
-  /* Colour spectrum canvas */
-  #cp-spectrum{width:228px;height:140px;border-radius:8px;cursor:crosshair;display:block}
-  #cp-spectrum-wrap{position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden;height:140px;background:#000}
-  #cp-cursor{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.5);pointer-events:none;transform:translate(-50%,-50%);top:20%;left:80%;z-index:2}
-  /* Hue slider */
-  #cp-hue-wrap{margin-bottom:10px;padding:6px 0}
-  #cp-hue{width:100%;height:14px;border-radius:7px;cursor:pointer;display:block;outline:none;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%);border:none}
-  #cp-hue::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #aaa;box-shadow:0 1px 6px rgba(0,0,0,0.6);cursor:pointer;margin-top:-3px}
-  #cp-hue::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #aaa;box-shadow:0 1px 6px rgba(0,0,0,0.6);cursor:pointer;border:none}
-  #cp-hue::-webkit-slider-runnable-track{height:14px;border-radius:7px}
-  #cp-hue::-moz-range-track{height:14px;border-radius:7px;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)}
-  /* Hex input row */
-  .cp-hex-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-  #cp-preview{width:28px;height:28px;border-radius:6px;flex-shrink:0;border:1px solid #333}
-  #cp-hex{flex:1;padding:6px 8px;font-size:12px;font-family:monospace;border:0.5px solid #2a2a2a;border-radius:6px;background:#0a0a0a;color:#fff;outline:none}
+  /* Panel header */
+  #tp-header{padding:12px 14px 0;display:flex;align-items:center;justify-content:space-between}
+  #tp-header-title{font-size:12px;font-weight:600;color:#e0e0e0;letter-spacing:.05em}
+  #tp-reset{font-size:11px;color:#555;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+  #tp-reset:hover{color:#aaa}
+  /* Section tabs */
+  #tp-tabs{display:flex;gap:4px;padding:10px 10px 0;flex-wrap:wrap}
+  .tp-tab{font-size:10px;padding:4px 8px;border-radius:20px;border:1px solid #2a2a2a;background:none;color:#666;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
+  .tp-tab:hover{color:#aaa;border-color:#444}
+  .tp-tab.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+  /* Section panels */
+  #tp-body{padding:12px 14px 14px}
+  .tp-section{display:none}
+  .tp-section.active{display:block}
+  .tp-sect-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+  /* Mini colour picker */
+  .mini-cp{margin-bottom:10px}
+  #cp-spectrum{display:block;border-radius:7px;cursor:crosshair}
+  #cp-spectrum-wrap{position:relative;margin-bottom:8px;border-radius:7px;overflow:hidden;background:#000}
+  #cp-cursor{position:absolute;width:13px;height:13px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.5);pointer-events:none;transform:translate(-50%,-50%);z-index:2}
+  #cp-hue-wrap{margin-bottom:8px}
+  #cp-hue{width:100%;height:13px;border-radius:7px;cursor:pointer;display:block;outline:none;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%);border:none}
+  #cp-hue::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:#fff;border:2px solid #aaa;box-shadow:0 1px 6px rgba(0,0,0,0.6);cursor:pointer;margin-top:-3px}
+  #cp-hue::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:#fff;border:2px solid #aaa;cursor:pointer}
+  #cp-hue::-webkit-slider-runnable-track{height:13px;border-radius:7px}
+  #cp-hue::-moz-range-track{height:13px;border-radius:7px;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)}
+  .cp-hex-row{display:flex;align-items:center;gap:7px}
+  #cp-preview{width:26px;height:26px;border-radius:5px;flex-shrink:0;border:1px solid #333}
+  #cp-hex{flex:1;padding:5px 7px;font-size:11px;font-family:monospace;border:0.5px solid #2a2a2a;border-radius:5px;background:#0a0a0a;color:#fff;outline:none}
   #cp-hex:focus{border-color:#555}
-  .cp-apply{padding:6px 12px;font-size:12px;border:none;border-radius:6px;background:var(--accent);color:#000;font-weight:600;cursor:pointer;font-family:inherit;transition:filter .15s}
-  .cp-apply:hover{filter:brightness(1.15)}
-  /* Preset swatches */
-  .cp-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-  .cp-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;flex-shrink:0}
+  .cp-apply{padding:5px 11px;font-size:11px;border:none;border-radius:5px;background:var(--accent);color:#000;font-weight:700;cursor:pointer;font-family:inherit}
+  .cp-apply:hover{filter:brightness(1.1)}
+  /* Presets row */
+  .cp-presets{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+  .cp-swatch{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .12s,transform .12s;flex-shrink:0}
   .cp-swatch:hover,.cp-swatch.active{border-color:#fff;transform:scale(1.2)}
-  .cp-sect{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
-  /* Bg swatches */
-  .cp-bg-row{display:flex;gap:6px}
-  .cp-bg-swatch{width:22px;height:22px;border-radius:5px;cursor:pointer;border:1.5px solid #333;transition:border-color .15s,transform .15s}
-  .cp-bg-swatch:hover,.cp-bg-swatch.active{border-color:#fff;transform:scale(1.15)}
+  /* BG swatches */
+  .cp-bg-swatches{display:flex;gap:5px;flex-wrap:wrap}
+  .cp-bg-sw{width:24px;height:24px;border-radius:5px;cursor:pointer;border:1.5px solid #333;transition:border-color .12s,transform .12s}
+  .cp-bg-sw:hover,.cp-bg-sw.active{border-color:#fff;transform:scale(1.1)}
+  /* Current colour preview strip */
+  .tp-cur-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+  .tp-cur-dot{width:22px;height:22px;border-radius:5px;border:1px solid #333;flex-shrink:0}
+  .tp-cur-hex{font-size:11px;font-family:monospace;color:#aaa}
 
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#ffffff;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid var(--accent);box-shadow:0 -1px 20px var(--accent-glow)}
@@ -3609,332 +3646,320 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
   })();
 })();
 
-// ── Theme customizer (colour picker) ──
+// ── Theme customizer — per-section ──
+
 const CP_PRESETS = [
-  {hex:'#10b981'},{hex:'#06b6d4'},{hex:'#3b82f6'},{hex:'#a855f7'},
-  {hex:'#f43f5e'},{hex:'#f59e0b'},{hex:'#e5e5e5'},{hex:'#ff6b35'},
-  {hex:'#00d4ff'},{hex:'#ff3cac'},{hex:'#7fff00'},{hex:'#ffd700'},
+  '#10b981','#06b6d4','#3b82f6','#a855f7',
+  '#f43f5e','#f59e0b','#e5e5e5','#ff6b35',
+  '#00d4ff','#ff3cac','#7fff00','#ffd700',
 ];
-const CP_BGS = ['#0a0f0a','#080808','#07080f','#0d0d0d','#0a0a12','#100a0a'];
+const CP_BGS = ['#0a0f0a','#080808','#07080f','#0d0d0d','#0a0a12','#100a0a','#0a0806','#111111'];
 
-let cpHue = 157, cpSat = 0.73, cpVal = 0.73;
-let cpDragging = false;
-let themeOpen = false;
-let cpCurrentBg = '#0a0f0a';
+// Defaults
+const TP_DEFAULTS = {
+  accent: '#10b981',
+  bg:     '#0a0f0a',
+  text:   '#ffffff',
+  cards:  '#0f1a12',
+  timer:  '#10b981',
+  check:  '#10b981',
+  win:    '#10b981',
+};
 
-// HSV → hex
-function hsvToHex(h, s, v) {
+let tpColors = Object.assign({}, TP_DEFAULTS);
+let tpSection = 'accent';  // active section
+let cpHue=157, cpSat=0.73, cpVal=0.73, cpDragging=false, themeOpen=false;
+
+// ── Colour math ──
+function hsvToHex(h,s,v){
   let r,g,b;
-  const i = Math.floor(h/60)%6, f=h/60-Math.floor(h/60), p=v*(1-s), q=v*(1-f*s), t=v*(1-(1-f)*s);
+  const i=Math.floor(h/60)%6,f=h/60-Math.floor(h/60),p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
   switch(i){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;default:r=v;g=p;b=q;}
   return '#'+[r,g,b].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');
 }
-
-// hex → HSV
-function hexToHsv(hex) {
-  hex = hex.replace('#','');
-  if(hex.length!==6) return null;
-  const r=parseInt(hex.slice(0,2),16)/255, g=parseInt(hex.slice(2,4),16)/255, b=parseInt(hex.slice(4,6),16)/255;
-  const max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+function hexToHsv(hex){
+  hex=hex.replace('#','');
+  if(hex.length!==6)return null;
+  const r=parseInt(hex.slice(0,2),16)/255,g=parseInt(hex.slice(2,4),16)/255,b=parseInt(hex.slice(4,6),16)/255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
   let h=0;
-  if(d){
-    if(max===r) h=((g-b)/d+6)%6;
-    else if(max===g) h=(b-r)/d+2;
-    else h=(r-g)/d+4;
-    h*=60;
+  if(d){if(max===r)h=((g-b)/d+6)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;}
+  return {h,s:max?d/max:0,v:max};
+}
+function hexToRgb(hex){
+  hex=hex.replace('#','');
+  return [parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)];
+}
+function darken(hex,f){return '#'+hexToRgb(hex).map(x=>Math.round(x*f).toString(16).padStart(2,'0')).join('');}
+
+// ── Apply colours to DOM via CSS vars ──
+function applyAllColors(save=true){
+  const rs = document.documentElement.style;
+  const a = tpColors.accent;
+  const [ar,ag,ab] = hexToRgb(a);
+
+  // Accent (tabs, borders, stars, btn-primary, etc.)
+  rs.setProperty('--accent', a);
+  rs.setProperty('--accent-rgb', `${ar},${ag},${ab}`);
+  rs.setProperty('--accent-glow', `rgba(${ar},${ag},${ab},0.22)`);
+  rs.setProperty('--accent-dim', darken(a, 0.82));
+  rs.setProperty('--accent-dark', `rgba(${ar},${ag},${ab},0.08)`);
+  rs.setProperty('--border-accent', `rgba(${ar},${ag},${ab},0.2)`);
+
+  // Background
+  rs.setProperty('--color-bg', tpColors.bg);
+  document.body.style.background = tpColors.bg;
+  document.body.style.borderTopColor = a;
+
+  // Cards
+  rs.setProperty('--bg-card', tpColors.cards);
+  rs.setProperty('--color-cards', tpColors.cards);
+
+  // Text
+  rs.setProperty('--color-text', tpColors.text);
+  document.body.style.color = tpColors.text;
+
+  // Timer/clocks
+  rs.setProperty('--color-timer', tpColors.timer);
+
+  // Checklist pass
+  rs.setProperty('--color-check', tpColors.check);
+
+  // Win colour
+  rs.setProperty('--color-win', tpColors.win);
+  const [wr,wg,wb] = hexToRgb(tpColors.win);
+  rs.setProperty('--color-win-bg', `rgba(${wr},${wg},${wb},0.08)`);
+  rs.setProperty('--color-win-border', `rgba(${wr},${wg},${wb},0.3)`);
+  rs.setProperty('--color-win-dim', darken(tpColors.win, 0.7));
+
+  // Theme btn colour = accent
+  const tbtn = document.getElementById('theme-toggle-btn');
+  if(tbtn) tbtn.style.background = a;
+
+  // Update dynamic elements that aren't CSS-var driven
+  // Clocks
+  document.querySelectorAll('#clock-uk,#clock-ny').forEach(el => el.style.color = tpColors.timer);
+  // Timer bar
+  const tb = document.getElementById('timer-bar');
+  if(tb) tb.style.background = tpColors.timer;
+
+  if(save){
+    try{ localStorage.setItem('ict_theme2', JSON.stringify(tpColors)); }catch(e){}
   }
-  return {h, s:max?d/max:0, v:max};
+
+  // Update cur dots in panel
+  updateCurDots();
 }
 
-function hexToRgbStr(hex) {
-  hex = hex.replace('#','');
-  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
-  return `${r},${g},${b}`;
+function updateCurDots(){
+  const map = {accent:'accent',bg:'bg',text:'text',cards:'cards',timer:'timer',check:'check',win:'win'};
+  Object.entries(map).forEach(([sec,key])=>{
+    const dot = document.getElementById('cur-dot-'+sec);
+    const hex = document.getElementById('cur-hex-'+sec);
+    if(dot) dot.style.background = tpColors[key];
+    if(hex) hex.textContent = tpColors[key];
+  });
+  // Update tp-tab active underline colour
+  document.querySelectorAll('.tp-tab').forEach(t=>{
+    if(t.classList.contains('active')) t.style.background = tpColors.accent;
+  });
 }
 
-function darken(hex, f) {
-  hex = hex.replace('#','');
-  return '#'+[0,2,4].map(i=>Math.round(parseInt(hex.slice(i,i+2),16)*f).toString(16).padStart(2,'0')).join('');
-}
-
-function tintedDark(hex) {
-  hex = hex.replace('#','');
-  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
-  return '#'+[Math.round(r*0.06),Math.round(g*0.1),Math.round(b*0.07)].map(x=>Math.min(30,x).toString(16).padStart(2,'0')).join('');
-}
-function tintedBorder(hex) {
-  hex = hex.replace('#','');
-  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
-  return '#'+[Math.round(r*0.1+4),Math.round(g*0.18+4),Math.round(b*0.12+4)].map(x=>Math.min(60,x).toString(16).padStart(2,'0')).join('');
-}
-function tintedCard(hex) {
-  hex = hex.replace('#','');
-  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
-  return '#'+[Math.round(r*0.05+8),Math.round(g*0.09+8),Math.round(b*0.06+8)].map(x=>Math.min(30,x).toString(16).padStart(2,'0')).join('');
-}
-
-function applyTheme(hex, bg, save=true) {
-  const rgb = hexToRgbStr(hex);
-  const r = document.documentElement.style;
-  r.setProperty('--accent', hex);
-  r.setProperty('--accent-rgb', rgb);
-  r.setProperty('--accent-glow', `rgba(${rgb},0.22)`);
-  r.setProperty('--accent-dim', darken(hex, 0.82));
-  r.setProperty('--accent-dark', tintedDark(hex));
-  r.setProperty('--border-accent', tintedBorder(hex));
-  r.setProperty('--bg-card', tintedCard(hex));
-  document.body.style.background = bg || cpCurrentBg;
-  document.body.style.borderTopColor = hex;
-  const btn = document.getElementById('theme-toggle-btn');
-  if(btn) btn.style.background = hex;
-  cpCurrentBg = bg || cpCurrentBg;
-  // Update bg swatch active state
-  document.querySelectorAll('.cp-bg-swatch').forEach(s => s.classList.toggle('active', s.dataset.bg === cpCurrentBg));
-  // Update preset active
-  document.querySelectorAll('.cp-swatch').forEach(s => s.classList.toggle('active', s.dataset.hex && s.dataset.hex.toLowerCase() === hex.toLowerCase()));
-  if(save) {
-    try{ localStorage.setItem('ict_theme', JSON.stringify({hex, bg: cpCurrentBg})); }catch(e){}
-  }
-}
-
-// Draw the spectrum canvas
-function cpDrawSpectrum() {
+// ── Colour picker canvas ──
+function cpDrawSpectrum(){
   const canvas = document.getElementById('cp-spectrum');
   if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
   ctx.clearRect(0,0,W,H);
-  // White → pure hue (horizontal = saturation)
-  const gradH = ctx.createLinearGradient(0,0,W,0);
-  gradH.addColorStop(0, '#ffffff');
-  gradH.addColorStop(1, `hsl(${cpHue},100%,50%)`);
-  ctx.fillStyle = gradH;
-  ctx.fillRect(0,0,W,H);
-  // Transparent → black overlay (vertical = brightness)
-  const gradV = ctx.createLinearGradient(0,0,0,H);
-  gradV.addColorStop(0, 'rgba(0,0,0,0)');
-  gradV.addColorStop(1, 'rgba(0,0,0,1)');
-  ctx.fillStyle = gradV;
-  ctx.fillRect(0,0,W,H);
+  const gH=ctx.createLinearGradient(0,0,W,0);
+  gH.addColorStop(0,'#ffffff');
+  gH.addColorStop(1,`hsl(${cpHue},100%,50%)`);
+  ctx.fillStyle=gH; ctx.fillRect(0,0,W,H);
+  const gV=ctx.createLinearGradient(0,0,0,H);
+  gV.addColorStop(0,'rgba(0,0,0,0)');
+  gV.addColorStop(1,'rgba(0,0,0,1)');
+  ctx.fillStyle=gV; ctx.fillRect(0,0,W,H);
 }
-
-function cpSizeCanvas() {
-  const canvas = document.getElementById('cp-spectrum');
-  if(!canvas) return;
-  // Match the CSS pixel size exactly
-  canvas.width = 228;
-  canvas.height = 140;
+function cpSizeCanvas(){
+  const canvas=document.getElementById('cp-spectrum');
+  const wrap=document.getElementById('cp-spectrum-wrap');
+  if(!canvas||!wrap) return;
+  const w=wrap.getBoundingClientRect().width;
+  canvas.width=Math.round(w)||258;
+  canvas.height=120;
   cpDrawSpectrum();
 }
-
-function cpUpdateCursor() {
-  const cursor = document.getElementById('cp-cursor');
-  const canvas = document.getElementById('cp-spectrum');
-  if(!cursor || !canvas) return;
-  const rect = canvas.getBoundingClientRect();
-  const W = rect.width || 228;
-  const H = rect.height || 140;
-  cursor.style.left = (cpSat * W) + 'px';
-  cursor.style.top  = ((1 - cpVal) * H) + 'px';
+function cpUpdateCursor(){
+  const cursor=document.getElementById('cp-cursor');
+  const canvas=document.getElementById('cp-spectrum');
+  if(!cursor||!canvas) return;
+  const r=canvas.getBoundingClientRect();
+  cursor.style.left=(cpSat*(r.width||258))+'px';
+  cursor.style.top=((1-cpVal)*(r.height||120))+'px';
 }
-
-function cpUpdatePreview() {
-  const hex = hsvToHex(cpHue, cpSat, cpVal);
-  const prev = document.getElementById('cp-preview');
-  const inp  = document.getElementById('cp-hex');
-  if(prev) prev.style.background = hex;
-  if(inp)  inp.value = hex;
+function cpUpdatePreview(){
+  const hex=hsvToHex(cpHue,cpSat,cpVal);
+  const p=document.getElementById('cp-preview');
+  const i=document.getElementById('cp-hex');
+  if(p) p.style.background=hex;
+  if(i) i.value=hex;
 }
-
-function cpLiveApply() {
-  const hex = hsvToHex(cpHue, cpSat, cpVal);
-  applyTheme(hex, cpCurrentBg);
-}
-
-function cpPickFromCanvas(clientX, clientY) {
-  const canvas = document.getElementById('cp-spectrum');
+function cpPickFromCanvas(cx,cy){
+  const canvas=document.getElementById('cp-spectrum');
   if(!canvas) return;
-  const rect = canvas.getBoundingClientRect();
-  // Normalise to 0-1 using CSS rect (display) dimensions
-  const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-  const y = Math.max(0, Math.min(clientY - rect.top,  rect.height));
-  cpSat = x / rect.width;
-  cpVal = 1 - (y / rect.height);
-  cpUpdateCursor();
-  cpUpdatePreview();
-  cpLiveApply();
+  const r=canvas.getBoundingClientRect();
+  cpSat=Math.max(0,Math.min((cx-r.left)/r.width,1));
+  cpVal=1-Math.max(0,Math.min((cy-r.top)/r.height,1));
+  cpUpdateCursor(); cpUpdatePreview();
+}
+function cpSyncFromHex(hex){
+  const hsv=hexToHsv(hex);
+  if(!hsv) return;
+  cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v;
+  const hEl=document.getElementById('cp-hue');
+  if(hEl) hEl.value=Math.round(cpHue);
+  cpDrawSpectrum(); cpUpdateCursor(); cpUpdatePreview();
 }
 
-function cpApply() {
-  const inp = document.getElementById('cp-hex');
-  let hex = (inp ? inp.value.trim() : '') || hsvToHex(cpHue, cpSat, cpVal);
-  if(!hex.startsWith('#')) hex = '#' + hex;
+// ── Section switching ──
+function tpSwitch(sec, btn){
+  tpSection=sec;
+  document.querySelectorAll('.tp-tab').forEach(t=>{ t.classList.remove('active'); t.style.background=''; t.style.borderColor=''; t.style.color=''; });
+  if(btn){ btn.classList.add('active'); btn.style.background=tpColors.accent; btn.style.borderColor=tpColors.accent; btn.style.color='#000'; }
+  document.querySelectorAll('.tp-section').forEach(s=>s.classList.remove('active'));
+  const sec_el=document.getElementById('tp-sec-'+sec);
+  if(sec_el) sec_el.classList.add('active');
+  // Load current colour into picker
+  const cur = tpColors[sec] || tpColors.accent;
+  cpSyncFromHex(cur);
+  // Show/hide bg swatches vs spectrum
+  const wrap=document.getElementById('cp-spectrum-wrap');
+  const hueW=document.getElementById('cp-hue-wrap');
+  const presW=document.getElementById('cp-presets');
+  if(sec==='bg'){
+    if(wrap) wrap.style.display='none';
+    if(hueW) hueW.style.display='none';
+    if(presW) presW.style.display='none';
+  } else {
+    if(wrap) wrap.style.display='';
+    if(hueW) hueW.style.display='';
+    if(presW) presW.style.display='';
+  }
+}
+
+function cpApply(){
+  const inp=document.getElementById('cp-hex');
+  let hex=(inp?inp.value.trim():'')||hsvToHex(cpHue,cpSat,cpVal);
+  if(!hex.startsWith('#')) hex='#'+hex;
   if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
-  const hsv = hexToHsv(hex);
-  if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
-  cpDrawSpectrum();
-  cpUpdateCursor();
-  applyTheme(hex, cpCurrentBg);
+  cpSyncFromHex(hex);
+  tpColors[tpSection]=hex;
+  applyAllColors();
 }
 
-function cpSetHue(h) {
-  cpHue = parseFloat(h);
-  cpDrawSpectrum();
-  cpUpdateCursor();
-  cpUpdatePreview();
-  cpLiveApply();
+function tpReset(){
+  if(!confirm('Reset all colours to default?')) return;
+  tpColors=Object.assign({},TP_DEFAULTS);
+  applyAllColors();
+  cpSyncFromHex(tpColors[tpSection]);
+  try{ localStorage.removeItem('ict_theme2'); }catch(e){}
 }
 
-function buildThemePanel() {
+// ── Build panel (presets + bg swatches + canvas events) ──
+function buildThemePanel(){
   // Presets
-  const pr = document.getElementById('cp-presets');
-  if(pr) {
-    pr.innerHTML = '';
-    CP_PRESETS.forEach(p => {
-      const s = document.createElement('div');
-      s.className = 'cp-swatch';
-      s.style.background = p.hex;
-      s.dataset.hex = p.hex;
-      s.title = p.hex;
-      s.onclick = () => {
-        const hsv = hexToHsv(p.hex);
-        if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
-        const hueEl = document.getElementById('cp-hue');
-        if(hueEl) hueEl.value = Math.round(cpHue);
-        cpDrawSpectrum();
-        cpUpdateCursor();
-        cpUpdatePreview();
-        applyTheme(p.hex, cpCurrentBg);
-      };
+  const pr=document.getElementById('cp-presets');
+  if(pr){
+    pr.innerHTML='';
+    CP_PRESETS.forEach(hex=>{
+      const s=document.createElement('div');
+      s.className='cp-swatch'; s.style.background=hex; s.dataset.hex=hex; s.title=hex;
+      s.onclick=()=>{ cpSyncFromHex(hex); tpColors[tpSection]=hex; applyAllColors(); };
       pr.appendChild(s);
     });
   }
 
-  // BG swatches
-  const bgr = document.getElementById('cp-bg-row');
-  if(bgr) {
-    bgr.innerHTML = '';
-    CP_BGS.forEach(bg => {
-      const s = document.createElement('div');
-      s.className = 'cp-bg-swatch';
-      s.style.background = bg;
-      s.dataset.bg = bg;
-      s.title = bg;
-      s.onclick = () => {
-        cpCurrentBg = bg;
-        applyTheme(hsvToHex(cpHue, cpSat, cpVal), bg);
-      };
+  // BG swatches (only shown in bg section)
+  const bgr=document.getElementById('cp-bg-swatches');
+  if(bgr){
+    bgr.innerHTML='';
+    CP_BGS.forEach(bg=>{
+      const s=document.createElement('div');
+      s.className='cp-bg-sw'; s.style.background=bg; s.dataset.bg=bg; s.title=bg;
+      s.onclick=()=>{ tpColors.bg=bg; applyAllColors(); document.querySelectorAll('.cp-bg-sw').forEach(x=>x.classList.toggle('active',x.dataset.bg===bg)); };
       bgr.appendChild(s);
     });
   }
 
-  // Canvas mouse events
-  const canvas = document.getElementById('cp-spectrum');
-  if(canvas) {
-    canvas.addEventListener('mousedown', e => {
-      cpDragging = true;
-      cpPickFromCanvas(e.clientX, e.clientY);
-      e.preventDefault();
-    });
-    window.addEventListener('mousemove', e => {
-      if(cpDragging) cpPickFromCanvas(e.clientX, e.clientY);
-    });
-    window.addEventListener('mouseup', () => { cpDragging = false; });
-
-    // Touch events
-    canvas.addEventListener('touchstart', e => {
-      cpDragging = true;
-      cpPickFromCanvas(e.touches[0].clientX, e.touches[0].clientY);
-      e.preventDefault();
-    }, {passive:false});
-    window.addEventListener('touchmove', e => {
-      if(cpDragging) cpPickFromCanvas(e.touches[0].clientX, e.touches[0].clientY);
-    }, {passive:true});
-    window.addEventListener('touchend', () => { cpDragging = false; });
+  // Canvas events
+  const canvas=document.getElementById('cp-spectrum');
+  if(canvas){
+    canvas.addEventListener('mousedown',e=>{ cpDragging=true; cpPickFromCanvas(e.clientX,e.clientY); e.preventDefault(); });
+    window.addEventListener('mousemove',e=>{ if(cpDragging) cpPickFromCanvas(e.clientX,e.clientY); });
+    window.addEventListener('mouseup',()=>{ cpDragging=false; });
+    canvas.addEventListener('touchstart',e=>{ cpDragging=true; cpPickFromCanvas(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); },{passive:false});
+    window.addEventListener('touchmove',e=>{ if(cpDragging) cpPickFromCanvas(e.touches[0].clientX,e.touches[0].clientY); },{passive:true});
+    window.addEventListener('touchend',()=>{ cpDragging=false; });
   }
 
-  // Hue slider — use both 'input' and 'change' for max browser compat
-  const hueEl = document.getElementById('cp-hue');
-  if(hueEl) {
-    hueEl.addEventListener('input',  () => cpSetHue(hueEl.value));
-    hueEl.addEventListener('change', () => cpSetHue(hueEl.value));
+  // Hue slider
+  const hueEl=document.getElementById('cp-hue');
+  if(hueEl){
+    hueEl.addEventListener('input',()=>{ cpHue=parseFloat(hueEl.value); cpDrawSpectrum(); cpUpdateCursor(); cpUpdatePreview(); });
+    hueEl.addEventListener('change',()=>{ cpHue=parseFloat(hueEl.value); cpDrawSpectrum(); cpUpdateCursor(); cpUpdatePreview(); });
   }
 
   // Hex input
-  const hexInp = document.getElementById('cp-hex');
-  if(hexInp) {
-    hexInp.addEventListener('keydown', e => { if(e.key==='Enter') cpApply(); });
-    hexInp.addEventListener('input', () => {
-      let v = hexInp.value.trim();
-      if(!v.startsWith('#')) v = '#'+v;
+  const hexInp=document.getElementById('cp-hex');
+  if(hexInp){
+    hexInp.addEventListener('keydown',e=>{ if(e.key==='Enter') cpApply(); });
+    hexInp.addEventListener('input',()=>{
+      let v=hexInp.value.trim();
+      if(!v.startsWith('#')) v='#'+v;
       if(/^#[0-9a-fA-F]{6}$/.test(v)){
-        const hsv = hexToHsv(v);
-        if(hsv){
-          cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v;
-          const hEl = document.getElementById('cp-hue');
-          if(hEl) hEl.value = Math.round(cpHue);
-          cpDrawSpectrum();
-          cpUpdateCursor();
-        }
-        const prev = document.getElementById('cp-preview');
-        if(prev) prev.style.background = v;
-        applyTheme(v, cpCurrentBg);
+        const prev=document.getElementById('cp-preview');
+        if(prev) prev.style.background=v;
+        cpSyncFromHex(v);
       }
     });
   }
 }
 
-function loadSavedTheme() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('ict_theme')||'null');
-    if(!saved || !saved.hex) return;
-    const hsv = hexToHsv(saved.hex);
-    if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
-    cpCurrentBg = saved.bg || '#0a0f0a';
-    applyTheme(saved.hex, cpCurrentBg, false);
-    const hueEl = document.getElementById('cp-hue');
-    if(hueEl) hueEl.value = Math.round(cpHue);
+function loadSavedTheme(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('ict_theme2')||'null');
+    if(saved&&typeof saved==='object') tpColors=Object.assign({},TP_DEFAULTS,saved);
   }catch(e){}
+  applyAllColors(false);
+  cpSyncFromHex(tpColors[tpSection]);
 }
 
-function toggleThemePanel() {
-  themeOpen = !themeOpen;
-  const p = document.getElementById('theme-panel');
+function toggleThemePanel(){
+  themeOpen=!themeOpen;
+  const p=document.getElementById('theme-panel');
   if(!p) return;
-  p.classList.toggle('open', themeOpen);
-  if(themeOpen) {
-    // Must wait for panel to be visible before measuring widths
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        cpSizeCanvas();
-        cpUpdateCursor();
-        cpUpdatePreview();
-        // Sync hue slider
-        const hueEl = document.getElementById('cp-hue');
-        if(hueEl) hueEl.value = Math.round(cpHue);
-        // Mark bg swatch
-        document.querySelectorAll('.cp-bg-swatch').forEach(s =>
-          s.classList.toggle('active', s.dataset.bg === cpCurrentBg));
-        // Mark preset swatch
-        const curHex = hsvToHex(cpHue,cpSat,cpVal).toLowerCase();
-        document.querySelectorAll('.cp-swatch').forEach(s =>
-          s.classList.toggle('active', (s.dataset.hex||'').toLowerCase() === curHex));
-      });
-    });
+  p.classList.toggle('open',themeOpen);
+  if(themeOpen){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      cpSizeCanvas(); cpUpdateCursor(); cpUpdatePreview();
+      const hEl=document.getElementById('cp-hue');
+      if(hEl) hEl.value=Math.round(cpHue);
+      // Sync bg swatches
+      document.querySelectorAll('.cp-bg-sw').forEach(s=>s.classList.toggle('active',s.dataset.bg===tpColors.bg));
+      updateCurDots();
+    }));
   }
 }
 
-// Close panel on outside click
-document.addEventListener('click', function(e){
-  const p = document.getElementById('theme-panel');
-  const btn = document.getElementById('theme-toggle-btn');
-  if(p && themeOpen && !p.contains(e.target) && btn && !btn.contains(e.target)){
-    themeOpen = false;
-    p.classList.remove('open');
+document.addEventListener('click',function(e){
+  const p=document.getElementById('theme-panel');
+  const btn=document.getElementById('theme-toggle-btn');
+  if(p&&themeOpen&&!p.contains(e.target)&&btn&&!btn.contains(e.target)){
+    themeOpen=false; p.classList.remove('open');
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded',function(){
   buildThemePanel();
   loadSavedTheme();
   renderQOTD();
@@ -4145,33 +4170,73 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- THEME CUSTOMIZER -->
 <button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
 <div id="theme-panel">
-  <div class="cp-title">🎨 Customise theme</div>
-
-  <!-- Preset swatches -->
-  <div class="cp-sect">Presets</div>
-  <div class="cp-presets" id="cp-presets"></div>
-
-  <!-- Spectrum canvas -->
-  <div id="cp-spectrum-wrap">
-    <canvas id="cp-spectrum" height="140"></canvas>
-    <div id="cp-cursor"></div>
+  <div id="tp-header">
+    <span id="tp-header-title">🎨 Customise theme</span>
+    <button id="tp-reset" onclick="tpReset()">Reset all</button>
   </div>
 
-  <!-- Hue slider -->
-  <div id="cp-hue-wrap">
-    <input type="range" id="cp-hue" min="0" max="360" value="157">
+  <!-- Section tabs -->
+  <div id="tp-tabs">
+    <button class="tp-tab active" data-sec="accent" onclick="tpSwitch('accent',this)">Accent</button>
+    <button class="tp-tab" data-sec="bg"     onclick="tpSwitch('bg',this)">Background</button>
+    <button class="tp-tab" data-sec="text"   onclick="tpSwitch('text',this)">Text</button>
+    <button class="tp-tab" data-sec="cards"  onclick="tpSwitch('cards',this)">Cards</button>
+    <button class="tp-tab" data-sec="timer"  onclick="tpSwitch('timer',this)">Timer</button>
+    <button class="tp-tab" data-sec="check"  onclick="tpSwitch('check',this)">Checklist</button>
+    <button class="tp-tab" data-sec="win"    onclick="tpSwitch('win',this)">Win/Loss</button>
   </div>
 
-  <!-- Hex + preview + apply -->
-  <div class="cp-hex-row">
-    <div id="cp-preview"></div>
-    <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
-    <button class="cp-apply" onclick="cpApply()">Apply</button>
-  </div>
+  <!-- Body -->
+  <div id="tp-body">
 
-  <!-- Background -->
-  <div class="cp-sect">Background</div>
-  <div class="cp-bg-row" id="cp-bg-row"></div>
+    <!-- Shared colour picker (reused for each section) -->
+    <div class="mini-cp">
+      <div class="cp-presets" id="cp-presets"></div>
+      <div id="cp-spectrum-wrap">
+        <canvas id="cp-spectrum" height="120"></canvas>
+        <div id="cp-cursor"></div>
+      </div>
+      <div id="cp-hue-wrap">
+        <input type="range" id="cp-hue" min="0" max="360" value="157">
+      </div>
+      <div class="cp-hex-row">
+        <div id="cp-preview"></div>
+        <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
+        <button class="cp-apply" onclick="cpApply()">Apply</button>
+      </div>
+    </div>
+
+    <!-- Per-section descriptions -->
+    <div class="tp-section active" id="tp-sec-accent">
+      <div class="tp-sect-label">Accent — tabs, borders, highlights, clocks, stars</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-accent"></div><span class="tp-cur-hex" id="cur-hex-accent"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-bg">
+      <div class="tp-sect-label">Page background colour</div>
+      <div class="cp-bg-swatches" id="cp-bg-swatches"></div>
+    </div>
+    <div class="tp-section" id="tp-sec-text">
+      <div class="tp-sect-label">Body text colour</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-text"></div><span class="tp-cur-hex" id="cur-hex-text"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-cards">
+      <div class="tp-sect-label">Card / panel background</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-cards"></div><span class="tp-cur-hex" id="cur-hex-cards"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-timer">
+      <div class="tp-sect-label">Session timer &amp; clock colour</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-timer"></div><span class="tp-cur-hex" id="cur-hex-timer"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-check">
+      <div class="tp-sect-label">Checklist pass colour</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-check"></div><span class="tp-cur-hex" id="cur-hex-check"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-win">
+      <div class="tp-sect-label">Win colour (loss stays red)</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-win"></div><span class="tp-cur-hex" id="cur-hex-win"></span></div>
+    </div>
+
+  </div>
 </div>
 
 <!-- Mobile bottom nav -->
