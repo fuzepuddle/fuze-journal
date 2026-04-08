@@ -22,14 +22,35 @@
   }
 
   /* Theme customizer panel */
-  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#0f1a12;border:0.5px solid var(--border-accent);border-radius:12px;padding:14px 16px;width:220px;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#111;border:0.5px solid #2a2a2a;border-radius:14px;padding:16px;width:260px;display:none;box-shadow:0 12px 40px rgba(0,0,0,0.8)}
   #theme-panel.open{display:block}
   #theme-toggle-btn{position:fixed;bottom:16px;right:16px;z-index:9999;width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:background .2s}
-  #theme-toggle-btn:hover{background:var(--accent-dim)}
-  .theme-swatch-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
-  .theme-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;flex-shrink:0}
-  .theme-swatch:hover,.theme-swatch.active{border-color:#fff;transform:scale(1.15)}
-  .theme-label{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.07em;margin-top:10px;margin-bottom:0}
+  #theme-toggle-btn:hover{filter:brightness(1.15)}
+  .cp-title{font-size:12px;font-weight:600;color:#e0e0e0;margin-bottom:12px;letter-spacing:.04em}
+  /* Colour spectrum canvas */
+  #cp-spectrum{width:100%;height:140px;border-radius:8px;cursor:crosshair;display:block;position:relative}
+  #cp-spectrum-wrap{position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden}
+  #cp-cursor{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.8);pointer-events:none;transform:translate(-50%,-50%);top:20%;left:80%}
+  /* Hue slider */
+  #cp-hue{width:100%;height:12px;border-radius:6px;cursor:pointer;display:block;margin-bottom:10px;outline:none;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+  #cp-hue::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #ccc;box-shadow:0 1px 4px rgba(0,0,0,0.5);cursor:pointer}
+  #cp-hue::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #ccc;cursor:pointer}
+  /* Hex input row */
+  .cp-hex-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  #cp-preview{width:28px;height:28px;border-radius:6px;flex-shrink:0;border:1px solid #333}
+  #cp-hex{flex:1;padding:6px 8px;font-size:12px;font-family:monospace;border:0.5px solid #2a2a2a;border-radius:6px;background:#0a0a0a;color:#fff;outline:none}
+  #cp-hex:focus{border-color:#555}
+  .cp-apply{padding:6px 12px;font-size:12px;border:none;border-radius:6px;background:var(--accent);color:#000;font-weight:600;cursor:pointer;font-family:inherit;transition:filter .15s}
+  .cp-apply:hover{filter:brightness(1.15)}
+  /* Preset swatches */
+  .cp-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .cp-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;flex-shrink:0}
+  .cp-swatch:hover,.cp-swatch.active{border-color:#fff;transform:scale(1.2)}
+  .cp-sect{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+  /* Bg swatches */
+  .cp-bg-row{display:flex;gap:6px}
+  .cp-bg-swatch{width:22px;height:22px;border-radius:5px;cursor:pointer;border:1.5px solid #333;transition:border-color .15s,transform .15s}
+  .cp-bg-swatch:hover,.cp-bg-swatch.active{border-color:#fff;transform:scale(1.15)}
 
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#ffffff;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid var(--accent);box-shadow:0 -1px 20px var(--accent-glow)}
@@ -3585,132 +3606,276 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
   })();
 })();
 
-// ── Theme customizer ──
-const THEME_SWATCHES = [
-  {name:'Emerald',   hex:'#10b981', rgb:'16,185,129',  dim:'#059669', dark:'#0a2010', border:'#1a2e1e', bgCard:'#0f1a12'},
-  {name:'Cyan',      hex:'#06b6d4', rgb:'6,182,212',   dim:'#0891b2', dark:'#031d22', border:'#0e2a2e', bgCard:'#071a1e'},
-  {name:'Blue',      hex:'#3b82f6', rgb:'59,130,246',  dim:'#2563eb', dark:'#0a1428', border:'#1a2840', bgCard:'#0c1828'},
-  {name:'Purple',    hex:'#a855f7', rgb:'168,85,247',  dim:'#9333ea', dark:'#1a0a28', border:'#2e1a40', bgCard:'#150c28'},
-  {name:'Rose',      hex:'#f43f5e', rgb:'244,63,94',   dim:'#e11d48', dark:'#280a10', border:'#401a20', bgCard:'#200a10'},
-  {name:'Amber',     hex:'#f59e0b', rgb:'245,158,11',  dim:'#d97706', dark:'#201400', border:'#3a2a00', bgCard:'#181000'},
-  {name:'White',     hex:'#e5e5e5', rgb:'229,229,229', dim:'#cccccc', dark:'#1a1a1a', border:'#2a2a2a', bgCard:'#131313'},
+// ── Theme customizer (colour picker) ──
+const CP_PRESETS = [
+  {hex:'#10b981'},{hex:'#06b6d4'},{hex:'#3b82f6'},{hex:'#a855f7'},
+  {hex:'#f43f5e'},{hex:'#f59e0b'},{hex:'#e5e5e5'},{hex:'#ff6b35'},
+  {hex:'#00d4ff'},{hex:'#ff3cac'},{hex:'#7fff00'},{hex:'#ffd700'},
 ];
-const BG_SWATCHES = [
-  {name:'Black',   bg:'#0a0f0a'},
-  {name:'Dark',    bg:'#080808'},
-  {name:'Navy',    bg:'#07080f'},
-  {name:'Charcoal',bg:'#0d0d0d'},
-];
+const CP_BGS = ['#0a0f0a','#080808','#07080f','#0d0d0d','#0a0a12','#100a0a'];
 
+let cpHue = 157, cpSat = 0.73, cpVal = 0.73;
+let cpDragging = false;
 let themeOpen = false;
+let cpCurrentBg = '#0a0f0a';
 
-function applyTheme(t, bg, save=true){
+// HSV → hex
+function hsvToHex(h, s, v) {
+  let r,g,b;
+  const i = Math.floor(h/60)%6, f=h/60-Math.floor(h/60), p=v*(1-s), q=v*(1-f*s), t=v*(1-(1-f)*s);
+  switch(i){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;default:r=v;g=p;b=q;}
+  return '#'+[r,g,b].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');
+}
+
+// hex → HSV
+function hexToHsv(hex) {
+  hex = hex.replace('#','');
+  if(hex.length!==6) return null;
+  const r=parseInt(hex.slice(0,2),16)/255, g=parseInt(hex.slice(2,4),16)/255, b=parseInt(hex.slice(4,6),16)/255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+  let h=0;
+  if(d){
+    if(max===r) h=((g-b)/d+6)%6;
+    else if(max===g) h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h*=60;
+  }
+  return {h, s:max?d/max:0, v:max};
+}
+
+function hexToRgbStr(hex) {
+  hex = hex.replace('#','');
+  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
+  return `${r},${g},${b}`;
+}
+
+function darken(hex, f) {
+  hex = hex.replace('#','');
+  return '#'+[0,2,4].map(i=>Math.round(parseInt(hex.slice(i,i+2),16)*f).toString(16).padStart(2,'0')).join('');
+}
+
+function tintedDark(hex) {
+  hex = hex.replace('#','');
+  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
+  return '#'+[Math.round(r*0.06),Math.round(g*0.1),Math.round(b*0.07)].map(x=>Math.min(30,x).toString(16).padStart(2,'0')).join('');
+}
+function tintedBorder(hex) {
+  hex = hex.replace('#','');
+  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
+  return '#'+[Math.round(r*0.1+4),Math.round(g*0.18+4),Math.round(b*0.12+4)].map(x=>Math.min(60,x).toString(16).padStart(2,'0')).join('');
+}
+function tintedCard(hex) {
+  hex = hex.replace('#','');
+  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
+  return '#'+[Math.round(r*0.05+8),Math.round(g*0.09+8),Math.round(b*0.06+8)].map(x=>Math.min(30,x).toString(16).padStart(2,'0')).join('');
+}
+
+function applyTheme(hex, bg, save=true) {
+  const rgb = hexToRgbStr(hex);
   const r = document.documentElement.style;
-  r.setProperty('--accent',      t.hex);
-  r.setProperty('--accent-rgb',  t.rgb);
-  r.setProperty('--accent-glow', `rgba(${t.rgb},0.22)`);
-  r.setProperty('--accent-dim',  t.dim);
-  r.setProperty('--accent-dark', t.dark);
-  r.setProperty('--border-accent', t.border);
-  r.setProperty('--bg-card',     t.bgCard);
-  document.body.style.background = bg || '#0a0f0a';
-  document.body.style.borderTopColor = t.hex;
-  // Update theme toggle button colour
+  r.setProperty('--accent', hex);
+  r.setProperty('--accent-rgb', rgb);
+  r.setProperty('--accent-glow', `rgba(${rgb},0.22)`);
+  r.setProperty('--accent-dim', darken(hex, 0.82));
+  r.setProperty('--accent-dark', tintedDark(hex));
+  r.setProperty('--border-accent', tintedBorder(hex));
+  r.setProperty('--bg-card', tintedCard(hex));
+  document.body.style.background = bg || cpCurrentBg;
+  document.body.style.borderTopColor = hex;
   const btn = document.getElementById('theme-toggle-btn');
-  if(btn) btn.style.background = t.hex;
-  // Mark active swatches
-  document.querySelectorAll('#swatch-row .theme-swatch').forEach(s=>{
-    s.classList.toggle('active', s.dataset.hex === t.hex);
-  });
-  document.querySelectorAll('#bg-swatch-row .theme-swatch').forEach(s=>{
-    s.classList.toggle('active', s.dataset.bg === (bg||'#0a0f0a'));
-  });
-  if(save){
-    try{ localStorage.setItem('ict_theme', JSON.stringify({hex:t.hex, bg: bg||'#0a0f0a'})); }catch(e){}
+  if(btn) btn.style.background = hex;
+  cpCurrentBg = bg || cpCurrentBg;
+  // Update bg swatch active state
+  document.querySelectorAll('.cp-bg-swatch').forEach(s => s.classList.toggle('active', s.dataset.bg === cpCurrentBg));
+  // Update preset active
+  document.querySelectorAll('.cp-swatch').forEach(s => s.classList.toggle('active', s.dataset.hex && s.dataset.hex.toLowerCase() === hex.toLowerCase()));
+  if(save) {
+    try{ localStorage.setItem('ict_theme', JSON.stringify({hex, bg: cpCurrentBg})); }catch(e){}
   }
 }
 
-function applyCustomHex(val){
-  val = val.trim();
-  if(!/^#[0-9a-fA-F]{6}$/.test(val)) return;
-  // Parse RGB
-  const bigint = parseInt(val.slice(1), 16);
-  const r2 = (bigint >> 16) & 255;
-  const g2 = (bigint >> 8) & 255;
-  const b2 = bigint & 255;
-  const dim = '#' + [r2*0.85, g2*0.85, b2*0.85].map(x=>Math.round(x).toString(16).padStart(2,'0')).join('');
-  const darkR = Math.round(r2*0.06), darkG = Math.round(g2*0.1), darkB = Math.round(b2*0.06);
-  const dark = '#' + [darkR,darkG,darkB].map(x=>x.toString(16).padStart(2,'0')).join('');
-  const borderR = Math.round(r2*0.1), borderG = Math.round(g2*0.18), borderB = Math.round(b2*0.12);
-  const border = '#' + [borderR,borderG,borderB].map(x=>x.toString(16).padStart(2,'0')).join('');
-  const bgCardR = Math.round(r2*0.06+4), bgCardG = Math.round(g2*0.1+2), bgCardB = Math.round(b2*0.07+2);
-  const bgCard = '#' + [bgCardR,bgCardG,bgCardB].map(x=>Math.min(255,x).toString(16).padStart(2,'0')).join('');
-  const custom = {hex:val, rgb:`${r2},${g2},${b2}`, dim, dark, border, bgCard};
-  const savedBg = (()=>{try{const s=JSON.parse(localStorage.getItem('ict_theme')||'{}');return s.bg||'#0a0f0a';}catch(e){return '#0a0f0a';}})();
-  applyTheme(custom, savedBg);
+// Draw the spectrum canvas
+function cpDrawSpectrum() {
+  const canvas = document.getElementById('cp-spectrum');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  // White → hue gradient (left to right = saturation)
+  const gradH = ctx.createLinearGradient(0,0,W,0);
+  gradH.addColorStop(0, `hsl(${cpHue},0%,100%)`);
+  gradH.addColorStop(1, `hsl(${cpHue},100%,50%)`);
+  ctx.fillStyle = gradH;
+  ctx.fillRect(0,0,W,H);
+  // Transparent → black gradient (top to bottom = value)
+  const gradV = ctx.createLinearGradient(0,0,0,H);
+  gradV.addColorStop(0, 'rgba(0,0,0,0)');
+  gradV.addColorStop(1, 'rgba(0,0,0,1)');
+  ctx.fillStyle = gradV;
+  ctx.fillRect(0,0,W,H);
 }
 
-function toggleThemePanel(){
+function cpSizeCanvas() {
+  const canvas = document.getElementById('cp-spectrum');
+  const wrap = document.getElementById('cp-spectrum-wrap');
+  if(!canvas || !wrap) return;
+  canvas.width = wrap.offsetWidth || 228;
+  canvas.height = 140;
+  cpDrawSpectrum();
+}
+
+function cpUpdateCursor() {
+  const cursor = document.getElementById('cp-cursor');
+  const canvas = document.getElementById('cp-spectrum');
+  if(!cursor || !canvas) return;
+  cursor.style.left = (cpSat * canvas.width) + 'px';
+  cursor.style.top = ((1 - cpVal) * canvas.height) + 'px';
+}
+
+function cpUpdatePreview() {
+  const hex = hsvToHex(cpHue, cpSat, cpVal);
+  const prev = document.getElementById('cp-preview');
+  const inp = document.getElementById('cp-hex');
+  if(prev) prev.style.background = hex;
+  if(inp) inp.value = hex;
+}
+
+function cpPickFromCanvas(e) {
+  const canvas = document.getElementById('cp-spectrum');
+  if(!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+  const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+  cpSat = x / rect.width;
+  cpVal = 1 - y / rect.height;
+  cpUpdateCursor();
+  cpUpdatePreview();
+}
+
+function cpApply() {
+  const inp = document.getElementById('cp-hex');
+  let hex = inp ? inp.value.trim() : hsvToHex(cpHue, cpSat, cpVal);
+  if(!hex.startsWith('#')) hex = '#' + hex;
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+  // Sync picker state to this hex
+  const hsv = hexToHsv(hex);
+  if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
+  cpDrawSpectrum();
+  cpUpdateCursor();
+  applyTheme(hex, cpCurrentBg);
+}
+
+function cpSetHue(h) {
+  cpHue = parseFloat(h);
+  cpDrawSpectrum();
+  cpUpdateCursor();
+  cpUpdatePreview();
+}
+
+function buildThemePanel() {
+  // Presets
+  const pr = document.getElementById('cp-presets');
+  if(pr) {
+    pr.innerHTML = '';
+    CP_PRESETS.forEach(p => {
+      const s = document.createElement('div');
+      s.className = 'cp-swatch';
+      s.style.background = p.hex;
+      s.dataset.hex = p.hex;
+      s.title = p.hex;
+      s.onclick = () => {
+        const hsv = hexToHsv(p.hex);
+        if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
+        document.getElementById('cp-hue').value = Math.round(cpHue);
+        cpDrawSpectrum();
+        cpUpdateCursor();
+        cpUpdatePreview();
+        applyTheme(p.hex, cpCurrentBg);
+      };
+      pr.appendChild(s);
+    });
+  }
+  // BG swatches
+  const bgr = document.getElementById('cp-bg-row');
+  if(bgr) {
+    bgr.innerHTML = '';
+    CP_BGS.forEach(bg => {
+      const s = document.createElement('div');
+      s.className = 'cp-bg-swatch';
+      s.style.background = bg;
+      s.dataset.bg = bg;
+      s.title = bg;
+      s.onclick = () => {
+        cpCurrentBg = bg;
+        const hex = hsvToHex(cpHue, cpSat, cpVal);
+        applyTheme(hex, bg);
+      };
+      bgr.appendChild(s);
+    });
+  }
+
+  // Canvas events
+  const canvas = document.getElementById('cp-spectrum');
+  if(canvas) {
+    canvas.addEventListener('mousedown', e => { cpDragging=true; cpPickFromCanvas(e); });
+    canvas.addEventListener('mousemove', e => { if(cpDragging) cpPickFromCanvas(e); });
+    document.addEventListener('mouseup', () => { cpDragging=false; });
+    // Touch
+    canvas.addEventListener('touchstart', e => { cpDragging=true; cpPickFromCanvas(e.touches[0]); e.preventDefault(); }, {passive:false});
+    canvas.addEventListener('touchmove', e => { if(cpDragging) cpPickFromCanvas(e.touches[0]); e.preventDefault(); }, {passive:false});
+    document.addEventListener('touchend', () => { cpDragging=false; });
+  }
+
+  // Hue slider
+  const hue = document.getElementById('cp-hue');
+  if(hue) hue.addEventListener('input', () => cpSetHue(hue.value));
+
+  // Hex input — apply on Enter
+  const hexInp = document.getElementById('cp-hex');
+  if(hexInp) {
+    hexInp.addEventListener('keydown', e => { if(e.key==='Enter') cpApply(); });
+    hexInp.addEventListener('input', () => {
+      let v = hexInp.value.trim();
+      if(!v.startsWith('#')) v = '#'+v;
+      if(/^#[0-9a-fA-F]{6}$/.test(v)){
+        const hsv = hexToHsv(v);
+        if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; hue.value=Math.round(cpHue); cpDrawSpectrum(); cpUpdateCursor(); }
+        document.getElementById('cp-preview').style.background = v;
+      }
+    });
+  }
+}
+
+function loadSavedTheme() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('ict_theme')||'null');
+    if(!saved || !saved.hex) return;
+    const hsv = hexToHsv(saved.hex);
+    if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
+    cpCurrentBg = saved.bg || '#0a0f0a';
+    applyTheme(saved.hex, cpCurrentBg, false);
+    const hue = document.getElementById('cp-hue');
+    if(hue) hue.value = Math.round(cpHue);
+  }catch(e){}
+}
+
+function toggleThemePanel() {
   themeOpen = !themeOpen;
   const p = document.getElementById('theme-panel');
-  if(p) p.classList.toggle('open', themeOpen);
-}
-
-function buildThemePanel(){
-  const sr = document.getElementById('swatch-row');
-  const bgr = document.getElementById('bg-swatch-row');
-  if(!sr || !bgr) return;
-  sr.innerHTML = '';
-  bgr.innerHTML = '';
-  THEME_SWATCHES.forEach(t=>{
-    const s = document.createElement('div');
-    s.className = 'theme-swatch';
-    s.style.background = t.hex;
-    s.dataset.hex = t.hex;
-    s.title = t.name;
-    s.onclick = ()=>{
-      const savedBg = (()=>{try{const d=JSON.parse(localStorage.getItem('ict_theme')||'{}');return d.bg||'#0a0f0a';}catch(e){return '#0a0f0a';}})();
-      applyTheme(t, savedBg);
-      const hex = document.getElementById('custom-hex');
-      if(hex) hex.value = t.hex;
-    };
-    sr.appendChild(s);
-  });
-  BG_SWATCHES.forEach(bg=>{
-    const s = document.createElement('div');
-    s.className = 'theme-swatch';
-    s.style.background = bg.bg;
-    s.style.border = '1.5px solid #333';
-    s.dataset.bg = bg.bg;
-    s.title = bg.name;
-    s.onclick = ()=>{
-      const savedHex = (()=>{try{const d=JSON.parse(localStorage.getItem('ict_theme')||'{}');return d.hex||'#10b981';}catch(e){return '#10b981';}})();
-      const t = THEME_SWATCHES.find(x=>x.hex===savedHex) || THEME_SWATCHES[0];
-      applyTheme(t, bg.bg);
-    };
-    bgr.appendChild(s);
-  });
-}
-
-function loadSavedTheme(){
-  try{
-    const saved = JSON.parse(localStorage.getItem('ict_theme')||'null');
-    if(!saved) return;
-    const t = THEME_SWATCHES.find(x=>x.hex===saved.hex);
-    if(t){
-      applyTheme(t, saved.bg||'#0a0f0a', false);
-      const hex = document.getElementById('custom-hex');
-      if(hex) hex.value = t.hex;
-    } else if(saved.hex){
-      // Custom colour
-      const inp = document.getElementById('custom-hex');
-      if(inp){ inp.value = saved.hex; applyCustomHex(saved.hex); }
-    }
-    // Re-mark bg swatch
-    document.querySelectorAll('#bg-swatch-row .theme-swatch').forEach(s=>{
-      s.classList.toggle('active', s.dataset.bg === (saved.bg||'#0a0f0a'));
-    });
-  }catch(e){}
+  if(!p) return;
+  p.classList.toggle('open', themeOpen);
+  if(themeOpen) {
+    // Size canvas after panel becomes visible
+    setTimeout(() => {
+      cpSizeCanvas();
+      cpUpdateCursor();
+      cpUpdatePreview();
+      // Mark active bg swatch
+      document.querySelectorAll('.cp-bg-swatch').forEach(s => s.classList.toggle('active', s.dataset.bg === cpCurrentBg));
+      // Mark active preset
+      const curHex = hsvToHex(cpHue,cpSat,cpVal);
+      document.querySelectorAll('.cp-swatch').forEach(s => s.classList.toggle('active', s.dataset.hex && s.dataset.hex.toLowerCase()===curHex.toLowerCase()));
+    }, 10);
+  }
 }
 
 // Close theme panel when clicking outside
@@ -3723,7 +3888,6 @@ document.addEventListener('click', function(e){
   }
 });
 
-// Init theme on load
 buildThemePanel();
 loadSavedTheme();
 renderQOTD();
@@ -3933,17 +4097,31 @@ renderQOTD();
 <!-- THEME CUSTOMIZER -->
 <button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
 <div id="theme-panel">
-  <div style="font-size:12px;font-weight:600;color:#e0e0e0;margin-bottom:10px;letter-spacing:.04em">Customise theme</div>
-  <div class="theme-label">Accent colour</div>
-  <div class="theme-swatch-row" id="swatch-row"></div>
-  <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
-    <label style="font-size:12px;color:#777;white-space:nowrap">Custom hex</label>
-    <input type="text" id="custom-hex" placeholder="#10b981" maxlength="7"
-      style="flex:1;padding:5px 8px;font-size:12px;border:0.5px solid #2a2a2a;border-radius:6px;background:#0a0f0a;color:#fff;font-family:monospace"
-      oninput="applyCustomHex(this.value)">
+  <div class="cp-title">🎨 Customise theme</div>
+
+  <!-- Preset swatches -->
+  <div class="cp-sect">Presets</div>
+  <div class="cp-presets" id="cp-presets"></div>
+
+  <!-- Spectrum canvas -->
+  <div id="cp-spectrum-wrap">
+    <canvas id="cp-spectrum" height="140"></canvas>
+    <div id="cp-cursor"></div>
   </div>
-  <div class="theme-label" style="margin-top:12px">Background</div>
-  <div class="theme-swatch-row" id="bg-swatch-row"></div>
+
+  <!-- Hue slider -->
+  <input type="range" id="cp-hue" min="0" max="360" value="157">
+
+  <!-- Hex + preview + apply -->
+  <div class="cp-hex-row">
+    <div id="cp-preview"></div>
+    <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
+    <button class="cp-apply" onclick="cpApply()">Apply</button>
+  </div>
+
+  <!-- Background -->
+  <div class="cp-sect">Background</div>
+  <div class="cp-bg-row" id="cp-bg-row"></div>
 </div>
 
 <!-- Mobile bottom nav -->
