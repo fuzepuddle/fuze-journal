@@ -3700,13 +3700,14 @@ function cpDrawSpectrum() {
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
-  // White → hue gradient (left to right = saturation)
+  ctx.clearRect(0,0,W,H);
+  // White → pure hue (horizontal = saturation)
   const gradH = ctx.createLinearGradient(0,0,W,0);
-  gradH.addColorStop(0, `hsl(${cpHue},0%,100%)`);
+  gradH.addColorStop(0, '#ffffff');
   gradH.addColorStop(1, `hsl(${cpHue},100%,50%)`);
   ctx.fillStyle = gradH;
   ctx.fillRect(0,0,W,H);
-  // Transparent → black gradient (top to bottom = value)
+  // Transparent → black overlay (vertical = brightness)
   const gradV = ctx.createLinearGradient(0,0,0,H);
   gradV.addColorStop(0, 'rgba(0,0,0,0)');
   gradV.addColorStop(1, 'rgba(0,0,0,1)');
@@ -3718,45 +3719,55 @@ function cpSizeCanvas() {
   const canvas = document.getElementById('cp-spectrum');
   const wrap = document.getElementById('cp-spectrum-wrap');
   if(!canvas || !wrap) return;
-  canvas.width = wrap.offsetWidth || 228;
+  // Set actual pixel dimensions to match CSS layout size
+  const w = wrap.getBoundingClientRect().width || 228;
+  canvas.width = Math.round(w);
   canvas.height = 140;
   cpDrawSpectrum();
 }
 
 function cpUpdateCursor() {
   const cursor = document.getElementById('cp-cursor');
-  const canvas = document.getElementById('cp-spectrum');
-  if(!cursor || !canvas) return;
-  cursor.style.left = (cpSat * canvas.width) + 'px';
-  cursor.style.top = ((1 - cpVal) * canvas.height) + 'px';
+  const wrap = document.getElementById('cp-spectrum-wrap');
+  if(!cursor || !wrap) return;
+  const W = wrap.getBoundingClientRect().width || 228;
+  const H = 140;
+  // Position in CSS pixels relative to wrap
+  cursor.style.left = (cpSat * W) + 'px';
+  cursor.style.top  = ((1 - cpVal) * H) + 'px';
 }
 
 function cpUpdatePreview() {
   const hex = hsvToHex(cpHue, cpSat, cpVal);
   const prev = document.getElementById('cp-preview');
-  const inp = document.getElementById('cp-hex');
+  const inp  = document.getElementById('cp-hex');
   if(prev) prev.style.background = hex;
-  if(inp) inp.value = hex;
+  if(inp)  inp.value = hex;
 }
 
-function cpPickFromCanvas(e) {
+function cpLiveApply() {
+  const hex = hsvToHex(cpHue, cpSat, cpVal);
+  applyTheme(hex, cpCurrentBg);
+}
+
+function cpPickFromCanvas(clientX, clientY) {
   const canvas = document.getElementById('cp-spectrum');
   if(!canvas) return;
   const rect = canvas.getBoundingClientRect();
-  const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-  const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+  const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+  const y = Math.max(0, Math.min(clientY - rect.top,  rect.height));
   cpSat = x / rect.width;
   cpVal = 1 - y / rect.height;
   cpUpdateCursor();
   cpUpdatePreview();
+  cpLiveApply();
 }
 
 function cpApply() {
   const inp = document.getElementById('cp-hex');
-  let hex = inp ? inp.value.trim() : hsvToHex(cpHue, cpSat, cpVal);
+  let hex = (inp ? inp.value.trim() : '') || hsvToHex(cpHue, cpSat, cpVal);
   if(!hex.startsWith('#')) hex = '#' + hex;
   if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
-  // Sync picker state to this hex
   const hsv = hexToHsv(hex);
   if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
   cpDrawSpectrum();
@@ -3769,6 +3780,7 @@ function cpSetHue(h) {
   cpDrawSpectrum();
   cpUpdateCursor();
   cpUpdatePreview();
+  cpLiveApply();
 }
 
 function buildThemePanel() {
@@ -3785,7 +3797,8 @@ function buildThemePanel() {
       s.onclick = () => {
         const hsv = hexToHsv(p.hex);
         if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
-        document.getElementById('cp-hue').value = Math.round(cpHue);
+        const hueEl = document.getElementById('cp-hue');
+        if(hueEl) hueEl.value = Math.round(cpHue);
         cpDrawSpectrum();
         cpUpdateCursor();
         cpUpdatePreview();
@@ -3794,6 +3807,7 @@ function buildThemePanel() {
       pr.appendChild(s);
     });
   }
+
   // BG swatches
   const bgr = document.getElementById('cp-bg-row');
   if(bgr) {
@@ -3806,30 +3820,45 @@ function buildThemePanel() {
       s.title = bg;
       s.onclick = () => {
         cpCurrentBg = bg;
-        const hex = hsvToHex(cpHue, cpSat, cpVal);
-        applyTheme(hex, bg);
+        applyTheme(hsvToHex(cpHue, cpSat, cpVal), bg);
       };
       bgr.appendChild(s);
     });
   }
 
-  // Canvas events
+  // Canvas mouse events
   const canvas = document.getElementById('cp-spectrum');
   if(canvas) {
-    canvas.addEventListener('mousedown', e => { cpDragging=true; cpPickFromCanvas(e); });
-    canvas.addEventListener('mousemove', e => { if(cpDragging) cpPickFromCanvas(e); });
-    document.addEventListener('mouseup', () => { cpDragging=false; });
-    // Touch
-    canvas.addEventListener('touchstart', e => { cpDragging=true; cpPickFromCanvas(e.touches[0]); e.preventDefault(); }, {passive:false});
-    canvas.addEventListener('touchmove', e => { if(cpDragging) cpPickFromCanvas(e.touches[0]); e.preventDefault(); }, {passive:false});
-    document.addEventListener('touchend', () => { cpDragging=false; });
+    canvas.addEventListener('mousedown', e => {
+      cpDragging = true;
+      cpPickFromCanvas(e.clientX, e.clientY);
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', e => {
+      if(cpDragging) cpPickFromCanvas(e.clientX, e.clientY);
+    });
+    window.addEventListener('mouseup', () => { cpDragging = false; });
+
+    // Touch events
+    canvas.addEventListener('touchstart', e => {
+      cpDragging = true;
+      cpPickFromCanvas(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault();
+    }, {passive:false});
+    window.addEventListener('touchmove', e => {
+      if(cpDragging) cpPickFromCanvas(e.touches[0].clientX, e.touches[0].clientY);
+    }, {passive:true});
+    window.addEventListener('touchend', () => { cpDragging = false; });
   }
 
-  // Hue slider
-  const hue = document.getElementById('cp-hue');
-  if(hue) hue.addEventListener('input', () => cpSetHue(hue.value));
+  // Hue slider — use both 'input' and 'change' for max browser compat
+  const hueEl = document.getElementById('cp-hue');
+  if(hueEl) {
+    hueEl.addEventListener('input',  () => cpSetHue(hueEl.value));
+    hueEl.addEventListener('change', () => cpSetHue(hueEl.value));
+  }
 
-  // Hex input — apply on Enter
+  // Hex input
   const hexInp = document.getElementById('cp-hex');
   if(hexInp) {
     hexInp.addEventListener('keydown', e => { if(e.key==='Enter') cpApply(); });
@@ -3838,8 +3867,16 @@ function buildThemePanel() {
       if(!v.startsWith('#')) v = '#'+v;
       if(/^#[0-9a-fA-F]{6}$/.test(v)){
         const hsv = hexToHsv(v);
-        if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; hue.value=Math.round(cpHue); cpDrawSpectrum(); cpUpdateCursor(); }
-        document.getElementById('cp-preview').style.background = v;
+        if(hsv){
+          cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v;
+          const hEl = document.getElementById('cp-hue');
+          if(hEl) hEl.value = Math.round(cpHue);
+          cpDrawSpectrum();
+          cpUpdateCursor();
+        }
+        const prev = document.getElementById('cp-preview');
+        if(prev) prev.style.background = v;
+        applyTheme(v, cpCurrentBg);
       }
     });
   }
@@ -3853,8 +3890,8 @@ function loadSavedTheme() {
     if(hsv){ cpHue=hsv.h; cpSat=hsv.s; cpVal=hsv.v; }
     cpCurrentBg = saved.bg || '#0a0f0a';
     applyTheme(saved.hex, cpCurrentBg, false);
-    const hue = document.getElementById('cp-hue');
-    if(hue) hue.value = Math.round(cpHue);
+    const hueEl = document.getElementById('cp-hue');
+    if(hueEl) hueEl.value = Math.round(cpHue);
   }catch(e){}
 }
 
@@ -3864,21 +3901,28 @@ function toggleThemePanel() {
   if(!p) return;
   p.classList.toggle('open', themeOpen);
   if(themeOpen) {
-    // Size canvas after panel becomes visible
-    setTimeout(() => {
-      cpSizeCanvas();
-      cpUpdateCursor();
-      cpUpdatePreview();
-      // Mark active bg swatch
-      document.querySelectorAll('.cp-bg-swatch').forEach(s => s.classList.toggle('active', s.dataset.bg === cpCurrentBg));
-      // Mark active preset
-      const curHex = hsvToHex(cpHue,cpSat,cpVal);
-      document.querySelectorAll('.cp-swatch').forEach(s => s.classList.toggle('active', s.dataset.hex && s.dataset.hex.toLowerCase()===curHex.toLowerCase()));
-    }, 10);
+    // Must wait for panel to be visible before measuring widths
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        cpSizeCanvas();
+        cpUpdateCursor();
+        cpUpdatePreview();
+        // Sync hue slider
+        const hueEl = document.getElementById('cp-hue');
+        if(hueEl) hueEl.value = Math.round(cpHue);
+        // Mark bg swatch
+        document.querySelectorAll('.cp-bg-swatch').forEach(s =>
+          s.classList.toggle('active', s.dataset.bg === cpCurrentBg));
+        // Mark preset swatch
+        const curHex = hsvToHex(cpHue,cpSat,cpVal).toLowerCase();
+        document.querySelectorAll('.cp-swatch').forEach(s =>
+          s.classList.toggle('active', (s.dataset.hex||'').toLowerCase() === curHex));
+      });
+    });
   }
 }
 
-// Close theme panel when clicking outside
+// Close panel on outside click
 document.addEventListener('click', function(e){
   const p = document.getElementById('theme-panel');
   const btn = document.getElementById('theme-toggle-btn');
