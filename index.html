@@ -4693,21 +4693,21 @@ const CP_PRESETS = [
   '#f43f5e','#f59e0b','#e5e5e5','#ff6b35',
   '#00d4ff','#ff3cac','#7fff00','#ffd700',
 ];
-const CP_BGS = ['#0a0f0a','#080808','#07080f','#0d0d0d','#0a0a12','#100a0a','#0a0806','#111111'];
+const CP_BGS = ['#f5f5f5','#f0f0f0','#e8e8e8','#0d0d0d','#0a0f0a','#111111'];
 
-// Defaults
+// Defaults — only accent-level things; bg/cards handled by dark/light class
 const TP_DEFAULTS = {
   accent: '#10b981',
-  bg:     '#0a0f0a',
-  text:   '#ffffff',
-  cards:  'var(--bg-card)',
+  bg:     '',
+  text:   '',
+  cards:  '',
   timer:  '#10b981',
   check:  '#10b981',
   win:    '#10b981',
 };
 
 let tpColors = Object.assign({}, TP_DEFAULTS);
-let tpSection = 'accent';  // active section
+let tpSection = 'accent';
 let cpHue=157, cpSat=0.73, cpVal=0.73, cpDragging=false, themeOpen=false;
 
 // ── Colour math ──
@@ -4732,13 +4732,12 @@ function hexToRgb(hex){
 }
 function darken(hex,f){return '#'+hexToRgb(hex).map(x=>Math.round(x*f).toString(16).padStart(2,'0')).join('');}
 
-// ── Apply colours to DOM via CSS vars ──
+// ── Apply accent + per-section colours via CSS vars only ──
 function applyAllColors(save=true){
   const rs = document.documentElement.style;
   const a = tpColors.accent;
   const [ar,ag,ab] = hexToRgb(a);
 
-  // Accent (tabs, borders, stars, btn-primary, etc.)
   rs.setProperty('--accent', a);
   rs.setProperty('--accent-rgb', `${ar},${ag},${ab}`);
   rs.setProperty('--accent-glow', `rgba(${ar},${ag},${ab},0.22)`);
@@ -4746,33 +4745,24 @@ function applyAllColors(save=true){
   rs.setProperty('--accent-dark', `rgba(${ar},${ag},${ab},0.08)`);
   rs.setProperty('--border-accent', `rgba(${ar},${ag},${ab},0.2)`);
 
-  // Background
-  rs.setProperty('--color-bg', tpColors.bg);
-  document.body.style.background = tpColors.bg;
-  document.body.style.borderTopColor = a;
+  // Only override bg/cards/text if user explicitly set them (non-empty)
+  if(tpColors.bg)    { rs.setProperty('--bg', tpColors.bg); document.body.style.background = tpColors.bg; }
+  else               { rs.removeProperty('--bg'); document.body.style.removeProperty('background'); }
 
-  // Cards
-  rs.setProperty('--bg-card', tpColors.cards);
-  rs.setProperty('--color-cards', tpColors.cards);
+  if(tpColors.cards) { rs.setProperty('--bg-card', tpColors.cards); }
+  else               { rs.removeProperty('--bg-card'); }
 
-  // Text
-  rs.setProperty('--color-text', tpColors.text);
-  document.body.style.color = tpColors.text;
+  if(tpColors.text)  { document.body.style.color = tpColors.text; }
+  else               { document.body.style.removeProperty('color'); }
 
-  // Timer/clocks
   rs.setProperty('--color-timer', tpColors.timer);
-
-  // Checklist pass
   rs.setProperty('--color-check', tpColors.check);
-
-  // Win colour
   rs.setProperty('--color-win', tpColors.win);
   const [wr,wg,wb] = hexToRgb(tpColors.win);
-  rs.setProperty('--color-win-bg', `rgba(${wr},${wg},${wb},0.08)`);
+  rs.setProperty('--color-win-bg',     `rgba(${wr},${wg},${wb},0.08)`);
   rs.setProperty('--color-win-border', `rgba(${wr},${wg},${wb},0.3)`);
-  rs.setProperty('--color-win-dim', darken(tpColors.win, 0.7));
+  rs.setProperty('--color-win-dim',    darken(tpColors.win, 0.7));
 
-  // Theme btn colour = accent
   const tbtn = document.getElementById('theme-toggle-btn');
   if(tbtn) tbtn.style.background = a;
 
@@ -4968,10 +4958,14 @@ function buildThemePanel(){
 function loadSavedTheme(){
   try{
     const saved=JSON.parse(localStorage.getItem('ict_theme2')||'null');
-    if(saved&&typeof saved==='object') tpColors=Object.assign({},TP_DEFAULTS,saved);
+    if(saved&&typeof saved==='object'){
+      // Only restore accent-level colours — bg/text/cards now controlled by dark/light toggle
+      const safe = { accent: saved.accent, timer: saved.timer, check: saved.check, win: saved.win };
+      tpColors=Object.assign({},TP_DEFAULTS,safe);
+    }
   }catch(e){}
   applyAllColors(false);
-  cpSyncFromHex(tpColors[tpSection]);
+  cpSyncFromHex(tpColors[tpSection]||tpColors.accent);
 }
 
 function toggleThemePanel(){
@@ -5004,6 +4998,9 @@ let isDark = false;
 
 function applyDarkLight(dark, save=true){
   isDark = dark;
+  // Clear any inline background/color set by the theme picker so CSS class vars win
+  if(!tpColors.bg)    document.body.style.removeProperty('background');
+  if(!tpColors.text)  document.body.style.removeProperty('color');
   document.body.classList.toggle('dark-mode', dark);
   const icon  = document.getElementById('dl-icon');
   const label = document.getElementById('dl-label');
