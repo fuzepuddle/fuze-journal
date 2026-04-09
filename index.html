@@ -17,31 +17,26 @@
   :root {
     --accent: #10b981;
     --accent-rgb: 16,185,129;
-    --accent-glow: rgba(16,185,129,0.22);
+    --accent-glow: rgba(16,185,129,0.18);
     --accent-dim: #059669;
-    --accent-dark: rgba(16,185,129,0.08);
-    --border-accent: rgba(16,185,129,0.2);
-    --bg-card: var(--bg-card);
-    --color-bg: #0a0f0a;
-    --color-text: #ffffff;
-    --color-cards: var(--bg-card);
+    --accent-dark: rgba(16,185,129,0.07);
+    --border-accent: rgba(16,185,129,0.3);
+    --color-text: #111827;
     --color-timer: #10b981;
     --color-check: #10b981;
     --color-win: #10b981;
     --color-win-bg: rgba(16,185,129,0.08);
-    --color-win-border: rgba(16,185,129,0.3);
-    --color-win-dim: #0a7a55;
+    --color-win-border: rgba(16,185,129,0.25);
   }
   /* Per-section variable bindings */
   body { color: var(--color-text) }
-  .card { background: linear-gradient(160deg, var(--color-cards) 0%, var(--color-bg) 100%) !important }
   #clock-uk, #clock-ny { color: var(--color-timer) !important }
   #timer-bar { background: var(--color-timer) !important }
-  #timer-display { color: var(--color-text) }
-  .gate.pass { color: var(--color-check) !important; border-color: var(--color-check) !important }
+  #timer-display { color: var(--text-primary) }
+  .gate.pass { color: #059669 !important; border-color: rgba(16,185,129,0.35) !important }
   .check-item input[type=checkbox] { accent-color: var(--color-check) !important }
   .outcome-btn.active-win { background: var(--color-win-bg) !important; border-color: var(--color-win) !important; color: var(--color-win) !important }
-  .green-bg { background: var(--color-win-bg) !important; color: var(--color-win) !important; border-color: var(--color-win-border) !important }
+  .green-bg { background: var(--color-win-bg) !important; color: #059669 !important; border-color: var(--color-win-border) !important }
   .cal-win { color: var(--color-win) !important }
   .star.lit { color: var(--color-win) !important }
 
@@ -52,13 +47,13 @@
   #theme-toggle-btn:hover{filter:brightness(1.15)}
   /* Panel header */
   #tp-header{padding:12px 14px 0;display:flex;align-items:center;justify-content:space-between}
-  #tp-header-title{font-size:12px;font-weight:600;color:var(--text-primary);letter-spacing:.05em}
+  #tp-header-title{font-size:12px;font-weight:600;color:#111827;letter-spacing:.05em}
   #tp-reset{font-size:11px;color:#555;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
-  #tp-reset:hover{color:var(--text-secondary)}
+  #tp-reset:hover{color:#4b5563}
   /* Section tabs */
   #tp-tabs{display:flex;gap:4px;padding:10px 10px 0;flex-wrap:wrap}
   .tp-tab{font-size:10px;padding:4px 8px;border-radius:20px;border:1px solid #2a2a2a;background:none;color:#666;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
-  .tp-tab:hover{color:var(--text-secondary);border-color:#444}
+  .tp-tab:hover{color:#4b5563;border-color:#444}
   .tp-tab.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
   /* Section panels */
   #tp-body{padding:12px 14px 14px}
@@ -93,91 +88,91 @@
   /* Current colour preview strip */
   .tp-cur-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
   .tp-cur-dot{width:22px;height:22px;border-radius:5px;border:1px solid #333;flex-shrink:0}
-  .tp-cur-hex{font-size:11px;font-family:monospace;color:var(--text-secondary)}
+  .tp-cur-hex{font-size:11px;font-family:monospace;color:#4b5563}
 
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f0a;color:#ffffff;font-size:15px;padding:1.5rem;max-width:1100px;margin:0 auto;border-top:2px solid var(--accent);box-shadow:0 -1px 20px var(--accent-glow)}
   h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:var(--accent);text-shadow:0 0 16px var(--accent-glow)}
   .profile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.07)}
   .profile-btns{display:flex;gap:6px}
-  .profile-btn{padding:5px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:var(--text-secondary);transition:all .2s;font-family:inherit}
+  .profile-btn{padding:5px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:#4b5563;transition:all .2s;font-family:inherit}
   .profile-btn.active{background:var(--accent);color:#0a0f0a;border-color:var(--accent);font-weight:500;box-shadow:0 0 16px rgba(201,168,76,0.25)}
   .tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:1.5rem;background:linear-gradient(180deg,#0a0f0a 0%,transparent 100%)}
-  .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:var(--text-secondary);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+  .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:#4b5563;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
   .tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;text-shadow:0 0 12px var(--accent-glow)}
-  .tab:hover:not(.active){color:var(--text-primary)}
+  .tab:hover:not(.active){color:#111827}
   .page{display:none}.page.active{display:block}
-  label{font-size:13px;color:var(--text-secondary);display:block;margin-bottom:4px}
-  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#0a0f18;color:#ffffff;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
-  input[type=date],input[type=time]{background:#0a0f18;color-scheme:dark}
-  input:focus,select:focus,textarea:focus{border-color:var(--text-secondary)}
+  label{font-size:13px;color:#4b5563;display:block;margin-bottom:4px}
+  input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
+  input[type=date],input[type=time]{background:#f9fafb;color-scheme:dark}
+  input:focus,select:focus,textarea:focus{border-color:#4b5563}
   textarea{resize:vertical;min-height:64px;line-height:1.5}
-  select option{background:#0a0f18;color:#ffffff}
+  select option{background:#f9fafb;color:#ffffff}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   .grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .gap{margin-bottom:14px}
   .card{background:linear-gradient(160deg,var(--bg-card) 0%,#0a0f0a 100%);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
-  .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
-  .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:var(--text-secondary);margin-bottom:1px;user-select:none}
+  .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:10px}
+  .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#4b5563;margin-bottom:1px;user-select:none}
   .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:var(--accent)}
-  .check-group-title{font-size:13px;font-weight:500;color:var(--text-primary);margin:10px 0 4px}
-  .gate{border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:rgba(15,26,18,0.58);color:var(--text-secondary)}
+  .check-group-title{font-size:13px;font-weight:500;color:#111827;margin:10px 0 4px}
+  .gate{border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:rgba(15,26,18,0.58);color:#4b5563}
   .gate.pass{border-color:#3a6e3a;background:#0f1f0f;color:#10b981}
   .gate.fail{border-color:#6e2a2a;background:#1f0f0f;color:#ef4444}
   .outcome-row{display:flex;gap:8px;margin-bottom:14px}
-  .outcome-btn{flex:1;padding:9px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#0a0f18;color:#555;transition:all .2s;text-align:center}
+  .outcome-btn{flex:1;padding:9px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;text-align:center}
   .outcome-btn.active-win{background:#0a2010;border:2px solid var(--accent);color:var(--accent);box-shadow:0 0 14px rgba(var(--accent-rgb),0.35);font-weight:700;text-shadow:0 0 4px rgba(var(--accent-rgb),0.4)}
   .outcome-btn.active-loss{background:#1f0808;border:2px solid #ef4444;color:#ef4444;box-shadow:0 0 14px rgba(239,68,68,0.35);font-weight:700;text-shadow:0 0 4px rgba(239,68,68,0.4)}
   .outcome-btn.active-be{background:#1a1400;border:2px solid #f59e0b;color:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,0.35);font-weight:700;text-shadow:0 0 4px rgba(245,158,11,0.4)}
-  .outcome-btn.active-skip{background:#1e1e1e;border-color:var(--text-secondary);color:var(--text-primary)}
+  .outcome-btn.active-skip{background:#1e1e1e;border-color:#4b5563;color:#111827}
   .stars{display:flex;gap:4px;margin-top:4px}
   .star{font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);transition:color .15s;line-height:1}
   .star.lit{color:var(--accent)}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:13px;background:#0a0f18;color:#ffffff;transition:all .2s;font-family:inherit}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:13px;background:#f9fafb;color:#ffffff;transition:all .2s;font-family:inherit}
   .btn:hover{background:rgba(15,26,18,0.82)}
   .btn-primary{background:var(--accent);color:#0a0f0a;border-color:var(--accent);font-weight:500;box-shadow:0 0 16px rgba(57,255,20,0.25)}
   .btn-primary:hover{background:#059669}
   .btn-sm{padding:5px 12px;font-size:13px}
   .log-wrap{overflow-x:auto;border:1px solid rgba(255,255,255,0.07);border-radius:12px}
   .log-table{width:100%;border-collapse:collapse;font-size:13px}
-  .log-table th{text-align:left;font-weight:500;color:var(--text-muted);padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.07);white-space:nowrap;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
-  .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:var(--text-primary)}
+  .log-table th{text-align:left;font-weight:500;color:#9ca3af;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.07);white-space:nowrap;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+  .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:#111827}
   .log-table tr:last-child td{border-bottom:none}
-  .log-table tr:hover td{background:#0a0f18}
-  .no-trades{text-align:center;padding:40px;color:var(--text-muted);font-size:13px}
+  .log-table tr:hover td{background:#f9fafb}
+  .no-trades{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
   .green-bg{background:#0f1f0f;color:#10b981;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #2a4a2a}
   .red-bg{background:#1f0f0f;color:#ef4444;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #4a2a2a}
   .amber-bg{background:#1f1800;color:#f59e0b;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:500;border:0.5px solid #4a3a00}
-  .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:var(--text-secondary);border:1px solid rgba(255,255,255,0.07)}
+  .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:#4b5563;border:1px solid rgba(255,255,255,0.07)}
   .metric-card{background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px 14px;text-align:center}
   .metric-val{font-size:22px;font-weight:500;line-height:1.2;margin-top:4px;color:#ffffff}
-  .metric-lbl{font-size:13px;color:var(--text-muted)}
+  .metric-lbl{font-size:13px;color:#9ca3af}
   .flex-between{display:flex;align-items:center;justify-content:space-between}
   .mode-toggle{display:flex;gap:8px;margin-bottom:16px}
-  .mode-btn{padding:6px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:var(--text-secondary);transition:all .2s;font-family:inherit}
+  .mode-btn{padding:6px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:#4b5563;transition:all .2s;font-family:inherit}
   .mode-btn.active{background:var(--accent);color:#0a0f0a;border-color:var(--accent)}
   .prog-bar{height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;margin-top:6px}
   .prog-fill{height:100%;border-radius:4px;transition:width .4s,background .3s}
-  .hint{font-size:13px;color:var(--text-muted);margin-top:4px}
+  .hint{font-size:13px;color:#9ca3af;margin-top:4px}
   .warn-bar{border:0.5px solid #6e5a00;background:#1f1800;color:#f59e0b;border-radius:8px;padding:8px 12px;font-size:13px;margin-top:8px;display:none}
   .danger-bar{border:0.5px solid #6e2a2a;background:#1f0f0f;color:#ef4444;border-radius:8px;padding:8px 12px;font-size:13px;margin-top:8px;display:none}
 
   /* Mistakes multi-select styled */
   .mistakes-list{border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:rgba(15,26,18,0.58);max-height:260px;overflow-y:auto;padding:4px}
-  .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text-secondary);user-select:none;transition:background .15s}
+  .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#4b5563;user-select:none;transition:background .15s}
   .mistake-item:hover{background:rgba(15,26,18,0.82)}
   .mistake-item.selected{background:#1f1f0f;color:#ffffff;border-left:2px solid #f59e0b;padding-left:6px}
   .mistake-item input[type=checkbox]{display:none}
   .mistake-dot{width:8px;height:8px;border-radius:50%;border:1px solid #444;flex-shrink:0;transition:all .15s}
   .mistake-item.selected .mistake-dot{background:#f59e0b;border-color:#f59e0b}
-  .mistake-cat{font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);padding:8px 8px 2px;pointer-events:none}
+  .mistake-cat{font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#4b5563;padding:8px 8px 2px;pointer-events:none}
 
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
   .profile-hide{display:none !important}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .collapsible-header:hover .collapse-icon{color:#ffffff}
-  .collapse-icon{font-size:13px;color:var(--text-muted);transition:transform .2s;display:inline-block}
+  .collapse-icon{font-size:13px;color:#9ca3af;transition:transform .2s;display:inline-block}
   .collapse-icon.collapsed{transform:rotate(-90deg)}
   .collapsible-body{transition:none}
   @keyframes glow-green{0%,100%{box-shadow:0 0 0px #1a4010}50%{box-shadow:0 0 24px rgba(57,255,20,0.25)}}
@@ -187,36 +182,36 @@
   .collapsible-body.collapsed{display:none}
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .collapsible-header:hover .collapse-icon{color:var(--accent)}
-  .collapse-icon{font-size:13px;color:var(--text-muted);transition:transform .2s;display:inline-block}
+  .collapse-icon{font-size:13px;color:#9ca3af;transition:transform .2s;display:inline-block}
   .collapsed .collapse-icon{transform:rotate(-90deg)}
   .collapsible-body{overflow:hidden;transition:max-height .25s ease}
 
   /* Calendar */
   .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
   .cal-title{font-size:22px;font-weight:500}
-  .cal-sub{font-size:13px;color:var(--text-secondary);margin-top:2px}
+  .cal-sub{font-size:13px;color:#4b5563;margin-top:2px}
   .cal-nav{display:flex;gap:8px;align-items:center}
-  .cal-nav button{padding:5px 12px;border:1px solid rgba(255,255,255,0.07);border-radius:6px;background:#0a0f18;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
+  .cal-nav button{padding:5px 12px;border:1px solid rgba(255,255,255,0.07);border-radius:6px;background:#f9fafb;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:rgba(15,26,18,0.82)}
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
-  .cal-grid th{font-size:13px;font-weight:500;color:var(--text-secondary);text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
-  .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;height:130px;padding:10px 12px;font-size:13px;color:var(--text-muted);background:#0a0a0a;cursor:default}
+  .cal-grid th{font-size:13px;font-weight:500;color:#4b5563;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
+  .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;height:130px;padding:10px 12px;font-size:13px;color:#9ca3af;background:#0a0a0a;cursor:default}
   .cal-grid td.weekend{background:#0a0a0a}
   .cal-grid td.has-trade{background:var(--bg-card);cursor:pointer}
   .cal-grid td.has-trade:hover{background:rgba(15,26,18,0.58)}
   .cal-grid td.today{border:2px solid var(--accent) !important;background:#0a1f10 !important}
   .cal-day{font-size:15px;font-weight:500;margin-bottom:8px}
   .cal-pnl{font-size:18px;font-weight:500;margin-bottom:4px}
-  .cal-count{font-size:13px;color:var(--text-secondary)}
+  .cal-count{font-size:13px;color:#4b5563}
   .cal-win{color:#10b981}
   .cal-loss{color:#ef4444}
   .cal-be{color:#f59e0b}
   .weekly-summary{display:flex;flex-direction:column;gap:8px}
   .week-card{background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
-  .week-lbl{font-size:13px;color:var(--text-muted);margin-bottom:2px}
+  .week-lbl{font-size:13px;color:#9ca3af;margin-bottom:2px}
   .week-pnl{font-size:17px;font-weight:500}
-  .week-trades{font-size:13px;color:var(--text-muted)}
+  .week-trades{font-size:13px;color:#9ca3af}
   .month-total-card{background:#161b27;border:1px solid #f59e0b;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
   .cal-layout{display:grid;grid-template-columns:1fr 220px;gap:20px}
   @media(max-width:700px){.cal-layout{grid-template-columns:1fr}.cal-metrics{grid-template-columns:1fr 1fr}}
@@ -437,7 +432,7 @@
       font-weight:600;
       letter-spacing:.03em;
       text-transform:uppercase;
-      color:#555;
+      color:#9ca3af;
       border:none;
       background:none;
       font-family:inherit;
@@ -459,7 +454,7 @@
       display:none;
       position:fixed;
       bottom:calc(64px + env(safe-area-inset-bottom,0px));left:0;right:0;
-      background:#0d1a0f;
+      background:#ffffff;
       border-top:1px solid rgba(255,255,255,0.07);
       border-radius:16px 16px 0 0;
       z-index:9998;
@@ -485,7 +480,7 @@
       gap:14px;
       padding:16px 18px;
       font-size:16px;
-      color:var(--text-primary);
+      color:#111827;
       border-radius:10px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
@@ -515,22 +510,22 @@
 
 /* ── Tokens ── */
 :root{
-  --bg:#0d1117;
-  --bg-card:#161b27;
-  --bg-hover:#1c2333;
-  --border:rgba(255,255,255,0.07);
-  --border-accent:rgba(16,185,129,0.25);
-  --text-primary:#e2e8f0;
-  --text-secondary:#8892a4;
-  --text-muted:#4a5568;
-  --sidebar-bg:#111520;
+  --bg:#f0f2f5;
+  --bg-card:#ffffff;
+  --bg-hover:#f7f8fa;
+  --border:rgba(0,0,0,0.08);
+  --border-accent:rgba(16,185,129,0.35);
+  --text-primary:#111827;
+  --text-secondary:#4b5563;
+  --text-muted:#9ca3af;
+  --sidebar-bg:#1e2640;
   --sidebar-border:rgba(255,255,255,0.06);
   --win:#10b981;
-  --win-bg:rgba(16,185,129,0.1);
+  --win-bg:rgba(16,185,129,0.08);
   --loss:#ef4444;
-  --loss-bg:rgba(239,68,68,0.1);
+  --loss-bg:rgba(239,68,68,0.08);
   --be:#f59e0b;
-  --be-bg:rgba(245,158,11,0.1);
+  --be-bg:rgba(245,158,11,0.08);
 }
 
 /* ── Reset / Base ── */
@@ -538,7 +533,7 @@
 body{
   font-family:'Inter',system-ui,sans-serif;
   background:var(--bg);
-  color:var(--text-primary);
+  color:#111827;
   font-size:13px;
   display:flex;
   min-height:100vh;
@@ -574,12 +569,12 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
 .sb-logo-text{
   font-size:16px;
   font-weight:700;
-  color:var(--text-primary);
+  color:#ffffff;
   letter-spacing:-.02em;
 }
 .sb-logo-sub{
   font-size:10px;
-  color:var(--text-muted);
+  color:rgba(255,255,255,0.3);
   letter-spacing:.07em;
   text-transform:uppercase;
   padding-left:27px;
@@ -588,7 +583,7 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
 .sb-section{padding:12px 10px 0}
 .sb-section-label{
   font-size:9px;
-  color:var(--text-muted);
+  color:rgba(255,255,255,0.3);
   text-transform:uppercase;
   letter-spacing:.14em;
   padding:0 8px;
@@ -604,7 +599,7 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   border:none;
   border-radius:6px;
   background:none;
-  color:var(--text-secondary);
+  color:rgba(255,255,255,0.5);
   cursor:pointer;
   font-size:12.5px;
   font-family:'Inter',sans-serif;
@@ -614,10 +609,10 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   margin-bottom:1px;
   white-space:nowrap;
 }
-.sb-nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text-primary)}
+.sb-nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9)}
 .sb-nav-item.active{
-  background:rgba(16,185,129,0.12);
-  color:var(--win);
+  background:rgba(255,255,255,0.1);
+  color:#ffffff;
   font-weight:500;
 }
 .sb-nav-icon{
@@ -637,13 +632,13 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
 .sb-clocks{display:flex;gap:6px;margin-bottom:10px}
 .sb-clock{
   flex:1;
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
   border-radius:6px;
   padding:6px 5px;
   text-align:center;
 }
-.sb-clock-label{font-size:9px;color:var(--text-muted);margin-bottom:1px;letter-spacing:.05em}
+.sb-clock-label{font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:1px;letter-spacing:.05em}
 .sb-clock-time{
   font-size:13px;
   font-weight:600;
@@ -659,8 +654,11 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   text-align:center;
   border-radius:5px;
   font-family:'Inter',sans-serif;
+  background:rgba(255,255,255,0.06);
+  border-color:rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5);
 }
-.sb-streak{font-size:10px;color:var(--text-muted);text-align:center;padding:2px 0}
+.sb-streak{font-size:10px;color:rgba(255,255,255,0.3);text-align:center;padding:2px 0}
 
 /* ── Profile buttons ── */
 .profile-btn{
@@ -670,11 +668,11 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   cursor:pointer;
   font-size:12px;
   background:rgba(255,255,255,0.03);
-  color:var(--text-secondary);
+  color:#4b5563;
   transition:all .15s;
   font-family:'Inter',sans-serif;
 }
-.profile-btn:hover{background:rgba(255,255,255,0.06);color:var(--text-primary)}
+.profile-btn:hover{background:rgba(255,255,255,0.06);color:#111827}
 .profile-btn.active{background:var(--win-bg);color:var(--win);border-color:var(--border-accent);font-weight:500}
 
 /* ── Main content ── */
@@ -696,10 +694,10 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
 .page-header h2,.page-header h1{
   font-size:20px;
   font-weight:600;
-  color:var(--text-primary);
+  color:#111827;
   letter-spacing:-.01em;
 }
-.page-header p{font-size:12px;color:var(--text-muted);margin-top:2px}
+.page-header p{font-size:12px;color:#9ca3af;margin-top:2px}
 
 /* Hide old nav */
 .tabs{display:none!important}
@@ -720,27 +718,27 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   font-weight:600;
   letter-spacing:.1em;
   text-transform:uppercase;
-  color:var(--text-muted);
+  color:#9ca3af;
   margin-bottom:10px;
 }
 
 /* ── Inputs ── */
-label{font-size:11.5px;color:var(--text-secondary);display:block;margin-bottom:4px}
+label{font-size:11.5px;color:#4b5563;display:block;margin-bottom:4px}
 input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{
   width:100%;
   padding:8px 10px;
   border:1px solid var(--border);
   border-radius:7px;
-  background:#0f1520;
-  color:var(--text-primary);
+  background:#f9fafb;
+  color:#111827;
   font-family:'Inter',sans-serif;
   font-size:12.5px;
   outline:none;
   transition:border-color .15s;
 }
 input[type=date],input[type=time]{color-scheme:dark}
-input:focus,select:focus,textarea:focus{border-color:rgba(16,185,129,0.4)}
-select option{background:#0f1520}
+input:focus,select:focus,textarea:focus{border-color:rgba(16,185,129,0.5);background:#fff}
+select option{background:#fff;color:#111827}
 textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Buttons ── */
@@ -753,12 +751,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   border-radius:7px;
   cursor:pointer;
   font-size:12.5px;
-  background:rgba(255,255,255,0.04);
-  color:var(--text-primary);
+  background:#ffffff;
+  color:#111827;
   transition:all .15s;
   font-family:'Inter',sans-serif;
 }
-.btn:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.14)}
+.btn:hover{background:#f3f4f6;border-color:rgba(0,0,0,0.14)}
 .btn-primary{
   background:var(--win);
   color:#050908;
@@ -771,24 +769,24 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Gate ── */
 .gate{
-  background:#0a0f18;
+  background:#f9fafb;
   border:1px solid var(--border);
   border-radius:7px;
   padding:9px 14px;
   font-size:12px;
-  color:var(--text-muted);
+  color:#9ca3af;
   transition:all .25s;
 }
-.gate.pass{border-color:var(--border-accent);background:rgba(16,185,129,0.05);color:var(--win)}
-.gate.fail{border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.05);color:#fc8181}
+.gate.pass{border-color:var(--border-accent);background:rgba(16,185,129,0.06);color:#059669}
+.gate.fail{border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.04);color:#dc2626}
 
 /* ── Check items ── */
-.check-item{color:var(--text-secondary);padding:6px 0;font-size:12.5px}
+.check-item{color:#4b5563;padding:6px 0;font-size:12.5px}
 .check-item input[type=checkbox]{accent-color:var(--win);width:14px;height:14px}
-.check-group-title{color:var(--text-primary);font-size:11px;font-weight:600;letter-spacing:.04em;margin:12px 0 5px;text-transform:uppercase}
+.check-group-title{color:#374151;font-size:11px;font-weight:600;letter-spacing:.04em;margin:12px 0 5px;text-transform:uppercase}
 
 /* ── Stars ── */
-.star{color:rgba(255,255,255,0.08)!important;font-size:19px!important}
+.star{color:rgba(0,0,0,0.1)!important;font-size:19px!important}
 .star.lit{color:var(--win)!important}
 
 /* ── Outcome buttons ── */
@@ -800,15 +798,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   cursor:pointer;
   font-size:12.5px;
   font-weight:500;
-  background:#0a0f18;
-  color:var(--text-muted);
+  background:#f9fafb;
+  color:#9ca3af;
   transition:all .15s;
   font-family:'Inter',sans-serif;
 }
 .outcome-btn.active-win{background:var(--win-bg);border:2px solid var(--win);color:var(--win);box-shadow:0 0 12px rgba(16,185,129,0.15)}
 .outcome-btn.active-loss{background:var(--loss-bg);border:2px solid var(--loss);color:var(--loss);box-shadow:0 0 12px rgba(239,68,68,0.15)}
 .outcome-btn.active-be{background:var(--be-bg);border:2px solid var(--be);color:var(--be);box-shadow:0 0 12px rgba(245,158,11,0.15)}
-.outcome-btn.active-skip{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);color:var(--text-primary)}
+.outcome-btn.active-skip{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);color:#111827}
 
 /* ── Metric card ── */
 .metric-card{
@@ -822,17 +820,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   font-size:20px;
   font-weight:600;
   font-family:'JetBrains Mono',monospace;
-  color:var(--text-primary);
+  color:#111827;
   margin-top:4px;
   line-height:1.2;
 }
-.metric-lbl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.metric-lbl{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em}
 
 /* ── Green / Red / Amber badges ── */
 .green-bg{background:var(--win-bg)!important;color:var(--win)!important;border:1px solid rgba(16,185,129,0.25)!important;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:500}
 .red-bg{background:var(--loss-bg)!important;color:var(--loss)!important;border:1px solid rgba(239,68,68,0.25)!important;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:500}
 .amber-bg{background:var(--be-bg)!important;color:var(--be)!important;border:1px solid rgba(245,158,11,0.25)!important;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:500}
-.badge{padding:2px 8px;border-radius:4px;font-size:11.5px;background:rgba(255,255,255,0.04);color:var(--text-secondary);border:1px solid var(--border)}
+.badge{padding:2px 8px;border-radius:4px;font-size:11.5px;background:rgba(255,255,255,0.04);color:#4b5563;border:1px solid var(--border)}
 
 /* ── Progress bars ── */
 .prog-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:6px}
@@ -848,25 +846,25 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .log-table th{
   text-align:left;
   font-weight:600;
-  color:var(--text-muted);
+  color:#9ca3af;
   padding:9px 10px;
   border-bottom:1px solid var(--border);
   white-space:nowrap;
   font-size:10px;
   text-transform:uppercase;
   letter-spacing:.07em;
-  background:rgba(255,255,255,0.02);
+  background:#f9fafb;
 }
 .log-table td{
   padding:9px 10px;
   border-bottom:1px solid rgba(255,255,255,0.03);
   vertical-align:middle;
-  color:var(--text-primary);
+  color:#111827;
   font-size:12.5px;
 }
 .log-table tr:last-child td{border-bottom:none}
-.log-table tr:hover td{background:rgba(255,255,255,0.02)}
-.no-trades{text-align:center;padding:40px;color:var(--text-muted);font-size:13px}
+.log-table tr:hover td{background:rgba(0,0,0,0.02)}
+.no-trades{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
 
 /* ── DASHBOARD ── */
 .dash-page-header{
@@ -875,10 +873,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-page-header h2{
   font-size:20px;
   font-weight:600;
-  color:var(--text-primary);
+  color:#111827;
   letter-spacing:-.01em;
 }
-.dash-page-header p{font-size:12px;color:var(--text-muted);margin-top:2px}
+.dash-page-header p{font-size:12px;color:#9ca3af;margin-top:2px}
 
 .dash-metrics{
   display:grid;
@@ -898,7 +896,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-metric:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-1px)}
 .dash-metric-label{
   font-size:10px;
-  color:var(--text-muted);
+  color:#9ca3af;
   text-transform:uppercase;
   letter-spacing:.1em;
   margin-bottom:10px;
@@ -911,13 +909,13 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   font-size:22px;
   font-weight:700;
   font-family:'JetBrains Mono',monospace;
-  color:var(--text-primary);
+  color:#111827;
   line-height:1.1;
   margin-bottom:4px;
 }
 .dash-metric-val.positive{color:var(--win)}
 .dash-metric-val.negative{color:var(--loss)}
-.dash-metric-sub{font-size:11px;color:var(--text-muted)}
+.dash-metric-sub{font-size:11px;color:#9ca3af}
 
 /* ── Dashboard chart grid ── */
 .dash-charts-row{
@@ -940,7 +938,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 }
 .dash-card-title{
   font-size:10px;
-  color:var(--text-muted);
+  color:#9ca3af;
   text-transform:uppercase;
   letter-spacing:.1em;
   margin-bottom:16px;
@@ -971,17 +969,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   font-family:'JetBrains Mono',monospace;
   line-height:1;
 }
-.dash-wr-sub{font-size:9px;color:var(--text-muted);margin-top:2px;letter-spacing:.04em}
+.dash-wr-sub{font-size:9px;color:#9ca3af;margin-top:2px;letter-spacing:.04em}
 .dash-legend{flex:1;min-width:90px}
 .dash-legend-item{
   display:flex;align-items:center;justify-content:space-between;
   padding:7px 0;
-  border-bottom:1px solid rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(0,0,0,0.05);
 }
 .dash-legend-item:last-child{border-bottom:none}
-.dash-legend-left{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-secondary)}
+.dash-legend-left{display:flex;align-items:center;gap:7px;font-size:12px;color:#4b5563}
 .dash-legend-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.dash-legend-val{font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text-primary)}
+.dash-legend-val{font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;color:#111827}
 
 /* Recent trades on dashboard */
 .dash-trade-row{
@@ -993,17 +991,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   gap:8px;
 }
 .dash-trade-row:last-child{border-bottom:none}
-.dash-trade-date{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
-.dash-trade-dir{font-size:11px;color:var(--text-secondary)}
-.dash-trade-draw{font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dash-no-trades{text-align:center;padding:24px;color:var(--text-muted);font-size:12px}
+.dash-trade-date{font-size:11px;color:#9ca3af;font-family:'JetBrains Mono',monospace}
+.dash-trade-dir{font-size:11px;color:#4b5563}
+.dash-trade-draw{font-size:11px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-no-trades{text-align:center;padding:24px;color:#9ca3af;font-size:12px}
 
 /* ── Mini calendar on dashboard ── */
 .dash-cal-grid{width:100%;border-collapse:collapse}
 .dash-cal-grid th{
   font-size:10px;
   font-weight:600;
-  color:var(--text-muted);
+  color:#9ca3af;
   text-align:center;
   padding:6px 0 8px;
   letter-spacing:.05em;
@@ -1014,11 +1012,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   height:52px;
   vertical-align:top;
   padding:5px 6px;
-  border:1px solid rgba(255,255,255,0.03);
+  border:1px solid rgba(0,0,0,0.04);
   font-size:10px;
-  color:var(--text-muted);
+  color:#9ca3af;
   cursor:default;
-  background:rgba(255,255,255,0.01);
+  background:rgba(0,0,0,0.01);
   border-radius:4px;
 }
 .dash-cal-grid td.dcal-has{cursor:pointer}
@@ -1026,34 +1024,34 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.15)}
 .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.12)}
 .dash-cal-grid td.dcal-today{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.05)!important}
-.dcal-day{font-size:10px;font-weight:500;color:var(--text-muted);margin-bottom:2px}
+.dcal-day{font-size:10px;font-weight:500;color:#9ca3af;margin-bottom:2px}
 .dcal-pnl{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;line-height:1.2}
 .dcal-win .dcal-pnl{color:var(--win)}
 .dcal-loss .dcal-pnl{color:var(--loss)}
 .dcal-be .dcal-pnl{color:var(--be)}
-.dcal-count{font-size:9px;color:var(--text-muted);margin-top:1px}
+.dcal-count{font-size:9px;color:#9ca3af;margin-top:1px}
 .dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.dash-cal-nav-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.dash-cal-nav-title{font-size:13px;font-weight:600;color:#111827}
 .dash-cal-nav button{
   background:none;border:1px solid var(--border);border-radius:5px;
-  color:var(--text-secondary);cursor:pointer;font-size:12px;padding:3px 8px;
+  color:#4b5563;cursor:pointer;font-size:12px;padding:3px 8px;
   font-family:'Inter',sans-serif;
 }
-.dash-cal-nav button:hover{background:rgba(255,255,255,0.05);color:var(--text-primary)}
+.dash-cal-nav button:hover{background:rgba(255,255,255,0.05);color:#111827}
 
 /* ── Calendar page ── */
-.cal-grid td{background:#0a0f18;border-color:rgba(255,255,255,0.05)}
-.cal-grid td.has-trade{background:var(--bg-card)}
+.cal-grid td{background:#f9fafb;border-color:rgba(0,0,0,0.06)}
+.cal-grid td.has-trade{background:#ffffff}
 .cal-grid td.today{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.05)!important}
-.cal-grid th{color:var(--text-muted)}
+.cal-grid th{color:#9ca3af}
 .cal-win{color:var(--win)!important}
 .cal-loss{color:var(--loss)!important}
 .cal-be{color:var(--be)!important}
 
 /* ── Collapsible ── */
 .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.collapsible-header:hover .collapse-icon{color:var(--text-primary)}
-.collapse-icon{font-size:11px;color:var(--text-muted);transition:transform .2s;display:inline-block}
+.collapsible-header:hover .collapse-icon{color:#111827}
+.collapse-icon{font-size:11px;color:#9ca3af;transition:transform .2s;display:inline-block}
 .collapsible-body.collapsed{display:none}
 
 /* ── Mode toggle ── */
@@ -1065,7 +1063,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   cursor:pointer;
   font-size:12px;
   background:rgba(255,255,255,0.02);
-  color:var(--text-secondary);
+  color:#4b5563;
   transition:all .15s;
   font-family:'Inter',sans-serif;
 }
@@ -1075,7 +1073,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .mistakes-list{
   border:1px solid var(--border);
   border-radius:7px;
-  background:#0a0f18;
+  background:#f9fafb;
   max-height:220px;
   overflow-y:auto;
   padding:4px;
@@ -1083,21 +1081,21 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .mistake-item{
   display:flex;align-items:center;gap:8px;
   padding:6px 8px;border-radius:5px;
-  cursor:pointer;font-size:12px;color:var(--text-secondary);
+  cursor:pointer;font-size:12px;color:#4b5563;
   user-select:none;transition:background .12s;
 }
-.mistake-item:hover{background:rgba(255,255,255,0.04)}
-.mistake-item.selected{background:rgba(245,158,11,0.08);color:var(--text-primary);border-left:2px solid var(--be);padding-left:6px}
+.mistake-item:hover{background:rgba(0,0,0,0.03)}
+.mistake-item.selected{background:rgba(245,158,11,0.07);color:#111827;border-left:2px solid var(--be);padding-left:6px}
 .mistake-item input[type=checkbox]{display:none}
 .mistake-dot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);flex-shrink:0;transition:all .12s}
 .mistake-item.selected .mistake-dot{background:var(--be);border-color:var(--be)}
-.mistake-cat{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding:7px 8px 2px;pointer-events:none}
+.mistake-cat{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9ca3af;padding:7px 8px 2px;pointer-events:none}
 
 /* ── Week/monthly cards ── */
-.week-card{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
-.week-lbl{font-size:11px;color:var(--text-muted);margin-bottom:2px}
+.week-card{background:#ffffff;border:1px solid var(--border);border-radius:7px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.week-lbl{font-size:11px;color:#9ca3af;margin-bottom:2px}
 .week-pnl{font-size:16px;font-weight:600;font-family:'JetBrains Mono',monospace}
-.week-trades{font-size:11px;color:var(--text-muted)}
+.week-trades{font-size:11px;color:#9ca3af}
 .monthly-summary{display:flex;flex-direction:column;gap:7px}
 .month-total-card{background:var(--bg-card);border:1px solid rgba(245,158,11,0.2);border-radius:7px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
 
@@ -1119,9 +1117,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .glow-red{animation:glow-red 2s ease-in-out infinite}
 
 /* ── Auth ── */
-#auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(5,8,15,0.96);display:none;align-items:center;justify-content:center;padding:24px}
+#auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(15,18,30,0.85);display:none;align-items:center;justify-content:center;padding:24px}
 #auth-overlay.auth-show{display:flex}
-#auth-overlay .auth-card{max-width:400px;width:100%;padding:28px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card)}
+#auth-overlay .auth-card{max-width:400px;width:100%;padding:28px;border:1px solid var(--border);border-radius:12px;background:#ffffff}
 #auth-overlay input{margin-bottom:12px}
 #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 
@@ -1147,8 +1145,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   cursor:pointer;
   font-size:12px;
   font-weight:500;
-  background:#0a0f18;
-  color:var(--text-muted);
+  background:#f9fafb;
+  color:#9ca3af;
   text-align:center;
   transition:all .15s;
   font-family:'Inter',sans-serif;
@@ -1157,8 +1155,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 /* ── Scrollbar ── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.16)}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.2)}
 
 /* ── Responsive ── */
 @media(max-width:1100px){
@@ -1183,7 +1181,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="auth-card">
     <div class="section-label" style="margin-bottom:14px">Sign in</div>
     <p style="font-size:13px;color:#888;margin-bottom:14px;line-height:1.5">Your cloud backup is tied to your account. Without signing in, data is only on this device (localStorage).</p>
-    <div id="auth-checking" style="font-size:14px;color:var(--text-secondary);margin-bottom:8px">Checking session…</div>
+    <div id="auth-checking" style="font-size:14px;color:#4b5563;margin-bottom:8px">Checking session…</div>
     <div id="auth-form-wrap" style="display:none">
       <label>Email</label>
       <input type="email" id="auth-email" autocomplete="username" placeholder="you@email.com">
@@ -1327,10 +1325,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <span>Recent Trades</span>
       </div>
       <div style="display:grid;grid-template-columns:85px 50px 1fr 65px;padding:0 0 7px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:4px">
-        <span style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em">Date</span>
-        <span style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em">Dir</span>
-        <span style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em">Target</span>
-        <span style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em">P&amp;L</span>
+        <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Date</span>
+        <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Dir</span>
+        <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Target</span>
+        <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">P&amp;L</span>
       </div>
       <div id="dash-recent-trades"><div class="dash-no-trades">No trades logged yet.</div></div>
     </div>
@@ -1356,7 +1354,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </div>
 <!-- LOG -->
 <div class="page" id="page-log">
-<div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:600;color:var(--text-primary);letter-spacing:-.01em">Log Trade</h2></div>
+<div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:600;color:#111827;letter-spacing:-.01em">Log Trade</h2></div>
 <div id="log-form-col">
 
   <!-- QOTD on Log page -->
@@ -1364,7 +1362,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div style="font-size:20px;line-height:1;margin-top:2px">💬</div>
     <div style="flex:1">
       <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Quote of the day</div>
-      <div id="qotd-text" style="font-size:13px;color:var(--text-primary);line-height:1.6;font-style:italic"></div>
+      <div id="qotd-text" style="font-size:13px;color:#111827;line-height:1.6;font-style:italic"></div>
       <div id="qotd-author" style="font-size:12px;color:#555;margin-top:4px"></div>
     </div>
   </div>
@@ -1372,12 +1370,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <!-- SESSION TIMER -->
   <div class="card" id="session-timer-card" style="padding:12px 16px;margin-bottom:12px;transition:border-color .5s,background .5s">
     <div class="section-label" style="margin-bottom:8px">Session timer</div>
-    <div id="timer-label" style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Loading...</div>
+    <div id="timer-label" style="font-size:13px;color:#9ca3af;margin-bottom:4px">Loading...</div>
     <div id="timer-display" style="font-size:28px;font-weight:500;font-family:monospace;color:#fff;letter-spacing:2px">--:--:--</div>
     <div id="timer-bar-wrap" style="height:4px;background:#1e1e1e;border-radius:2px;margin-top:10px;overflow:hidden">
       <div id="timer-bar" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1s linear"></div>
     </div>
-    <div id="timer-sub" style="font-size:13px;color:var(--text-muted);margin-top:4px"></div>
+    <div id="timer-sub" style="font-size:13px;color:#9ca3af;margin-top:4px"></div>
   </div>
 
   <div class="card gap">
@@ -1392,7 +1390,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
       <div class="section-label" style="margin-bottom:0">Model checklist</div>
-      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:13px;color:var(--text-muted)">0 / 10</span><span class="collapse-icon">▼</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:13px;color:#9ca3af">0 / 10</span><span class="collapse-icon">▼</span></div>
     </div>
     <div id="checklist-body" class="collapsible-body">
     <div class="check-group-title">Can I Trade?</div>
@@ -1469,7 +1467,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <button class="outcome-btn" onclick="setOutcome('be',this)" style="color:#f59e0b;border-color:#6e5000;opacity:0.5">BE</button>
     </div>
     <div class="grid-2">
-      <div><label>P&amp;L ($) <span style="color:var(--text-muted);font-weight:400">— negative for a loss e.g. -120</span></label>
+      <div><label>P&amp;L ($) <span style="color:#9ca3af;font-weight:400">— negative for a loss e.g. -120</span></label>
         <input type="number" id="f-pnl" placeholder="e.g. 250 or -120" step="1" oninput="calcAutoRR()">
       </div>
       <div><label>Risk taken</label>
@@ -1483,9 +1481,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div style="margin-top:14px">
       <label style="margin-bottom:6px">Trade classification</label>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px" id="trade-class-row">
-        <button type="button" id="tclass-valid-good" class="tclass-btn" onclick="setTradeClass('valid-good',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0a0f18;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">✅ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">good execution</span></button>
-        <button type="button" id="tclass-valid-bad" class="tclass-btn" onclick="setTradeClass('valid-bad',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0a0f18;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">⚠️ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">bad execution</span></button>
-        <button type="button" id="tclass-invalid" class="tclass-btn" onclick="setTradeClass('invalid',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#0a0f18;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">❌ Invalid setup<br><span style="font-weight:400;font-size:11px;color:#444">shouldn't have taken</span></button>
+        <button type="button" id="tclass-valid-good" class="tclass-btn" onclick="setTradeClass('valid-good',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">✅ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">good execution</span></button>
+        <button type="button" id="tclass-valid-bad" class="tclass-btn" onclick="setTradeClass('valid-bad',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">⚠️ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">bad execution</span></button>
+        <button type="button" id="tclass-invalid" class="tclass-btn" onclick="setTradeClass('invalid',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">❌ Invalid setup<br><span style="font-weight:400;font-size:11px;color:#444">shouldn't have taken</span></button>
       </div>
     </div>
 
@@ -1579,7 +1577,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <div class="card">
-    <div class="section-label">Notes <span style="color:var(--text-muted);font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— visible in All trades dropdown</span></div>
+    <div class="section-label">Notes <span style="color:#9ca3af;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— visible in All trades dropdown</span></div>
 
     <div class="gap">
       <label>Momentum / price speed at entry</label>
@@ -1605,7 +1603,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       </select>
     </div>
     <div class="gap">
-      <label>Similar past trade <span style="color:var(--text-muted);font-size:13px;font-weight:400">— date of a trade this setup resembles</span></label>
+      <label>Similar past trade <span style="color:#9ca3af;font-size:13px;font-weight:400">— date of a trade this setup resembles</span></label>
       <input type="text" id="f-similar" placeholder="e.g. 2025-03-14 — same PDH draw, slowing momentum, got stopped">
     </div>
     <div class="gap">
@@ -1632,7 +1630,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="flex-between" style="margin-bottom:12px">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="section-label" style="margin-bottom:0">Trade log</div>
-      <span id="trade-count-badge" style="background:#1e1e1e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2px 10px;font-size:13px;color:var(--text-secondary)"></span>
+      <span id="trade-count-badge" style="background:#1e1e1e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2px 10px;font-size:13px;color:#4b5563"></span>
     </div>
   </div>
   <div style="margin-bottom:10px">
@@ -1711,7 +1709,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div class="section-label">Avg win / loss</div>
       <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;margin-top:6px">
         <div id="s-wl-ratio" style="font-size:26px;font-weight:500;color:#ffffff">—</div>
-        <div style="font-size:13px;color:var(--text-secondary)">ratio</div>
+        <div style="font-size:13px;color:#4b5563">ratio</div>
       </div>
       <div style="position:relative;height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px">
         <div id="s-wl-green" style="height:100%;background:#3a6e3a;transition:width .4s"></div>
@@ -1722,8 +1720,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <span id="s-avg-loss" style="font-size:13px;font-weight:500;color:#ef4444">—</span>
       </div>
       <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:12px">
-        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:var(--text-primary)">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#10b981">—</span></div>
-        <div class="flex-between"><span style="font-size:13px;color:var(--text-primary)">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#ef4444">—</span></div>
+        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:#111827">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#10b981">—</span></div>
+        <div class="flex-between"><span style="font-size:13px;color:#111827">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#ef4444">—</span></div>
       </div>
     </div>
     <div class="card">
@@ -1745,19 +1743,19 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Streaks</div>
-      <div id="s-streaks" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-streaks" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Time of day</div>
-      <div id="s-timeofday" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-timeofday" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Emotional state</div>
-      <div id="s-emotions" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-emotions" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Momentum at entry</div>
-      <div id="s-momentum" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-momentum" style="font-size:13px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -1765,15 +1763,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Draw success rate</div>
-      <div id="s-draws" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-draws" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Best day &amp; bias</div>
-      <div id="s-bestday" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-bestday" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Top mistakes</div>
-      <div id="s-mistakes" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-mistakes" style="font-size:13px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -1781,11 +1779,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Long vs Short</div>
-      <div id="s-longshort" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-longshort" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Discipline vs outcome</div>
-      <div id="s-disc-corr" style="font-size:13px;color:var(--text-secondary)">No data</div>
+      <div id="s-disc-corr" style="font-size:13px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -1796,7 +1794,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="margin-bottom:12px">
     <div class="card">
       <div class="section-label" style="margin-bottom:12px">Valid vs invalid setup breakdown</div>
-      <div id="s-class-stats" style="font-size:13px;color:var(--text-secondary)">No classifications logged yet — tag your trades as valid/invalid when logging.</div>
+      <div id="s-class-stats" style="font-size:13px;color:#4b5563">No classifications logged yet — tag your trades as valid/invalid when logging.</div>
     </div>
   </div>
 
@@ -1823,7 +1821,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
     </div>
     <div><label>Notes</label><textarea id="m-notes" placeholder="What did you see? What stopped you?" style="min-height:50px"></textarea></div>
-    <div style="margin-top:10px"><label>Exact thought that stopped you <span style="color:var(--text-muted);font-size:13px;font-weight:400">— be specific</span></label><textarea id="m-hesitation" placeholder="e.g. I told myself maybe we get a bigger pullback. By the time the real entry came I'd already mentally checked out..." style="min-height:60px"></textarea></div>
+    <div style="margin-top:10px"><label>Exact thought that stopped you <span style="color:#9ca3af;font-size:13px;font-weight:400">— be specific</span></label><textarea id="m-hesitation" placeholder="e.g. I told myself maybe we get a bigger pullback. By the time the real entry came I'd already mentally checked out..." style="min-height:60px"></textarea></div>
   </div>
   <div class="log-wrap" style="margin-top:4px">
     <table class="log-table">
@@ -1856,11 +1854,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="grid-2">
       <div>
         <div class="section-label" style="margin-bottom:8px">Top mistake this week</div>
-        <div id="w-mistake" style="font-size:13px;color:var(--text-secondary)">—</div>
+        <div id="w-mistake" style="font-size:13px;color:#4b5563">—</div>
       </div>
       <div>
         <div class="section-label" style="margin-bottom:8px">Outcomes</div>
-        <div id="w-outcomes" style="font-size:13px;color:var(--text-secondary)">—</div>
+        <div id="w-outcomes" style="font-size:13px;color:#4b5563">—</div>
       </div>
     </div>
   </div>
@@ -1884,11 +1882,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
   <div class="card" style="margin-top:14px">
     <div class="section-label" style="margin-bottom:10px">Emotional pattern this week</div>
-    <div id="w-emotion-breakdown" style="font-size:13px;color:var(--text-secondary)">No trades this week.</div>
+    <div id="w-emotion-breakdown" style="font-size:13px;color:#4b5563">No trades this week.</div>
   </div>
   <div class="card" style="margin-top:14px">
     <div class="section-label" style="margin-bottom:10px">vs last week</div>
-    <div id="w-emotion-compare" style="font-size:13px;color:var(--text-secondary)">No comparison data yet.</div>
+    <div id="w-emotion-compare" style="font-size:13px;color:#4b5563">No comparison data yet.</div>
   </div>
 </div>
 
@@ -1923,13 +1921,13 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="card" id="prop-tracker" style="display:none">
     <div class="flex-between" style="margin-bottom:14px">
       <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
-      <span style="font-size:13px;color:var(--text-muted)" id="prop-account-lbl"></span>
+      <span style="font-size:13px;color:#9ca3af" id="prop-account-lbl"></span>
     </div>
 
     <!-- Profit progress -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:var(--text-primary)">Profit target</span>
+        <span style="font-size:13px;color:#111827">Profit target</span>
         <span style="font-size:13px;font-weight:500" id="prop-profit-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-profit-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -1939,7 +1937,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Drawdown -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:var(--text-primary)">Max drawdown used</span>
+        <span style="font-size:13px;color:#111827">Max drawdown used</span>
         <span style="font-size:13px;font-weight:500" id="prop-dd-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-dd-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -1949,7 +1947,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Daily loss -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:var(--text-primary)">Today's P&amp;L vs daily limit</span>
+        <span style="font-size:13px;color:#111827">Today's P&amp;L vs daily limit</span>
         <span style="font-size:13px;font-weight:500" id="prop-ddl-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-ddl-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -1969,7 +1967,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <div id="prop-empty" style="text-align:center;padding:40px;color:var(--text-muted);font-size:13px">Fill in your prop firm settings above and hit Save to start tracking.</div>
+  <div id="prop-empty" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">Fill in your prop firm settings above and hit Save to start tracking.</div>
 </div>
 
 
@@ -2801,9 +2799,9 @@ function renderJournal(){
     const hasDetail=ssLinks.length||t.narrative||t.improve;
     const isFav=t.favourite||false;
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:14px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
-    const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:13px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
+    const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:13px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'rgba(255,255,255,0.07)'};
-    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:13px;color:var(--text-secondary)">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:13px;color:var(--text-secondary)">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:14px;padding:2px 6px">×</button></td></tr>';
+    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:13px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:13px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 6px">×</button></td></tr>';
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
@@ -2811,19 +2809,19 @@ function renderJournal(){
       +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
       +ssLinks.map((s,i)=>_isCDN(s[1])
         ?'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
-          +'<div style="font-size:13px;color:var(--text-muted)">'+s[0]+'</div>'
+          +'<div style="font-size:13px;color:#9ca3af">'+s[0]+'</div>'
           +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
           +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:1px solid rgba(255,255,255,0.07);cursor:pointer;background:var(--bg-card)" '
           +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.07)\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:var(--text-primary);font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#111827;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">What happened</div><div style="font-size:13px;color:var(--text-primary);line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">What to improve</div><div style="font-size:13px;color:var(--text-primary);line-height:1.6">'+t.improve+'</div></div>':'';
-    const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Emotion after close</div><div style="font-size:13px;color:var(--text-secondary)">'+t.emotionPost+'</div></div>':'';
-    const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Momentum at entry</div><div style="font-size:13px;color:'+(t.momentum.includes('Aggressive')?'#10b981':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#ef4444':'#f59e0b')+'">'+t.momentum+'</div></div>':'';
-    const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:var(--text-secondary);line-height:1.6">'+t.similar+'</div></div>':'';
+    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#111827;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#111827;line-height:1.6">'+t.improve+'</div></div>':'';
+    const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Emotion after close</div><div style="font-size:13px;color:#4b5563">'+t.emotionPost+'</div></div>':'';
+    const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Momentum at entry</div><div style="font-size:13px;color:'+(t.momentum.includes('Aggressive')?'#10b981':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#ef4444':'#f59e0b')+'">'+t.momentum+'</div></div>':'';
+    const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#4b5563;line-height:1.6">'+t.similar+'</div></div>':'';
     const classBadgeHtml=t.tradeClass?'<div style="margin-bottom:10px">'+( classBadges[t.tradeClass]||'')+'</div>':'';
     const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#0d0d0d;cursor:pointer;color:#666;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
     const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#090e0a;border-bottom:1px solid rgba(255,255,255,0.07)">'+classBadgeHtml+ssHtml+momentumHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
@@ -2990,7 +2988,7 @@ function renderStats(){
     const total=c.win+c.loss+c.be;
     if(total){
       window._outChart=new Chart(outCanvas,{type:'doughnut',data:{labels:['Wins','Losses','Break-even'],datasets:[{data:[c.win,c.loss,c.be],backgroundColor:['rgba(16,185,129,0.75)','rgba(239,68,68,0.75)','rgba(245,158,11,0.75)'],borderColor:['#10b981','#ef4444','#f59e0b'],borderWidth:1.5,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+' ('+Math.round(ctx.raw/total*100)+'%)';}}}}}});
-      if(outLegend)outLegend.innerHTML=[['Wins',c.win,'#10b981','rgba(16,185,129,0.75)'],['Losses',c.loss,'#ef4444','rgba(239,68,68,0.75)'],['BE',c.be,'#f59e0b','rgba(245,158,11,0.75)']].map(([l,v,tc,bg])=>'<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:'+bg+';border:1px solid '+tc+'"></span><span style="color:var(--text-primary)">'+l+' <strong style="color:'+tc+'">'+v+'</strong></span></span>').join('');
+      if(outLegend)outLegend.innerHTML=[['Wins',c.win,'#10b981','rgba(16,185,129,0.75)'],['Losses',c.loss,'#ef4444','rgba(239,68,68,0.75)'],['BE',c.be,'#f59e0b','rgba(245,158,11,0.75)']].map(([l,v,tc,bg])=>'<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:'+bg+';border:1px solid '+tc+'"></span><span style="color:#111827">'+l+' <strong style="color:'+tc+'">'+v+'</strong></span></span>').join('');
     }
   }
   const winTrades=f.filter(t=>t.pnl!=null&&t.pnl>0);
@@ -3009,12 +3007,12 @@ function renderStats(){
   const eEl=document.getElementById('s-emotions');
   const es=Object.entries(em).sort((a,b)=>b[1]-a[1]);
   if(!es.length){eEl.textContent='No data';}
-  else eEl.innerHTML=es.map(e=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:var(--text-primary)">'+e[0]+'</span><span class="badge">'+e[1]+'</span></div>').join('');
+  else eEl.innerHTML=es.map(e=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#111827">'+e[0]+'</span><span class="badge">'+e[1]+'</span></div>').join('');
   const mm={};f.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
   const mEl=document.getElementById('s-mistakes');
   const msorted=Object.entries(mm).sort((a,b)=>b[1]-a[1]);
   if(!msorted.length){mEl.innerHTML='None recorded';mEl.style.color='#10b981';}
-  else mEl.innerHTML=msorted.slice(0,6).map(e=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:var(--text-primary)">'+e[0]+'</span><span class="red-bg">'+e[1]+'x</span></div>').join('');
+  else mEl.innerHTML=msorted.slice(0,6).map(e=>'<div class="flex-between" style="margin-bottom:6px"><span style="font-size:13px;color:#111827">'+e[0]+'</span><span class="red-bg">'+e[1]+'x</span></div>').join('');
   renderEquityChart(trades);
   renderDailyChart(f);
   renderStreaks(f.filter(t=>t.outcome!=='skip'));
@@ -3080,7 +3078,7 @@ function renderMonthlyChart(f){
 function renderMomentumStats(f){
   const el=document.getElementById('s-momentum');if(!el)return;
   const withM=f.filter(t=>t.momentum);
-  if(!withM.length){el.innerHTML='<span style="color:var(--text-muted);font-size:13px">Log momentum on trades to see this</span>';return;}
+  if(!withM.length){el.innerHTML='<span style="color:#9ca3af;font-size:13px">Log momentum on trades to see this</span>';return;}
   const map={};
   withM.forEach(t=>{
     if(!map[t.momentum])map[t.momentum]={win:0,loss:0,be:0,total:0};
@@ -3096,7 +3094,7 @@ function renderMomentumStats(f){
     return'<div style="margin-bottom:8px">'
       +'<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
       +'<span style="font-size:13px;color:'+col(m)+'">'+m+'</span>'
-      +'<span style="font-size:13px;color:var(--text-muted)">'+d.total+' trades · '+wr+' WR</span>'
+      +'<span style="font-size:13px;color:#9ca3af">'+d.total+' trades · '+wr+' WR</span>'
       +'</div></div>';
   }).join('');
 }
@@ -3157,9 +3155,9 @@ function renderDrawStats(f){
     const wr=Math.round(d.win/d.total*100);
     const col=wr>=60?'#10b981':wr>=40?'#f59e0b':'#ef4444';
     return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
-      +'<span style="font-size:13px;color:var(--text-primary)">'+draw+'</span>'
+      +'<span style="font-size:13px;color:#111827">'+draw+'</span>'
       +'<div style="display:flex;align-items:center;gap:8px">'
-      +'<span style="font-size:13px;color:var(--text-muted)">'+d.total+' trades</span>'
+      +'<span style="font-size:13px;color:#9ca3af">'+d.total+' trades</span>'
       +'<span style="font-size:13px;font-weight:500;color:'+col+'">'+wr+'%</span>'
       +'</div></div>';
   }).join('');
@@ -3182,14 +3180,14 @@ function renderBestDayBias(f){
   const hasData=f.filter(t=>t.pnl!=null).length>0;
   if(!hasData){el.textContent='No data';return;}
   el.innerHTML='<div style="margin-bottom:10px">'
-    +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:4px">Best day</div>'
+    +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:4px">Best day</div>'
     +'<div style="font-size:16px;font-weight:500;color:#10b981">'+bestDay+'</div>'
-    +'<div style="font-size:13px;color:var(--text-secondary)">'+days.map(d=>'<span style="margin-right:8px;color:'+(dayPnl[d]>=0?'#10b981':'#ef4444')+'">'+d+' '+(dayPnl[d]>=0?'+$':'-$')+Math.abs(dayPnl[d]).toFixed(0)+'</span>').join('')+'</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+days.map(d=>'<span style="margin-right:8px;color:'+(dayPnl[d]>=0?'#10b981':'#ef4444')+'">'+d+' '+(dayPnl[d]>=0?'+$':'-$')+Math.abs(dayPnl[d]).toFixed(0)+'</span>').join('')+'</div>'
     +'</div>'
     +'<div>'
-    +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:4px">Best bias</div>'
+    +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:4px">Best bias</div>'
     +'<div style="font-size:16px;font-weight:500;color:'+(bestBias[1]>=0?'#10b981':'#ef4444')+'">'+bestBias[0]+'</div>'
-    +'<div style="font-size:13px;color:var(--text-secondary)">'+Object.entries(biasPnl).map(([k,v])=>'<span style="margin-right:8px;color:'+(v>=0?'#10b981':'#ef4444')+'">'+k+' '+(v>=0?'+$':'-$')+Math.abs(v).toFixed(0)+'</span>').join('')+'</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+Object.entries(biasPnl).map(([k,v])=>'<span style="margin-right:8px;color:'+(v>=0?'#10b981':'#ef4444')+'">'+k+' '+(v>=0?'+$':'-$')+Math.abs(v).toFixed(0)+'</span>').join('')+'</div>'
     +'</div>';
 }
 
@@ -3297,21 +3295,21 @@ function calDayClick(dateStr){
       +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
       +ssLinks.map((s,i)=>_isCDN(s[1])
         ?'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
-          +'<div style="font-size:13px;color:var(--text-muted)">'+s[0]+'</div>'
+          +'<div style="font-size:13px;color:#9ca3af">'+s[0]+'</div>'
           +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
           +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:1px solid rgba(255,255,255,0.07);cursor:pointer;background:var(--bg-card)" '
           +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.07)\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:var(--text-primary);font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:var(--bg-card)">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#111827;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:var(--bg-card)">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:3px">What happened</div><div style="font-size:13px;color:var(--text-primary);line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:3px">Improve</div><div style="font-size:13px;color:var(--text-primary);line-height:1.6">'+t.improve+'</div></div>':'';
+    const narrativeHtml=t.narrative?'<div style="margin-top:10px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:3px">What happened</div><div style="font-size:13px;color:#111827;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div style="margin-top:8px"><div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:3px">Improve</div><div style="font-size:13px;color:#111827;line-height:1.6">'+t.improve+'</div></div>':'';
     return'<div style="background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;margin-bottom:10px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-      +'<div style="display:flex;gap:8px;align-items:center">'+(badges[t.outcome]||'')+'<span style="font-size:13px;color:var(--text-secondary)">'+(t.direction||'')+'</span></div>'
+      +'<div style="display:flex;gap:8px;align-items:center">'+(badges[t.outcome]||'')+'<span style="font-size:13px;color:#4b5563">'+(t.direction||'')+'</span></div>'
       +pnlStr+'</div>'
-      +'<div style="display:flex;gap:16px;font-size:13px;color:var(--text-secondary);flex-wrap:wrap">'
+      +'<div style="display:flex;gap:16px;font-size:13px;color:#4b5563;flex-wrap:wrap">'
       +'<span>Draw: '+(t.draw||'—')+'</span>'
       +'<span>RR: '+(t.rrActual||'—')+'</span>'
       +'<span>Risk: '+(t.risk?t.risk+'%':'—')+'</span>'
@@ -3343,7 +3341,7 @@ function renderLongShort(f){
     const pnlCol=d.pnl>=0?'#10b981':'#ef4444';
     return'<div style="margin-bottom:12px">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
-      +'<span style="font-size:14px;font-weight:500;color:var(--text-primary)">'+dir+'</span>'
+      +'<span style="font-size:14px;font-weight:500;color:#111827">'+dir+'</span>'
       +'<span style="font-size:14px;font-weight:500;color:'+col+'">'+wr+'% WR</span>'
       +'</div>'
       +'<div style="display:flex;gap:6px;margin-bottom:4px">'
@@ -3391,7 +3389,7 @@ function renderDiscCorr(f){
 function renderClassStats(f){
   const el=document.getElementById('s-class-stats');if(!el)return;
   const withClass=f.filter(t=>t.tradeClass&&t.outcome);
-  if(!withClass.length){el.innerHTML='<span style="font-size:13px;color:var(--text-muted)">No classifications logged yet — tag your trades as valid/invalid when logging.</span>';return;}
+  if(!withClass.length){el.innerHTML='<span style="font-size:13px;color:#9ca3af">No classifications logged yet — tag your trades as valid/invalid when logging.</span>';return;}
   const groups={'valid-good':{label:'✅ Valid + good exec',win:0,loss:0,be:0,total:0,pnl:0},'valid-bad':{label:'⚠️ Valid + bad exec',win:0,loss:0,be:0,total:0,pnl:0},'invalid':{label:'❌ Invalid setup',win:0,loss:0,be:0,total:0,pnl:0}};
   withClass.forEach(t=>{
     const g=groups[t.tradeClass];if(!g)return;
@@ -3409,7 +3407,7 @@ function renderClassStats(f){
     const barCol=barColors[key]||'#888';
     return '<div style="margin-bottom:14px">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
-      +'<span style="font-size:13px;font-weight:500;color:var(--text-primary)">'+g.label+'</span>'
+      +'<span style="font-size:13px;font-weight:500;color:#111827">'+g.label+'</span>'
       +'<span style="font-size:13px;color:#888">'+g.total+' trades ('+pct+'%)</span>'
       +'</div>'
       +'<div style="height:4px;background:#1e1e1e;border-radius:2px;margin-bottom:8px;overflow:hidden">'
@@ -3595,7 +3593,7 @@ function calcRisk(){
   const account=parseFloat(document.getElementById('calc-account').value)||0;
   const stop=parseFloat(document.getElementById('calc-stop').value)||0;
   const out=document.getElementById('calc-output');
-  if(!account||!stop){out.innerHTML='<span style="color:var(--text-muted)">Enter account size and stop distance</span>';return;}
+  if(!account||!stop){out.innerHTML='<span style="color:#9ca3af">Enter account size and stop distance</span>';return;}
 
   const risk1pct=account*0.01;
   const risk05pct=account*0.005;
@@ -3610,17 +3608,17 @@ function calcRisk(){
   out.innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
     +'<div style="background:rgba(15,26,18,0.58);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px 10px">'
-    +'<div style="font-size:13px;color:var(--text-muted);margin-bottom:3px">1% risk ($'+risk1pct.toFixed(0)+')</div>'
+    +'<div style="font-size:13px;color:#9ca3af;margin-bottom:3px">1% risk ($'+risk1pct.toFixed(0)+')</div>'
     +'<div style="font-size:13px;font-weight:500;color:#10b981">'+nq1.toFixed(2)+' NQ</div>'
-    +'<div style="font-size:13px;color:var(--text-secondary)">'+Math.round(mnq1)+' MNQ</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+Math.round(mnq1)+' MNQ</div>'
     +'</div>'
     +'<div style="background:rgba(15,26,18,0.58);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px 10px">'
-    +'<div style="font-size:13px;color:var(--text-muted);margin-bottom:3px">0.5% risk ($'+risk05pct.toFixed(0)+')</div>'
+    +'<div style="font-size:13px;color:#9ca3af;margin-bottom:3px">0.5% risk ($'+risk05pct.toFixed(0)+')</div>'
     +'<div style="font-size:13px;font-weight:500;color:#10b981">'+nq05.toFixed(2)+' NQ</div>'
-    +'<div style="font-size:13px;color:var(--text-secondary)">'+Math.round(mnq05)+' MNQ</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+Math.round(mnq05)+' MNQ</div>'
     +'</div>'
     +'</div>'
-    +'<div style="font-size:13px;color:var(--text-secondary);margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
+    +'<div style="font-size:13px;color:#4b5563;margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
 }
 
 // Pre-fill calc from prop settings if available
@@ -3662,7 +3660,7 @@ function openSSLightbox(url){
     lb = document.createElement('div');
     lb.id = 'trade-ss-lightbox';
     lb.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out';
-    lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:var(--text-secondary);cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
+    lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#4b5563;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
     lb.addEventListener('click', closeLightbox);
     document.body.appendChild(lb);
   }
@@ -4082,7 +4080,7 @@ function renderMissed(){
   const empty=document.getElementById('missed-empty');
   if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:13px;color:var(--text-secondary)">'+(m.draw||'—')+'</td><td style="font-size:13px;color:var(--text-secondary)">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:13px;color:var(--text-secondary);max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:12px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:14px;padding:2px 6px">×</button></td></tr>').join('');
+  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:13px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:13px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:13px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:12px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 6px">×</button></td></tr>').join('');
 }
 function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();}
 
@@ -4179,13 +4177,13 @@ function renderWeekly(){
     const wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
     const pnlDiff=pnl-lastPnl;
     if(cmpEl)cmpEl.innerHTML=
-      '<div style="margin-bottom:8px"><span style="color:var(--text-muted);font-size:13px">Dominant emotion: </span>'
-      +'<span style="color:var(--text-primary)">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
+      '<div style="margin-bottom:8px"><span style="color:#9ca3af;font-size:13px">Dominant emotion: </span>'
+      +'<span style="color:#111827">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
       +' <span style="color:#555;font-size:13px">vs last week: </span>'
-      +'<span style="color:var(--text-primary)">'+(lastWeekTop?lastWeekTop[0]:'—')+'</span></div>'
-      +(wrDiff!=null?'<div style="margin-bottom:6px"><span style="color:var(--text-muted);font-size:13px">Win rate: </span>'
+      +'<span style="color:#111827">'+(lastWeekTop?lastWeekTop[0]:'—')+'</span></div>'
+      +(wrDiff!=null?'<div style="margin-bottom:6px"><span style="color:#9ca3af;font-size:13px">Win rate: </span>'
       +'<span style="color:'+(wrDiff>=0?'#10b981':'#ef4444')+'">'+(wrDiff>=0?'+':'')+wrDiff+'% vs last week</span></div>':'')
-      +'<div><span style="color:var(--text-muted);font-size:13px">P&L: </span>'
+      +'<div><span style="color:#9ca3af;font-size:13px">P&L: </span>'
       +'<span style="color:'+(pnlDiff>=0?'#10b981':'#ef4444')+'">'+(pnlDiff>=0?'+$':'-$')+Math.abs(pnlDiff).toFixed(2)+' vs last week</span></div>';
   }
 }
@@ -4209,16 +4207,16 @@ function renderStreaks(trades){
   });
   curType=active[active.length-1].outcome;
   const curColor=curType==='win'?'#10b981':'#ef4444';
-  el.innerHTML='<div class="flex-between" style="margin-bottom:8px"><span style="color:var(--text-primary)">Current streak</span><span style="font-weight:500;color:'+curColor+'">'+curStreak+' '+curType+(curStreak>1?'s':'')+'</span></div>'
-    +'<div class="flex-between" style="margin-bottom:8px"><span style="color:var(--text-primary)">Longest win streak</span><span style="font-weight:500;color:#10b981">'+maxWin+'</span></div>'
-    +'<div class="flex-between"><span style="color:var(--text-primary)">Longest loss streak</span><span style="font-weight:500;color:#ef4444">'+maxLoss+'</span></div>';
+  el.innerHTML='<div class="flex-between" style="margin-bottom:8px"><span style="color:#111827">Current streak</span><span style="font-weight:500;color:'+curColor+'">'+curStreak+' '+curType+(curStreak>1?'s':'')+'</span></div>'
+    +'<div class="flex-between" style="margin-bottom:8px"><span style="color:#111827">Longest win streak</span><span style="font-weight:500;color:#10b981">'+maxWin+'</span></div>'
+    +'<div class="flex-between"><span style="color:#111827">Longest loss streak</span><span style="font-weight:500;color:#ef4444">'+maxLoss+'</span></div>';
 }
 
 // ── Time of day performance ──
 function renderTimeOfDay(trades){
   const el=document.getElementById('s-timeofday');
   const withTime=trades.filter(t=>t.entryTime&&t.pnl!=null);
-  if(!withTime.length){el.innerHTML='<span style="color:var(--text-muted);font-size:13px">Log entry time on trades to see this</span>';return;}
+  if(!withTime.length){el.innerHTML='<span style="color:#9ca3af;font-size:13px">Log entry time on trades to see this</span>';return;}
   const slots={'14:30–15:00':{pnl:0,n:0},'15:00–15:30':{pnl:0,n:0},'15:30–16:00':{pnl:0,n:0}};
   withTime.forEach(t=>{
     const[h,m]=t.entryTime.split(':').map(Number);
@@ -4230,7 +4228,7 @@ function renderTimeOfDay(trades){
   el.innerHTML=Object.entries(slots).map(([k,v])=>{
     const avg=v.n?v.pnl/v.n:0;
     const col=avg>0?'#10b981':avg<0?'#ef4444':'#888';
-    return'<div class="flex-between" style="margin-bottom:8px"><span style="color:var(--text-primary);font-size:13px">'+k+'</span><span style="font-size:13px;color:'+col+'">'+(v.n?v.n+' trades · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0):'No data')+'</span></div>';
+    return'<div class="flex-between" style="margin-bottom:8px"><span style="color:#111827;font-size:13px">'+k+'</span><span style="font-size:13px;color:'+col+'">'+(v.n?v.n+' trades · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0):'No data')+'</span></div>';
   }).join('');
 }
 
@@ -4896,10 +4894,10 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
-  <div style="background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
+  <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
       <div style="font-size:15px;font-weight:500">Edit trade</div>
-      <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:var(--text-secondary);font-size:20px;padding:0 4px">×</button>
+      <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:20px;padding:0 4px">×</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Date</label><input type="date" id="e-date"></div>
@@ -4954,11 +4952,11 @@ document.addEventListener('DOMContentLoaded',function(){
 
     <div style="margin-bottom:12px">
       <label>What happened?</label>
-      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#0a0f18;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="margin-bottom:12px">
       <label>What to improve?</label>
-      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#0a0f18;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive expansion — strong displacement</option><option>Strong but starting to slow</option><option>Moderate — steady push</option><option>Slowing — losing volume</option><option>Grinding — small candles, slow grind</option><option>Choppy — back and forth</option><option>Stalled — no directional momentum</option><option>V-shape recovery off FVG</option><option>Slow corrective retrace — textbook</option><option>Violent retrace — entered anyway</option><option>Price consolidating inside FVG</option></select></div>
@@ -4966,7 +4964,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <div><label>Emotion after close</label><select id="e-emotion-post" style="width:100%"><option value="">—</option><option>Satisfied ✓</option><option>Calm / indifferent</option><option>Frustrated</option><option>Relieved</option><option>Overconfident / euphoric</option><option>Revenge urge</option><option>Regret (closed too early)</option><option>Regret (held too long)</option><option>Shaken / doubting model</option></select></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button onclick="closeEdit()" style="padding:9px 18px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:13px;background:#0a0f18;color:#ffffff;font-family:inherit">Cancel</button>
+      <button onclick="closeEdit()" style="padding:9px 18px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:13px;background:#f9fafb;color:#ffffff;font-family:inherit">Cancel</button>
       <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;background:#e0e0e0;color:#0a0f0a;font-family:inherit;font-weight:500">Save changes</button>
     </div>
   </div>
@@ -4974,32 +4972,32 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- Prop firm passed popup -->
 <div id="popup-passed" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;flex-direction:column">
-  <div style="background:#0a1a0e;border:1px solid #3a6e3a;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
     <div style="font-size:48px;margin-bottom:16px">🏆</div>
     <div style="font-size:22px;font-weight:600;color:#10b981;margin-bottom:8px">Challenge passed!</div>
-    <div style="font-size:14px;color:var(--text-primary);margin-bottom:6px" id="popup-passed-name"></div>
-    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.6">You hit the profit target. The discipline, the patience, the process — it all showed. Now go get that funded account.</div>
-    <button onclick="closePassedPopup()" style="padding:12px 32px;border:0.5px solid #3a6e3a;border-radius:8px;background:#3a6e3a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Let's go 🚀</button>
+    <div style="font-size:14px;color:#111827;margin-bottom:6px" id="popup-passed-name"></div>
+    <div style="font-size:13px;color:#4b5563;margin-bottom:28px;line-height:1.6">You hit the profit target. The discipline, the patience, the process — it all showed. Now go get that funded account.</div>
+    <button onclick="closePassedPopup()" style="padding:12px 32px;border:none;border-radius:8px;background:#10b981;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Let's go 🚀</button>
   </div>
 </div>
 
 <!-- Prop firm blown popup -->
 <div id="popup-blown" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;flex-direction:column">
-  <div style="background:#1a0a0a;border:1px solid #6e2a2a;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
+  <div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
     <div style="font-size:48px;margin-bottom:16px">📉</div>
     <div style="font-size:22px;font-weight:600;color:#ef4444;margin-bottom:8px">Account blown</div>
-    <div style="font-size:14px;color:var(--text-primary);margin-bottom:6px" id="popup-blown-name"></div>
-    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.6">You hit the max drawdown limit. Go through your journal, find the patterns, fix the holes in the model. Every blown account is a lesson — make sure you learn it.</div>
-    <button onclick="closeBlownPopup()" style="padding:12px 32px;border:0.5px solid #6e2a2a;border-radius:8px;background:#6e2a2a;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Back to the drawing board</button>
+    <div style="font-size:14px;color:#111827;margin-bottom:6px" id="popup-blown-name"></div>
+    <div style="font-size:13px;color:#4b5563;margin-bottom:28px;line-height:1.6">You hit the max drawdown limit. Go through your journal, find the patterns, fix the holes in the model. Every blown account is a lesson — make sure you learn it.</div>
+    <button onclick="closeBlownPopup()" style="padding:12px 32px;border:0.5px solid #6e2a2a;border-radius:8px;background:#ef4444;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Back to the drawing board</button>
   </div>
 </div>
 
 <!-- Calendar day popup -->
 <div id="cal-day-popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
-  <div style="background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:14px;max-width:560px;width:100%;padding:1.5rem">
+  <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.08);border-radius:14px;max-width:560px;width:100%;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div style="font-size:16px;font-weight:500;color:var(--accent)" id="cal-popup-date"></div>
-      <button onclick="document.getElementById('cal-day-popup').style.display='none'" style="border:none;background:none;cursor:pointer;color:var(--text-secondary);font-size:20px">×</button>
+      <button onclick="document.getElementById('cal-day-popup').style.display='none'" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:20px">×</button>
     </div>
     <div id="cal-popup-body"></div>
   </div>
@@ -5014,9 +5012,9 @@ document.addEventListener('DOMContentLoaded',function(){
   <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;border-bottom:0.5px solid #1e1e1e">
     <div style="display:flex;gap:8px;align-items:center" id="lb-thumbs"></div>
     <div style="display:flex;align-items:center;gap:12px">
-      <span style="font-size:13px;color:var(--text-secondary)" id="lb-zoom-label">100%</span>
-      <button onclick="lbResetZoom()" style="border:1px solid rgba(255,255,255,0.07);background:rgba(15,26,18,0.58);cursor:pointer;color:var(--text-secondary);font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
-      <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:var(--text-secondary);font-size:26px;line-height:1;padding:2px 6px">×</button>
+      <span style="font-size:13px;color:#4b5563" id="lb-zoom-label">100%</span>
+      <button onclick="lbResetZoom()" style="border:1px solid rgba(255,255,255,0.07);background:rgba(15,26,18,0.58);cursor:pointer;color:#4b5563;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
+      <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:26px;line-height:1;padding:2px 6px">×</button>
     </div>
   </div>
   <!-- Main image area -->
@@ -5029,7 +5027,7 @@ document.addEventListener('DOMContentLoaded',function(){
   </div>
   <!-- Bottom dots -->
   <div style="display:flex;gap:8px;justify-content:center;padding:10px 0;flex-shrink:0" id="lb-dots"></div>
-  <div style="text-align:center;font-size:13px;color:var(--text-secondary);padding-bottom:8px">← → navigate · scroll to zoom · drag to pan · Esc close</div>
+  <div style="text-align:center;font-size:13px;color:#4b5563;padding-bottom:8px">← → navigate · scroll to zoom · drag to pan · Esc close</div>
 </div>
 
 
@@ -5043,7 +5041,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <div>
       <div class="card">
         <div class="section-label" style="margin-bottom:12px">Add reminder trade</div>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.6">Pin trades that show your worst mistakes — read these <strong style="color:#ffffff">15 mins before every session</strong> to jog your memory.</p>
+        <p style="font-size:13px;color:#4b5563;margin-bottom:14px;line-height:1.6">Pin trades that show your worst mistakes — read these <strong style="color:#ffffff">15 mins before every session</strong> to jog your memory.</p>
         <div style="margin-bottom:10px">
           <label>Mistake category</label>
           <select id="ps-category">
@@ -5079,7 +5077,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <!-- Daily affirmations -->
       <div class="card">
         <div class="section-label" style="margin-bottom:10px">My non-negotiables</div>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.6">Your hard rules — read before every session.</p>
+        <p style="font-size:13px;color:#4b5563;margin-bottom:10px;line-height:1.6">Your hard rules — read before every session.</p>
         <textarea id="ps-nonneg" placeholder="e.g. I will not trade without a clear HTF draw&#10;I will not enter without displacement&#10;I will move to BE immediately after entry&#10;I will close all trades at 11:00 NY..." style="min-height:140px" oninput="saveNonNeg()"></textarea>
       </div>
     </div>
@@ -5098,77 +5096,6 @@ document.addEventListener('DOMContentLoaded',function(){
 </div>
 
 <!-- THEME CUSTOMIZER -->
-<button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
-<div id="theme-panel">
-  <div id="tp-header">
-    <span id="tp-header-title">🎨 Customise theme</span>
-    <button id="tp-reset" onclick="tpReset()">Reset all</button>
-  </div>
-
-  <!-- Section tabs -->
-  <div id="tp-tabs">
-    <button class="tp-tab active" data-sec="accent" onclick="tpSwitch('accent',this)">Accent</button>
-    <button class="tp-tab" data-sec="bg"     onclick="tpSwitch('bg',this)">Background</button>
-    <button class="tp-tab" data-sec="text"   onclick="tpSwitch('text',this)">Text</button>
-    <button class="tp-tab" data-sec="cards"  onclick="tpSwitch('cards',this)">Cards</button>
-    <button class="tp-tab" data-sec="timer"  onclick="tpSwitch('timer',this)">Timer</button>
-    <button class="tp-tab" data-sec="check"  onclick="tpSwitch('check',this)">Checklist</button>
-    <button class="tp-tab" data-sec="win"    onclick="tpSwitch('win',this)">Win/Loss</button>
-  </div>
-
-  <!-- Body -->
-  <div id="tp-body">
-
-    <!-- Shared colour picker (reused for each section) -->
-    <div class="mini-cp">
-      <div class="cp-presets" id="cp-presets"></div>
-      <div id="cp-spectrum-wrap">
-        <canvas id="cp-spectrum" height="120"></canvas>
-        <div id="cp-cursor"></div>
-      </div>
-      <div id="cp-hue-wrap">
-        <input type="range" id="cp-hue" min="0" max="360" value="157">
-      </div>
-      <div class="cp-hex-row">
-        <div id="cp-preview"></div>
-        <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
-        <button class="cp-apply" onclick="cpApply()">Apply</button>
-      </div>
-    </div>
-
-    <!-- Per-section descriptions -->
-    <div class="tp-section active" id="tp-sec-accent">
-      <div class="tp-sect-label">Accent — tabs, borders, highlights, clocks, stars</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-accent"></div><span class="tp-cur-hex" id="cur-hex-accent"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-bg">
-      <div class="tp-sect-label">Page background colour</div>
-      <div class="cp-bg-swatches" id="cp-bg-swatches"></div>
-    </div>
-    <div class="tp-section" id="tp-sec-text">
-      <div class="tp-sect-label">Body text colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-text"></div><span class="tp-cur-hex" id="cur-hex-text"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-cards">
-      <div class="tp-sect-label">Card / panel background</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-cards"></div><span class="tp-cur-hex" id="cur-hex-cards"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-timer">
-      <div class="tp-sect-label">Session timer &amp; clock colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-timer"></div><span class="tp-cur-hex" id="cur-hex-timer"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-check">
-      <div class="tp-sect-label">Checklist pass colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-check"></div><span class="tp-cur-hex" id="cur-hex-check"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-win">
-      <div class="tp-sect-label">Win colour (loss stays red)</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-win"></div><span class="tp-cur-hex" id="cur-hex-win"></span></div>
-    </div>
-
-  </div>
-</div>
-
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
   <button class="mob-btn" id="mobnav-dashboard" onclick="mobNav('dashboard')"><span class="mob-icon">⊞</span>Home</button>
@@ -5502,7 +5429,7 @@ document.addEventListener('click',function(e){
   /* ── 20. MOBILE NAV — safe area + polish ── */
   #mobile-nav {
     border-top: 1px solid rgba(255,255,255,0.07) !important;
-    background: rgba(8, 12, 8, 0.97) !important;
+    background: rgba(255,255,255,0.98) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
   }
