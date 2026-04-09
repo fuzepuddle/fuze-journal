@@ -510,22 +510,22 @@
 
 /* ── Tokens ── */
 :root{
-  --bg:#f0f2f5;
+  --bg:#f5f5f5;
   --bg-card:#ffffff;
-  --bg-hover:#f7f8fa;
-  --border:rgba(0,0,0,0.08);
-  --border-accent:rgba(16,185,129,0.35);
-  --text-primary:#111827;
-  --text-secondary:#4b5563;
-  --text-muted:#9ca3af;
-  --sidebar-bg:#1e2640;
-  --sidebar-border:rgba(255,255,255,0.06);
-  --win:#10b981;
-  --win-bg:rgba(16,185,129,0.08);
-  --loss:#ef4444;
-  --loss-bg:rgba(239,68,68,0.08);
-  --be:#f59e0b;
-  --be-bg:rgba(245,158,11,0.08);
+  --bg-hover:#f9f9f9;
+  --border:rgba(0,0,0,0.1);
+  --border-accent:rgba(22,163,74,0.3);
+  --text-primary:#111111;
+  --text-secondary:#555555;
+  --text-muted:#999999;
+  --sidebar-bg:#1a1a1a;
+  --sidebar-border:rgba(255,255,255,0.08);
+  --win:#16a34a;
+  --win-bg:rgba(22,163,74,0.08);
+  --loss:#dc2626;
+  --loss-bg:rgba(220,38,38,0.07);
+  --be:#d97706;
+  --be-bg:rgba(217,119,6,0.07);
 }
 
 /* ── Reset / Base ── */
@@ -5739,93 +5739,184 @@ document.addEventListener('click',function(e){
 /* ═══════════════════════════════════════════════
    FINAL LIGHT THEME OVERRIDES — wins over all above
    ═══════════════════════════════════════════════ */
-body{background:var(--bg)!important;color:var(--text-primary)!important;border-top:none!important;box-shadow:none!important;max-width:none!important;padding:0!important}
-.card{background:var(--bg-card)!important;border:1px solid var(--border)!important;border-radius:10px!important;padding:16px 18px!important}
-.card:hover{border-color:rgba(0,0,0,0.12)!important}
-label{color:var(--text-secondary)!important;font-size:12px!important}
-input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{background:#f9fafb!important;border:1px solid rgba(0,0,0,0.1)!important;color:var(--text-primary)!important;border-radius:7px!important}
-input:focus,select:focus,textarea:focus{border-color:rgba(16,185,129,0.45)!important;background:#fff!important}
-select option{background:#fff!important;color:#111827!important}
-.section-label{color:var(--text-muted)!important;font-size:10px!important}
-.btn{background:#fff!important;border:1px solid rgba(0,0,0,0.1)!important;color:var(--text-primary)!important;border-radius:7px!important}
-.btn:hover{background:#f9fafb!important}
-.btn-primary{background:#10b981!important;color:#fff!important;border-color:#10b981!important}
-.btn-primary:hover{background:#059669!important}
-.gate{background:#f9fafb!important;border:1px solid rgba(0,0,0,0.08)!important;color:var(--text-muted)!important}
-.gate.pass{background:rgba(16,185,129,0.06)!important;border-color:rgba(16,185,129,0.3)!important;color:#059669!important}
-.gate.fail{background:rgba(239,68,68,0.05)!important;border-color:rgba(239,68,68,0.2)!important;color:#dc2626!important}
-.outcome-btn{background:#f9fafb!important;border:1px solid rgba(0,0,0,0.09)!important;color:var(--text-muted)!important}
-.outcome-btn.active-win{background:rgba(16,185,129,0.08)!important;border:2px solid #10b981!important;color:#059669!important}
-.outcome-btn.active-loss{background:rgba(239,68,68,0.07)!important;border:2px solid #ef4444!important;color:#dc2626!important}
-.outcome-btn.active-be{background:rgba(245,158,11,0.07)!important;border:2px solid #f59e0b!important;color:#b45309!important}
-.outcome-btn.active-skip{background:rgba(0,0,0,0.04)!important;border-color:rgba(0,0,0,0.2)!important;color:var(--text-primary)!important}
-.green-bg{background:rgba(16,185,129,0.08)!important;color:#059669!important;border:1px solid rgba(16,185,129,0.2)!important}
-.red-bg{background:rgba(239,68,68,0.07)!important;color:#dc2626!important;border:1px solid rgba(239,68,68,0.2)!important}
-.amber-bg{background:rgba(245,158,11,0.07)!important;color:#b45309!important;border:1px solid rgba(245,158,11,0.2)!important}
-.badge{background:rgba(0,0,0,0.04)!important;color:var(--text-secondary)!important;border:1px solid rgba(0,0,0,0.07)!important}
-.metric-card{background:#fff!important;border:1px solid rgba(0,0,0,0.07)!important}
-.metric-val{color:var(--text-primary)!important}
-.metric-lbl{color:var(--text-muted)!important}
-.log-wrap{border:1px solid rgba(0,0,0,0.07)!important}
-.log-table th{background:#f9fafb!important;color:var(--text-muted)!important;border-bottom:1px solid rgba(0,0,0,0.07)!important;font-size:10px!important}
-.log-table td{color:var(--text-primary)!important;border-bottom:1px solid rgba(0,0,0,0.05)!important}
-.log-table tr:hover td{background:rgba(0,0,0,0.02)!important}
-.no-trades{color:var(--text-muted)!important}
-.star{color:rgba(0,0,0,0.1)!important}
-.star.lit{color:#10b981!important}
-.check-item{color:var(--text-secondary)!important}
-.check-group-title{color:var(--text-primary)!important}
-.mistakes-list{background:#f9fafb!important;border:1px solid rgba(0,0,0,0.07)!important}
-.mistake-item{color:var(--text-secondary)!important}
-.mistake-item:hover{background:rgba(0,0,0,0.03)!important}
-.mistake-item.selected{background:rgba(245,158,11,0.07)!important;color:var(--text-primary)!important}
-.mistake-dot{border-color:rgba(0,0,0,0.15)!important}
-.warn-bar{background:rgba(245,158,11,0.07)!important;border-color:rgba(245,158,11,0.2)!important;color:#b45309!important}
-.danger-bar{background:rgba(239,68,68,0.06)!important;border-color:rgba(239,68,68,0.2)!important;color:#dc2626!important}
-.prog-bar{background:rgba(0,0,0,0.07)!important}
-.mode-btn{background:#f9fafb!important;border:1px solid rgba(0,0,0,0.08)!important;color:var(--text-secondary)!important}
-.mode-btn.active{background:rgba(16,185,129,0.08)!important;color:#059669!important;border-color:rgba(16,185,129,0.3)!important}
-.cal-grid td{background:#f9fafb!important;border-color:rgba(0,0,0,0.05)!important;color:var(--text-muted)!important}
-.cal-grid td.has-trade{background:#fff!important}
-.cal-grid td.today{border-color:#10b981!important;background:rgba(16,185,129,0.05)!important}
-.cal-grid th{color:var(--text-muted)!important}
-.week-card,.month-total-card{background:#fff!important;border-color:rgba(0,0,0,0.07)!important}
-.week-lbl,.week-trades{color:var(--text-muted)!important}
-.dash-metric{background:#fff!important;border:1px solid rgba(0,0,0,0.07)!important}
-.dash-chart-card,.dash-recent{background:#fff!important;border:1px solid rgba(0,0,0,0.07)!important}
-.dash-metric-label,.dash-card-title{color:var(--text-muted)!important}
-.dash-metric-val{color:var(--text-primary)!important}
-.dash-cal-grid td{background:rgba(0,0,0,0.01)!important;border-color:rgba(0,0,0,0.04)!important}
-.dash-legend-item{border-bottom-color:rgba(0,0,0,0.05)!important}
-.tclass-btn{background:#f9fafb!important;border:1px solid rgba(0,0,0,0.08)!important;color:var(--text-muted)!important}
-#page-log>div>h2{color:var(--text-primary)!important}
-.page-header h2{color:var(--text-primary)!important}
-.page-header p{color:var(--text-muted)!important}
-.qotd-log-card{background:#fff!important}
-#qotd-text{color:var(--text-primary)!important}
-#qotd-author{color:var(--text-muted)!important}
-.collapsible-header:hover .collapse-icon{color:var(--text-primary)!important}
-.collapse-icon{color:var(--text-muted)!important}
-#timer-display{color:var(--text-primary)!important}
-#timer-label,#timer-sub{color:var(--text-muted)!important}
+
+/* --- Base --- */
+*{box-sizing:border-box}
+html,body{background:#f5f5f5!important;color:#111!important;font-family:'Inter',system-ui,sans-serif!important;padding:0!important;margin:0!important;max-width:none!important;border-top:none!important;box-shadow:none!important;min-height:100vh}
+body{display:flex!important}
+
+/* --- Sidebar --- */
+#sidebar{background:#1a1a1a!important;border-right:1px solid rgba(255,255,255,0.07)!important}
+.sb-logo-text{color:#fff!important}
+.sb-logo-sub{color:rgba(255,255,255,0.3)!important}
+.sb-nav-item{color:rgba(255,255,255,0.45)!important;background:none!important}
+.sb-nav-item:hover{background:rgba(255,255,255,0.06)!important;color:rgba(255,255,255,0.85)!important}
+.sb-nav-item.active{background:rgba(255,255,255,0.1)!important;color:#fff!important;font-weight:500!important}
+.sb-section-label{color:rgba(255,255,255,0.25)!important}
+.sb-clock{background:rgba(255,255,255,0.05)!important;border:1px solid rgba(255,255,255,0.08)!important}
+.sb-clock-label{color:rgba(255,255,255,0.3)!important}
+.sb-clock-time{color:#fff!important;font-family:'JetBrains Mono',monospace!important}
+.sb-streak{color:rgba(255,255,255,0.3)!important}
+#sidebar .profile-btn{background:rgba(255,255,255,0.05)!important;border:1px solid rgba(255,255,255,0.1)!important;color:rgba(255,255,255,0.4)!important}
+#sidebar .profile-btn.active{background:rgba(255,255,255,0.12)!important;color:#fff!important;border-color:rgba(255,255,255,0.25)!important}
+
+/* --- Main content --- */
+#main-content{background:#f5f5f5!important;margin-left:220px!important}
+.page-header h2,.page-header h1,h1,h2{color:#111!important}
+.page-header p{color:#999!important}
+
+/* --- Cards --- */
+.card,.dash-chart-card,.dash-recent,.dash-metric,.metric-card{background:#fff!important;border:1px solid #e0e0e0!important;border-radius:10px!important;color:#111!important}
+.card:hover,.dash-metric:hover{border-color:#ccc!important}
+.section-label,.dash-metric-label,.dash-card-title,.metric-lbl{color:#999!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.08em!important;font-weight:600!important}
+.dash-metric-val,.metric-val{color:#111!important;font-family:'JetBrains Mono',monospace!important}
+.dash-metric-val.positive{color:#16a34a!important}
+.dash-metric-val.negative{color:#dc2626!important}
+.dash-metric-sub,.dash-trade-date,.dash-trade-draw,.dash-legend-left{color:#999!important}
+
+/* --- Inputs & labels --- */
+label{color:#555!important;font-size:12px!important}
+input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{background:#fff!important;border:1px solid #ddd!important;color:#111!important;font-family:'Inter',sans-serif!important;border-radius:7px!important;font-size:13px!important}
+input:focus,select:focus,textarea:focus{border-color:#999!important;outline:none!important;background:#fff!important}
+input[type=date],input[type=time]{color-scheme:light!important}
+select option{background:#fff!important;color:#111!important}
+
+/* --- Buttons --- */
+.btn{background:#fff!important;border:1px solid #ddd!important;color:#111!important;border-radius:7px!important;font-family:'Inter',sans-serif!important}
+.btn:hover{background:#f5f5f5!important;border-color:#bbb!important}
+.btn-primary{background:#111!important;color:#fff!important;border-color:#111!important;box-shadow:none!important}
+.btn-primary:hover{background:#333!important}
+.btn-sm{padding:5px 11px!important;font-size:12px!important}
+
+/* --- Gate --- */
+.gate{background:#f9f9f9!important;border:1px solid #e0e0e0!important;color:#999!important}
+.gate.pass{background:#f0fdf4!important;border-color:#86efac!important;color:#16a34a!important}
+.gate.fail{background:#fef2f2!important;border-color:#fca5a5!important;color:#dc2626!important}
+
+/* --- Checklist --- */
+.check-item{color:#555!important}
+.check-item input[type=checkbox]{accent-color:#111!important}
+.check-group-title{color:#111!important;font-size:11px!important;font-weight:600!important;text-transform:uppercase!important;letter-spacing:.05em!important}
+.collapse-icon{color:#999!important}
+
+/* --- Stars --- */
+.star{color:#ddd!important;font-size:20px!important}
+.star.lit{color:#111!important}
+
+/* --- Outcome buttons --- */
+.outcome-btn{background:#fff!important;border:1px solid #ddd!important;color:#999!important;font-family:'Inter',sans-serif!important}
+.outcome-btn:hover{border-color:#999!important;color:#555!important}
+.outcome-btn.active-win{background:#f0fdf4!important;border:2px solid #16a34a!important;color:#16a34a!important}
+.outcome-btn.active-loss{background:#fef2f2!important;border:2px solid #dc2626!important;color:#dc2626!important}
+.outcome-btn.active-be{background:#fffbeb!important;border:2px solid #d97706!important;color:#d97706!important}
+.outcome-btn.active-skip{background:#f5f5f5!important;border-color:#999!important;color:#111!important}
+
+/* --- Trade classification --- */
+.tclass-btn{background:#fff!important;border:1px solid #ddd!important;color:#999!important;font-family:'Inter',sans-serif!important}
+
+/* --- Badges --- */
+.green-bg{background:#f0fdf4!important;color:#16a34a!important;border:1px solid #86efac!important}
+.red-bg{background:#fef2f2!important;color:#dc2626!important;border:1px solid #fca5a5!important}
+.amber-bg{background:#fffbeb!important;color:#d97706!important;border:1px solid #fcd34d!important}
+.badge{background:#f5f5f5!important;color:#555!important;border:1px solid #e0e0e0!important}
+.cal-win{color:#16a34a!important}
+.cal-loss{color:#dc2626!important}
+.cal-be{color:#d97706!important}
+
+/* --- Tables --- */
+.log-wrap{border:1px solid #e0e0e0!important;border-radius:10px!important;background:#fff!important}
+.log-table th{background:#f9f9f9!important;color:#999!important;border-bottom:1px solid #e0e0e0!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.07em!important;font-weight:600!important}
+.log-table td{color:#111!important;border-bottom:1px solid #f0f0f0!important}
+.log-table tr:hover td{background:#fafafa!important}
+.log-table tr:last-child td{border-bottom:none!important}
+.no-trades{color:#999!important}
+
+/* --- Mistakes --- */
+.mistakes-list{background:#fff!important;border:1px solid #e0e0e0!important}
+.mistake-item{color:#555!important}
+.mistake-item:hover{background:#f5f5f5!important}
+.mistake-item.selected{background:#fafafa!important;color:#111!important;border-left:2px solid #999!important}
+.mistake-dot{border-color:#ccc!important}
+.mistake-item.selected .mistake-dot{background:#111!important;border-color:#111!important}
+.mistake-cat{color:#bbb!important}
+
+/* --- Progress / warn bars --- */
+.prog-bar{background:#e0e0e0!important}
+.warn-bar{background:#fffbeb!important;border:1px solid #fcd34d!important;color:#d97706!important}
+.danger-bar{background:#fef2f2!important;border:1px solid #fca5a5!important;color:#dc2626!important}
+
+/* --- Mode toggle --- */
+.mode-btn{background:#fff!important;border:1px solid #ddd!important;color:#555!important}
+.mode-btn.active{background:#111!important;color:#fff!important;border-color:#111!important}
+
+/* --- Calendar page --- */
+.cal-grid{border-collapse:collapse!important}
+.cal-grid th{color:#999!important;font-size:11px!important;font-weight:600!important}
+.cal-grid td{background:#fff!important;border:1px solid #e8e8e8!important;color:#999!important}
+.cal-grid td.has-trade{background:#fff!important;cursor:pointer!important}
+.cal-grid td.today{border:2px solid #111!important;background:#fafafa!important}
+.cal-grid td:hover{background:#f9f9f9!important}
+.cal-day{color:#111!important;font-weight:500!important}
+
+/* --- Dashboard mini calendar --- */
+.dash-cal-grid th{color:#999!important}
+.dash-cal-grid td{background:#fafafa!important;border:1px solid #f0f0f0!important;color:#999!important}
+.dash-cal-grid td.dcal-win{background:#f0fdf4!important;border-color:#bbf7d0!important}
+.dash-cal-grid td.dcal-loss{background:#fef2f2!important;border-color:#fecaca!important}
+.dash-cal-grid td.dcal-be{background:#fffbeb!important;border-color:#fde68a!important}
+.dash-cal-grid td.dcal-today{border-color:#111!important;background:#f5f5f5!important}
+.dcal-day{color:#999!important}
+.dcal-win .dcal-pnl{color:#16a34a!important}
+.dcal-loss .dcal-pnl{color:#dc2626!important}
+.dcal-be .dcal-pnl{color:#d97706!important}
+.dash-cal-nav-title{color:#111!important}
+.dash-cal-nav button{background:#fff!important;border:1px solid #ddd!important;color:#555!important}
+.dash-cal-nav button:hover{background:#f5f5f5!important}
+
+/* --- Session timer --- */
 #session-timer-card{background:#fff!important}
-/* edit modal */
-#edit-modal>div{background:#fff!important;border:1px solid rgba(0,0,0,0.08)!important}
-/* cal day popup */
-#cal-day-popup>div{background:#fff!important;border:1px solid rgba(0,0,0,0.08)!important}
-/* detail rows in journal */
-tr[id^="detail-"] td{background:#f9fafb!important;border-bottom:1px solid rgba(0,0,0,0.05)!important}
-/* mobile nav */
-#mobile-nav{background:rgba(255,255,255,0.97)!important;border-top:1px solid rgba(0,0,0,0.07)!important}
-.mob-btn{color:#9ca3af!important}
-.mob-btn.active{color:#10b981!important}
-#mobile-more-menu{background:#fff!important;border-top:1px solid rgba(0,0,0,0.07)!important}
-.more-item{color:var(--text-primary)!important}
-.more-item:active{background:rgba(0,0,0,0.04)!important}
-/* profile buttons on sidebar stay readable on dark bg */
-#sidebar .profile-btn{background:rgba(255,255,255,0.06)!important;border-color:rgba(255,255,255,0.1)!important;color:rgba(255,255,255,0.5)!important}
-#sidebar .profile-btn.active{background:rgba(255,255,255,0.15)!important;color:#fff!important;border-color:rgba(255,255,255,0.3)!important}
+#timer-label,#timer-sub{color:#999!important}
+#timer-display{color:#111!important;font-family:'JetBrains Mono',monospace!important}
+#timer-bar{background:#111!important}
+#timer-bar-wrap{background:#e0e0e0!important}
+
+/* --- QOTD --- */
+.qotd-log-card{background:#fff!important;border-left:3px solid #111!important}
+#qotd-text{color:#111!important}
+#qotd-author{color:#999!important}
+
+/* --- Modals --- */
+#edit-modal>div{background:#fff!important;border:1px solid #e0e0e0!important;border-radius:12px!important}
+#cal-day-popup>div{background:#fff!important;border:1px solid #e0e0e0!important}
+tr[id^="detail-"] td{background:#f9f9f9!important;border-bottom:1px solid #f0f0f0!important}
+
+/* --- Stats extras --- */
+.weekly-summary{background:transparent!important}
+.week-card,.month-total-card{background:#fff!important;border:1px solid #e0e0e0!important}
+.week-lbl,.week-trades{color:#999!important}
+.week-pnl{color:#111!important;font-family:'JetBrains Mono',monospace!important}
+
+/* --- Mobile nav --- */
+#mobile-nav{background:rgba(255,255,255,0.97)!important;border-top:1px solid #e0e0e0!important}
+.mob-btn{color:#bbb!important}
+.mob-btn.active{color:#111!important}
+#mobile-more-menu{background:#fff!important;border-top:1px solid #e0e0e0!important}
+.more-item{color:#111!important}
+.more-item:active{background:#f5f5f5!important}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#ccc!important;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#aaa!important}
+
+/* --- Auth --- */
+#auth-overlay{background:rgba(0,0,0,0.5)!important}
+#auth-overlay .auth-card{background:#fff!important;border:1px solid #e0e0e0!important}
+
+/* --- Popups --- */
+#popup-passed>div{background:#fff!important;border:1px solid #e0e0e0!important}
+#popup-blown>div{background:#fff!important;border:1px solid #e0e0e0!important}
 </style>
 
 </body>
-</html>
