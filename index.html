@@ -2593,7 +2593,7 @@ function renderProp(){
   if(empty)empty.style.display='none';
   document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop firm tracker';
   document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+propSettings.account.toLocaleString()+' account':'';
-  const liveTrades=trades.filter(t=>t.mode==='live'&&t.pnl!=null);
+  const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
   const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const account=propSettings.account||0;
   const maxddAmt=propSettings.maxdd||0;
@@ -4363,7 +4363,7 @@ function renderWeekly(){
   document.getElementById('weekly-range-label').textContent=fmt(mon)+' – '+fmt(fri);
   const monStr=mon.toISOString().split('T')[0];
   const friStr=fri.toISOString().split('T')[0];
-  const weekTrades=trades.filter(t=>t.date>=monStr&&t.date<=friStr&&t.mode==='live');
+  const weekTrades=trades.filter(t=>t.date>=monStr&&t.date<=friStr);
   const active=weekTrades.filter(t=>t.outcome!=='skip');
   const wins=active.filter(t=>t.outcome==='win');
   document.getElementById('w-trades').textContent=active.length;
@@ -4411,7 +4411,7 @@ function renderWeekly(){
   const{mon:lastMon,fri:lastFri,key:lastKey}=getWeekDates(currentWeekOffset-1);
   const lastMonStr=lastMon.toISOString().split('T')[0];
   const lastFriStr=lastFri.toISOString().split('T')[0];
-  const lastWeekTrades=trades.filter(t=>t.date>=lastMonStr&&t.date<=lastFriStr&&t.mode==='live');
+  const lastWeekTrades=trades.filter(t=>t.date>=lastMonStr&&t.date<=lastFriStr);
   const lastEmotMap={};
   lastWeekTrades.forEach(t=>{
     if(t.emotion)lastEmotMap[t.emotion]=(lastEmotMap[t.emotion]||0)+1;
@@ -6104,7 +6104,7 @@ function calcFuzeScore(tArr){
   const wrScore=Math.min(wrPct/0.60,1)*25;
 
   // Avg discipline rating
-  const discs=completed.filter(t=>t.disc&&t.disc>0).map(t=>t.disc);
+  const discs=completed.filter(t=>t.discRating&&t.discRating>0).map(t=>t.discRating);
   const avgDisc=discs.length>0?discs.reduce((a,b)=>a+b,0)/discs.length:0;
   const discScore=(avgDisc/5)*25;
 
@@ -6114,7 +6114,7 @@ function calcFuzeScore(tArr){
   const classScore=classified.length>0?Math.min(validPct,1)*20:0;
 
   // Avg RR (wins only, capped at 2R)
-  const rrVals=completed.filter(t=>t.rr&&parseFloat(t.rr)>0).map(t=>parseFloat(t.rr));
+  const rrVals=completed.filter(t=>t.rrActual&&parseFloat(t.rrActual)>0).map(t=>parseFloat(t.rrActual));
   const avgRR=rrVals.length>0?rrVals.reduce((a,b)=>a+b,0)/rrVals.length:0;
   const rrScore=Math.min(avgRR/2,1)*15;
 
@@ -6240,7 +6240,7 @@ function renderConsistencyTracker(){
       tradeDays++;
       const hasInvalid=dayTrades.some(t=>t.tradeClass==='invalid');
       const allValid=dayTrades.every(t=>t.tradeClass==='valid-good'||t.tradeClass==='valid-bad');
-      const allHighDisc=dayTrades.every(t=>t.disc&&t.disc>=4);
+      const allHighDisc=dayTrades.every(t=>t.discRating&&t.discRating>=4);
       if(!hasInvalid&&allValid&&allHighDisc){
         bg='#16a34a'; border='none'; fullModelDays++; title='Full model followed';
       } else if(hasInvalid){
@@ -6308,10 +6308,10 @@ function renderSmartInsights(){
   }
 
   // Discipline correlation
-  const discTrades=t.filter(x=>x.disc&&x.disc>0);
+  const discTrades=t.filter(x=>x.discRating&&x.discRating>0);
   if(discTrades.length>=5){
-    const highDisc=discTrades.filter(x=>x.disc>=4);
-    const lowDisc=discTrades.filter(x=>x.disc<=2);
+    const highDisc=discTrades.filter(x=>x.discRating>=4);
+    const lowDisc=discTrades.filter(x=>x.discRating<=2);
     if(highDisc.length>=3&&lowDisc.length>=2){
       const hdWR=highDisc.filter(x=>x.outcome==='win').length/highDisc.length;
       const ldWR=lowDisc.filter(x=>x.outcome==='win').length/lowDisc.length;
@@ -6376,9 +6376,9 @@ function exportTradesToCSV(){
     t.draw||'',
     t.outcome||'',
     t.pnl||'',
-    t.rr||'',
+    t.rrActual||'',
     t.risk||'',
-    t.disc||'',
+    t.discRating||'',
     (t.emotion||'').replace(/,/g,';'),
     (t.emotionPost||'').replace(/,/g,';'),
     t.tradeClass||'',
