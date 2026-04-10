@@ -731,20 +731,23 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
 .sb-nav-item.active .sb-nav-icon,.sb-nav-item:hover .sb-nav-icon{opacity:1}
 .sb-bottom{
   margin-top:auto;
-  padding:12px 10px 14px;
+  padding:14px 10px 16px;
   border-top:1px solid var(--sidebar-border);
   flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
-.sb-clocks{display:flex;gap:6px;margin-bottom:10px}
+.sb-clocks{display:flex;gap:6px}
 .sb-clock{
   flex:1;
   background:rgba(255,255,255,0.05);
   border:1px solid rgba(255,255,255,0.08);
   border-radius:6px;
-  padding:6px 5px;
+  padding:7px 5px;
   text-align:center;
 }
-.sb-clock-label{font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:1px;letter-spacing:.05em}
+.sb-clock-label{font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:2px;letter-spacing:.05em}
 .sb-clock-time{
   font-size:13px;
   font-weight:600;
@@ -752,11 +755,11 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   color:var(--win);
   line-height:1.2;
 }
-.sb-profile-btns{display:flex;gap:4px;margin-bottom:8px}
+.sb-profile-btns{display:flex;gap:4px}
 .sb-profile-btns .profile-btn{
   flex:1;
-  padding:5px 3px;
-  font-size:10.5px;
+  padding:7px 3px;
+  font-size:11px;
   text-align:center;
   border-radius:5px;
   font-family:'Inter',sans-serif;
@@ -764,8 +767,9 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Inter',sans-serif}
   border-color:rgba(255,255,255,0.1);
   color:rgba(255,255,255,0.5);
 }
-.sb-streak{font-size:10px;color:rgba(255,255,255,0.3);text-align:center;padding:2px 0}
+.sb-streak{font-size:10px;color:rgba(255,255,255,0.3);text-align:center;padding:0}
 
+#sb-signout-btn:hover{background:rgba(255,255,255,0.08)!important;color:rgba(255,255,255,0.7)!important}
 /* ── Profile buttons ── */
 .profile-btn{
   padding:5px 14px;
@@ -1229,19 +1233,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 #auth-overlay input{margin-bottom:12px}
 #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 
-/* ── Sign-out button ── */
-#auth-signout-btn{
-  position:fixed!important;
-  bottom:16px!important;
-  left:16px!important;
-  z-index:9998!important;
-  opacity:.25!important;
-  font-size:10px!important;
-  padding:3px 9px!important;
-  border-radius:5px!important;
-}
-#auth-signout-btn:hover{opacity:.6!important}
-
 /* ── Trade classification ── */
 #trade-class-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .tclass-btn{
@@ -1360,6 +1351,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <span style="margin-left:auto">
         <span id="dl-toggle-track"><span id="dl-toggle-thumb"></span></span>
       </span>
+    </button>
+    <button id="sb-signout-btn" onclick="authSignOut()" style="display:none;width:100%;padding:7px 9px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;font-weight:400;text-align:left;transition:background .12s,color .12s;display:none">
+      <span style="margin-right:8px;opacity:.6">⎋</span>Log out
     </button>
   </div>
 </aside>
@@ -2434,7 +2428,7 @@ function authHideOverlay(){
 
 async function onAuthSuccess(){
   authHideOverlay();
-  const sob=document.getElementById('auth-signout-btn');
+  const sob=document.getElementById('sb-signout-btn');
   if(sob) sob.style.display='';
   const fDateEl=document.getElementById('f-date');
   const mDateEl=document.getElementById('m-date');
@@ -4815,7 +4809,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
         const today=new Date().toISOString().split('T')[0];
         if(fDateEl) fDateEl.value=today;
         if(mDateEl) mDateEl.value=today;
-        const sob=document.getElementById('auth-signout-btn');
+        const sob=document.getElementById('sb-signout-btn');
         if(sob) sob.style.display='';
         await loadAllData();
         setTimeout(()=>{updateJournalStreak();},100);
@@ -6558,8 +6552,6 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 </div><!-- end #main-content -->
-
-<button type="button" id="auth-signout-btn" onclick="authSignOut()" title="Sign out" style="position:fixed;bottom:14px;left:14px;z-index:9998;opacity:0.25;font-size:10px;padding:3px 9px;border:1px solid rgba(0,0,0,0.1);border-radius:5px;background:#f3f4f6;color:#6b7280;cursor:pointer;font-family:Outfit,sans-serif;display:none">Out</button>
 
 <style>
 /* ═══════════════════════════════════════════════
