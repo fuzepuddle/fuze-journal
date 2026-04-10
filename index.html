@@ -4516,10 +4516,13 @@ function switchProfile(p, btn){
   if(dailyChartInstance){dailyChartInstance.destroy();dailyChartInstance=null;}
   if(window._outChart){window._outChart.destroy();window._outChart=null;}
   if(monthlyChartInstance){monthlyChartInstance.destroy();monthlyChartInstance=null;}
-  // Refresh current tab
-  const activeTab=document.querySelector('.tab.active');
-  if(activeTab){
-    const t=activeTab.getAttribute('data-tab');
+  // Detect active tab — check sb-nav-item first (sidebar redesign), then .tab fallback
+  let t=null;
+  const activeSb=document.querySelector('.sb-nav-item.active');
+  if(activeSb) t=activeSb.getAttribute('data-tab');
+  if(!t){const activeTab=document.querySelector('.tab.active');if(activeTab)t=activeTab.getAttribute('data-tab');}
+  if(!t){const activePg=document.querySelector('.page.active');if(activePg)t=activePg.id.replace('page-','');}
+  if(t){
     if(t==='log'){setTimeout(prefillCalc,100);}
     else if(t==='dashboard')renderDashboard();
     else if(t==='journal')renderJournal();
@@ -4528,6 +4531,8 @@ function switchProfile(p, btn){
     else if(t==='calendar')renderCalendar();
     else if(t==='missed')renderMissed();
     else if(t==='weekly')renderWeekly();
+    else if(t==='presession'){if(typeof loadPresession==='function')loadPresession();}
+    else if(t==='notebook'){if(typeof loadNotebookForDate==='function')loadNotebookForDate();}
   }
   clearForm();
   applyProfileUI();
