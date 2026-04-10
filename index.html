@@ -1334,6 +1334,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="sb-section-label">Review</div>
     <button class="sb-nav-item" onclick="showTab('weekly')" data-tab="weekly"><span class="sb-nav-icon">◎</span> Weekly Review</button>
     <button class="sb-nav-item" onclick="showTab('presession')" data-tab="presession"><span class="sb-nav-icon">◐</span> Pre-Session</button>
+    <button class="sb-nav-item" onclick="showTab('notebook')" data-tab="notebook"><span class="sb-nav-icon">✎</span> Notebook</button>
   </div>
 
   <div class="sb-bottom">
@@ -1463,6 +1464,50 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         </thead>
         <tbody id="dash-cal-body"></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Fuze Score + Monthly Consistency row -->
+  <div class="dash-charts-row" style="margin-top:12px">
+    <!-- Fuze Score -->
+    <div class="dash-chart-card" id="fuze-score-card">
+      <div class="dash-card-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Fuze Score</span>
+        <span style="font-size:10px;color:#9ca3af;font-weight:400">composite performance</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;margin-top:8px">
+        <!-- Ring -->
+        <div style="position:relative;width:100px;height:100px;flex-shrink:0">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+            <circle id="fuze-score-ring" cx="50" cy="50" r="40" fill="none" stroke="var(--win,#16a34a)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"
+              transform="rotate(-90 50 50)" style="transition:stroke-dashoffset 1s ease,stroke .5s"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div id="fuze-score-val" style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary,#111);line-height:1">—</div>
+            <div style="font-size:9px;color:#9ca3af;letter-spacing:.07em;text-transform:uppercase;margin-top:2px">/100</div>
+          </div>
+        </div>
+        <!-- Breakdown -->
+        <div id="fuze-score-breakdown" style="flex:1;display:flex;flex-direction:column;gap:6px;font-size:12px"></div>
+      </div>
+      <div id="fuze-score-label" style="margin-top:10px;font-size:12px;color:#9ca3af;font-style:italic"></div>
+    </div>
+    <!-- Monthly Consistency -->
+    <div class="dash-chart-card" id="consistency-card">
+      <div class="dash-card-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Month Consistency</span>
+        <span id="consistency-month-lbl" style="font-size:10px;color:#9ca3af;font-weight:400"></span>
+      </div>
+      <div id="consistency-grid" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px"></div>
+      <div style="display:flex;gap:14px;margin-top:10px;font-size:11px;color:#9ca3af">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--win,#16a34a);display:inline-block"></span>Full model</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Trade (partial)</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block"></span>Invalid</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.08);display:inline-block"></span>No trade</span>
+      </div>
+      <div id="consistency-stat" style="margin-top:8px;font-size:12px;color:#9ca3af"></div>
     </div>
   </div>
 
@@ -1747,6 +1792,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div class="section-label" style="margin-bottom:0">Trade log</div>
       <span id="trade-count-badge" style="background:#1e1e1e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2px 10px;font-size:13px;color:#4b5563"></span>
     </div>
+    <button class="btn btn-sm" onclick="exportTradesToCSV()" title="Download all trades as a spreadsheet">⬇ Export CSV</button>
   </div>
   <div style="margin-bottom:10px">
     <input type="text" id="journal-search" placeholder="Search notes, draws, mistakes..." oninput="renderJournal()" style="font-size:13px;padding:7px 12px;max-width:340px">
@@ -1787,6 +1833,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <!-- Filter bar -->
   <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
     <div id="s-tilt"></div>
+  </div>
+
+  <!-- Smart Insights strip -->
+  <div id="smart-insights-card" class="card" style="margin-bottom:12px;display:none">
+    <div class="section-label" style="margin-bottom:10px">🧠 Smart Insights</div>
+    <div id="smart-insights-list" style="display:flex;flex-direction:column;gap:7px"></div>
   </div>
 
   <!-- Row 1: 6 key metrics -->
@@ -2120,6 +2172,90 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       </table>
     </div>
 
+  </div>
+</div>
+
+<!-- NOTEBOOK -->
+<div class="page" id="page-notebook">
+  <div class="page-header">
+    <h2>Notebook</h2>
+    <div class="cal-nav">
+      <button onclick="notebookPrev()">&#8249;</button>
+      <span id="notebook-date-lbl" style="font-size:13px;font-weight:500;min-width:110px;text-align:center"></span>
+      <button onclick="notebookNext()">&#8250;</button>
+      <button onclick="notebookToday()" style="margin-left:4px">Today</button>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="section-label" style="margin-bottom:10px">Mood &amp; Energy</div>
+      <div style="margin-bottom:10px">
+        <label style="margin-bottom:6px">Mood</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="nb-mood-row">
+          <button type="button" class="nb-mood-btn" data-val="great" onclick="setNbMood('great',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😄 Great</button>
+          <button type="button" class="nb-mood-btn" data-val="good" onclick="setNbMood('good',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">🙂 Good</button>
+          <button type="button" class="nb-mood-btn" data-val="neutral" onclick="setNbMood('neutral',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😐 Neutral</button>
+          <button type="button" class="nb-mood-btn" data-val="off" onclick="setNbMood('off',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😔 Off</button>
+          <button type="button" class="nb-mood-btn" data-val="bad" onclick="setNbMood('bad',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😤 Stressed</button>
+        </div>
+      </div>
+      <div>
+        <label style="margin-bottom:6px">Energy level</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="nb-energy-row">
+          <button type="button" class="nb-energy-btn" data-val="high" onclick="setNbEnergy('high',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">⚡ High</button>
+          <button type="button" class="nb-energy-btn" data-val="medium" onclick="setNbEnergy('medium',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">🔋 Medium</button>
+          <button type="button" class="nb-energy-btn" data-val="low" onclick="setNbEnergy('low',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">🪫 Low</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="margin-bottom:10px">Today's Intent</div>
+      <div style="margin-bottom:10px">
+        <label>Trading intention for today</label>
+        <select id="nb-intent">
+          <option value="">—</option>
+          <option>Trade if setup is perfect ✓</option>
+          <option>Watch only — no trades today</option>
+          <option>Focus on patience</option>
+          <option>Focus on confirmation — no early entries</option>
+          <option>Rest day — markets closed / personal</option>
+          <option>Back to basics — just follow the model</option>
+        </select>
+      </div>
+      <div>
+        <label>One focus for today</label>
+        <input type="text" id="nb-focus" placeholder="e.g. Wait for the 1M close, don't jump early">
+      </div>
+    </div>
+  </div>
+  <div class="card gap">
+    <div class="section-label">Free Notes</div>
+    <div class="gap">
+      <label>Morning thoughts / market observations</label>
+      <textarea id="nb-morning" placeholder="What's on your mind? Macro context, key levels you're watching, general state..." style="min-height:80px"></textarea>
+    </div>
+    <div class="gap">
+      <label>Post-session reflection</label>
+      <textarea id="nb-postsession" placeholder="How did the session go? What did price do? Did a setup appear? How did you feel?" style="min-height:80px"></textarea>
+    </div>
+    <div>
+      <label>Anything else</label>
+      <textarea id="nb-other" placeholder="Ideas, pattern notes, things to research, reminders..." style="min-height:60px"></textarea>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:1rem">
+    <button class="btn btn-primary" onclick="saveNotebook()">Save →</button>
+  </div>
+  <!-- Past entries -->
+  <div class="card" style="margin-top:8px">
+    <div class="collapsible-header" onclick="toggleCollapse('nb-history-body')">
+      <div class="section-label" style="margin-bottom:0">Past entries</div>
+      <span class="collapse-icon">▼</span>
+    </div>
+    <div id="nb-history-body" class="collapsible-body collapsed">
+      <div id="nb-history-list" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+      <div id="nb-history-empty" style="font-size:13px;color:#9ca3af;padding:12px 0">No notebook entries yet.</div>
+    </div>
   </div>
 </div>
 
@@ -5313,6 +5449,7 @@ document.addEventListener('DOMContentLoaded',function(){
   <div class="more-item" onclick="mobNav('prop')">      <span class="more-item-icon">📊</span>Prop firm</div>
   <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
+  <div class="more-item" onclick="mobNav('notebook')">  <span class="more-item-icon">✎</span>Notebook</div>
 
 </div>
 
@@ -5934,6 +6071,487 @@ document.addEventListener('click',function(e){
 
 })();
 </script>
+
+<script>
+/* ═══════════════════════════════════════════════
+   NEW FEATURES: Fuze Score · Consistency Tracker ·
+   Notebook · CSV Export · Smart Insights
+   ═══════════════════════════════════════════════ */
+
+/* ── FUZE SCORE ─────────────────────────────────
+   Composite 0–100 score. Shown on dashboard.
+   Components:
+     Win rate        25pts  (60% wr = full marks)
+     Avg discipline  25pts  (5★ = full marks)
+     Valid setup %   20pts  (% of non-invalid trades)
+     Avg RR          15pts  (2R avg = full marks)
+     Neutral emotion 15pts  (% entries w/ neutral state)
+─────────────────────────────────────────────── */
+function calcFuzeScore(tArr){
+  if(!tArr||tArr.length===0) return null;
+  const completed=tArr.filter(t=>t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');
+  if(completed.length===0) return null;
+
+  // Win rate (exclude BE from denominator for purity)
+  const wl=completed.filter(t=>t.outcome==='win'||t.outcome==='loss');
+  const wins=wl.filter(t=>t.outcome==='win').length;
+  const wrPct=wl.length>0?wins/wl.length:0;
+  const wrScore=Math.min(wrPct/0.60,1)*25;
+
+  // Avg discipline rating
+  const discs=completed.filter(t=>t.disc&&t.disc>0).map(t=>t.disc);
+  const avgDisc=discs.length>0?discs.reduce((a,b)=>a+b,0)/discs.length:0;
+  const discScore=(avgDisc/5)*25;
+
+  // Valid setup %
+  const classified=completed.filter(t=>t.tradeClass);
+  const validPct=classified.length>0?classified.filter(t=>t.tradeClass==='valid-good'||t.tradeClass==='valid-bad').length/classified.length:0;
+  const classScore=classified.length>0?Math.min(validPct,1)*20:0;
+
+  // Avg RR (wins only, capped at 2R)
+  const rrVals=completed.filter(t=>t.rr&&parseFloat(t.rr)>0).map(t=>parseFloat(t.rr));
+  const avgRR=rrVals.length>0?rrVals.reduce((a,b)=>a+b,0)/rrVals.length:0;
+  const rrScore=Math.min(avgRR/2,1)*15;
+
+  // Neutral/patient emotion %
+  const withEmo=completed.filter(t=>t.emotion);
+  const neutralPct=withEmo.length>0?withEmo.filter(t=>t.emotion==='Neutral ✓'||t.emotion==='Patient / waiting').length/withEmo.length:0;
+  const emoScore=withEmo.length>0?Math.min(neutralPct,1)*15:0;
+
+  const total=Math.round(wrScore+discScore+classScore+rrScore+emoScore);
+  return{
+    total:Math.min(total,100),
+    components:[
+      {label:'Win rate',score:Math.round(wrScore),max:25,pct:wrPct},
+      {label:'Discipline',score:Math.round(discScore),max:25,avg:avgDisc},
+      {label:'Valid setups',score:Math.round(classScore),max:20,pct:validPct},
+      {label:'Avg RR',score:Math.round(rrScore),max:15,avg:avgRR},
+      {label:'Neutral entry',score:Math.round(emoScore),max:15,pct:neutralPct}
+    ]
+  };
+}
+
+function getFuzeLabel(score){
+  if(score>=85) return'Elite execution 🏆';
+  if(score>=70) return'Strong & consistent 🔥';
+  if(score>=55) return'Developing well 📈';
+  if(score>=40) return'Building foundations 🧱';
+  if(score>=20) return'Early days — keep logging 📝';
+  return'Not enough data yet';
+}
+
+function getFuzeColor(score){
+  if(score>=75) return'#16a34a';
+  if(score>=50) return'#f59e0b';
+  return'#ef4444';
+}
+
+function renderFuzeScore(){
+  const ring=document.getElementById('fuze-score-ring');
+  const valEl=document.getElementById('fuze-score-val');
+  const breakdown=document.getElementById('fuze-score-breakdown');
+  const lbl=document.getElementById('fuze-score-label');
+  if(!ring||!valEl) return;
+
+  const result=calcFuzeScore(trades);
+  if(!result){
+    valEl.textContent='—';
+    if(breakdown) breakdown.innerHTML='<span style="color:#9ca3af;font-size:12px">Log at least one completed trade to generate your Fuze Score.</span>';
+    if(lbl) lbl.textContent='';
+    return;
+  }
+
+  const s=result.total;
+  const colour=getFuzeColor(s);
+  const circumference=251.2;
+  const offset=circumference-(circumference*(s/100));
+
+  ring.style.strokeDashoffset=offset;
+  ring.style.stroke=colour;
+  valEl.textContent=s;
+  valEl.style.color=colour;
+
+  if(breakdown){
+    breakdown.innerHTML=result.components.map(c=>{
+      const pct=c.score/c.max;
+      const barColor=pct>=0.8?'#16a34a':pct>=0.5?'#f59e0b':'#ef4444';
+      const detail=c.pct!==undefined?Math.round(c.pct*100)+'%':c.avg!==undefined?c.avg.toFixed(1):'';
+      return`<div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="color:var(--text-secondary,#555)">${c.label}</span>
+          <span style="font-weight:600;color:var(--text-primary,#111)">${c.score}<span style="color:#9ca3af;font-weight:400">/${c.max}</span>${detail?' <span style="color:#9ca3af;font-size:10px">('+detail+')</span>':''}</span>
+        </div>
+        <div style="height:3px;background:rgba(0,0,0,0.07);border-radius:2px">
+          <div style="height:100%;width:${Math.round(pct*100)}%;background:${barColor};border-radius:2px;transition:width .6s ease"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if(lbl) lbl.textContent=getFuzeLabel(s);
+}
+
+/* ── MONTHLY CONSISTENCY TRACKER ───────────────
+   For each weekday in current month, show a coloured
+   dot: green=full model (disc ≥4 & valid class),
+   amber=traded (any class), red=invalid setup,
+   empty=no trade that day.
+─────────────────────────────────────────────── */
+function renderConsistencyTracker(){
+  const grid=document.getElementById('consistency-grid');
+  const stat=document.getElementById('consistency-stat');
+  const monthLbl=document.getElementById('consistency-month-lbl');
+  if(!grid) return;
+
+  const now=new Date();
+  const year=now.getFullYear();
+  const month=now.getMonth();
+  const today=now.toISOString().slice(0,10);
+  if(monthLbl) monthLbl.textContent=now.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  // Build map: date -> trade info
+  const tradeMap={};
+  trades.forEach(t=>{
+    if(!t.date) return;
+    const d=t.date.slice(0,10);
+    if(d.slice(0,7)!==`${year}-${String(month+1).padStart(2,'0')}`) return;
+    if(!tradeMap[d]) tradeMap[d]=[];
+    tradeMap[d].push(t);
+  });
+
+  let fullModelDays=0, tradeDays=0;
+  let html='';
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow=new Date(dateStr).getDay();
+    if(dow===0||dow===6) continue; // skip weekends
+
+    const dayTrades=tradeMap[dateStr];
+    let bg='rgba(0,0,0,0.05)';
+    let border='1px solid rgba(0,0,0,0.07)';
+    let title='No trade';
+
+    if(dayTrades&&dayTrades.length>0){
+      tradeDays++;
+      const hasInvalid=dayTrades.some(t=>t.tradeClass==='invalid');
+      const allValid=dayTrades.every(t=>t.tradeClass==='valid-good'||t.tradeClass==='valid-bad');
+      const allHighDisc=dayTrades.every(t=>t.disc&&t.disc>=4);
+      if(!hasInvalid&&allValid&&allHighDisc){
+        bg='#16a34a'; border='none'; fullModelDays++; title='Full model followed';
+      } else if(hasInvalid){
+        bg='#ef4444'; border='none'; title='Invalid setup taken';
+      } else {
+        bg='#f59e0b'; border='none'; title='Traded (partial model)';
+      }
+    }
+
+    const isFuture=dateStr>today;
+    const isToday=dateStr===today;
+    html+=`<div title="${dateStr} — ${title}" style="width:22px;height:22px;border-radius:4px;background:${isFuture?'rgba(0,0,0,0.03)':bg};border:${isToday?'2px solid var(--accent,#10b981)':border};display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.9);font-weight:600;cursor:default;opacity:${isFuture?0.3:1}">${d}</div>`;
+  }
+  grid.innerHTML=html;
+  if(stat) stat.textContent=tradeDays>0?`${fullModelDays} full-model day${fullModelDays!==1?'s':''} out of ${tradeDays} trading day${tradeDays!==1?'s':''} this month`:'No trades logged this month yet.';
+}
+
+/* ── SMART INSIGHTS ─────────────────────────────
+   Surfaces data-driven observations from trade log.
+─────────────────────────────────────────────── */
+function renderSmartInsights(){
+  const card=document.getElementById('smart-insights-card');
+  const list=document.getElementById('smart-insights-list');
+  if(!card||!list) return;
+
+  const t=trades.filter(x=>x.outcome==='win'||x.outcome==='loss'||x.outcome==='be');
+  if(t.length<4){ card.style.display='none'; return; }
+
+  const insights=[];
+
+  // Long vs Short win rate
+  const longs=t.filter(x=>x.direction==='Long');
+  const shorts=t.filter(x=>x.direction==='Short');
+  const longWR=longs.length>0?longs.filter(x=>x.outcome==='win').length/longs.length:null;
+  const shortWR=shorts.length>0?shorts.filter(x=>x.outcome==='win').length/shorts.length:null;
+  if(longWR!==null&&shortWR!==null&&longs.length>=3&&shorts.length>=3){
+    const diff=Math.abs(longWR-shortWR);
+    if(diff>0.15){
+      const better=longWR>shortWR?'long':'short';
+      const worse=better==='long'?'short':'long';
+      const betterPct=Math.round(Math.max(longWR,shortWR)*100);
+      const worsePct=Math.round(Math.min(longWR,shortWR)*100);
+      insights.push({icon:'↕',color:'#3b82f6',text:`Your <strong>${better}</strong> trades win at ${betterPct}% vs ${worsePct}% on ${worse}s. Consider being more selective on ${worse} setups.`});
+    }
+  }
+
+  // Best performing draw
+  const drawMap={};
+  t.forEach(x=>{
+    if(!x.draw) return;
+    if(!drawMap[x.draw]) drawMap[x.draw]={w:0,total:0};
+    drawMap[x.draw].total++;
+    if(x.outcome==='win') drawMap[x.draw].w++;
+  });
+  const drawArr=Object.entries(drawMap).filter(([,v])=>v.total>=3).map(([k,v])=>({draw:k,wr:v.w/v.total,n:v.total}));
+  drawArr.sort((a,b)=>b.wr-a.wr);
+  if(drawArr.length>=2){
+    const best=drawArr[0];
+    const worst=drawArr[drawArr.length-1];
+    if(best.wr-worst.wr>0.25){
+      insights.push({icon:'🎯',color:'#16a34a',text:`Best draw: <strong>${best.draw}</strong> (${Math.round(best.wr*100)}% WR over ${best.n} trades). Worst: <strong>${worst.draw}</strong> (${Math.round(worst.wr*100)}% WR). Consider if ${worst.draw} setups are worth taking.`});
+    } else if(best.wr>=0.7){
+      insights.push({icon:'🎯',color:'#16a34a',text:`<strong>${best.draw}</strong> is your strongest draw with ${Math.round(best.wr*100)}% win rate over ${best.n} trades — keep targeting it.`});
+    }
+  }
+
+  // Discipline correlation
+  const discTrades=t.filter(x=>x.disc&&x.disc>0);
+  if(discTrades.length>=5){
+    const highDisc=discTrades.filter(x=>x.disc>=4);
+    const lowDisc=discTrades.filter(x=>x.disc<=2);
+    if(highDisc.length>=3&&lowDisc.length>=2){
+      const hdWR=highDisc.filter(x=>x.outcome==='win').length/highDisc.length;
+      const ldWR=lowDisc.filter(x=>x.outcome==='win').length/lowDisc.length;
+      if(hdWR-ldWR>0.2){
+        insights.push({icon:'⭐',color:'#f59e0b',text:`High discipline trades (4–5★) win at <strong>${Math.round(hdWR*100)}%</strong> vs <strong>${Math.round(ldWR*100)}%</strong> for low discipline. Your process is your edge.`});
+      }
+    }
+  }
+
+  // Emotion correlation
+  const neutralTrades=t.filter(x=>x.emotion==='Neutral ✓'||x.emotion==='Patient / waiting');
+  const negEmoTrades=t.filter(x=>x.emotion==='FOMO / chasing'||x.emotion==='Revenge trading'||x.emotion==='Overconfident');
+  if(neutralTrades.length>=3&&negEmoTrades.length>=2){
+    const nWR=neutralTrades.filter(x=>x.outcome==='win').length/neutralTrades.length;
+    const eWR=negEmoTrades.filter(x=>x.outcome==='win').length/negEmoTrades.length;
+    if(nWR-eWR>0.2){
+      insights.push({icon:'🧘',color:'#8b5cf6',text:`Neutral emotional state yields <strong>${Math.round(nWR*100)}% WR</strong> vs <strong>${Math.round(eWR*100)}%</strong> when emotional. Protecting your state is directly protecting your P&L.`});
+    }
+  }
+
+  // Day of week
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayMap={};
+  t.forEach(x=>{
+    if(!x.date) return;
+    const dow=new Date(x.date).getDay();
+    if(!dayMap[dow]) dayMap[dow]={w:0,total:0};
+    dayMap[dow].total++;
+    if(x.outcome==='win') dayMap[dow].w++;
+  });
+  const dayArr=Object.entries(dayMap).filter(([,v])=>v.total>=3).map(([k,v])=>({day:dayNames[k],wr:v.w/v.total,n:v.total}));
+  dayArr.sort((a,b)=>b.wr-a.wr);
+  if(dayArr.length>=2&&dayArr[0].wr-dayArr[dayArr.length-1].wr>0.25){
+    insights.push({icon:'📅',color:'#06b6d4',text:`Best day: <strong>${dayArr[0].day}</strong> at ${Math.round(dayArr[0].wr*100)}% WR. Toughest: <strong>${dayArr[dayArr.length-1].day}</strong> at ${Math.round(dayArr[dayArr.length-1].wr*100)}%. Worth noting if you're feeling off on a slow day.`});
+  }
+
+  // Consecutive valid/invalid
+  const lastFive=t.slice(-5);
+  const invalidStreak=lastFive.filter(x=>x.tradeClass==='invalid').length;
+  if(invalidStreak>=3){
+    insights.push({icon:'⚠️',color:'#ef4444',text:`<strong>${invalidStreak} of your last 5 trades</strong> were tagged as invalid setups. Time to step back and re-read your model rules.`});
+  }
+
+  if(insights.length===0){ card.style.display='none'; return; }
+  card.style.display='block';
+  list.innerHTML=insights.map(i=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:rgba(0,0,0,0.03);border-radius:7px;border-left:3px solid ${i.color}">
+      <span style="font-size:16px;line-height:1.4;flex-shrink:0">${i.icon}</span>
+      <span style="font-size:12.5px;line-height:1.6;color:var(--text-secondary,#555)">${i.text}</span>
+    </div>`).join('');
+}
+
+/* ── CSV EXPORT ─────────────────────────────── */
+function exportTradesToCSV(){
+  if(!trades||trades.length===0){ alert('No trades to export.'); return; }
+  const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Risk','Discipline','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
+  const rows=trades.map(t=>[
+    t.date||'',
+    t.entryTime||'',
+    t.exitTime||'',
+    t.direction||'',
+    t.draw||'',
+    t.outcome||'',
+    t.pnl||'',
+    t.rr||'',
+    t.risk||'',
+    t.disc||'',
+    (t.emotion||'').replace(/,/g,';'),
+    (t.emotionPost||'').replace(/,/g,';'),
+    t.tradeClass||'',
+    (Array.isArray(t.mistakes)?t.mistakes.join('; '):'').replace(/,/g,';'),
+    (t.narrative||'').replace(/[\n\r,]/g,' '),
+    (t.improve||'').replace(/[\n\r,]/g,' ')
+  ]);
+  const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`fuze_trades_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ── NOTEBOOK ────────────────────────────────── */
+let allNotebooks={challenge:{},funded:{},demo:{}};
+let notebookDate=new Date().toISOString().slice(0,10);
+let nbMood='';
+let nbEnergy='';
+
+function notebookDateKey(){ return notebookDate; }
+
+function loadNotebookForDate(){
+  const notebooks=allNotebooks[currentProfile]||{};
+  const entry=notebooks[notebookDate]||{};
+  document.getElementById('nb-morning').value=entry.morning||'';
+  document.getElementById('nb-postsession').value=entry.postsession||'';
+  document.getElementById('nb-other').value=entry.other||'';
+  document.getElementById('nb-intent').value=entry.intent||'';
+  document.getElementById('nb-focus').value=entry.focus||'';
+  nbMood=entry.mood||'';
+  nbEnergy=entry.energy||'';
+  // highlight mood/energy buttons
+  document.querySelectorAll('.nb-mood-btn').forEach(b=>{ b.style.background=b.dataset.val===nbMood?'var(--win,#16a34a)':''; b.style.color=b.dataset.val===nbMood?'#fff':''; });
+  document.querySelectorAll('.nb-energy-btn').forEach(b=>{ b.style.background=b.dataset.val===nbEnergy?'var(--win,#16a34a)':''; b.style.color=b.dataset.val===nbEnergy?'#fff':''; });
+  // date label
+  const d=new Date(notebookDate+'T12:00:00');
+  const isToday=notebookDate===new Date().toISOString().slice(0,10);
+  document.getElementById('notebook-date-lbl').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+(isToday?' (Today)':'');
+  renderNotebookHistory();
+}
+
+function setNbMood(val,btn){
+  nbMood=val;
+  document.querySelectorAll('.nb-mood-btn').forEach(b=>{b.style.background='';b.style.color='';});
+  btn.style.background='var(--win,#16a34a)';
+  btn.style.color='#fff';
+}
+function setNbEnergy(val,btn){
+  nbEnergy=val;
+  document.querySelectorAll('.nb-energy-btn').forEach(b=>{b.style.background='';b.style.color='';});
+  btn.style.background='var(--win,#16a34a)';
+  btn.style.color='#fff';
+}
+
+function saveNotebook(){
+  if(!allNotebooks[currentProfile]) allNotebooks[currentProfile]={};
+  allNotebooks[currentProfile][notebookDate]={
+    date:notebookDate,
+    mood:nbMood,
+    energy:nbEnergy,
+    intent:document.getElementById('nb-intent').value,
+    focus:document.getElementById('nb-focus').value,
+    morning:document.getElementById('nb-morning').value,
+    postsession:document.getElementById('nb-postsession').value,
+    other:document.getElementById('nb-other').value
+  };
+  // Persist via same storage mechanism as existing data
+  if(typeof saveAllToStorage==='function') saveAllToStorage();
+  else { try{ localStorage.setItem('fuze_notebooks',JSON.stringify(allNotebooks)); }catch(e){} }
+  renderNotebookHistory();
+  // Brief visual feedback
+  const btn=document.querySelector('#page-notebook .btn-primary');
+  if(btn){ const orig=btn.textContent; btn.textContent='Saved ✓'; setTimeout(()=>btn.textContent=orig,1500); }
+}
+
+function notebookPrev(){
+  const d=new Date(notebookDate+'T12:00:00');
+  d.setDate(d.getDate()-1);
+  notebookDate=d.toISOString().slice(0,10);
+  loadNotebookForDate();
+}
+function notebookNext(){
+  const d=new Date(notebookDate+'T12:00:00');
+  const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  if(d>=tomorrow) return; // don't go into the future
+  d.setDate(d.getDate()+1);
+  notebookDate=d.toISOString().slice(0,10);
+  loadNotebookForDate();
+}
+function notebookToday(){
+  notebookDate=new Date().toISOString().slice(0,10);
+  loadNotebookForDate();
+}
+
+function renderNotebookHistory(){
+  const list=document.getElementById('nb-history-list');
+  const empty=document.getElementById('nb-history-empty');
+  if(!list) return;
+  const notebooks=allNotebooks[currentProfile]||{};
+  const entries=Object.values(notebooks).filter(e=>e.date&&e.date!==notebookDate).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20);
+  if(entries.length===0){ list.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  const moodEmoji={great:'😄',good:'🙂',neutral:'😐',off:'😔',bad:'😤'};
+  const energyEmoji={high:'⚡',medium:'🔋',low:'🪫'};
+  list.innerHTML=entries.map(e=>{
+    const d=new Date(e.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    const preview=(e.morning||e.postsession||'').slice(0,80)||'(no notes)';
+    return`<div style="padding:10px 12px;background:rgba(0,0,0,0.03);border-radius:7px;cursor:pointer" onclick="notebookDate='${e.date}';loadNotebookForDate()">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:12px;font-weight:600;color:var(--text-primary,#111)">${d}</span>
+        ${e.mood?`<span title="Mood">${moodEmoji[e.mood]||''}</span>`:''}
+        ${e.energy?`<span title="Energy">${energyEmoji[e.energy]||''}</span>`:''}
+        ${e.intent?`<span style="font-size:10px;color:#9ca3af;background:rgba(0,0,0,0.05);padding:1px 6px;border-radius:10px">${e.intent.split('—')[0].trim()}</span>`:''}
+      </div>
+      <div style="font-size:12px;color:#9ca3af;line-height:1.4">${preview}${(e.morning||e.postsession||'').length>80?'…':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function loadNotebookStorage(){
+  try{
+    const raw=localStorage.getItem('fuze_notebooks');
+    if(raw){ const parsed=JSON.parse(raw); if(parsed&&typeof parsed==='object') allNotebooks=parsed; }
+  }catch(e){}
+}
+
+/* ── PATCH: hook into showTab so notebook loads on open ─ */
+const _origShowTab=typeof showTab==='function'?showTab:null;
+if(_origShowTab){
+  window.showTab=function(t){
+    _origShowTab(t);
+    if(t==='notebook') loadNotebookForDate();
+    if(t==='stats') setTimeout(renderSmartInsights,50);
+    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); }
+  };
+}
+
+/* ── PATCH: hook into renderDashboard so score updates ── */
+const _origRenderDashboard=typeof renderDashboard==='function'?renderDashboard:null;
+if(_origRenderDashboard){
+  window.renderDashboard=function(){
+    _origRenderDashboard();
+    setTimeout(renderFuzeScore,100);
+    setTimeout(renderConsistencyTracker,100);
+  };
+}
+
+/* ── PATCH: hook into renderStats ── */
+const _origRenderStats=typeof renderStats==='function'?renderStats:null;
+if(_origRenderStats){
+  window.renderStats=function(){
+    _origRenderStats();
+    setTimeout(renderSmartInsights,100);
+  };
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded',function(){
+  loadNotebookStorage();
+  // init notebook date label even if not navigated yet
+  const d=new Date(notebookDate+'T12:00:00');
+  const lbl=document.getElementById('notebook-date-lbl');
+  if(lbl) lbl.textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' (Today)';
+  // dark mode ring bg
+  const applyRingBg=()=>{
+    const ring=document.getElementById('fuze-score-ring');
+    const sibling=ring&&ring.previousElementSibling;
+    if(sibling) sibling.setAttribute('stroke',document.body.classList.contains('dark-mode')?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.07)');
+  };
+  setTimeout(applyRingBg,200);
+});
+</script>
 </div><!-- end #main-content -->
 
 <button type="button" id="auth-signout-btn" onclick="authSignOut()" title="Sign out" style="position:fixed;bottom:14px;left:14px;z-index:9998;opacity:0.25;font-size:10px;padding:3px 9px;border:1px solid rgba(0,0,0,0.1);border-radius:5px;background:#f3f4f6;color:#6b7280;cursor:pointer;font-family:Outfit,sans-serif;display:none">Out</button>
@@ -6178,6 +6796,17 @@ body.dark-mode #mobile-more-menu{background:#141414!important;border-top:1px sol
 body.dark-mode .more-item{color:#e5e7eb!important}
 body.dark-mode #auth-overlay .auth-card{background:#141414!important;border:1px solid rgba(255,255,255,0.08)!important}
 body.dark-mode #popup-passed>div,body.dark-mode #popup-blown>div{background:#141414!important;border:1px solid rgba(255,255,255,0.08)!important}
+/* New feature dark mode */
+body.dark-mode #fuze-score-card,body.dark-mode #consistency-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important}
+body.dark-mode #fuze-score-ring~*{stroke:rgba(255,255,255,0.06)!important}
+body.dark-mode #smart-insights-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important}
+body.dark-mode #smart-insights-list>div{background:rgba(255,255,255,0.04)!important}
+body.dark-mode #smart-insights-list span{color:#9ca3af!important}
+body.dark-mode .nb-mood-btn,body.dark-mode .nb-energy-btn{border-color:rgba(255,255,255,0.1)!important;color:#9ca3af!important}
+body.dark-mode #nb-history-list>div{background:rgba(255,255,255,0.04)!important}
+body.dark-mode #consistency-grid>div[style*="rgba(0,0,0,0.05)"]{background:rgba(255,255,255,0.05)!important;border-color:rgba(255,255,255,0.07)!important}
+body.dark-mode #fuze-score-breakdown>div>div:first-child>span:first-child{color:#9ca3af!important}
+body.dark-mode #fuze-score-label{color:#6b7280!important}
 </style>
 </body>
 </html>
