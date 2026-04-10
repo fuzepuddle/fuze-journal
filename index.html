@@ -2399,6 +2399,7 @@ async function loadAllData(){
     applyLoadedData();
     applyProfileUI();
     renderJournal&&renderJournal();
+    renderDashboard&&renderDashboard();
   }catch(e){console.error('Init error',e);}
 }
 function save(){
@@ -2566,11 +2567,12 @@ function toggleMistake(item,el){
 // ── Dashboard ──
 var _dashEquityChart=null, _dashDonutChart=null;
 function renderDashboard(){
-  const trades=liveTrades.filter(t=>t.outcome&&t.outcome!=='skip');
-  const wins=trades.filter(t=>t.outcome==='win');
-  const losses=trades.filter(t=>t.outcome==='loss');
-  const be=trades.filter(t=>t.outcome==='be');
-  const total=trades.length;
+  const allT=trades.filter(t=>t.pnl!=null);
+  const dashTrades=allT.filter(t=>t.outcome&&t.outcome!=='skip');
+  const wins=dashTrades.filter(t=>t.outcome==='win');
+  const losses=dashTrades.filter(t=>t.outcome==='loss');
+  const be=dashTrades.filter(t=>t.outcome==='be');
+  const total=dashTrades.length;
 
   // Greeting
   const hr=new Date().getHours();
@@ -2580,7 +2582,7 @@ function renderDashboard(){
   if(greetSub)greetSub.textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', fuze · NQ · NY Session · 14:30–16:00 UK';
 
   // P&L
-  const totalPnl=trades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
+  const totalPnl=dashTrades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
   const dm_pnl=document.getElementById('dm-pnl');
   if(dm_pnl){dm_pnl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});dm_pnl.className='dash-metric-val '+(totalPnl>0?'positive':totalPnl<0?'negative':'');}
   const dm_pnl_sub=document.getElementById('dm-pnl-sub');if(dm_pnl_sub)dm_pnl_sub.textContent=total+' trade'+(total!==1?'s':'');
@@ -2592,7 +2594,7 @@ function renderDashboard(){
   const dashWrBig=document.getElementById('dash-wr-big');if(dashWrBig)dashWrBig.textContent=wr+'%';
 
   // Avg RR
-  const rrs=trades.filter(t=>t.rrActual).map(t=>parseFloat(t.rrActual)).filter(n=>!isNaN(n));
+  const rrs=dashTrades.filter(t=>t.rrActual).map(t=>parseFloat(t.rrActual)).filter(n=>!isNaN(n));
   const avgRR=rrs.length?( rrs.reduce((a,b)=>a+b,0)/rrs.length).toFixed(2):'—';
   const dm_rr=document.getElementById('dm-rr');if(dm_rr)dm_rr.textContent=avgRR!='—'?avgRR+'R':avgRR;
 
@@ -2604,7 +2606,7 @@ function renderDashboard(){
 
   // Best streak
   let bestStreak=0,cur=0;
-  const sorted=[...trades].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const sorted=[...dashTrades].sort((a,b)=>new Date(a.date)-new Date(b.date));
   sorted.forEach(t=>{if(t.outcome==='win'){cur++;bestStreak=Math.max(bestStreak,cur);}else cur=0;});
   const dm_streak=document.getElementById('dm-streak');if(dm_streak)dm_streak.textContent=bestStreak;
 
@@ -2635,7 +2637,7 @@ function renderDashboard(){
   // Recent trades
   const recentEl=document.getElementById('dash-recent-trades');
   if(recentEl){
-    const recent=[...trades].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+    const recent=[...dashTrades].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
     if(!recent.length){recentEl.innerHTML='<div class="dash-no-trades">No trades logged yet.</div>';}
     else{
       const pnlColor=p=>parseFloat(p)>0?'var(--win)':parseFloat(p)<0?'var(--loss)':'var(--be)';
@@ -2660,7 +2662,7 @@ function renderDashMiniCal(){
   const today=new Date();
   // Build day map from trades
   const dayMap={};
-  liveTrades.forEach(t=>{
+  trades.forEach(t=>{
     if(!t.date||!t.pnl)return;
     const d=new Date(t.date+'T12:00:00');
     if(d.getFullYear()!==y||d.getMonth()!==m)return;
@@ -4381,6 +4383,7 @@ function switchProfile(p, btn){
   if(activeTab){
     const t=activeTab.getAttribute('data-tab');
     if(t==='log'){setTimeout(prefillCalc,100);}
+    else if(t==='dashboard')renderDashboard();
     else if(t==='journal')renderJournal();
     else if(t==='stats')renderStats();
     else if(t==='prop'){loadPropSettings();renderProp();}
