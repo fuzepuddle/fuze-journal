@@ -602,7 +602,9 @@ body.dark-mode .outcome-btn.active-skip{background:#1a1a1a!important;border-colo
 body.dark-mode .log-table td{color:#e5e7eb!important}
 body.dark-mode .tab:hover:not(.active){color:#f0f0f0!important}
 body.dark-mode .cal-title{color:#f0f0f0!important}
-body.dark-mode .week-pnl{color:#f0f0f0!important}
+body.dark-mode .week-pnl.pnl-pos{color:#10b981!important}
+body.dark-mode .week-pnl.pnl-neg{color:#ef4444!important}
+body.dark-mode .week-pnl.pnl-zero{color:#f59e0b!important}
 body.dark-mode .metric-val{color:#f0f0f0!important}
 body.dark-mode .auth-card{background:#141414!important;border-color:rgba(255,255,255,0.08)!important}
 body.dark-mode #auth-overlay{background:rgba(0,0,0,0.92)!important}
@@ -1386,7 +1388,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
       <div class="dash-metric-val" id="dm-pnl">—</div>
-      <div class="dash-metric-sub" id="dm-pnl-sub">all trades</div>
+      <div class="dash-metric-sub" id="dm-pnl-sub">All Trades</div>
     </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Win Rate</div>
@@ -1396,17 +1398,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="dash-metric">
       <div class="dash-metric-label">Profit Factor</div>
       <div class="dash-metric-val" id="dm-pf">—</div>
-      <div class="dash-metric-sub">wins ÷ losses</div>
+      <div class="dash-metric-sub">Wins ÷ Losses</div>
     </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Avg RR</div>
       <div class="dash-metric-val" id="dm-rr">—</div>
-      <div class="dash-metric-sub">realised</div>
+      <div class="dash-metric-sub">Realised</div>
     </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Best Streak</div>
       <div class="dash-metric-val" id="dm-streak">—</div>
-      <div class="dash-metric-sub">consecutive wins</div>
+      <div class="dash-metric-sub">Consecutive Wins</div>
     </div>
   </div>
 
@@ -6721,7 +6723,9 @@ body:not(.dark-mode) #cal-day-popup>div{background:#fff!important;border:1px sol
 body:not(.dark-mode) tr[id^="detail-"] td{background:#f9f9f9!important;border-bottom:1px solid #f0f0f0!important}
 body:not(.dark-mode) .week-card,body:not(.dark-mode) .month-total-card{background:#fff!important;border:1px solid #e0e0e0!important}
 body:not(.dark-mode) .week-lbl,body:not(.dark-mode) .week-trades{color:#999!important}
-body:not(.dark-mode) .week-pnl{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .week-pnl.pnl-pos{color:#16a34a!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .week-pnl.pnl-neg{color:#dc2626!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .week-pnl.pnl-zero{color:#d97706!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 
 /* --- Mobile nav --- */
 body:not(.dark-mode) #mobile-nav{background:rgba(255,255,255,0.97)!important;border-top:1px solid #e0e0e0!important}
@@ -6798,7 +6802,9 @@ body.dark-mode #edit-modal>div{background:#141414!important;border:1px solid rgb
 body.dark-mode #cal-day-popup>div{background:#141414!important;border:1px solid rgba(255,255,255,0.08)!important}
 body.dark-mode tr[id^="detail-"] td{background:#0f0f0f!important;border-bottom:1px solid #1f1f1f!important}
 body.dark-mode .week-card,body.dark-mode .month-total-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important}
-body.dark-mode .week-pnl{color:#f0f0f0!important}
+body.dark-mode .week-pnl.pnl-pos{color:#10b981!important}
+body.dark-mode .week-pnl.pnl-neg{color:#ef4444!important}
+body.dark-mode .week-pnl.pnl-zero{color:#f59e0b!important}
 body.dark-mode .week-lbl,body.dark-mode .week-trades{color:#6b7280!important}
 body.dark-mode .dash-legend-val{color:#f0f0f0!important}
 body.dark-mode .dash-legend-item{border-color:rgba(255,255,255,0.05)!important}
