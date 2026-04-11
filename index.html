@@ -194,7 +194,7 @@
   .cal-nav button{padding:5px 12px;border:1px solid rgba(255,255,255,0.07);border-radius:6px;background:#f9fafb;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:rgba(15,26,18,0.82)}
   .cal-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-  .cal-grid{width:100%;border-collapse:collapse;margin-bottom:0;height:100%}
+  .cal-grid{width:100%;border-collapse:separate;border-spacing:2px;margin-bottom:0;height:100%}
   #page-calendar.active{display:flex;flex-direction:column;height:calc(100vh - 48px);overflow:hidden}
   #page-calendar .cal-header{margin-bottom:10px;flex-shrink:0}
   #page-calendar .cal-metrics{margin-bottom:10px;flex-shrink:0}
@@ -3232,7 +3232,7 @@ function renderStats(){
   const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
   const pnlEl=document.getElementById('s-pnl');
   pnlEl.textContent=(totalPnl>=0?'+$':'−$')+Math.abs(totalPnl).toLocaleString();
-  pnlEl.style.color=totalPnl>=0?'#10b981':'#ef4444';
+  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(totalPnl>0?' positive':totalPnl<0?' negative':' be');
   const outCanvas=document.getElementById('s-outcomes-chart');
   const outLegend=document.getElementById('s-outcomes-legend');
   if(window._outChart){window._outChart.destroy();window._outChart=null;}
@@ -3483,7 +3483,7 @@ function renderCalendar(){
   const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
   const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
   const mPnlEl=document.getElementById('cal-m-pnl');
-  if(mPnlEl){mPnlEl.textContent=(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2);mPnlEl.style.color=monthPnl>=0?'#10b981':'#ef4444';}
+  if(mPnlEl){mPnlEl.textContent=(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2);mPnlEl.className=(mPnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(monthPnl>0?' positive':monthPnl<0?' negative':' be');}
   const mTradesEl=document.getElementById('cal-m-trades');if(mTradesEl)mTradesEl.textContent=monthTotal;
   const mWrEl=document.getElementById('cal-m-wr');if(mWrEl)mWrEl.textContent=monthTotal?Math.round(monthWins/monthTotal*100)+'%':'—';
   const mWlEl=document.getElementById('cal-m-wl');if(mWlEl)mWlEl.textContent=monthTrades.filter(t=>t.outcome==='win').length+' / '+monthTrades.filter(t=>t.outcome==='loss').length;
@@ -4380,7 +4380,7 @@ function renderWeekly(){
   const pnl=weekTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const pnlEl=document.getElementById('w-pnl');
   pnlEl.textContent=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2);
-  pnlEl.style.color=pnl>=0?'#10b981':'#ef4444';
+  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
   const mm={};weekTrades.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
   const topMistake=Object.entries(mm).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('w-mistake').textContent=topMistake?topMistake[0]+' ('+topMistake[1]+'×)':'None ✓';
@@ -6601,6 +6601,9 @@ body:not(.dark-mode) .card,body:not(.dark-mode) .dash-chart-card,body:not(.dark-
 body:not(.dark-mode) .card:hover,body:not(.dark-mode) .dash-metric:hover{border-color:#ccc!important}
 body:not(.dark-mode) .section-label,body:not(.dark-mode) .dash-metric-label,body:not(.dark-mode) .dash-card-title,body:not(.dark-mode) .metric-lbl{color:#999!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.08em!important;font-weight:600!important}
 body:not(.dark-mode) .dash-metric-val,body:not(.dark-mode) .metric-val{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .metric-val.positive{color:#16a34a!important}
+body:not(.dark-mode) .metric-val.negative{color:#dc2626!important}
+body:not(.dark-mode) .metric-val.be{color:#d97706!important}
 body:not(.dark-mode) .dash-metric-val.positive{color:#16a34a!important}
 body:not(.dark-mode) .dash-metric-val.negative{color:#dc2626!important}
 body:not(.dark-mode) .dash-metric-sub,body:not(.dark-mode) .dash-trade-date,body:not(.dark-mode) .dash-trade-draw,body:not(.dark-mode) .dash-legend-left{color:#999!important}
@@ -6681,7 +6684,7 @@ body:not(.dark-mode) .mode-btn{background:#fff!important;border:1px solid #ddd!i
 body:not(.dark-mode) .mode-btn.active{background:#111!important;color:#fff!important;border-color:#111!important}
 
 /* --- Calendar --- */
-.cal-grid{border-collapse:collapse!important}
+.cal-grid{border-collapse:separate!important;border-spacing:2px!important}
 body:not(.dark-mode) .cal-grid th{color:#999!important;font-size:11px!important;font-weight:600!important}
 body:not(.dark-mode) .cal-grid td{background:#fff!important;border:1px solid #e8e8e8!important;color:#999!important}
 body:not(.dark-mode) .cal-grid td.has-trade{background:#fff!important;cursor:pointer!important}
@@ -6752,6 +6755,9 @@ body.dark-mode h1,body.dark-mode h2,body.dark-mode h3{color:#f0f0f0!important}
 body.dark-mode .dash-page-header h2,body.dark-mode .page-header h2,body.dark-mode .page-header h1{color:#f0f0f0!important}
 body.dark-mode .card,body.dark-mode .dash-chart-card,body.dark-mode .dash-recent,body.dark-mode .dash-metric,body.dark-mode .metric-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important;color:#f0f0f0!important}
 body.dark-mode .dash-metric-val,body.dark-mode .metric-val{color:#f0f0f0!important}
+body.dark-mode .dash-metric-val.positive,body.dark-mode .metric-val.positive{color:#10b981!important}
+body.dark-mode .dash-metric-val.negative,body.dark-mode .metric-val.negative{color:#ef4444!important}
+body.dark-mode .dash-metric-val.be,body.dark-mode .metric-val.be{color:#f59e0b!important}
 body.dark-mode .section-label,body.dark-mode .dash-metric-label,body.dark-mode .dash-card-title,body.dark-mode .metric-lbl{color:#6b7280!important}
 body.dark-mode label{color:#9ca3af!important}
 body.dark-mode input[type=date],body.dark-mode input[type=number],body.dark-mode input[type=text],body.dark-mode input[type=time],body.dark-mode select,body.dark-mode textarea{background:#1a1a1a!important;color:#f0f0f0!important;border:1px solid rgba(255,255,255,0.1)!important}
