@@ -196,7 +196,7 @@
   .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
   .cal-grid th{font-size:13px;font-weight:500;color:#4b5563;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
-  .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;height:130px;padding:10px 12px;font-size:13px;color:#9ca3af;background:#f9fafb;cursor:default}
+  .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;height:140px;padding:10px 12px;font-size:13px;color:#9ca3af;background:#f9fafb;cursor:default}
   .cal-grid td.weekend{background:#f9fafb}
   .cal-grid td.has-trade{background:var(--bg-card);cursor:pointer}
   .cal-grid td.has-trade:hover{background:rgba(15,26,18,0.58)}
@@ -3499,24 +3499,28 @@ function renderCalendar(){
       if(isWeekend)cls+=' weekend';
       if(d)cls+=' has-trade';
       // Determine cell background based on day outcome
-      let cellBg='';
+      let cellBg='';let cellBorder='';
       if(d&&!isToday){
-        if(d.pnl>0)cellBg='background:rgba(16,185,129,0.08);';
-        else if(d.pnl<0)cellBg='background:rgba(239,68,68,0.1);';
-        else cellBg='background:rgba(245,158,11,0.07);';
+        if(d.pnl>0){cellBg='background:rgba(16,185,129,0.18);';cellBorder='border-color:rgba(16,185,129,0.45)!important;';}
+        else if(d.pnl<0){cellBg='background:rgba(239,68,68,0.18);';cellBorder='border-color:rgba(239,68,68,0.45)!important;';}
+        else{cellBg='background:rgba(245,158,11,0.15);';cellBorder='border-color:rgba(245,158,11,0.4)!important;';}
       }
-      let inner='<div style="font-size:13px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
+      let inner='<div style="display:flex;flex-direction:column;height:100%;min-height:108px;justify-content:space-between">';
+      inner+='<div style="font-size:13px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
       if(d){
         const pnlCol=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#f59e0b';
-        inner+='<div style="font-size:20px;font-weight:700;color:'+pnlCol+';margin-top:6px;line-height:1">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
-        inner+='<div style="display:flex;gap:3px;margin-top:6px;flex-wrap:wrap">';
-        if(d.wins)inner+='<span style="font-size:13px;font-weight:600;background:rgba(16,185,129,0.15);color:#10b981;border-radius:4px;padding:3px 8px">'+d.wins+'W</span>';
-        if(d.losses)inner+='<span style="font-size:13px;font-weight:600;background:rgba(239,68,68,0.15);color:#ef4444;border-radius:4px;padding:3px 8px">'+d.losses+'L</span>';
-        if(d.be)inner+='<span style="font-size:13px;font-weight:600;background:rgba(245,158,11,0.12);color:#f59e0b;border-radius:4px;padding:3px 8px">'+d.be+'BE</span>';
+        inner+='<div style="font-size:22px;font-weight:700;color:'+pnlCol+';line-height:1;text-align:center">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
+        inner+='<div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end">';
+        if(d.wins)inner+='<span style="font-size:12px;font-weight:600;background:rgba(16,185,129,0.2);color:#10b981;border-radius:4px;padding:2px 7px">'+d.wins+'W</span>';
+        if(d.losses)inner+='<span style="font-size:12px;font-weight:600;background:rgba(239,68,68,0.2);color:#ef4444;border-radius:4px;padding:2px 7px">'+d.losses+'L</span>';
+        if(d.be)inner+='<span style="font-size:12px;font-weight:600;background:rgba(245,158,11,0.18);color:#f59e0b;border-radius:4px;padding:2px 7px">'+d.be+'BE</span>';
         inner+='</div>';
+      } else {
+        inner+='<div></div><div></div>';
       }
+      inner+='</div>';
       const click=d?'onclick="calDayClick(\''+dateStr+'\')"':'';
-      html+='<td class="'+cls.trim()+'" style="'+cellBg+'" '+click+'>'+inner+'</td>';
+      html+='<td class="'+cls.trim()+'" style="'+cellBg+cellBorder+'padding:10px 12px;" '+click+'>'+inner+'</td>';
       day++;
     }
     html+='</tr>';
