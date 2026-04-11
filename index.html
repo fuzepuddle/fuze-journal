@@ -41,7 +41,7 @@
   .star.lit { color: var(--color-win) !important }
 
   /* ── Theme customizer ── */
-  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#111;border:1px solid #2a2a2a;border-radius:14px;width:290px;display:none;box-shadow:0 12px 40px rgba(0,0,0,0.85);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#111;border:1px solid #2a2a2a;border-radius:14px;width:290px;display:none;box-shadow:0 12px 40px rgba(0,0,0,0.85);overflow:hidden;font-family:'Plus Jakarta Sans',sans-serif}
   #theme-panel.open{display:flex;flex-direction:column}
   #theme-toggle-btn{position:fixed;bottom:16px;right:16px;z-index:9999;width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:background .2s}
   #theme-toggle-btn:hover{filter:brightness(1.15)}
@@ -73,7 +73,7 @@
   #cp-hue::-moz-range-track{height:13px;border-radius:7px;background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)}
   .cp-hex-row{display:flex;align-items:center;gap:7px}
   #cp-preview{width:26px;height:26px;border-radius:5px;flex-shrink:0;border:1px solid #333}
-  #cp-hex{flex:1;padding:5px 7px;font-size:11px;font-family:monospace;border:0.5px solid #2a2a2a;border-radius:5px;background:#0a0a0a;color:#fff;outline:none}
+  #cp-hex{flex:1;padding:5px 7px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;border:0.5px solid #2a2a2a;border-radius:5px;background:#0a0a0a;color:#fff;outline:none}
   #cp-hex:focus{border-color:#555}
   .cp-apply{padding:5px 11px;font-size:11px;border:none;border-radius:5px;background:var(--accent);color:#000;font-weight:700;cursor:pointer;font-family:inherit}
   .cp-apply:hover{filter:brightness(1.1)}
@@ -88,7 +88,7 @@
   /* Current colour preview strip */
   .tp-cur-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
   .tp-cur-dot{width:22px;height:22px;border-radius:5px;border:1px solid #333;flex-shrink:0}
-  .tp-cur-hex{font-size:11px;font-family:monospace;color:#4b5563}
+  .tp-cur-hex{font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#4b5563}
 
   *{box-sizing:border-box;margin:0;padding:0}
   /* body overridden by redesign block */
@@ -751,7 +751,7 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
 .sb-clock-time{
   font-size:13px;
   font-weight:600;
-  font-family:'JetBrains Mono',monospace;
+  font-family:'Plus Jakarta Sans',sans-serif;
   color:var(--win);
   line-height:1.2;
 }
@@ -929,7 +929,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .metric-val{
   font-size:20px;
   font-weight:600;
-  font-family:'JetBrains Mono',monospace;
+  font-family:'Plus Jakarta Sans',sans-serif;
   color:#111827;
   margin-top:4px;
   line-height:1.2;
@@ -1018,7 +1018,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-metric-val{
   font-size:22px;
   font-weight:700;
-  font-family:'JetBrains Mono',monospace;
+  font-family:'Plus Jakarta Sans',sans-serif;
   color:#111827;
   line-height:1.1;
   margin-bottom:4px;
@@ -1076,7 +1076,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   font-size:19px;
   font-weight:700;
   color:var(--win);
-  font-family:'JetBrains Mono',monospace;
+  font-family:'Plus Jakarta Sans',sans-serif;
   line-height:1;
 }
 .dash-wr-sub{font-size:9px;color:#9ca3af;margin-top:2px;letter-spacing:.04em}
@@ -1089,7 +1089,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-legend-item:last-child{border-bottom:none}
 .dash-legend-left{display:flex;align-items:center;gap:7px;font-size:12px;color:#4b5563}
 .dash-legend-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.dash-legend-val{font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;color:#111827}
+.dash-legend-val{font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;color:#111827}
 
 /* Recent trades on dashboard */
 .dash-trade-row{
@@ -1101,7 +1101,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   gap:8px;
 }
 .dash-trade-row:last-child{border-bottom:none}
-.dash-trade-date{font-size:11px;color:#9ca3af;font-family:'JetBrains Mono',monospace}
+.dash-trade-date{font-size:11px;color:#9ca3af;font-family:'Plus Jakarta Sans',sans-serif}
 .dash-trade-dir{font-size:11px;color:#4b5563}
 .dash-trade-draw{font-size:11px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dash-no-trades{text-align:center;padding:24px;color:#9ca3af;font-size:12px}
@@ -1135,7 +1135,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.12)}
 .dash-cal-grid td.dcal-today{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.05)!important}
 .dcal-day{font-size:10px;font-weight:500;color:#9ca3af;margin-bottom:2px}
-.dcal-pnl{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;line-height:1.2}
+.dcal-pnl{font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2}
 .dcal-win .dcal-pnl{color:var(--win)}
 .dcal-loss .dcal-pnl{color:var(--loss)}
 .dcal-be .dcal-pnl{color:var(--be)}
@@ -1204,7 +1204,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 /* ── Week/monthly cards ── */
 .week-card{background:#ffffff;border:1px solid var(--border);border-radius:7px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
 .week-lbl{font-size:11px;color:#9ca3af;margin-bottom:2px}
-.week-pnl{font-size:16px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.week-pnl{font-size:16px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif}
 .week-trades{font-size:11px;color:#9ca3af}
 .monthly-summary{display:flex;flex-direction:column;gap:7px}
 .month-total-card{background:var(--bg-card);border:1px solid rgba(245,158,11,0.2);border-radius:7px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:4px}
@@ -1479,7 +1479,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
               transform="rotate(-90 50 50)" style="transition:stroke-dashoffset 1s ease,stroke .5s"/>
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <div id="fuze-score-val" style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary,#111);line-height:1">—</div>
+            <div id="fuze-score-val" style="font-size:26px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text-primary,#111);line-height:1">—</div>
             <div style="font-size:9px;color:#9ca3af;letter-spacing:.07em;text-transform:uppercase;margin-top:2px">/100</div>
           </div>
         </div>
@@ -1525,7 +1525,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="card" id="session-timer-card" style="padding:12px 16px;margin-bottom:12px;transition:border-color .5s,background .5s">
     <div class="section-label" style="margin-bottom:8px">Session timer</div>
     <div id="timer-label" style="font-size:13px;color:#9ca3af;margin-bottom:4px">Loading...</div>
-    <div id="timer-display" style="font-size:28px;font-weight:500;font-family:monospace;color:#fff;letter-spacing:2px">--:--:--</div>
+    <div id="timer-display" style="font-size:28px;font-weight:500;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;letter-spacing:2px">--:--:--</div>
     <div id="timer-bar-wrap" style="height:4px;background:#1e1e1e;border-radius:2px;margin-top:10px;overflow:hidden">
       <div id="timer-bar" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1s linear"></div>
     </div>
@@ -1608,7 +1608,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
     <div style="max-width:260px">
       <label>RR achieved <span id="f-rr-auto" style="font-size:12px;margin-left:6px;font-weight:600"></span></label>
-      <input type="text" id="f-actual-rr" placeholder="auto-fills from P&amp;L below" oninput="syncRRField()" style="font-family:monospace">
+      <input type="text" id="f-actual-rr" placeholder="auto-fills from P&amp;L below" oninput="syncRRField()" style="font-family:'Plus Jakarta Sans',sans-serif">
       <div style="font-size:11px;color:#555;margin-top:4px">Enter P&amp;L + risk → R calculates automatically</div>
     </div>
   </div>
@@ -2763,7 +2763,7 @@ function renderDashboard(){
     const labels=sorted.map(t=>t.date?t.date.slice(5):'');labels.unshift('');
     const lineColor=eq[eq.length-1]>=0?'rgba(16,185,129,0.9)':'rgba(239,68,68,0.9)';
     const fillColor=eq[eq.length-1]>=0?'rgba(16,185,129,0.06)':'rgba(239,68,68,0.06)';
-    _dashEquityChart=new Chart(eCanvas,{type:'line',data:{labels,datasets:[{data:eq,borderColor:lineColor,backgroundColor:fillColor,borderWidth:2,fill:true,tension:.35,pointRadius:sorted.length>30?0:3,pointBackgroundColor:lineColor,pointBorderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.raw.toFixed(0)}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'JetBrains Mono'}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'JetBrains Mono'},callback:v=>'$'+v}}}}});
+    _dashEquityChart=new Chart(eCanvas,{type:'line',data:{labels,datasets:[{data:eq,borderColor:lineColor,backgroundColor:fillColor,borderWidth:2,fill:true,tension:.35,pointRadius:sorted.length>30?0:3,pointBackgroundColor:lineColor,pointBorderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.raw.toFixed(0)}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'Plus Jakarta Sans'}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'Plus Jakarta Sans'},callback:v=>'$'+v}}}}});
   }
 
   // Recent trades
@@ -2774,7 +2774,7 @@ function renderDashboard(){
     else{
       const pnlColor=p=>parseFloat(p)>0?'var(--win)':parseFloat(p)<0?'var(--loss)':'var(--be)';
       const dirColor=d=>d==='Long'?'var(--win)':d==='Short'?'var(--loss)':'var(--text-secondary)';
-      recentEl.innerHTML=recent.map(t=>`<div class="dash-trade-row"><span class="dash-trade-date">${t.date||'—'}</span><span style="font-size:11px;color:${dirColor(t.direction)};font-weight:500">${t.direction||'—'}</span><span class="dash-trade-draw">${t.draw||'—'}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:${pnlColor(t.pnl)};text-align:right">${t.pnl!=null?(parseFloat(t.pnl)>0?'+':'')+parseFloat(t.pnl).toFixed(0):'—'}</span></div>`).join('');
+      recentEl.innerHTML=recent.map(t=>`<div class="dash-trade-row"><span class="dash-trade-date">${t.date||'—'}</span><span style="font-size:11px;color:${dirColor(t.direction)};font-weight:500">${t.direction||'—'}</span><span class="dash-trade-draw">${t.draw||'—'}</span><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:${pnlColor(t.pnl)};text-align:right">${t.pnl!=null?(parseFloat(t.pnl)>0?'+':'')+parseFloat(t.pnl).toFixed(0):'—'}</span></div>`).join('');
     }
   }
   renderDashMiniCal();
@@ -3306,7 +3306,7 @@ function renderDailyChart(trades){
   if(typeof Chart==='undefined')return;
   dailyChartInstance=new Chart(canvas,{type:'bar',data:{labels:days,datasets:[{data:pnls,backgroundColor:colors,borderColor:borderColors,borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return(c.raw>=0?'+$':'-$')+Math.abs(c.raw).toFixed(2);}}}},scales:{x:{ticks:{color:'#4a5568',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#4a5568',font:{size:11},callback:function(v){return(v>=0?'+$':'-$')+Math.abs(v);}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}}}});
   const statsEl=document.getElementById('s-daily-stats');
-  statsEl.innerHTML=days.map(function(day,i){const d=data[i];const wr=d.wins+d.losses>0?Math.round(d.wins/(d.wins+d.losses)*100)+'%':'—';const pColor=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#4a5568';return'<div style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:11px;font-weight:600;color:#4a5568;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">'+day+'</div><div style="font-size:14px;font-weight:600;font-family:JetBrains Mono,monospace;color:'+pColor+';margin-bottom:2px">'+(d.pnl>=0?'+':'')+d.pnl.toFixed(2)+'</div><div style="font-size:11px;color:#4a5568">'+d.trades+' trade'+(d.trades!==1?'s':'')+'</div><div style="font-size:11px;color:#4a5568">WR '+wr+'</div></div>';}).join('');
+  statsEl.innerHTML=days.map(function(day,i){const d=data[i];const wr=d.wins+d.losses>0?Math.round(d.wins/(d.wins+d.losses)*100)+'%':'—';const pColor=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#4a5568';return'<div style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:11px;font-weight:600;color:#4a5568;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">'+day+'</div><div style="font-size:14px;font-weight:600;font-family:Plus Jakarta Sans,sans-serif;color:'+pColor+';margin-bottom:2px">'+(d.pnl>=0?'+':'')+d.pnl.toFixed(2)+'</div><div style="font-size:11px;color:#4a5568">'+d.trades+' trade'+(d.trades!==1?'s':'')+'</div><div style="font-size:11px;color:#4a5568">WR '+wr+'</div></div>';}).join('');
 }
 
 function renderMonthlyChart(f){
@@ -5186,7 +5186,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
 <div>
   <label>RR achieved <span id="e-rr-auto" style="color:var(--accent);font-size:12px;margin-left:6px"></span></label>
-  <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="font-family:monospace" oninput="this.dataset.autoFilled='0'">
+  <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="font-family:'Plus Jakarta Sans',sans-serif" oninput="this.dataset.autoFilled='0'">
 </div>      <div><label>Outcome</label><select id="e-outcome"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
     </div>
     <div style="margin-bottom:12px">
@@ -6573,7 +6573,7 @@ body{display:flex!important}
 .sb-section-label{color:rgba(255,255,255,0.25)!important}
 .sb-clock{background:rgba(255,255,255,0.05)!important;border:1px solid rgba(255,255,255,0.08)!important}
 .sb-clock-label{color:rgba(255,255,255,0.3)!important}
-.sb-clock-time{color:#fff!important;font-family:'JetBrains Mono',monospace!important}
+.sb-clock-time{color:#fff!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 .sb-streak{color:rgba(255,255,255,0.3)!important}
 #sidebar .profile-btn{background:rgba(255,255,255,0.05)!important;border:1px solid rgba(255,255,255,0.1)!important;color:rgba(255,255,255,0.4)!important}
 #sidebar .profile-btn.active{background:rgba(255,255,255,0.12)!important;color:#fff!important;border-color:rgba(255,255,255,0.25)!important}
@@ -6588,7 +6588,7 @@ body:not(.dark-mode) .page-header p{color:#999!important}
 body:not(.dark-mode) .card,body:not(.dark-mode) .dash-chart-card,body:not(.dark-mode) .dash-recent,body:not(.dark-mode) .dash-metric,body:not(.dark-mode) .metric-card{background:#fff!important;border:1px solid #e0e0e0!important;border-radius:10px!important;color:#111!important}
 body:not(.dark-mode) .card:hover,body:not(.dark-mode) .dash-metric:hover{border-color:#ccc!important}
 body:not(.dark-mode) .section-label,body:not(.dark-mode) .dash-metric-label,body:not(.dark-mode) .dash-card-title,body:not(.dark-mode) .metric-lbl{color:#999!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.08em!important;font-weight:600!important}
-body:not(.dark-mode) .dash-metric-val,body:not(.dark-mode) .metric-val{color:#111!important;font-family:'JetBrains Mono',monospace!important}
+body:not(.dark-mode) .dash-metric-val,body:not(.dark-mode) .metric-val{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 body:not(.dark-mode) .dash-metric-val.positive{color:#16a34a!important}
 body:not(.dark-mode) .dash-metric-val.negative{color:#dc2626!important}
 body:not(.dark-mode) .dash-metric-sub,body:not(.dark-mode) .dash-trade-date,body:not(.dark-mode) .dash-trade-draw,body:not(.dark-mode) .dash-legend-left{color:#999!important}
@@ -6693,7 +6693,7 @@ body:not(.dark-mode) .dash-cal-nav button:hover{background:#f5f5f5!important}
 /* --- Session timer --- */
 body:not(.dark-mode) #session-timer-card{background:#fff!important}
 body:not(.dark-mode) #timer-label,body:not(.dark-mode) #timer-sub{color:#999!important}
-body:not(.dark-mode) #timer-display{color:#111!important;font-family:'JetBrains Mono',monospace!important}
+body:not(.dark-mode) #timer-display{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 body:not(.dark-mode) #timer-bar{background:#111!important}
 body:not(.dark-mode) #timer-bar-wrap{background:#e0e0e0!important}
 
@@ -6708,7 +6708,7 @@ body:not(.dark-mode) #cal-day-popup>div{background:#fff!important;border:1px sol
 body:not(.dark-mode) tr[id^="detail-"] td{background:#f9f9f9!important;border-bottom:1px solid #f0f0f0!important}
 body:not(.dark-mode) .week-card,body:not(.dark-mode) .month-total-card{background:#fff!important;border:1px solid #e0e0e0!important}
 body:not(.dark-mode) .week-lbl,body:not(.dark-mode) .week-trades{color:#999!important}
-body:not(.dark-mode) .week-pnl{color:#111!important;font-family:'JetBrains Mono',monospace!important}
+body:not(.dark-mode) .week-pnl{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 
 /* --- Mobile nav --- */
 body:not(.dark-mode) #mobile-nav{background:rgba(255,255,255,0.97)!important;border-top:1px solid #e0e0e0!important}
