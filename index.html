@@ -3211,12 +3211,13 @@ function renderStats(){
   });
   document.getElementById('s-total').textContent='0';
   document.getElementById('s-total').textContent=f.length;
+  const completedTrades=f.filter(t=>t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');
   const wins=f.filter(t=>t.outcome==='win');
   const wrEl=document.getElementById('s-wr');
-  wrEl.textContent=f.length?Math.round(wins.length/f.length*100)+'%':'—';
-  wrEl.style.color=f.length?(wins.length/f.length>=0.5?'#10b981':'#ef4444'):'';
+  wrEl.textContent=completedTrades.length?Math.round(wins.length/completedTrades.length*100)+'%':'—';
+  wrEl.style.color=completedTrades.length?(wins.length/completedTrades.length>=0.5?'#10b981':'#ef4444'):'';
   const wrCard=document.getElementById('s-wr-card');
-  if(wrCard)wrCard.style.background=f.length?(wins.length/f.length>=0.5?'rgba(16,185,129,0.07)':'rgba(239,68,68,0.07)'):'var(--bg-card)';
+  if(wrCard)wrCard.style.background=completedTrades.length?(wins.length/completedTrades.length>=0.5?'rgba(16,185,129,0.07)':'rgba(239,68,68,0.07)'):'var(--bg-card)';
   const withDisc=f.filter(t=>t.discRating);
   document.getElementById('s-disc').textContent=withDisc.length?'★ '+(withDisc.reduce((s,t)=>s+t.discRating,0)/withDisc.length).toFixed(1):'—';
   const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
@@ -6091,10 +6092,9 @@ function calcFuzeScore(tArr){
   const completed=tArr.filter(t=>t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');
   if(completed.length===0) return null;
 
-  // Win rate (exclude BE from denominator for purity)
-  const wl=completed.filter(t=>t.outcome==='win'||t.outcome==='loss');
-  const wins=wl.filter(t=>t.outcome==='win').length;
-  const wrPct=wl.length>0?wins/wl.length:0;
+  // Win rate (include BE in denominator for accuracy)
+  const wins=completed.filter(t=>t.outcome==='win').length;
+  const wrPct=completed.length>0?wins/completed.length:0;
   const wrScore=Math.min(wrPct/0.60,1)*25;
 
   // Avg discipline rating
