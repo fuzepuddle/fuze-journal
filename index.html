@@ -193,10 +193,18 @@
   .cal-nav{display:flex;gap:8px;align-items:center}
   .cal-nav button{padding:5px 12px;border:1px solid rgba(255,255,255,0.07);border-radius:6px;background:#f9fafb;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:rgba(15,26,18,0.82)}
-  .cal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-  .cal-grid{width:100%;border-collapse:collapse;margin-bottom:16px}
+  .cal-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+  .cal-grid{width:100%;border-collapse:collapse;margin-bottom:0;height:100%}
+  #page-calendar.active{display:flex;flex-direction:column;height:calc(100vh - 48px);overflow:hidden}
+  #page-calendar .cal-header{margin-bottom:10px;flex-shrink:0}
+  #page-calendar .cal-metrics{margin-bottom:10px;flex-shrink:0}
+  #page-calendar .page-header{margin-bottom:12px;flex-shrink:0}
+  #cal-grid-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+  #cal-grid-wrap table{height:100%;table-layout:fixed}
+  #cal-grid-wrap tbody{height:calc(100% - 40px)}
+  #cal-grid-wrap tbody tr{height:16.666%}
   .cal-grid th{font-size:13px;font-weight:500;color:#4b5563;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
-  .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;height:140px;padding:10px 12px;font-size:13px;color:#9ca3af;background:#f9fafb;cursor:default}
+  .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;padding:10px 12px;font-size:13px;color:#9ca3af;background:#f9fafb;cursor:default}
   .cal-grid td.weekend{background:#f9fafb}
   .cal-grid td.has-trade{background:var(--bg-card);cursor:pointer}
   .cal-grid td.has-trade:hover{background:rgba(15,26,18,0.58)}
@@ -342,7 +350,7 @@
     .cal-layout>div:first-child{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
     /* Calendar cells */
-    .cal-grid td{height:90px;padding:7px 8px}
+    .cal-grid td{padding:7px 8px}
 
     /* Metric cards */
     .metric-val{font-size:20px !important}
@@ -2156,19 +2164,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="metric-card"><div class="metric-lbl">Win rate</div><div class="metric-val" id="cal-m-wr">—</div></div>
     <div class="metric-card"><div class="metric-lbl">Wins / Losses</div><div class="metric-val" id="cal-m-wl">— / —</div></div>
   </div>
-  <div>
-    <div>
+  <div id="cal-grid-wrap">
       <table class="cal-grid">
         <thead>
           <tr>
-            <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
-            <th>Thu</th><th>Fri</th><th>Sat</th>
+            <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
           </tr>
         </thead>
         <tbody id="cal-body"></tbody>
       </table>
-    </div>
-
   </div>
 </div>
 
@@ -3488,7 +3492,6 @@ function renderCalendar(){
   let day=1;
   const startOffset=(firstDay+6)%7; // Monday-first
   for(let row=0;row<6;row++){
-    if(day>daysInMonth)break;
     html+='<tr>';
     for(let col=0;col<7;col++){
       const cellNum=row*7+col;
@@ -3508,7 +3511,7 @@ function renderCalendar(){
         else if(d.pnl<0){cellBg='background:rgba(239,68,68,0.18);';cellBorder='border-color:rgba(239,68,68,0.45)!important;';}
         else{cellBg='background:rgba(245,158,11,0.15);';cellBorder='border-color:rgba(245,158,11,0.4)!important;';}
       }
-      let inner='<div style="display:flex;flex-direction:column;height:100%;min-height:108px;justify-content:space-between">';
+      let inner='<div style="display:flex;flex-direction:column;height:100%;justify-content:space-between">';
       inner+='<div style="font-size:13px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
       if(d){
         const pnlCol=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#f59e0b';
