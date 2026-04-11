@@ -3138,6 +3138,8 @@ function openEdit(id){
   if(esSec)esSec.style.display=currentProfile==='backtesting'?'none':'grid';
   document.getElementById('edit-modal').style.display='block';
   document.body.style.overflow='hidden';
+  // Auto-calc RR when modal opens with existing pnl/risk data
+  setTimeout(calcEditAutoRR,0);
 }
 
 function closeEdit(){
@@ -4751,11 +4753,17 @@ function launchConfetti(){
 function calcAutoRR(){
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
-  const account=parseFloat(document.getElementById('calc-account').value)||parseFloat(document.getElementById('p-account').value)||0;
+  // Use propSettings.account first (always in memory), fall back to DOM inputs
+  const account=(propSettings&&propSettings.account&&propSettings.account>0)
+    ? propSettings.account
+    : (parseFloat(document.getElementById('calc-account').value)||parseFloat(document.getElementById('p-account').value)||0);
   const label=document.getElementById('f-rr-auto');
   const rrInput=document.getElementById('f-actual-rr');
   if(!label)return;
-  if(isNaN(pnl)||isNaN(riskPct)||!account){label.textContent='';return;}
+  if(isNaN(pnl)||isNaN(riskPct)||!account){
+    label.textContent=(!account&&!isNaN(pnl)&&!isNaN(riskPct))?'⚠ set account size in Prop tab':'';
+    return;
+  }
   const riskAmt=account*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
@@ -4777,11 +4785,16 @@ function syncRRField(){
 function calcEditAutoRR(){
   const pnl=parseFloat(document.getElementById('e-pnl').value);
   const riskPct=parseFloat(document.getElementById('e-risk').value);
-  const account=parseFloat(document.getElementById('p-account').value)||0;
+  const account=(propSettings&&propSettings.account&&propSettings.account>0)
+    ? propSettings.account
+    : (parseFloat(document.getElementById('p-account').value)||0);
   const label=document.getElementById('e-rr-auto');
   const rrInput=document.getElementById('e-actual-rr');
   if(!label)return;
-  if(isNaN(pnl)||isNaN(riskPct)||!account){label.textContent='';return;}
+  if(isNaN(pnl)||isNaN(riskPct)||!account){
+    label.textContent=(!account&&!isNaN(pnl)&&!isNaN(riskPct))?'⚠ set account size in Prop tab':'';
+    return;
+  }
   const riskAmt=account*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
