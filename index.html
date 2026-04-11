@@ -564,6 +564,9 @@ body.dark-mode .mistake-cat{color:#6b7280!important}
 body.dark-mode .hint{color:#6b7280!important}
 body.dark-mode .cal-grid td{background:#0d0d0d!important;border-color:rgba(255,255,255,0.06)!important;color:#6b7280!important}
 body.dark-mode .cal-grid td.has-trade{background:#141414!important}
+body.dark-mode .cal-grid td.cal-day-win{background:rgba(16,185,129,0.22)!important;border-color:rgba(16,185,129,0.5)!important}
+body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!important;border-color:rgba(239,68,68,0.5)!important}
+body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
 body.dark-mode .cal-grid th{color:#6b7280!important}
 body.dark-mode .cal-nav button{background:#1a1a1a!important;color:#e5e7eb!important;border-color:rgba(255,255,255,0.07)!important}
 body.dark-mode .week-card{background:#141414!important;border-color:rgba(255,255,255,0.07)!important}
@@ -3497,7 +3500,7 @@ function renderCalendar(){
       let cls='';
       if(isToday)cls+=' today';
       if(isWeekend)cls+=' weekend';
-      if(d)cls+=' has-trade';
+      if(d){cls+=' has-trade';if(d.pnl>0)cls+=' cal-day-win';else if(d.pnl<0)cls+=' cal-day-loss';else cls+=' cal-day-be';}
       // Determine cell background based on day outcome
       let cellBg='';let cellBorder='';
       if(d&&!isToday){
@@ -6677,6 +6680,9 @@ body:not(.dark-mode) .mode-btn.active{background:#111!important;color:#fff!impor
 body:not(.dark-mode) .cal-grid th{color:#999!important;font-size:11px!important;font-weight:600!important}
 body:not(.dark-mode) .cal-grid td{background:#fff!important;border:1px solid #e8e8e8!important;color:#999!important}
 body:not(.dark-mode) .cal-grid td.has-trade{background:#fff!important;cursor:pointer!important}
+body:not(.dark-mode) .cal-grid td.cal-day-win{background:rgba(16,185,129,0.12)!important;border-color:rgba(16,185,129,0.4)!important}
+body:not(.dark-mode) .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.12)!important;border-color:rgba(239,68,68,0.4)!important}
+body:not(.dark-mode) .cal-grid td.cal-day-be{background:rgba(245,158,11,0.1)!important;border-color:rgba(245,158,11,0.35)!important}
 body:not(.dark-mode) .cal-grid td.today{border:2px solid #111!important;background:#fafafa!important}
 body:not(.dark-mode) .cal-grid td:hover{background:#f9f9f9!important}
 body:not(.dark-mode) .cal-day{color:#111!important;font-weight:500!important}
@@ -6770,6 +6776,9 @@ body.dark-mode .mode-btn{background:#1a1a1a!important;border:1px solid rgba(255,
 body.dark-mode .cal-grid th{color:#6b7280!important}
 body.dark-mode .cal-grid td{background:#111!important;border:1px solid rgba(255,255,255,0.06)!important;color:#6b7280!important}
 body.dark-mode .cal-grid td.has-trade{background:#141414!important}
+body.dark-mode .cal-grid td.cal-day-win{background:rgba(16,185,129,0.22)!important;border-color:rgba(16,185,129,0.5)!important}
+body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!important;border-color:rgba(239,68,68,0.5)!important}
+body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
 body.dark-mode .cal-grid td.today{border:2px solid var(--accent,#10b981)!important;background:rgba(16,185,129,0.06)!important}
 body.dark-mode .cal-day{color:#e5e7eb!important}
 body.dark-mode .dash-cal-grid td{background:#111!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important}
