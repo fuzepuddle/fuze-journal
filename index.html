@@ -1120,47 +1120,85 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-no-trades{text-align:center;padding:24px;color:#9ca3af;font-size:12px}
 
 /* ── Mini calendar on dashboard ── */
-.dash-cal-grid{width:100%;border-collapse:collapse}
+.dash-cal-grid{width:100%;border-collapse:separate;border-spacing:3px}
 .dash-cal-grid th{
   font-size:10px;
   font-weight:600;
-  color:#9ca3af;
+  color:#6b7280;
   text-align:center;
-  padding:6px 0 8px;
-  letter-spacing:.05em;
+  padding:0 0 10px;
+  letter-spacing:.08em;
   text-transform:uppercase;
 }
 .dash-cal-grid td{
   width:14.28%;
-  height:52px;
+  height:64px;
   vertical-align:top;
-  padding:5px 6px;
-  border:1px solid rgba(0,0,0,0.04);
-  font-size:10px;
-  color:#9ca3af;
+  padding:8px 7px 6px;
+  border:1px solid rgba(255,255,255,0.05);
+  font-size:11px;
+  color:#6b7280;
   cursor:default;
-  background:rgba(0,0,0,0.01);
-  border-radius:4px;
+  background:rgba(255,255,255,0.02);
+  border-radius:7px;
+  transition:background .15s;
 }
 .dash-cal-grid td.dcal-has{cursor:pointer}
-.dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.15)}
-.dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.15)}
-.dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.12)}
-.dash-cal-grid td.dcal-today{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.05)!important}
-.dcal-day{font-size:10px;font-weight:500;color:#9ca3af;margin-bottom:2px}
-.dcal-pnl{font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2}
-.dcal-win .dcal-pnl{color:var(--win)}
-.dcal-loss .dcal-pnl{color:var(--loss)}
-.dcal-be .dcal-pnl{color:var(--be)}
-.dcal-count{font-size:9px;color:#9ca3af;margin-top:1px}
-.dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.dash-cal-nav-title{font-size:13px;font-weight:600;color:#111827}
-.dash-cal-nav button{
-  background:none;border:1px solid var(--border);border-radius:5px;
-  color:#4b5563;cursor:pointer;font-size:12px;padding:3px 8px;
-  font-family:'Plus Jakarta Sans',sans-serif;
+.dash-cal-grid td.dcal-has:hover{filter:brightness(1.15)}
+.dash-cal-grid td.dcal-win{
+  background:rgba(16,185,129,0.1);
+  border-color:rgba(16,185,129,0.22);
 }
-.dash-cal-nav button:hover{background:rgba(255,255,255,0.05);color:#111827}
+.dash-cal-grid td.dcal-loss{
+  background:rgba(239,68,68,0.1);
+  border-color:rgba(239,68,68,0.2);
+}
+.dash-cal-grid td.dcal-be{
+  background:rgba(245,158,11,0.08);
+  border-color:rgba(245,158,11,0.18);
+}
+.dash-cal-grid td.dcal-today{
+  border:2px solid rgba(16,185,129,0.55)!important;
+  background:rgba(16,185,129,0.06)!important;
+}
+.dcal-day{
+  font-size:12px;
+  font-weight:600;
+  color:#9ca3af;
+  margin-bottom:4px;
+  line-height:1;
+}
+.dcal-win .dcal-day,.dcal-loss .dcal-day,.dcal-be .dcal-day{color:#d1d5db}
+.dcal-today .dcal-day{color:#10b981!important}
+.dcal-pnl{
+  font-size:12px;
+  font-weight:700;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  line-height:1;
+  margin-bottom:3px;
+}
+.dcal-win .dcal-pnl{color:#10b981}
+.dcal-loss .dcal-pnl{color:#ef4444}
+.dcal-be .dcal-pnl{color:#f59e0b}
+.dcal-count{
+  font-size:10px;
+  color:#6b7280;
+  font-weight:500;
+}
+.dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.dash-cal-nav-title{font-size:13px;font-weight:700;color:#e5e7eb;letter-spacing:.04em;text-transform:uppercase}
+.dash-cal-nav button{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px;
+  color:#9ca3af;
+  cursor:pointer;
+  font-size:14px;
+  padding:4px 10px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  transition:all .15s;
+}
+.dash-cal-nav button:hover{background:rgba(255,255,255,0.1);color:#e5e7eb}
 
 /* ── Calendar page ── */
 .cal-grid td{background:#f9fafb;border-color:rgba(0,0,0,0.06)}
@@ -2834,7 +2872,7 @@ function renderDashMiniCal(){
       else if(info.outcome==='loss')cls+=' dcal-loss';
       else cls+=' dcal-be';
     }
-    const pnlHtml=info?`<div class="dcal-pnl">${info.pnl>=0?'+':''}${info.pnl.toFixed(0)}</div><div class="dcal-count">${info.trades}t</div>`:'';
+    const pnlHtml=info?`<div class="dcal-pnl">${info.pnl>=0?'+$':'-$'}${Math.abs(info.pnl).toFixed(0)}</div><div class="dcal-count">${info.trades} trade${info.trades!==1?'s':''}</div>`:'';
     html+=`<td class="${cls.trim()}"><div class="dcal-day">${d}</div>${pnlHtml}</td>`;
     cell++;
     if(cell%7===0&&d<daysInMonth)html+='</tr><tr>';
@@ -3138,8 +3176,6 @@ function openEdit(id){
   if(esSec)esSec.style.display=currentProfile==='backtesting'?'none':'grid';
   document.getElementById('edit-modal').style.display='block';
   document.body.style.overflow='hidden';
-  // Auto-calc RR when modal opens with existing pnl/risk data
-  setTimeout(calcEditAutoRR,0);
 }
 
 function closeEdit(){
@@ -4753,17 +4789,11 @@ function launchConfetti(){
 function calcAutoRR(){
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
-  // Use propSettings.account first (always in memory), fall back to DOM inputs
-  const account=(propSettings&&propSettings.account&&propSettings.account>0)
-    ? propSettings.account
-    : (parseFloat(document.getElementById('calc-account').value)||parseFloat(document.getElementById('p-account').value)||0);
+  const account=parseFloat(document.getElementById('calc-account').value)||parseFloat(document.getElementById('p-account').value)||0;
   const label=document.getElementById('f-rr-auto');
   const rrInput=document.getElementById('f-actual-rr');
   if(!label)return;
-  if(isNaN(pnl)||isNaN(riskPct)||!account){
-    label.textContent=(!account&&!isNaN(pnl)&&!isNaN(riskPct))?'⚠ set account size in Prop tab':'';
-    return;
-  }
+  if(isNaN(pnl)||isNaN(riskPct)||!account){label.textContent='';return;}
   const riskAmt=account*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
@@ -4785,16 +4815,11 @@ function syncRRField(){
 function calcEditAutoRR(){
   const pnl=parseFloat(document.getElementById('e-pnl').value);
   const riskPct=parseFloat(document.getElementById('e-risk').value);
-  const account=(propSettings&&propSettings.account&&propSettings.account>0)
-    ? propSettings.account
-    : (parseFloat(document.getElementById('p-account').value)||0);
+  const account=parseFloat(document.getElementById('p-account').value)||0;
   const label=document.getElementById('e-rr-auto');
   const rrInput=document.getElementById('e-actual-rr');
   if(!label)return;
-  if(isNaN(pnl)||isNaN(riskPct)||!account){
-    label.textContent=(!account&&!isNaN(pnl)&&!isNaN(riskPct))?'⚠ set account size in Prop tab':'';
-    return;
-  }
+  if(isNaN(pnl)||isNaN(riskPct)||!account){label.textContent='';return;}
   const riskAmt=account*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
@@ -6807,7 +6832,7 @@ body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!importa
 body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
 body.dark-mode .cal-grid td.today{border:2px solid var(--accent,#10b981)!important;background:rgba(16,185,129,0.06)!important}
 body.dark-mode .cal-day{color:#e5e7eb!important}
-body.dark-mode .dash-cal-grid td{background:#111!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important}
+body.dark-mode .dash-cal-grid td{background:rgba(255,255,255,0.02)!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important}
 body.dark-mode .dash-cal-grid th{color:#6b7280!important}
 body.dark-mode .dash-cal-nav button{background:#1a1a1a!important;border:1px solid rgba(255,255,255,0.07)!important;color:#9ca3af!important}
 body.dark-mode .dash-cal-nav-title{color:#e5e7eb!important}
