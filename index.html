@@ -1561,6 +1561,51 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div id="timer-sub" style="font-size:13px;color:#9ca3af;margin-top:4px"></div>
   </div>
 
+  <!-- PRE-SESSION CHECK -->
+  <div class="card gap">
+    <div class="section-label">Pre-session</div>
+
+    <div class="gap">
+      <label>Morning routine <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— how did you prepare today?</span></label>
+      <select id="f-routine">
+        <option value="">—</option>
+        <option>Woke up early — full prep ✓</option>
+        <option>Woke up on time — decent prep</option>
+        <option>Rushed — not enough time before session</option>
+        <option>Woke up 10 min before — no prep</option>
+        <option>Skipped prep entirely</option>
+      </select>
+    </div>
+
+    <div class="gap">
+      <label>Did you interfere with the trade while it was running?</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px" id="interference-row">
+        <button type="button" class="tclass-btn" id="intrf-no" onclick="setInterference('no',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;text-align:center">✅ No — let it run</button>
+        <button type="button" class="tclass-btn" id="intrf-partial" onclick="setInterference('partial',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;text-align:center">⚠️ Moved SL / partial</button>
+        <button type="button" class="tclass-btn" id="intrf-yes" onclick="setInterference('yes',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;text-align:center">❌ Closed early / chased</button>
+      </div>
+    </div>
+
+    <div class="gap">
+      <label>What happened after the trade? <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— post-session behaviour</span></label>
+      <select id="f-post-behaviour">
+        <option value="">—</option>
+        <option>Closed laptop — done for the day ✓</option>
+        <option>Reviewed the trade calmly ✓</option>
+        <option>Watched charts for a while after</option>
+        <option>Felt frustrated but moved on</option>
+        <option>Dwelled on the loss — couldn't let it go</option>
+        <option>Went looking for a revenge trade</option>
+        <option>Doom scrolled / low energy rest of day</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Why are you doing this? <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— remind yourself before you trade</span></label>
+      <input type="text" id="f-why" placeholder="e.g. Huracán STO. Freedom. Prove to myself I can do this.">
+    </div>
+  </div>
+
   <div class="card gap">
     <div class="section-label">Session</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
@@ -2321,7 +2366,7 @@ let allTrades={challenge:[],funded:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
-let trades=[];let mode=currentProfile==='demo'?'demo':'live';let discRating=0;let outcome='';let tradeClass='';
+let trades=[];let mode=currentProfile==='demo'?'demo':'live';let discRating=0;let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
 
@@ -2929,6 +2974,20 @@ function setTradeClass(type, btn){
   btn.querySelectorAll('span').forEach(s=>s.style.color=text);
 }
 
+function setInterference(type, btn){
+  tradeInterference=type;
+  document.querySelectorAll('#interference-row .tclass-btn').forEach(b=>{
+    b.style.background='#0a0f18';
+    b.style.borderColor='rgba(255,255,255,0.07)';
+    b.style.color='#555';
+  });
+  const colors={'no':['#0a2010','#10b981','#10b981'],'partial':['#1a1400','#f59e0b','#f59e0b'],'yes':['#1f0808','#ef4444','#ef4444']};
+  const [bg,border,text]=colors[type]||['#0a0f18','rgba(255,255,255,0.07)','#555'];
+  btn.style.background=bg;
+  btn.style.borderColor=border;
+  btn.style.color=text;
+}
+
 // ── Save trade ──
 async function saveTrade(){
   const date=document.getElementById('f-date').value;
@@ -2998,6 +3057,10 @@ async function saveTrade(){
     similar:document.getElementById('f-similar').value,
     narrative:document.getElementById('f-narrative').value,
     improve:document.getElementById('f-improve').value,
+    routine:document.getElementById('f-routine').value,
+    interference:tradeInterference,
+    postBehaviour:document.getElementById('f-post-behaviour').value,
+    why:document.getElementById('f-why').value,
     ss1m:ssUrls['1m']||'', ss5m:ssUrls['5m']||'',
     ss15m:ssUrls['15m']||'', ss1h:ssUrls['1h']||'', ss4h:ssUrls['4h']||'',
     risk,
@@ -3016,7 +3079,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum','f-emotion-post'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum','f-emotion-post','f-routine','f-post-behaviour','f-why'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -3027,12 +3090,9 @@ function clearForm(){
   document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
-  tradeClass='';
-  document.querySelectorAll('.tclass-btn').forEach(b=>{
-    b.style.background='#0a0f18';
-    b.style.borderColor='rgba(255,255,255,0.07)';
-    b.style.color='#555';
-    b.querySelectorAll('span').forEach(s=>s.style.color='#444');
+  tradeClass='';tradeInterference='';
+  document.querySelectorAll('#interference-row .tclass-btn').forEach(b=>{
+    b.style.background='#0a0f18';b.style.borderColor='rgba(255,255,255,0.07)';b.style.color='#555';
   });
   selectedMistakes=[];
   buildMistakes();
