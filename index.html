@@ -1689,29 +1689,65 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <label>Emotional state <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— before entry</span></label>
       <select id="f-emotion">
         <option value="">—</option>
-        <option>Neutral ✓</option>
-        <option>Patient / waiting</option>
-        <option>FOMO / chasing</option>
-        <option>Revenge trading</option>
-        <option>Overconfident</option>
-        <option>Anxious / hesitant</option>
-        <option>Distracted</option>
-        <option>Tired / low energy</option>
+        <optgroup label="Positive / ready">
+          <option>Neutral ✓</option>
+          <option>Patient / waiting ✓</option>
+          <option>Calm and focused ✓</option>
+          <option>Confident — setup was clear ✓</option>
+          <option>In flow state ✓</option>
+        </optgroup>
+        <optgroup label="Negative / off">
+          <option>Anxious / hesitant</option>
+          <option>FOMO / chasing</option>
+          <option>Impatient — forced entry</option>
+          <option>Revenge trading after a loss</option>
+          <option>Overconfident / ego</option>
+          <option>Frustrated — bad day</option>
+          <option>Distracted / not focused</option>
+          <option>Tired / low energy</option>
+          <option>Stressed about money</option>
+          <option>Doubting the model</option>
+          <option>Bored — needed something to happen</option>
+          <option>Pressured — felt I had to trade</option>
+          <option>Detached / going through the motions</option>
+        </optgroup>
       </select>
     </div>
     <div class="gap">
       <label>Emotional state <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— after close</span></label>
       <select id="f-emotion-post">
         <option value="">—</option>
-        <option>Satisfied ✓</option>
-        <option>Calm / indifferent</option>
-        <option>Frustrated</option>
-        <option>Relieved</option>
-        <option>Overconfident / euphoric</option>
-        <option>Revenge urge</option>
-        <option>Regret (closed too early)</option>
-        <option>Regret (held too long)</option>
-        <option>Shaken / doubting model</option>
+        <optgroup label="Positive">
+          <option>Satisfied — executed well ✓</option>
+          <option>Calm / indifferent ✓</option>
+          <option>Proud of the process ✓</option>
+          <option>Relieved — stuck to the plan ✓</option>
+          <option>Energised — great session ✓</option>
+        </optgroup>
+        <optgroup label="Negative — win">
+          <option>Overconfident / euphoric after win</option>
+          <option>Annoyed didn't size up</option>
+          <option>Felt I got lucky — not a clean win</option>
+          <option>Immediately wanted to trade again</option>
+        </optgroup>
+        <optgroup label="Negative — loss">
+          <option>Frustrated with the result</option>
+          <option>Revenge urge — wanted it back</option>
+          <option>Regret — closed too early</option>
+          <option>Regret — held too long</option>
+          <option>Regret — moved SL</option>
+          <option>Shaken / doubting the model</option>
+          <option>Angry at myself</option>
+          <option>Defeated / want to quit</option>
+          <option>Dwelling on the loss — couldn't let it go</option>
+          <option>Went and doom scrolled after</option>
+        </optgroup>
+        <optgroup label="Mixed">
+          <option>Neutral about the outcome</option>
+          <option>Glad I followed rules even though it lost</option>
+          <option>Unsure if execution was right</option>
+          <option>Confused by price action</option>
+        </optgroup>
       </select>
     </div>
     <div>
@@ -1763,22 +1799,35 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <label>Momentum / price speed at entry</label>
       <select id="f-momentum">
         <option value="">—</option>
-        <optgroup label="Strong">
-          <option>Aggressive expansion — strong displacement</option>
-          <option>Strong but starting to slow</option>
-          <option>Moderate — steady push</option>
-        </optgroup>
-        <optgroup label="Weak / mixed">
-          <option>Slowing — losing volume</option>
-          <option>Grinding — small candles, slow grind</option>
-          <option>Choppy — back and forth</option>
-          <option>Stalled — no directional momentum</option>
+        <optgroup label="Strong displacement">
+          <option>Aggressive expansion — large bodied candles, clear BOS</option>
+          <option>Strong push — displacement visible on 15M and 5M</option>
+          <option>Strong but starting to slow near entry</option>
+          <option>Moderate — steady directional push</option>
         </optgroup>
         <optgroup label="Retrace character">
-          <option>V-shape recovery off FVG</option>
-          <option>Slow corrective retrace — textbook</option>
+          <option>Slow corrective retrace — textbook pullback ✓</option>
+          <option>V-shape recovery off FVG — sharp reaction ✓</option>
+          <option>Tight consolidation inside FVG — coiling</option>
+          <option>Price wicked into FVG then closed back out</option>
+          <option>Retrace was choppy — lots of back and forth</option>
           <option>Violent retrace — entered anyway</option>
-          <option>Price consolidating inside FVG</option>
+          <option>Retrace went through entire FVG</option>
+          <option>Deep retrace — more than 75% of displacement</option>
+        </optgroup>
+        <optgroup label="At entry">
+          <option>Price slowing — losing candle size and speed</option>
+          <option>Grinding — small candles, slow grind</option>
+          <option>Choppy at entry — indecision</option>
+          <option>Stalled completely — no directional momentum</option>
+          <option>Price spiking — fast and hard to fill</option>
+          <option>Clean expansion off gap — immediate move ✓</option>
+        </optgroup>
+        <optgroup label="Context">
+          <option>Pre-news — reduced momentum expected</option>
+          <option>Low volume — outside main session hours</option>
+          <option>NY open momentum — aggressive market conditions</option>
+          <option>End of session — fading momentum</option>
         </optgroup>
       </select>
     </div>
@@ -2004,7 +2053,65 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Midnight Open</option><option>EQH</option><option>EQL</option><option>HTF Swing Point</option></select></div>
     </div>
     <div class="grid-2 gap">
-      <div><label>Why skipped?</label><select id="m-reason"><option value="">—</option><option>No clear draw</option><option>Chop / no momentum</option><option>No displacement</option><option>Violent retrace</option><option>No 1M confirmation</option><option>After 16:00</option><option>News pending</option><option>Emotional state not neutral</option><option>Just missed it</option></select></div>
+      <div><label>Why skipped?</label><select id="m-reason">
+        <option value="">—</option>
+        <optgroup label="Draw / Target">
+          <option>No clear single draw</option>
+          <option>Multiple competing draws — couldn't decide</option>
+          <option>Draw already tapped earlier in session</option>
+          <option>Target felt too far — doubted the move</option>
+          <option>Opposing HTF level in the way</option>
+        </optgroup>
+        <optgroup label="HTF Context">
+          <option>HTF chop — no clear structure</option>
+          <option>4H and 1H misaligned</option>
+          <option>Small candles on higher timeframe</option>
+          <option>Traded against HTF trend — hesitated</option>
+          <option>Wasn't sure of overall bias</option>
+        </optgroup>
+        <optgroup label="Displacement">
+          <option>No displacement visible on 15M</option>
+          <option>Displacement looked weak</option>
+          <option>Displacement weaker than retrace — unsure</option>
+          <option>No 5M FVG left behind</option>
+          <option>5M FVG formed in chop — ignored</option>
+          <option>FVG too large / messy</option>
+          <option>Gap already partially filled</option>
+        </optgroup>
+        <optgroup label="Retrace">
+          <option>Retrace was violent — scared me off</option>
+          <option>Retrace too deep — went through FVG</option>
+          <option>Price consolidated inside gap — no clean tap</option>
+          <option>Missed the retrace — wasn't watching</option>
+          <option>Retrace happened too fast</option>
+        </optgroup>
+        <optgroup label="1M Confirmation">
+          <option>No 1M candle close — still waiting</option>
+          <option>No 1M mini trend (no HH + HL)</option>
+          <option>No clear higher low to mark</option>
+          <option>BOS candle was going away from draw</option>
+          <option>BOS was a wick not a close</option>
+          <option>1M structure broke before confirmation</option>
+          <option>Confirmation candle was too large — bad fill</option>
+          <option>Missed the 1M entry — came back too late</option>
+        </optgroup>
+        <optgroup label="Session / Timing">
+          <option>After 16:00 UK cutoff</option>
+          <option>News event pending</option>
+          <option>Setup appeared outside session window</option>
+          <option>Didn't have enough time left in session</option>
+        </optgroup>
+        <optgroup label="Psychology">
+          <option>Emotional state not neutral</option>
+          <option>Still shaken from previous loss</option>
+          <option>Hesitated — doubted myself</option>
+          <option>Overthought it — analysis paralysis</option>
+          <option>Got distracted — missed the window</option>
+          <option>Didn't trust the setup even though it was valid</option>
+          <option>Fear of another loss</option>
+          <option>Just missed it — wasn't at the screen</option>
+        </optgroup>
+      </select></div>
 
     </div>
     <div><label>Notes</label><textarea id="m-notes" placeholder="What did you see? What stopped you?" style="min-height:50px"></textarea></div>
@@ -2240,14 +2347,114 @@ let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
-  {cat:'Session / Timing',items:['Outside NY window','Entered after 16:00 UK','Didn\'t close at 16:30','Took second trade in session','Entered during news event','Traded during low liquidity open','Held through hard close time']},
-  {cat:'Draw',items:['Unclear draw on liquidity','Multiple competing draws','Draw already taken / tapped','Price through draw, not toward it','Targeted too far draw — skipped nearer one','Draw was stacked — targeted the last one','Draw was on wrong timeframe']},
-  {cat:'Context',items:['HTF structure misread','Traded into chop / ranging market','Small candles — no momentum','Traded against higher timeframe trend','4H and 1H misaligned','Entered during consolidation, not expansion','Ignored obvious opposing HTF level nearby']},
-  {cat:'Displacement',items:['Displacement weaker than retrace','No clear BOS on displacement','5M FVG formed in chop, not displacement','No 5M FVG left behind','Displacement was a single candle wick — not a move','FVG was too large — low quality imbalance','Displacement was on wrong timeframe']},
-  {cat:'Retrace',items:['Violent retrace ignored','Retrace stronger than displacement','Entered too early — no retrace waited','Retrace went through entire FVG','Price consolidated inside FVG instead of tapping','Chased price after FVG was missed','Entered on a spike, not a clean retrace']},
-  {cat:'Confirmation',items:['No 1M close confirmation','BOS not driving toward draw','Entered on candle open not close','BOS was a wick, not a close','Confirmation candle was too large — bad entry price','Entered on momentum, not on structure','Mistook a liquidity grab for confirmation']},
-  {cat:'Stop / Management',items:['Unprotected stop loss','Stop too tight — wicked out','Didn\'t move to BE','Moved stop against trade','Closed early — TP not reached','Removed stop entirely','Moved BE back to entry after being ahead','Didn\'t trail after BE was hit','Took partial profit then let runner go to loss']},
-  {cat:'Psychology',items:['Forced the setup','FOMO — chased price','Traded on emotion / revenge','Deviated from model rules','Ignored draw taken rule (barcode)','Traded to make back a loss','Overconfident after a winning streak','Felt pressure to trade — no valid setup','Second-guessed the entry and waited too long','Convinced myself the setup was valid when it wasn\'t']}
+  {cat:'Session / Timing',items:[
+    'Outside NY window (before 14:30 UK)',
+    'Entered after 16:00 UK hard cutoff',
+    'Didn\'t close at 16:30 hard close',
+    'Took second trade in same session',
+    'Entered during news event / red folder',
+    'Traded during low liquidity open',
+    'Held through hard close time',
+    'Entered too close to session end — no time for trade to play',
+    'Traded during lunch hours — dead zone',
+    'Forced a trade because session was almost over'
+  ]},
+  {cat:'Draw / Target',items:[
+    'No clear single draw — multiple targets',
+    'Draw already taken / tapped earlier',
+    'Price moving away from draw, not toward it',
+    'Targeted too far draw — skipped nearer one',
+    'Draw was stacked — targeted the last one',
+    'Draw on wrong timeframe',
+    'Target was inside a major opposing HTF level',
+    'Draw was too close — not enough RR potential',
+    'Draw was a weak swing — not a clean level',
+    'Didn\'t account for opposing draw in the way'
+  ]},
+  {cat:'HTF Context',items:[
+    'HTF structure misread — was actually bearish',
+    'Traded into chop / ranging 4H or 1H market',
+    '4H and 1H misaligned — no confluence',
+    'Traded against higher timeframe trend',
+    'Ignored obvious opposing HTF level nearby',
+    'Small candles on 4H/1H — no momentum',
+    'HTF was in consolidation between equal highs/lows',
+    'Previous session high/low was too close — blocked path',
+    'HTF gap already filled — draw was gone',
+    'Entered during a HTF distribution / accumulation phase'
+  ]},
+  {cat:'Displacement',items:[
+    'No displacement at all — entered on chop',
+    'Displacement weaker than the retrace',
+    'No clear BOS on displacement candle',
+    'Displacement was a single candle wick — not a real move',
+    'Displacement happened but no 5M FVG was left behind',
+    '5M FVG formed in chop, not from clean displacement',
+    'FVG was too large — low quality imbalance',
+    'Displacement was on wrong timeframe (1M not 15M)',
+    'Multiple overlapping FVGs — messy area',
+    'Gap was partially filled before entry — invalidated',
+    'Displacement was against HTF trend',
+    'Retrace already came before I noticed the gap'
+  ]},
+  {cat:'Retrace',items:[
+    'Violent / aggressive retrace — should have skipped',
+    'Retrace stronger than displacement',
+    'Entered too early — didn\'t wait for retrace into gap',
+    'Retrace went through entire 5M FVG',
+    'Price consolidated inside FVG instead of tapping and reacting',
+    'Chased price after FVG was missed',
+    'Entered on a spike candle, not a clean retrace',
+    'Retrace was deep — over 75% of displacement',
+    'Multiple retrace attempts before entry — structure weakened',
+    'Gap was hit and closed — no longer valid'
+  ]},
+  {cat:'1M Confirmation',items:[
+    'No 1M candle close confirmation — entered on open',
+    'Entered on a wick, not a candle body close',
+    'No 1M mini trend (no HH + HL structure)',
+    'BOS candle was driving away from draw',
+    'BOS was a wick, not a close',
+    '1M BOS candle was too large — terrible entry price',
+    'Entered on momentum, not on structure break',
+    'Mistook a liquidity grab for confirmation',
+    'No higher low to reference — structure unclear',
+    'Confirmation happened but I entered late — chased it',
+    '1M structure broke below last HL before entry',
+    'Multiple 1M BOS attempts — first was a fake'
+  ]},
+  {cat:'Stop / Trade Management',items:[
+    'Stop was unprotected — no structure behind it',
+    'Stop too tight — wicked out then moved',
+    'Didn\'t move to break even after 1:1',
+    'Moved stop further away mid-trade',
+    'Moved BE back to entry after being ahead',
+    'Closed early — target not reached',
+    'Removed stop entirely',
+    'Didn\'t trail stop after BE was set',
+    'Took partial profit then let runner go to full loss',
+    'Scaled out too early — missed the full move',
+    'Manually closed on drawdown out of fear',
+    'Moved TP closer because price was slow',
+    'Widened risk without adjusting size'
+  ]},
+  {cat:'Psychology',items:[
+    'Forced the setup — no valid entry',
+    'FOMO — chased price after missing entry',
+    'Traded on emotion / revenge after a loss',
+    'Deviated from model rules mid-trade',
+    'Felt pressure to trade — no real setup',
+    'Convinced myself the setup was valid when it wasn\'t',
+    'Overconfident after a winning streak',
+    'Second-guessed valid entry and waited too long',
+    'Anxious during trade — micromanaged it',
+    'Let a winner turn to a loser by ignoring BE rule',
+    'Traded to prove a point to myself',
+    'Logged in outside session hours and took a trade',
+    'Made a decision too fast — didn\'t follow process',
+    'Kept watching after entry and scared myself out',
+    'Got attached to a bias and ignored contradicting signs'
+  ]}
 ];
 
 const SUPA_URL='https://ksjwlisoggcahzhzngfq.supabase.co';
