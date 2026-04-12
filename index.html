@@ -1347,14 +1347,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="sb-section-label">Analysis</div>
     <button class="sb-nav-item" onclick="showTab('stats')" data-tab="stats"><span class="sb-nav-icon">↗</span> Stats</button>
     <button class="sb-nav-item" onclick="showTab('calendar')" data-tab="calendar"><span class="sb-nav-icon">▦</span> Calendar</button>
-    <button class="sb-nav-item" onclick="showTab('prop')" data-tab="prop"><span class="sb-nav-icon">◈</span> Prop Firm</button>
-  </div>
-
-  <div class="sb-section">
-    <div class="sb-section-label">Review</div>
     <button class="sb-nav-item" onclick="showTab('weekly')" data-tab="weekly"><span class="sb-nav-icon">◎</span> Weekly Review</button>
-    <button class="sb-nav-item" onclick="showTab('presession')" data-tab="presession"><span class="sb-nav-icon">◐</span> Pre-Session</button>
-    <button class="sb-nav-item" onclick="showTab('notebook')" data-tab="notebook"><span class="sb-nav-icon">✎</span> Notebook</button>
+    <button class="sb-nav-item" onclick="showTab('prop')" data-tab="prop"><span class="sb-nav-icon">◈</span> Prop Firm</button>
   </div>
 
   <div class="sb-bottom">
@@ -1559,51 +1553,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div id="timer-bar" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1s linear"></div>
     </div>
     <div id="timer-sub" style="font-size:13px;color:#9ca3af;margin-top:4px"></div>
-  </div>
-
-  <!-- PRE-SESSION CHECK -->
-  <div class="card gap">
-    <div class="section-label">Pre-session</div>
-
-    <div class="gap">
-      <label>Morning routine <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— how did you prepare today?</span></label>
-      <select id="f-routine">
-        <option value="">—</option>
-        <option>Woke up early — full prep ✓</option>
-        <option>Woke up on time — decent prep</option>
-        <option>Rushed — not enough time before session</option>
-        <option>Woke up 10 min before — no prep</option>
-        <option>Skipped prep entirely</option>
-      </select>
-    </div>
-
-    <div class="gap">
-      <label>Did you interfere with the trade while it was running?</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px" id="interference-row">
-        <button type="button" class="tclass-btn" id="intrf-no" onclick="setInterference('no',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;text-align:center">✅ No — let it run</button>
-        <button type="button" class="tclass-btn" id="intrf-partial" onclick="setInterference('partial',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;text-align:center">⚠️ Moved SL / partial</button>
-        <button type="button" class="tclass-btn" id="intrf-yes" onclick="setInterference('yes',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;text-align:center">❌ Closed early / chased</button>
-      </div>
-    </div>
-
-    <div class="gap">
-      <label>What happened after the trade? <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— post-session behaviour</span></label>
-      <select id="f-post-behaviour">
-        <option value="">—</option>
-        <option>Closed laptop — done for the day ✓</option>
-        <option>Reviewed the trade calmly ✓</option>
-        <option>Watched charts for a while after</option>
-        <option>Felt frustrated but moved on</option>
-        <option>Dwelled on the loss — couldn't let it go</option>
-        <option>Went looking for a revenge trade</option>
-        <option>Doom scrolled / low energy rest of day</option>
-      </select>
-    </div>
-
-    <div>
-      <label>Why are you doing this? <span style="color:#555;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0">— remind yourself before you trade</span></label>
-      <input type="text" id="f-why" placeholder="e.g. Huracán STO. Freedom. Prove to myself I can do this.">
-    </div>
   </div>
 
   <div class="card gap">
@@ -2239,89 +2188,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 </div>
 
-<!-- NOTEBOOK -->
-<div class="page" id="page-notebook">
-  <div class="page-header">
-    <h2>Notebook</h2>
-    <div class="cal-nav">
-      <button onclick="notebookPrev()">&#8249;</button>
-      <span id="notebook-date-lbl" style="font-size:13px;font-weight:500;min-width:110px;text-align:center"></span>
-      <button onclick="notebookNext()">&#8250;</button>
-      <button onclick="notebookToday()" style="margin-left:4px">Today</button>
-    </div>
-  </div>
-  <div class="grid-2" style="margin-bottom:12px">
-    <div class="card">
-      <div class="section-label" style="margin-bottom:10px">Mood &amp; Energy</div>
-      <div style="margin-bottom:10px">
-        <label style="margin-bottom:6px">Mood</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="nb-mood-row">
-          <button type="button" class="nb-mood-btn" data-val="great" onclick="setNbMood('great',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😄 Great</button>
-          <button type="button" class="nb-mood-btn" data-val="good" onclick="setNbMood('good',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">🙂 Good</button>
-          <button type="button" class="nb-mood-btn" data-val="neutral" onclick="setNbMood('neutral',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😐 Neutral</button>
-          <button type="button" class="nb-mood-btn" data-val="off" onclick="setNbMood('off',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😔 Off</button>
-          <button type="button" class="nb-mood-btn" data-val="bad" onclick="setNbMood('bad',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">😤 Stressed</button>
-        </div>
-      </div>
-      <div>
-        <label style="margin-bottom:6px">Energy level</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="nb-energy-row">
-          <button type="button" class="nb-energy-btn" data-val="high" onclick="setNbEnergy('high',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">⚡ High</button>
-          <button type="button" class="nb-energy-btn" data-val="medium" onclick="setNbEnergy('medium',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">🔋 Medium</button>
-          <button type="button" class="nb-energy-btn" data-val="low" onclick="setNbEnergy('low',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border,rgba(0,0,0,0.1));background:none;cursor:pointer;font-size:12px;font-family:inherit;color:var(--text-secondary,#555)">🪫 Low</button>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-label" style="margin-bottom:10px">Today's Intent</div>
-      <div style="margin-bottom:10px">
-        <label>Trading intention for today</label>
-        <select id="nb-intent">
-          <option value="">—</option>
-          <option>Trade if setup is perfect ✓</option>
-          <option>Watch only — no trades today</option>
-          <option>Focus on patience</option>
-          <option>Focus on confirmation — no early entries</option>
-          <option>Rest day — markets closed / personal</option>
-          <option>Back to basics — just follow the model</option>
-        </select>
-      </div>
-      <div>
-        <label>One focus for today</label>
-        <input type="text" id="nb-focus" placeholder="e.g. Wait for the 1M close, don't jump early">
-      </div>
-    </div>
-  </div>
-  <div class="card gap">
-    <div class="section-label">Free Notes</div>
-    <div class="gap">
-      <label>Morning thoughts / market observations</label>
-      <textarea id="nb-morning" placeholder="What's on your mind? Macro context, key levels you're watching, general state..." style="min-height:80px"></textarea>
-    </div>
-    <div class="gap">
-      <label>Post-session reflection</label>
-      <textarea id="nb-postsession" placeholder="How did the session go? What did price do? Did a setup appear? How did you feel?" style="min-height:80px"></textarea>
-    </div>
-    <div>
-      <label>Anything else</label>
-      <textarea id="nb-other" placeholder="Ideas, pattern notes, things to research, reminders..." style="min-height:60px"></textarea>
-    </div>
-  </div>
-  <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:1rem">
-    <button class="btn btn-primary" onclick="saveNotebook()">Save →</button>
-  </div>
-  <!-- Past entries -->
-  <div class="card" style="margin-top:8px">
-    <div class="collapsible-header" onclick="toggleCollapse('nb-history-body')">
-      <div class="section-label" style="margin-bottom:0">Past entries</div>
-      <span class="collapse-icon">▼</span>
-    </div>
-    <div id="nb-history-body" class="collapsible-body collapsed">
-      <div id="nb-history-list" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
-      <div id="nb-history-empty" style="font-size:13px;color:#9ca3af;padding:12px 0">No notebook entries yet.</div>
-    </div>
-  </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <!--
@@ -2920,7 +2786,6 @@ function showTab(t){
   if(t==='calendar')renderCalendar();
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
-  if(t==='presession'){loadPresession();}
   const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
 
@@ -2972,20 +2837,6 @@ function setTradeClass(type, btn){
   btn.style.borderColor=border;
   btn.style.color=text;
   btn.querySelectorAll('span').forEach(s=>s.style.color=text);
-}
-
-function setInterference(type, btn){
-  tradeInterference=type;
-  document.querySelectorAll('#interference-row .tclass-btn').forEach(b=>{
-    b.style.background='#0a0f18';
-    b.style.borderColor='rgba(255,255,255,0.07)';
-    b.style.color='#555';
-  });
-  const colors={'no':['#0a2010','#10b981','#10b981'],'partial':['#1a1400','#f59e0b','#f59e0b'],'yes':['#1f0808','#ef4444','#ef4444']};
-  const [bg,border,text]=colors[type]||['#0a0f18','rgba(255,255,255,0.07)','#555'];
-  btn.style.background=bg;
-  btn.style.borderColor=border;
-  btn.style.color=text;
 }
 
 // ── Save trade ──
@@ -3057,10 +2908,6 @@ async function saveTrade(){
     similar:document.getElementById('f-similar').value,
     narrative:document.getElementById('f-narrative').value,
     improve:document.getElementById('f-improve').value,
-    routine:document.getElementById('f-routine').value,
-    interference:tradeInterference,
-    postBehaviour:document.getElementById('f-post-behaviour').value,
-    why:document.getElementById('f-why').value,
     ss1m:ssUrls['1m']||'', ss5m:ssUrls['5m']||'',
     ss15m:ssUrls['15m']||'', ss1h:ssUrls['1h']||'', ss4h:ssUrls['4h']||'',
     risk,
@@ -3079,7 +2926,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum','f-emotion-post','f-routine','f-post-behaviour','f-why'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum','f-emotion-post'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -3091,9 +2938,6 @@ function clearForm(){
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   tradeClass='';tradeInterference='';
-  document.querySelectorAll('#interference-row .tclass-btn').forEach(b=>{
-    b.style.background='#0a0f18';b.style.borderColor='rgba(255,255,255,0.07)';b.style.color='#555';
-  });
   selectedMistakes=[];
   buildMistakes();
   document.getElementById('mistake-count').textContent='';
@@ -5471,69 +5315,6 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 <!-- PRE-SESSION REVIEW (hidden tab, content kept for pinned reminders) -->
-<div class="page" id="page-presession">
-  <div class="page-header"><h2>Pre-Session</h2></div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
-
-    <!-- Left: Add reminder trade -->
-    <div>
-      <div class="card">
-        <div class="section-label" style="margin-bottom:12px">Add reminder trade</div>
-        <p style="font-size:13px;color:#4b5563;margin-bottom:14px;line-height:1.6">Pin trades that show your worst mistakes — read these <strong style="color:#ffffff">15 mins before every session</strong> to jog your memory.</p>
-        <div style="margin-bottom:10px">
-          <label>Mistake category</label>
-          <select id="ps-category">
-            <option value="">Select category</option>
-            <option>Forced entry — no clear setup</option>
-            <option>Ignored HTF bias</option>
-            <option>Entered during chop</option>
-            <option>No displacement</option>
-            <option>FOMO — chased price</option>
-            <option>Moved SL / gave back profit</option>
-            <option>Emotional after loss</option>
-            <option>Overtraded</option>
-            <option>Ignored news/event</option>
-            <option>Outside NY window</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div style="margin-bottom:10px">
-          <label>Trade date (from your journal)</label>
-          <input type="date" id="ps-date">
-        </div>
-        <div style="margin-bottom:10px">
-          <label>What went wrong?</label>
-          <textarea id="ps-lesson" placeholder="Be specific — what thought process caused the mistake?" style="min-height:80px"></textarea>
-        </div>
-        <div style="margin-bottom:14px">
-          <label>What to do instead</label>
-          <textarea id="ps-rule" placeholder="The rule you should follow in this situation..." style="min-height:60px"></textarea>
-        </div>
-        <button class="btn btn-primary" onclick="savePresessionReminder()" style="width:100%">Pin reminder →</button>
-      </div>
-
-      <!-- Daily affirmations -->
-      <div class="card">
-        <div class="section-label" style="margin-bottom:10px">My non-negotiables</div>
-        <p style="font-size:13px;color:#4b5563;margin-bottom:10px;line-height:1.6">Your hard rules — read before every session.</p>
-        <textarea id="ps-nonneg" placeholder="e.g. I will not trade without a clear HTF draw&#10;I will not enter without displacement&#10;I will move to BE immediately after entry&#10;I will close all trades at 11:00 NY..." style="min-height:140px" oninput="saveNonNeg()"></textarea>
-      </div>
-    </div>
-
-    <!-- Right: Pinned reminders -->
-    <div>
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div class="section-label" style="margin-bottom:0">📌 Pinned reminders <span id="ps-count" style="font-size:12px;color:#777;font-weight:400"></span></div>
-          <div style="font-size:12px;color:#777">Read before every session</div>
-        </div>
-        <div id="ps-list" style="font-size:13px;color:#777">No reminders pinned yet.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- THEME CUSTOMIZER -->
 <button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
 <div id="theme-panel">
@@ -5611,7 +5392,6 @@ document.addEventListener('DOMContentLoaded',function(){
   <div class="more-item" onclick="mobNav('prop')">      <span class="more-item-icon">📊</span>Prop firm</div>
   <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
-  <div class="more-item" onclick="mobNav('notebook')">  <span class="more-item-icon">✎</span>Notebook</div>
 
 </div>
 
@@ -6668,12 +6448,11 @@ function loadNotebookStorage(){
   }catch(e){}
 }
 
-/* ── PATCH: hook into showTab so notebook loads on open ─ */
+/* ── PATCH: hook into showTab so score/insights update ─ */
 const _origShowTab=typeof showTab==='function'?showTab:null;
 if(_origShowTab){
   window.showTab=function(t){
     _origShowTab(t);
-    if(t==='notebook') loadNotebookForDate();
     if(t==='stats') setTimeout(renderSmartInsights,50);
     if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); }
   };
@@ -6700,11 +6479,6 @@ if(_origRenderStats){
 
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded',function(){
-  loadNotebookStorage();
-  // init notebook date label even if not navigated yet
-  const d=new Date(notebookDate+'T12:00:00');
-  const lbl=document.getElementById('notebook-date-lbl');
-  if(lbl) lbl.textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' (Today)';
   // dark mode ring bg
   const applyRingBg=()=>{
     const ring=document.getElementById('fuze-score-ring');
