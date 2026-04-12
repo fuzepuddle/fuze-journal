@@ -4838,13 +4838,50 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
 });
 (function journalAuthBoot(){
   loadSbSession();
+
+  // ── INSTANT LOAD: render from localStorage cache before any network call ──
+  const hasCachedData = !!localStorage.getItem('ict_profiles');
+  if(hasCachedData){
+    try{
+      const _p=localStorage.getItem('ict_profiles');
+      const _pp=localStorage.getItem('ict_prop_profiles');
+      const _pw=localStorage.getItem('ict_weekly_profiles');
+      const _pm=localStorage.getItem('ict_missed_profiles');
+      const _ps=localStorage.getItem('ict_presession');
+      const _nn=localStorage.getItem('ict_nonneg');
+      if(_p){const d=JSON.parse(_p);if(d&&typeof d==='object')allTrades=d;}
+      if(_pp){const d=JSON.parse(_pp);if(d&&typeof d==='object')allPropSettings=d;}
+      if(_pw){const d=JSON.parse(_pw);if(d&&typeof d==='object')allWeeklyNotes=d;}
+      if(_pm){const d=JSON.parse(_pm);if(d&&typeof d==='object')allMissedTrades=d;}
+      if(_ps){const d=JSON.parse(_ps);if(d&&typeof d==='object')presessionData=d;}
+      if(_nn){const d=JSON.parse(_nn);if(d&&typeof d==='object')psNonNeg=d;}
+    }catch(e){}
+    try{
+      const today=new Date().toISOString().split('T')[0];
+      const fDateEl=document.getElementById('f-date');
+      const mDateEl=document.getElementById('m-date');
+      if(fDateEl) fDateEl.value=today;
+      if(mDateEl) mDateEl.value=today;
+      applyLoadedData();
+      applyProfileUI();
+      renderJournal&&renderJournal();
+      renderDashboard&&renderDashboard();
+    }catch(e){}
+    loadDraft&&loadDraft();
+    setTimeout(()=>{updateJournalStreak&&updateJournalStreak();},100);
+  }
+
+  // Only block with overlay if no local data exists (first ever open)
   const ov=document.getElementById('auth-overlay');
   const checking=document.getElementById('auth-checking');
   const formWrap=document.getElementById('auth-form-wrap');
-  if(ov) ov.classList.add('auth-show');
-  if(checking) checking.style.display='block';
-  if(formWrap) formWrap.style.display='none';
+  if(!hasCachedData){
+    if(ov) ov.classList.add('auth-show');
+    if(checking) checking.style.display='block';
+    if(formWrap) formWrap.style.display='none';
+  }
 
+  // Auth verify + cloud sync runs silently in background
   (async function(){
     if(sbAccessToken){
       let ok=await sbVerifyAccessToken();
@@ -4852,25 +4889,29 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       if(sbAccessToken&&ok){
         if(checking) checking.style.display='none';
         authHideOverlay();
+        const today=new Date().toISOString().split('T')[0];
         const fDateEl=document.getElementById('f-date');
         const mDateEl=document.getElementById('m-date');
-        const today=new Date().toISOString().split('T')[0];
         if(fDateEl) fDateEl.value=today;
         if(mDateEl) mDateEl.value=today;
         const sob=document.getElementById('sb-signout-btn');
         if(sob) sob.style.display='';
+        // Sync from cloud — silently refreshes UI if cloud has newer data
         await loadAllData();
-        setTimeout(()=>{updateJournalStreak();},100);
+        setTimeout(()=>{updateJournalStreak&&updateJournalStreak();},100);
         setTimeout(updateJournalStreak,1000);
         setTimeout(updateJournalStreak,3000);
-        loadDraft();
+        if(!hasCachedData) loadDraft&&loadDraft();
         return;
       }
       clearSbSession();
     }
     if(checking) checking.style.display='none';
-    if(formWrap) formWrap.style.display='block';
-    if(ov) ov.classList.add('auth-show');
+    // If no token and no cache → show login form
+    if(!hasCachedData){
+      if(formWrap) formWrap.style.display='block';
+      if(ov) ov.classList.add('auth-show');
+    }
   })();
 })();
 
