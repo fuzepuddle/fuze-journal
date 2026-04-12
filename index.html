@@ -599,6 +599,9 @@ body.dark-mode .dash-legend-item{border-color:rgba(255,255,255,0.05)!important}
 body.dark-mode .dash-trade-row{border-color:rgba(255,255,255,0.05)!important}
 body.dark-mode .check-group-title{color:#e5e7eb!important}
 body.dark-mode .outcome-btn.active-skip{background:#1a1a1a!important;border-color:rgba(255,255,255,0.15)!important;color:#e5e7eb!important}
+body.dark-mode .outcome-btn.active-win{background:rgba(16,185,129,0.15)!important;border:2px solid #10b981!important;color:#10b981!important;box-shadow:0 0 14px rgba(16,185,129,0.2)!important}
+body.dark-mode .outcome-btn.active-loss{background:rgba(239,68,68,0.15)!important;border:2px solid #ef4444!important;color:#ef4444!important;box-shadow:0 0 14px rgba(239,68,68,0.2)!important}
+body.dark-mode .outcome-btn.active-be{background:rgba(245,158,11,0.15)!important;border:2px solid #f59e0b!important;color:#f59e0b!important;box-shadow:0 0 14px rgba(245,158,11,0.2)!important}
 body.dark-mode .log-table td{color:#e5e7eb!important}
 body.dark-mode .tab:hover:not(.active){color:#f0f0f0!important}
 body.dark-mode .cal-title{color:#f0f0f0!important}
@@ -1639,9 +1642,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="card gap">
     <div class="section-label">Outcome</div>
     <div class="outcome-row">
-      <button class="outcome-btn" onclick="setOutcome('win',this)" style="color:var(--accent);border-color:#0d4a30;opacity:0.5">Win ✓</button>
-      <button class="outcome-btn" onclick="setOutcome('loss',this)" style="color:#ef4444;border-color:#6e1a1a;opacity:0.5">Loss ✗</button>
-      <button class="outcome-btn" onclick="setOutcome('be',this)" style="color:#f59e0b;border-color:#6e5000;opacity:0.5">BE</button>
+      <button class="outcome-btn" onclick="setOutcome('win',this)">Win ✓</button>
+      <button class="outcome-btn" onclick="setOutcome('loss',this)">Loss ✗</button>
+      <button class="outcome-btn" onclick="setOutcome('be',this)">BE</button>
     </div>
     <div class="grid-2">
       <div><label>P&amp;L ($) <span style="color:#9ca3af;font-weight:400">— negative for a loss e.g. -120</span></label>
@@ -4706,12 +4709,14 @@ function launchConfetti(){
 function calcAutoRR(){
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
-  const account=parseFloat(document.getElementById('calc-account').value)||parseFloat(document.getElementById('p-account').value)||0;
+  const account=(propSettings&&propSettings.account)?propSettings.account:parseFloat(document.getElementById('p-account').value)||0;
   const label=document.getElementById('f-rr-auto');
   const rrInput=document.getElementById('f-actual-rr');
   if(!label)return;
-  if(isNaN(pnl)||isNaN(riskPct)||!account){label.textContent='';return;}
-  const riskAmt=account*(riskPct/100);
+  if(isNaN(pnl)||isNaN(riskPct)){label.textContent='';return;}
+  // If no account set, fall back to showing R based on risk% of a standard 50k account
+  const effectiveAccount=account||50000;
+  const riskAmt=effectiveAccount*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
   const rStr=(r>=0?'+':'')+r.toFixed(2)+'R';
