@@ -2672,6 +2672,8 @@ async function loadAllData(){
     if(ps_d&&typeof ps_d==='object')presessionData=ps_d;
     const nn_d=await supaGet('ict_nonneg').catch(()=>null);
     if(nn_d&&typeof nn_d==='object')psNonNeg=nn_d;
+    const nb_d=await supaGet('fuze_notebooks').catch(()=>null);
+    if(nb_d&&typeof nb_d==='object')allNotebooks=nb_d;
   }catch(e){console.error('Load error',e);}
   try{
     applyLoadedData();
@@ -4071,8 +4073,8 @@ function updateClocks(){
   const [h,m]=uk.split(':').map(Number);
   const mins=h*60+m;
   const inSession=mins>=14*60+30&&mins<16*60+30;
-  ukEl.style.color=inSession?'#10b981':'#10b981';
-  nyEl.style.color=inSession?'#10b981':'#10b981';
+  ukEl.style.color=inSession?'var(--color-timer)':'#4b5563';
+  nyEl.style.color=inSession?'var(--color-timer)':'#4b5563';
 }
 setInterval(updateClocks,1000);
 updateClocks();
@@ -4988,6 +4990,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       if(_ps){const d=JSON.parse(_ps);if(d&&typeof d==='object')presessionData=d;}
       if(_nn){const d=JSON.parse(_nn);if(d&&typeof d==='object')psNonNeg=d;}
     }catch(e){}
+    try{const _nb=localStorage.getItem('fuze_notebooks');if(_nb){const d=JSON.parse(_nb);if(d&&typeof d==='object')allNotebooks=d;}}catch(e){}
     try{
       const today=new Date().toISOString().split('T')[0];
       const fDateEl=document.getElementById('f-date');
@@ -6601,8 +6604,8 @@ function saveNotebook(){
     other:document.getElementById('nb-other').value
   };
   // Persist via same storage mechanism as existing data
-  if(typeof saveAllToStorage==='function') saveAllToStorage();
-  else { try{ localStorage.setItem('fuze_notebooks',JSON.stringify(allNotebooks)); }catch(e){} }
+  try{ localStorage.setItem('fuze_notebooks',JSON.stringify(allNotebooks)); }catch(e){}
+  supaSet('fuze_notebooks',allNotebooks);
   renderNotebookHistory();
   // Brief visual feedback
   const btn=document.querySelector('#page-notebook .btn-primary');
