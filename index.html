@@ -1120,83 +1120,48 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-no-trades{text-align:center;padding:24px;color:#9ca3af;font-size:12px}
 
 /* ── Mini calendar on dashboard ── */
-.dash-cal-grid{width:100%;border-collapse:separate;border-spacing:3px}
+.dash-cal-grid{width:100%;border-collapse:collapse}
 .dash-cal-grid th{
   font-size:10px;
-  font-weight:700;
-  color:#6b7280;
+  font-weight:600;
+  color:#9ca3af;
   text-align:center;
-  padding:4px 0 10px;
-  letter-spacing:.08em;
+  padding:6px 0 8px;
+  letter-spacing:.05em;
   text-transform:uppercase;
 }
 .dash-cal-grid td{
   width:14.28%;
-  height:58px;
+  height:52px;
   vertical-align:top;
-  padding:7px 8px 5px;
-  border:1px solid rgba(255,255,255,0.05);
-  font-size:11px;
-  color:#6b7280;
-  cursor:default;
-  background:rgba(255,255,255,0.02);
-  border-radius:8px;
-  transition:background .15s,border-color .15s;
-}
-.dash-cal-grid td:empty{background:transparent;border-color:transparent}
-.dash-cal-grid td.dcal-has{cursor:pointer}
-.dash-cal-grid td.dcal-has:hover{filter:brightness(1.25)}
-.dash-cal-grid td.dcal-win{
-  background:rgba(16,185,129,0.12);
-  border-color:rgba(16,185,129,0.25);
-}
-.dash-cal-grid td.dcal-loss{
-  background:rgba(239,68,68,0.12);
-  border-color:rgba(239,68,68,0.22);
-}
-.dash-cal-grid td.dcal-be{
-  background:rgba(245,158,11,0.1);
-  border-color:rgba(245,158,11,0.2);
-}
-.dash-cal-grid td.dcal-today{
-  border:1.5px solid var(--accent)!important;
-  box-shadow:0 0 0 1px rgba(16,185,129,0.12);
-}
-.dcal-day{
-  font-size:11px;
-  font-weight:600;
+  padding:5px 6px;
+  border:1px solid rgba(0,0,0,0.04);
+  font-size:10px;
   color:#9ca3af;
-  margin-bottom:3px;
-  line-height:1;
+  cursor:default;
+  background:rgba(0,0,0,0.01);
+  border-radius:4px;
 }
-.dcal-today .dcal-day{
-  color:var(--accent);
-  font-weight:700;
-}
-.dcal-pnl{
-  font-size:12px;
-  font-weight:700;
-  font-family:'JetBrains Mono',monospace;
-  line-height:1.1;
-  letter-spacing:-.02em;
-}
-.dcal-win .dcal-pnl{color:#10b981}
-.dcal-loss .dcal-pnl{color:#ef4444}
-.dcal-be .dcal-pnl{color:#f59e0b}
-.dcal-count{
-  font-size:9px;
-  font-weight:500;
-  color:#6b7280;
-  margin-top:2px;
-  letter-spacing:.02em;
-}
-.dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.dash-cal-grid td.dcal-has{cursor:pointer}
+.dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.15)}
+.dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.15)}
+.dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.12)}
+.dash-cal-grid td.dcal-today{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.05)!important}
+.dcal-day{font-size:10px;font-weight:500;color:#9ca3af;margin-bottom:2px}
+.dcal-pnl{font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2}
+.dcal-win .dcal-pnl{color:var(--win)}
+.dcal-loss .dcal-pnl{color:var(--loss)}
+.dcal-be .dcal-pnl{color:var(--be)}
+.dcal-count{font-size:9px;color:#9ca3af;margin-top:1px}
+.dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
 .dash-cal-nav-title{
   font-size:13px;
   font-weight:700;
   color:#e5e7eb;
   letter-spacing:.06em;
   text-transform:uppercase;
+  flex:1;
+  text-align:center;
 }
 .dash-cal-nav button{
   background:rgba(255,255,255,0.04);
@@ -1205,14 +1170,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   color:#9ca3af;
   cursor:pointer;
   font-size:14px;
-  width:26px;
-  height:26px;
+  width:30px;
+  height:28px;
   display:flex;
   align-items:center;
   justify-content:center;
   font-family:'Plus Jakarta Sans',sans-serif;
   transition:background .15s,color .15s;
   padding:0;
+  flex-shrink:0;
 }
 .dash-cal-nav button:hover{background:rgba(255,255,255,0.09);color:#e5e7eb}
 
@@ -6362,7 +6328,7 @@ function renderSmartInsights(){
   if(!card||!list) return;
 
   const t=trades.filter(x=>x.outcome==='win'||x.outcome==='loss'||x.outcome==='be');
-  if(t.length<4){ card.style.display='none'; return; }
+  if(t.length<5){ card.style.display='none'; return; }
 
   const insights=[];
 
@@ -6371,7 +6337,7 @@ function renderSmartInsights(){
   const shorts=t.filter(x=>x.direction==='Short');
   const longWR=longs.length>0?longs.filter(x=>x.outcome==='win').length/longs.length:null;
   const shortWR=shorts.length>0?shorts.filter(x=>x.outcome==='win').length/shorts.length:null;
-  if(longWR!==null&&shortWR!==null&&longs.length>=3&&shorts.length>=3){
+  if(longWR!==null&&shortWR!==null&&longs.length>=5&&shorts.length>=5){
     const diff=Math.abs(longWR-shortWR);
     if(diff>0.15){
       const better=longWR>shortWR?'long':'short';
@@ -6382,7 +6348,7 @@ function renderSmartInsights(){
     }
   }
 
-  // Best performing draw
+  // Best performing draw (min 5 trades per draw)
   const drawMap={};
   t.forEach(x=>{
     if(!x.draw) return;
@@ -6390,7 +6356,7 @@ function renderSmartInsights(){
     drawMap[x.draw].total++;
     if(x.outcome==='win') drawMap[x.draw].w++;
   });
-  const drawArr=Object.entries(drawMap).filter(([,v])=>v.total>=3).map(([k,v])=>({draw:k,wr:v.w/v.total,n:v.total}));
+  const drawArr=Object.entries(drawMap).filter(([,v])=>v.total>=5).map(([k,v])=>({draw:k,wr:v.w/v.total,n:v.total}));
   drawArr.sort((a,b)=>b.wr-a.wr);
   if(drawArr.length>=2){
     const best=drawArr[0];
@@ -6427,7 +6393,7 @@ function renderSmartInsights(){
     }
   }
 
-  // Day of week
+  // Day of week (min 5 trades per day)
   const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const dayMap={};
   t.forEach(x=>{
@@ -6437,7 +6403,7 @@ function renderSmartInsights(){
     dayMap[dow].total++;
     if(x.outcome==='win') dayMap[dow].w++;
   });
-  const dayArr=Object.entries(dayMap).filter(([,v])=>v.total>=3).map(([k,v])=>({day:dayNames[k],wr:v.w/v.total,n:v.total}));
+  const dayArr=Object.entries(dayMap).filter(([,v])=>v.total>=5).map(([k,v])=>({day:dayNames[k],wr:v.w/v.total,n:v.total}));
   dayArr.sort((a,b)=>b.wr-a.wr);
   if(dayArr.length>=2&&dayArr[0].wr-dayArr[dayArr.length-1].wr>0.25){
     insights.push({icon:'📅',color:'#06b6d4',text:`Best day: <strong>${dayArr[0].day}</strong> at ${Math.round(dayArr[0].wr*100)}% WR. Toughest: <strong>${dayArr[dayArr.length-1].day}</strong> at ${Math.round(dayArr[dayArr.length-1].wr*100)}%. Worth noting if you're feeling off on a slow day.`});
@@ -6883,15 +6849,8 @@ body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!importa
 body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
 body.dark-mode .cal-grid td.today{border:2px solid var(--accent,#10b981)!important;background:rgba(16,185,129,0.06)!important}
 body.dark-mode .cal-day{color:#e5e7eb!important}
-body.dark-mode .dash-cal-grid td{background:rgba(255,255,255,0.025)!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important;border-radius:8px!important}
-body.dark-mode .dash-cal-grid td:empty{background:transparent!important;border-color:transparent!important}
+body.dark-mode .dash-cal-grid td{background:#111!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important}
 body.dark-mode .dash-cal-grid th{color:#6b7280!important}
-body.dark-mode .dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.12)!important;border-color:rgba(16,185,129,0.25)!important}
-body.dark-mode .dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12)!important;border-color:rgba(239,68,68,0.22)!important}
-body.dark-mode .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.1)!important;border-color:rgba(245,158,11,0.2)!important}
-body.dark-mode .dash-cal-grid td.dcal-today{border:1.5px solid var(--accent,#10b981)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)!important}
-body.dark-mode .dcal-day{color:#6b7280!important}
-body.dark-mode .dcal-today .dcal-day{color:var(--accent,#10b981)!important}
 body.dark-mode .dash-cal-nav button{background:rgba(255,255,255,0.04)!important;border:1px solid rgba(255,255,255,0.08)!important;color:#9ca3af!important}
 body.dark-mode .dash-cal-nav button:hover{background:rgba(255,255,255,0.09)!important;color:#e5e7eb!important}
 body.dark-mode .dash-cal-nav-title{color:#e5e7eb!important}
