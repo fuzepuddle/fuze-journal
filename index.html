@@ -1120,49 +1120,45 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-no-trades{text-align:center;padding:24px;color:#9ca3af;font-size:12px}
 
 /* ── Mini calendar on dashboard ── */
-.dash-cal-grid{width:100%;border-collapse:collapse}
+.dash-cal-grid{width:100%;border-collapse:separate;border-spacing:3px}
 .dash-cal-grid th{
   font-size:10px;
-  font-weight:600;
-  color:#9ca3af;
+  font-weight:700;
+  color:#6b7280;
   text-align:center;
-  padding:6px 0 8px;
-  letter-spacing:.05em;
+  padding:4px 0 10px;
+  letter-spacing:.08em;
   text-transform:uppercase;
 }
 .dash-cal-grid td{
   width:14.28%;
-  height:52px;
+  height:58px;
   vertical-align:top;
-  padding:5px 6px;
-  border:1px solid rgba(0,0,0,0.04);
-  font-size:10px;
-  color:#9ca3af;
+  padding:7px 8px 5px;
+  border:1px solid rgba(255,255,255,0.05);
+  font-size:11px;
+  color:#6b7280;
   cursor:default;
-  background:rgba(0,0,0,0.01);
-  border-radius:4px;
+  background:rgba(255,255,255,0.02);
+  border-radius:8px;
+  transition:background .15s,border-color .15s;
 }
+.dash-cal-grid td:empty{background:transparent;border-color:transparent}
 .dash-cal-grid td.dcal-has{cursor:pointer}
-.dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.15)}
-.dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.15)}
-.dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.12)}
-.dash-cal-grid td.dcal-today{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.05)!important}
-.dcal-day{font-size:10px;font-weight:500;color:#9ca3af;margin-bottom:2px}
-.dcal-pnl{font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2}
-.dcal-win .dcal-pnl{color:var(--win)}
-.dcal-loss .dcal-pnl{color:var(--loss)}
-.dcal-be .dcal-pnl{color:var(--be)}
-.dcal-count{font-size:9px;color:#9ca3af;margin-top:1px}
+.dash-cal-grid td.dcal-has:hover{filter:brightness(1.25)}
+.dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.25)}
+.dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.22)}
+.dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.2)}
+.dash-cal-grid td.dcal-today{border:1.5px solid var(--accent)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)}
+.dcal-day{font-size:11px;font-weight:600;color:#9ca3af;margin-bottom:3px;line-height:1}
+.dcal-today .dcal-day{color:var(--accent);font-weight:700}
+.dcal-pnl{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.1;letter-spacing:-.02em}
+.dcal-win .dcal-pnl{color:#10b981}
+.dcal-loss .dcal-pnl{color:#ef4444}
+.dcal-be .dcal-pnl{color:#f59e0b}
+.dcal-count{font-size:9px;font-weight:500;color:#6b7280;margin-top:2px;letter-spacing:.02em}
 .dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
-.dash-cal-nav-title{
-  font-size:13px;
-  font-weight:700;
-  color:#e5e7eb;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  flex:1;
-  text-align:center;
-}
+.dash-cal-nav-title{font-size:13px;font-weight:700;color:#e5e7eb;letter-spacing:.06em;text-transform:uppercase;flex:1;text-align:center}
 .dash-cal-nav button{
   background:rgba(255,255,255,0.04);
   border:1px solid rgba(255,255,255,0.08);
@@ -4858,13 +4854,50 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
 });
 (function journalAuthBoot(){
   loadSbSession();
+
+  // ── INSTANT LOAD: render from localStorage cache before any network call ──
+  const hasCachedData = !!localStorage.getItem('ict_profiles');
+  if(hasCachedData){
+    try{
+      const _p=localStorage.getItem('ict_profiles');
+      const _pp=localStorage.getItem('ict_prop_profiles');
+      const _pw=localStorage.getItem('ict_weekly_profiles');
+      const _pm=localStorage.getItem('ict_missed_profiles');
+      const _ps=localStorage.getItem('ict_presession');
+      const _nn=localStorage.getItem('ict_nonneg');
+      if(_p){const d=JSON.parse(_p);if(d&&typeof d==='object')allTrades=d;}
+      if(_pp){const d=JSON.parse(_pp);if(d&&typeof d==='object')allPropSettings=d;}
+      if(_pw){const d=JSON.parse(_pw);if(d&&typeof d==='object')allWeeklyNotes=d;}
+      if(_pm){const d=JSON.parse(_pm);if(d&&typeof d==='object')allMissedTrades=d;}
+      if(_ps){const d=JSON.parse(_ps);if(d&&typeof d==='object')presessionData=d;}
+      if(_nn){const d=JSON.parse(_nn);if(d&&typeof d==='object')psNonNeg=d;}
+    }catch(e){}
+    try{
+      const today=new Date().toISOString().split('T')[0];
+      const fDateEl=document.getElementById('f-date');
+      const mDateEl=document.getElementById('m-date');
+      if(fDateEl) fDateEl.value=today;
+      if(mDateEl) mDateEl.value=today;
+      applyLoadedData();
+      applyProfileUI();
+      renderJournal&&renderJournal();
+      renderDashboard&&renderDashboard();
+    }catch(e){}
+    loadDraft&&loadDraft();
+    setTimeout(()=>{updateJournalStreak&&updateJournalStreak();},100);
+  }
+
+  // Only block with overlay if no local data exists (first ever open)
   const ov=document.getElementById('auth-overlay');
   const checking=document.getElementById('auth-checking');
   const formWrap=document.getElementById('auth-form-wrap');
-  if(ov) ov.classList.add('auth-show');
-  if(checking) checking.style.display='block';
-  if(formWrap) formWrap.style.display='none';
+  if(!hasCachedData){
+    if(ov) ov.classList.add('auth-show');
+    if(checking) checking.style.display='block';
+    if(formWrap) formWrap.style.display='none';
+  }
 
+  // Auth verify + cloud sync runs silently in background
   (async function(){
     if(sbAccessToken){
       let ok=await sbVerifyAccessToken();
@@ -4872,25 +4905,27 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       if(sbAccessToken&&ok){
         if(checking) checking.style.display='none';
         authHideOverlay();
+        const today=new Date().toISOString().split('T')[0];
         const fDateEl=document.getElementById('f-date');
         const mDateEl=document.getElementById('m-date');
-        const today=new Date().toISOString().split('T')[0];
         if(fDateEl) fDateEl.value=today;
         if(mDateEl) mDateEl.value=today;
         const sob=document.getElementById('sb-signout-btn');
         if(sob) sob.style.display='';
         await loadAllData();
-        setTimeout(()=>{updateJournalStreak();},100);
+        setTimeout(()=>{updateJournalStreak&&updateJournalStreak();},100);
         setTimeout(updateJournalStreak,1000);
         setTimeout(updateJournalStreak,3000);
-        loadDraft();
+        if(!hasCachedData) loadDraft&&loadDraft();
         return;
       }
       clearSbSession();
     }
     if(checking) checking.style.display='none';
-    if(formWrap) formWrap.style.display='block';
-    if(ov) ov.classList.add('auth-show');
+    if(!hasCachedData){
+      if(formWrap) formWrap.style.display='block';
+      if(ov) ov.classList.add('auth-show');
+    }
   })();
 })();
 
@@ -6849,8 +6884,15 @@ body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!importa
 body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
 body.dark-mode .cal-grid td.today{border:2px solid var(--accent,#10b981)!important;background:rgba(16,185,129,0.06)!important}
 body.dark-mode .cal-day{color:#e5e7eb!important}
-body.dark-mode .dash-cal-grid td{background:#111!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important}
+body.dark-mode .dash-cal-grid td{background:rgba(255,255,255,0.025)!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important;border-radius:8px!important}
+body.dark-mode .dash-cal-grid td:empty{background:transparent!important;border-color:transparent!important}
 body.dark-mode .dash-cal-grid th{color:#6b7280!important}
+body.dark-mode .dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.12)!important;border-color:rgba(16,185,129,0.25)!important}
+body.dark-mode .dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12)!important;border-color:rgba(239,68,68,0.22)!important}
+body.dark-mode .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.1)!important;border-color:rgba(245,158,11,0.2)!important}
+body.dark-mode .dash-cal-grid td.dcal-today{border:1.5px solid var(--accent,#10b981)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)!important}
+body.dark-mode .dcal-day{color:#6b7280!important}
+body.dark-mode .dcal-today .dcal-day{color:var(--accent,#10b981)!important}
 body.dark-mode .dash-cal-nav button{background:rgba(255,255,255,0.04)!important;border:1px solid rgba(255,255,255,0.08)!important;color:#9ca3af!important}
 body.dark-mode .dash-cal-nav button:hover{background:rgba(255,255,255,0.09)!important;color:#e5e7eb!important}
 body.dark-mode .dash-cal-nav-title{color:#e5e7eb!important}
