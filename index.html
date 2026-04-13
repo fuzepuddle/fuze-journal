@@ -933,6 +933,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 /* ── Table ── */
 .log-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
 .log-table{width:100%;border-collapse:collapse;font-size:12px}
+.log-table th:nth-child(1){width:105px}
+.log-table th:nth-child(2){width:85px}
+.log-table th:nth-child(3){width:75px}
+.log-table th:nth-child(4){width:60px}
+.log-table th:nth-child(5){width:130px}
+.log-table th:nth-child(6){width:90px}
+.log-table th:nth-child(7){width:75px}
+.log-table th:nth-child(8){width:55px}
+.log-table th:nth-child(9){width:80px}
+.log-table th:nth-child(10){width:85px}
+.log-table th:nth-child(11){width:45px}
 .log-table th{
   text-align:left;
   font-weight:600;
@@ -1799,6 +1810,16 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <!-- ALL TRADES -->
 <div class="page" id="page-journal">
   <div class="dash-page-header"><h2>All Trades</h2><p>Full trade log — NQ</p></div>
+
+  <!-- Mini metric strip — mirrors dashboard -->
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px">
+    <div class="dash-metric"><div class="dash-metric-label">Net P&amp;L</div><div class="dash-metric-val" id="jm-pnl">—</div><div class="dash-metric-sub">All trades</div></div>
+    <div class="dash-metric"><div class="dash-metric-label">Win Rate</div><div class="dash-metric-val" id="jm-wr">—</div><div class="dash-metric-sub" id="jm-wl">—</div></div>
+    <div class="dash-metric"><div class="dash-metric-label">Trades</div><div class="dash-metric-val" id="jm-total">—</div><div class="dash-metric-sub">Logged</div></div>
+    <div class="dash-metric"><div class="dash-metric-label">Avg RR</div><div class="dash-metric-val" id="jm-rr">—</div><div class="dash-metric-sub">Realised</div></div>
+    <div class="dash-metric"><div class="dash-metric-label">Profit Factor</div><div class="dash-metric-val" id="jm-pf">—</div><div class="dash-metric-sub">Wins ÷ Losses</div></div>
+  </div>
+
   <div class="dash-chart-card">
     <div class="flex-between" style="margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:10px">
@@ -3187,8 +3208,25 @@ function renderJournal(){
     const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#f9fafb;border-bottom:1px solid rgba(0,0,0,0.06)">'+classBadgeHtml+ssHtml+momentumHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
-}
 
+  // Update All Trades metric strip
+  const wins=f.filter(t=>t.outcome==='win');
+  const losses=f.filter(t=>t.outcome==='loss');
+  const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
+  const wr=f.length?Math.round(wins.length/f.length*100):null;
+  const rrVals=f.filter(t=>t.rrActual&&parseFloat(t.rrActual)).map(t=>parseFloat(t.rrActual));
+  const avgRR=rrVals.length?(rrVals.reduce((a,b)=>a+b,0)/rrVals.length).toFixed(2):null;
+  const grossW=wins.reduce((s,t)=>s+(t.pnl||0),0);
+  const grossL=Math.abs(losses.reduce((s,t)=>s+(t.pnl||0),0));
+  const pf=grossL>0?(grossW/grossL).toFixed(2):wins.length?'∞':null;
+  const set=(id,val,cls)=>{const el=document.getElementById(id);if(el){el.textContent=val||'—';el.className='dash-metric-val'+(cls?' '+cls:'');}};
+  set('jm-pnl',(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toFixed(0),totalPnl>0?'positive':totalPnl<0?'negative':'');
+  set('jm-wr',wr!=null?wr+'%':null);
+  const wlEl=document.getElementById('jm-wl');if(wlEl)wlEl.textContent=f.length?wins.length+'W · '+losses.length+'L':'—';
+  set('jm-total',f.length||null);
+  set('jm-rr',avgRR?avgRR+'R':null);
+  set('jm-pf',pf);
+}
 
 function toggleDetail(id, btn){
   const row = document.getElementById('detail-'+id);
