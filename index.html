@@ -932,7 +932,19 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Table ── */
 .log-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
-.log-table{width:100%;border-collapse:collapse;font-size:12px}
+.log-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.log-table th:nth-child(1){width:100px} /* Date */
+.log-table th:nth-child(2){width:80px}  /* Instr */
+.log-table th:nth-child(3){width:70px}  /* Bias */
+.log-table th:nth-child(4){width:55px}  /* Dir */
+.log-table th:nth-child(5){width:130px} /* Draw */
+.log-table th:nth-child(6){width:95px}  /* RR got */
+.log-table th:nth-child(7){width:70px}  /* P&L */
+.log-table th:nth-child(8){width:55px}  /* Risk */
+.log-table th:nth-child(9){width:80px}  /* Outcome */
+.log-table th:nth-child(10){width:80px} /* Disc */
+.log-table th:nth-child(11){width:55px} /* Actions */
+.log-table td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .log-table th:nth-child(1){width:105px}
 .log-table th:nth-child(2){width:85px}
 .log-table th:nth-child(3){width:75px}
