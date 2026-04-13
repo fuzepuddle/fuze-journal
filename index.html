@@ -1261,7 +1261,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 /* ── Auth ── */
 #auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(15,18,30,0.85);display:none;align-items:center;justify-content:center;padding:24px}
 #auth-overlay.auth-show{display:flex}
-#auth-overlay .auth-card{max-width:400px;width:100%;padding:28px;border:1px solid var(--border);border-radius:12px;background:#ffffff}
+#auth-overlay .auth-card{max-width:400px;width:100%;padding:28px;border:1px solid var(--border);border-radius:12px;background:#141414}
 #auth-overlay input{margin-bottom:12px}
 #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 
@@ -2498,7 +2498,9 @@ function clearSbSession(){
 async function sbVerifyAccessToken(){
   if(!sbAccessToken) return false;
   try{
-    const r=await fetch(SUPA_URL+'/auth/v1/user',{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+sbAccessToken}});
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    const req=fetch(SUPA_URL+'/auth/v1/user',{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+sbAccessToken}});
+    const r=await Promise.race([req,timeout]);
     return r.ok;
   }catch(e){return false;}
 }
@@ -2506,11 +2508,13 @@ async function sbVerifyAccessToken(){
 async function sbRefreshAccessToken(){
   if(!sbRefreshToken) return false;
   try{
-    const r=await fetch(SUPA_URL+'/auth/v1/token?grant_type=refresh_token',{
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    const req=fetch(SUPA_URL+'/auth/v1/token?grant_type=refresh_token',{
       method:'POST',
       headers:{apikey:SUPA_KEY,'Content-Type':'application/json'},
       body:JSON.stringify({refresh_token:sbRefreshToken})
     });
+    const r=await Promise.race([req,timeout]);
     const j=await r.json().catch(()=>({}));
     if(!r.ok){clearSbSession();return false;}
     saveSbSession(j.access_token,j.refresh_token||sbRefreshToken);
