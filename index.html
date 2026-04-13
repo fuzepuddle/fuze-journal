@@ -5055,6 +5055,9 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
     if(!hasCachedData){
       if(formWrap) formWrap.style.display='block';
       if(ov) ov.classList.add('auth-show');
+    } else {
+      // Has local data but no valid token — just close the overlay and let them use local data
+      authHideOverlay();
     }
   })();
 })();
