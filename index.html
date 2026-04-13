@@ -1530,6 +1530,108 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════
+       WHAT YOUR TRADE DATA REVEALS
+  ════════════════════════════════════════════════════════ -->
+  <div id="reveals-section" style="margin-top:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--accent);letter-spacing:-.01em">What Your Trade Data Reveals</div>
+        <div id="reveals-meta" style="font-size:11px;color:#6b7280;margin-top:2px"></div>
+      </div>
+      <button id="reveals-refresh-btn" onclick="startRevealsAnalysis()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:20px;background:rgba(255,255,255,0.04);color:#9ca3af;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+        <span id="reveals-refresh-icon">⟳</span> Analyse
+      </button>
+    </div>
+
+    <!-- Dot nav -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px" id="reveals-dots"></div>
+
+    <!-- Slides wrapper -->
+    <div id="reveals-slides-wrap" style="position:relative;overflow:hidden;border-radius:14px">
+      <div id="reveals-slides" style="display:flex;transition:transform .35s cubic-bezier(.4,0,.2,1)">
+
+        <!-- SLIDE 1: Fuze Score -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px;background:linear-gradient(135deg,rgba(16,185,129,0.06) 0%,rgba(0,0,0,0) 60%);border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
+          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:14px">FUZE SCORE</div>
+          <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+            <!-- Big ring -->
+            <div style="position:relative;width:120px;height:120px;flex-shrink:0">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12"/>
+                <circle id="rev-score-ring" cx="60" cy="60" r="50" fill="none" stroke="#10b981" stroke-width="12"
+                  stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"
+                  transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease,stroke .5s"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <div id="rev-score-val" style="font-size:32px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;color:#e5e7eb;line-height:1">—</div>
+                <div style="font-size:10px;color:#6b7280;letter-spacing:.06em">/100</div>
+              </div>
+            </div>
+            <!-- Breakdown bars -->
+            <div id="rev-score-bars" style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:9px"></div>
+          </div>
+          <!-- Key takeaway -->
+          <div id="rev-slide0-takeaway" class="rev-takeaway" style="margin-top:16px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
+          </div>
+          <div class="rev-loading" style="display:none;margin-top:14px;font-size:12px;color:#6b7280;font-style:italic;display:none">⏳ Generating AI insight...</div>
+        </div>
+
+        <!-- SLIDE 2: Trading Consistency -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
+          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:10px;font-weight:700;letter-spacing:.08em;color:#9ca3af;text-transform:uppercase;margin-bottom:14px">TRADING CONSISTENCY</div>
+          <div style="font-size:17px;font-weight:700;color:#e5e7eb;margin-bottom:14px">Your Trading Consistency Dashboard</div>
+          <!-- Tabs -->
+          <div style="display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:10px">
+            <button class="rev-tab active" onclick="revConsistTab(0)" style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:rgba(16,185,129,0.15);color:var(--accent);cursor:pointer;font-family:inherit;font-weight:600">Essential Stats</button>
+            <button class="rev-tab" onclick="revConsistTab(1)" style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:none;color:#6b7280;cursor:pointer;font-family:inherit">Advanced Stats</button>
+          </div>
+          <div id="rev-consist-essential" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div id="rev-consist-advanced" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div id="rev-slide1-takeaway" class="rev-takeaway" style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Day of Week Performance -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
+          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:10px;font-weight:700;letter-spacing:.08em;color:#9ca3af;text-transform:uppercase;margin-bottom:14px">DAY OF WEEK</div>
+          <div style="font-size:17px;font-weight:700;color:#e5e7eb;margin-bottom:14px">Day of Week Performance</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div id="rev-dow-list" style="display:flex;flex-direction:column;gap:6px;min-width:200px;flex:0 0 auto"></div>
+            <div style="flex:1;min-width:220px;position:relative;height:160px">
+              <canvas id="rev-dow-chart" style="width:100%;height:160px"></canvas>
+            </div>
+          </div>
+          <div id="rev-slide2-takeaway" class="rev-takeaway" style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Patterns -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
+          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:10px;font-weight:700;letter-spacing:.08em;color:#9ca3af;text-transform:uppercase;margin-bottom:14px">PATTERNS</div>
+          <div style="font-size:17px;font-weight:700;color:#e5e7eb;margin-bottom:14px">Trading Patterns & Habits</div>
+          <div id="rev-patterns-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div id="rev-slide3-takeaway" class="rev-takeaway" style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
+          </div>
+        </div>
+
+      </div><!-- /slides -->
+    </div><!-- /wrap -->
+
+    <!-- Prev / Next arrows -->
+    <button onclick="revNav(-1)" style="position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(20,20,20,0.9);color:#9ca3af;cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center" id="rev-prev-btn">‹</button>
+    <button onclick="revNav(1)"  style="position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(20,20,20,0.9);color:#9ca3af;cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center" id="rev-next-btn">›</button>
+
+  </div><!-- /reveals-section -->
+
 </div>
 <!-- LOG -->
 <div class="page" id="page-log">
@@ -5384,6 +5486,381 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
+<script>
+/* ═══════════════════════════════════════════════════════════
+   WHAT YOUR TRADE DATA REVEALS  —  fuze journal
+   4 slides: Fuze Score · Consistency · Day of Week · Patterns
+   AI key takeaway per slide via Claude API
+═══════════════════════════════════════════════════════════ */
+
+let _revSlide = 0;
+const _revTotal = 4;
+let _revDowChart = null;
+let _revAiCache = {};
+
+function revNav(dir){
+  _revSlide = (_revSlide + dir + _revTotal) % _revTotal;
+  revGoTo(_revSlide);
+}
+
+function revGoTo(idx){
+  _revSlide = idx;
+  const wrap = document.getElementById('reveals-slides');
+  if(wrap) wrap.style.transform = 'translateX(-' + (idx * 100) + '%)';
+  revUpdateDots();
+  revRenderSlide(idx);
+}
+
+function revUpdateDots(){
+  const dotsEl = document.getElementById('reveals-dots');
+  if(!dotsEl) return;
+  let html = '';
+  for(let i=0;i<_revTotal;i++){
+    html += '<div onclick="revGoTo('+i+')" style="width:'+(i===_revSlide?22:7)+'px;height:7px;border-radius:20px;background:'+(i===_revSlide?'var(--accent)':'rgba(255,255,255,0.15)')+';cursor:pointer;transition:all .25s"></div>';
+  }
+  dotsEl.innerHTML = html;
+}
+
+function initReveals(){
+  const allT = trades.filter(function(t){return t.pnl!=null;});
+  const meta = document.getElementById('reveals-meta');
+  if(meta){
+    const dates = allT.map(function(t){return t.date;}).filter(Boolean).sort();
+    if(dates.length){
+      meta.textContent = allT.length + ' trade' + (allT.length!==1?'s':'') + ' · ' + dates[0] + ' – ' + dates[dates.length-1];
+    } else {
+      meta.textContent = 'No trades logged yet';
+    }
+  }
+  revUpdateDots();
+  revRenderSlide(0);
+}
+
+function revRenderSlide(idx){
+  if(idx===0) revRenderFuzeSlide();
+  else if(idx===1) revRenderConsistSlide();
+  else if(idx===2) revRenderDowSlide();
+  else if(idx===3) revRenderPatternsSlide();
+}
+
+/* ─── SLIDE 0 : Fuze Score ───────────────────────────────── */
+function revRenderFuzeSlide(){
+  const result = calcFuzeScore(trades);
+  const ring = document.getElementById('rev-score-ring');
+  const val  = document.getElementById('rev-score-val');
+  const bars = document.getElementById('rev-score-bars');
+  if(!ring||!val) return;
+  if(!result){
+    val.textContent='—';
+    if(bars) bars.innerHTML='<span style="color:#6b7280;font-size:12px">Log trades to generate your Fuze Score.</span>';
+    return;
+  }
+  const s=result.total;
+  const colour=getFuzeColor(s);
+  const circ=314.16;
+  ring.style.strokeDashoffset = circ - circ*(s/100);
+  ring.style.stroke = colour;
+  val.textContent = s;
+  val.style.color = colour;
+  if(bars){
+    bars.innerHTML = result.components.map(function(c){
+      const pct=c.score/c.max;
+      const barCol=pct>=0.8?'#10b981':pct>=0.5?'#f59e0b':'#ef4444';
+      const detail=c.pct!==undefined?Math.round(c.pct*100)+'%':c.avg!==undefined?c.avg.toFixed(1):'';
+      return '<div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:#9ca3af">'+c.label+'</span><span style="font-size:11px;font-weight:600;color:#e5e7eb">'+c.score+'<span style="color:#6b7280">/'+c.max+'</span>'+(detail?' <span style="font-size:10px;color:#6b7280">('+detail+')</span>':'')+'</span></div><div style="height:4px;background:rgba(255,255,255,0.07);border-radius:2px"><div style="height:100%;width:'+Math.round(pct*100)+'%;background:'+barCol+';border-radius:2px;transition:width .8s ease"></div></div></div>';
+    }).join('');
+  }
+  revRequestAI(0);
+}
+
+/* ─── SLIDE 1 : Trading Consistency ─────────────────────── */
+let _revConsistTab = 0;
+function revConsistTab(n){
+  _revConsistTab = n;
+  document.querySelectorAll('.rev-tab').forEach(function(b,i){
+    b.style.background = i===n?'rgba(16,185,129,0.15)':'none';
+    b.style.color = i===n?'var(--accent)':'#6b7280';
+    b.style.fontWeight = i===n?'600':'400';
+  });
+  document.getElementById('rev-consist-essential').style.display = n===0?'grid':'none';
+  document.getElementById('rev-consist-advanced').style.display  = n===1?'grid':'none';
+}
+
+function revRenderConsistSlide(){
+  const allT = trades.filter(function(t){return t.pnl!=null;});
+  const completed = allT.filter(function(t){return t.outcome==='win'||t.outcome==='loss'||t.outcome==='be';});
+  const wins = completed.filter(function(t){return t.outcome==='win';});
+  const losses = completed.filter(function(t){return t.outcome==='loss';});
+  const total = completed.length;
+  const wr = total?Math.round(wins.length/total*100):0;
+  const grossWin = wins.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
+  const grossLoss = losses.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
+  const pf = grossLoss>0?(grossWin/grossLoss):null;
+  const avgWin = wins.length?grossWin/wins.length:0;
+  const avgLoss = losses.length?grossLoss/losses.length:0;
+  const wlRatio = avgLoss>0?(avgWin/avgLoss):null;
+  const totalPnl = completed.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
+  let peak=0,dd=0,runPnl=0;
+  var sortedT=[].concat(completed).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+  sortedT.forEach(function(t){runPnl+=parseFloat(t.pnl)||0;if(runPnl>peak)peak=runPnl;if(peak-runPnl>dd)dd=peak-runPnl;});
+  const exp = total ? ((wins.length/total)*avgWin - (losses.length/total)*avgLoss) : 0;
+  let bestW=0,curW=0,bestL=0,curL=0;
+  sortedT.forEach(function(t){
+    if(t.outcome==='win'){curW++;bestW=Math.max(bestW,curW);curL=0;}
+    else if(t.outcome==='loss'){curL++;bestL=Math.max(bestL,curL);curW=0;}
+    else{curW=0;curL=0;}
+  });
+
+  function badge(val,goodFn,warnFn){
+    if(val===null||val===undefined) return '<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.06);color:#6b7280">NO DATA</span>';
+    var isGood=goodFn(val), isWarn=warnFn(val);
+    var bg=isGood?'rgba(16,185,129,0.15)':isWarn?'rgba(245,158,11,0.15)':'rgba(239,68,68,0.15)';
+    var col=isGood?'#10b981':isWarn?'#f59e0b':'#ef4444';
+    var lbl=isGood?'DOING FINE':'WATCH OUT';
+    return '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:'+bg+';color:'+col+'">'+lbl+'</span>';
+  }
+
+  function card(title,val,desc,badgeHtml){
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#6b7280">'+title+'</span>'+badgeHtml+'</div><div style="font-size:20px;font-weight:800;color:#e5e7eb;margin-bottom:4px">'+val+'</div><div style="font-size:11px;color:#6b7280;line-height:1.5">'+desc+'</div></div>';
+  }
+
+  var essEl = document.getElementById('rev-consist-essential');
+  if(essEl) essEl.innerHTML =
+    card('Win Rate', wr+'%',
+      wr<40?'Losses outpacing wins — focus on setup quality.':wr<50?'Below breakeven — tighten entries.':'Win rate is positive.',
+      badge(wr,function(v){return v>=50;},function(v){return v>=40;})) +
+    card('Profit Factor', pf!==null?pf.toFixed(2):'—',
+      !pf?'Not enough data.':pf<1?'Strategy losing money overall.':pf<1.5?'Marginal edge — cut losses or widen winners.':'Strong edge.',
+      badge(pf,function(v){return v>=1.5;},function(v){return v>=1.0;})) +
+    card('Avg Win/Loss Ratio', wlRatio!==null?wlRatio.toFixed(2):'—',
+      !wlRatio?'Not enough data.':wlRatio<0.8?'Winners much smaller than losers — widen targets.':wlRatio<1?'Winners slightly smaller.':'Winners outsize losers.',
+      badge(wlRatio,function(v){return v>=1.0;},function(v){return v>=0.8;})) +
+    card('Max Drawdown', dd>0?'-$'+dd.toFixed(0):'$0',
+      dd===0?'No drawdown.':dd>Math.abs(totalPnl)*0.5?'Drawdown large relative to net P&L.':'Within acceptable range.',
+      badge(dd,function(v){return v<=Math.abs(totalPnl)*0.3||totalPnl===0;},function(v){return v<=Math.abs(totalPnl)*0.6;}));
+
+  var advEl = document.getElementById('rev-consist-advanced');
+  if(advEl) advEl.innerHTML =
+    card('Expectancy', exp?'$'+exp.toFixed(2):'—',
+      !exp?'Not enough data.':exp>0?'Positive expectancy — edge exists.':'Negative expectancy — system needs work.',
+      badge(exp,function(v){return v>0;},function(v){return v>-20;})) +
+    card('Total Trades', total,'Completed trades logged.','<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.06);color:#9ca3af">INFO</span>') +
+    card('Best Win Streak', bestW,'Consecutive winning trades.','<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.06);color:#9ca3af">INFO</span>') +
+    card('Worst Loss Streak', bestL,'Consecutive losing trades.',
+      badge(bestL,function(v){return v<=2;},function(v){return v<=4;}));
+
+  revRequestAI(1);
+}
+
+/* ─── SLIDE 2 : Day of Week ─────────────────────────────── */
+function revRenderDowSlide(){
+  var days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  var allT = trades.filter(function(t){return t.pnl!=null&&(t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');});
+  var dowData = days.map(function(day,idx){
+    var dayTrades = allT.filter(function(t){
+      if(!t.date) return false;
+      return new Date(t.date+'T12:00:00').getDay()===(idx+1);
+    });
+    var pnl = dayTrades.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
+    var wins = dayTrades.filter(function(t){return t.outcome==='win';}).length;
+    var losses = dayTrades.filter(function(t){return t.outcome==='loss';}).length;
+    return {day:day,pnl:pnl,wins:wins,losses:losses,total:dayTrades.length};
+  });
+
+  var listEl = document.getElementById('rev-dow-list');
+  if(listEl){
+    listEl.innerHTML = dowData.map(function(d){
+      var col = d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#f59e0b';
+      var pnlStr = d.pnl>0?'+$'+d.pnl.toFixed(0):d.pnl<0?'-$'+Math.abs(d.pnl).toFixed(0):'$0';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)"><span style="font-size:13px;font-weight:600;color:#e5e7eb;min-width:80px">'+d.day+'</span><span style="font-size:13px;font-weight:700;color:'+col+';min-width:60px">'+pnlStr+'</span><span style="font-size:11px;color:#10b981">'+d.wins+'W</span><span style="font-size:11px;color:#ef4444">'+d.losses+'L</span></div>';
+    }).join('');
+  }
+
+  var canvas = document.getElementById('rev-dow-chart');
+  if(canvas&&typeof Chart!=='undefined'){
+    if(_revDowChart){_revDowChart.destroy();_revDowChart=null;}
+    var vals = dowData.map(function(d){return d.pnl;});
+    var colours = vals.map(function(v){return v>=0?'rgba(16,185,129,0.7)':'rgba(239,68,68,0.7)';});
+    _revDowChart = new Chart(canvas,{
+      type:'bar',
+      data:{labels:days.map(function(d){return d.slice(0,3);}),datasets:[{data:vals,backgroundColor:colours,borderColor:colours.map(function(c){return c.replace('.7','.9');}),borderWidth:1,borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '$'+ctx.raw.toFixed(0);}}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:11,family:'Plus Jakarta Sans'}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:10,family:'Plus Jakarta Sans'},callback:function(v){return '$'+v;}}}}}
+    });
+  }
+  revRequestAI(2);
+}
+
+/* ─── SLIDE 3 : Patterns ─────────────────────────────────── */
+function revRenderPatternsSlide(){
+  var allT = trades.filter(function(t){return t.pnl!=null&&(t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');});
+  var grid = document.getElementById('rev-patterns-grid');
+  if(!grid) return;
+
+  var hourBuckets={};
+  allT.forEach(function(t){
+    if(!t.entryTime) return;
+    var hr = t.entryTime.slice(0,2)+':00';
+    if(!hourBuckets[hr]) hourBuckets[hr]={pnl:0,count:0};
+    hourBuckets[hr].pnl += parseFloat(t.pnl)||0;
+    hourBuckets[hr].count++;
+  });
+  var hourEntries = Object.entries(hourBuckets);
+  var sortedByPnl = hourEntries.slice().sort(function(a,b){return b[1].pnl-a[1].pnl;});
+  var bestHour = sortedByPnl.length?sortedByPnl[0]:null;
+  var worstHour = sortedByPnl.length?sortedByPnl[sortedByPnl.length-1]:null;
+
+  var discs = allT.filter(function(t){return t.discRating;}).map(function(t){return t.discRating;});
+  var avgDisc = discs.length?(discs.reduce(function(a,b){return a+b;},0)/discs.length).toFixed(1):'—';
+  var highDisc = allT.filter(function(t){return t.discRating>=4;});
+  var lowDisc  = allT.filter(function(t){return t.discRating>0&&t.discRating<=2;});
+  var highDiscPnl = highDisc.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
+  var lowDiscPnl  = lowDisc.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
+
+  var dayCount={};
+  allT.forEach(function(t){if(t.date)dayCount[t.date]=(dayCount[t.date]||0)+1;});
+  var dayVals = Object.values(dayCount);
+  var maxPerDay = dayVals.length?Math.max.apply(null,dayVals):0;
+  var avgPerDay = dayVals.length?(dayVals.reduce(function(a,b){return a+b;},0)/dayVals.length).toFixed(1):0;
+
+  function patCard(icon,title,val,sub,col){
+    col=col||'#e5e7eb';
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px 14px"><div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">'+icon+' '+title+'</div><div style="font-size:19px;font-weight:800;color:'+col+';margin-bottom:4px">'+val+'</div><div style="font-size:11px;color:#6b7280;line-height:1.5">'+sub+'</div></div>';
+  }
+
+  grid.innerHTML =
+    patCard('⏰','Best Hour',
+      bestHour?bestHour[0]:'—',
+      bestHour?'$'+bestHour[1].pnl.toFixed(0)+' net over '+bestHour[1].count+' trade(s)':'No entry times logged','#10b981') +
+    patCard('⚠️','Worst Hour',
+      (worstHour&&bestHour&&worstHour[0]!==bestHour[0])?worstHour[0]:'—',
+      (worstHour&&bestHour&&worstHour[0]!==bestHour[0])?'$'+worstHour[1].pnl.toFixed(0)+' net over '+worstHour[1].count+' trade(s)':'No data','#ef4444') +
+    patCard('⭐','Avg Discipline',
+      avgDisc+'/5',
+      highDisc.length?'High disc (4-5★): $'+highDiscPnl.toFixed(0)+' · Low disc (1-2★): $'+lowDiscPnl.toFixed(0):'Log discipline ratings to see patterns',
+      parseFloat(avgDisc)>=4?'#10b981':parseFloat(avgDisc)>=3?'#f59e0b':'#ef4444') +
+    patCard('📊','Trades/Day',
+      avgPerDay,
+      'Max '+maxPerDay+' in one day · Model: 1 trade/day'+(maxPerDay>1?' — check for overtrading':''),
+      maxPerDay>1?'#f59e0b':'#10b981');
+
+  revRequestAI(3);
+}
+
+/* ── AI Takeaway via Claude API ──────────────────────────── */
+async function revRequestAI(slideIdx){
+  var takeawayEl = document.getElementById('rev-slide'+slideIdx+'-takeaway');
+  if(!takeawayEl) return;
+
+  if(_revAiCache[slideIdx]){
+    takeawayEl.style.display='block';
+    takeawayEl.querySelector('.rev-takeaway-text').textContent = _revAiCache[slideIdx];
+    return;
+  }
+
+  var allT = trades.filter(function(t){return t.pnl!=null&&(t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');});
+  if(allT.length<3){
+    takeawayEl.style.display='block';
+    takeawayEl.querySelector('.rev-takeaway-text').textContent='Log at least 3 trades to generate an AI insight.';
+    return;
+  }
+
+  var prompt = buildRevealPrompt(slideIdx, allT);
+  if(!prompt) return;
+
+  takeawayEl.style.display='block';
+  takeawayEl.querySelector('.rev-takeaway-text').textContent='⏳ Generating AI insight...';
+  takeawayEl.style.opacity='0.6';
+
+  try{
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:'You are a concise trading coach analyzing a trader\'s journal data. The trader uses ICT concepts on NQ (NASDAQ) futures, trades intraday 2:30–4:00 PM UK window, 7 months into trading, on demo. Give ONE sharp specific key takeaway — 2-4 sentences max. Be direct and actionable, use the exact numbers. No generic advice. No preamble. Start straight with the insight.',
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    var data = await resp.json();
+    var text = (data.content&&data.content[0]&&data.content[0].text)||'Unable to generate insight.';
+    _revAiCache[slideIdx] = text;
+    takeawayEl.querySelector('.rev-takeaway-text').textContent = text;
+    takeawayEl.style.opacity='1';
+  } catch(e){
+    takeawayEl.querySelector('.rev-takeaway-text').textContent='AI insight unavailable — check connection.';
+    takeawayEl.style.opacity='1';
+  }
+}
+
+function buildRevealPrompt(slideIdx, allT){
+  var wins=allT.filter(function(t){return t.outcome==='win';});
+  var losses=allT.filter(function(t){return t.outcome==='loss';});
+  var total=allT.length;
+  var wr=Math.round(wins.length/total*100);
+  var grossWin=wins.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
+  var grossLoss=losses.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
+  var pf=grossLoss>0?(grossWin/grossLoss).toFixed(2):'N/A';
+  var avgWin=wins.length?(grossWin/wins.length).toFixed(0):0;
+  var avgLoss=losses.length?(grossLoss/losses.length).toFixed(0):0;
+  var totalPnl=allT.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0).toFixed(0);
+  var score=calcFuzeScore(allT);
+
+  if(slideIdx===0){
+    return 'Fuze Score analysis. '+total+' trades. Net P&L: $'+totalPnl+'. Win rate: '+wr+'%. Profit factor: '+pf+'. Avg win: $'+avgWin+', Avg loss: $'+avgLoss+'. Fuze Score: '+(score?score.total:'N/A')+'/100. Components: '+(score?score.components.map(function(c){return c.label+' '+c.score+'/'+c.max;}).join(', '):'N/A')+'. What is the single most important thing this trader should focus on to improve their score?';
+  }
+  if(slideIdx===1){
+    var wlRatio=avgLoss>0?(avgWin/avgLoss).toFixed(2):'N/A';
+    var peak2=0,dd2=0,run2=0;
+    allT.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(t){run2+=parseFloat(t.pnl)||0;if(run2>peak2)peak2=run2;if(peak2-run2>dd2)dd2=peak2-run2;});
+    return 'Trading consistency. '+total+' trades over '+Object.keys(allT.reduce(function(m,t){if(t.date)m[t.date]=1;return m;},{})).length+' days. Win rate: '+wr+'%. Profit factor: '+pf+'. Avg win/loss ratio: '+wlRatio+'. Max drawdown: $'+dd2.toFixed(0)+'. Net P&L: $'+totalPnl+'. What is the most actionable step to improve consistency?';
+  }
+  if(slideIdx===2){
+    var days2=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+    var dowSummary=days2.map(function(day,idx){
+      var dayT=allT.filter(function(t){if(!t.date)return false;return new Date(t.date+'T12:00:00').getDay()===(idx+1);});
+      return day+': $'+dayT.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0).toFixed(0)+' ('+dayT.length+' trades)';
+    }).join(', ');
+    return 'Day of week performance. '+dowSummary+'. Total net P&L: $'+totalPnl+'. Which day pattern stands out most and what should this trader do?';
+  }
+  if(slideIdx===3){
+    var hourB={};
+    allT.forEach(function(t){if(!t.entryTime)return;var hr=t.entryTime.slice(0,2)+':00';if(!hourB[hr]){hourB[hr]={pnl:0,count:0};}hourB[hr].pnl+=parseFloat(t.pnl)||0;hourB[hr].count++;});
+    var hourSummary=Object.entries(hourB).sort(function(a,b){return b[1].pnl-a[1].pnl;}).map(function(e){return e[0]+': $'+e[1].pnl.toFixed(0)+' ('+e[1].count+' trades)';}).join(', ')||'No time data';
+    var discs3=allT.filter(function(t){return t.discRating;}).map(function(t){return t.discRating;});
+    var avgDisc3=discs3.length?(discs3.reduce(function(a,b){return a+b;},0)/discs3.length).toFixed(1):'N/A';
+    var dc={};allT.forEach(function(t){if(t.date)dc[t.date]=(dc[t.date]||0)+1;});
+    var maxPD=Object.values(dc).length?Math.max.apply(null,Object.values(dc)):0;
+    return 'Trading patterns. Entry time P&L: '+hourSummary+'. Avg discipline: '+avgDisc3+'/5. Max trades in one day: '+maxPD+' (model: 1/day). What is the most impactful pattern — good or bad — in this data?';
+  }
+  return null;
+}
+
+function startRevealsAnalysis(){
+  _revAiCache = {};
+  var icon=document.getElementById('reveals-refresh-icon');
+  var btn=document.getElementById('reveals-refresh-btn');
+  if(icon) icon.style.animation='revSpin 1s linear infinite';
+  if(btn) btn.style.opacity='0.5';
+  setTimeout(function(){
+    if(icon){icon.style.animation='';}
+    if(btn){btn.style.opacity='1';}
+    initReveals();
+    revRenderSlide(_revSlide);
+  }, 400);
+}
+
+/* ── Hook into existing dashboard render ─────────────────── */
+// initReveals is called by the existing _origRenderDashboard / _origShowTab hooks below
+</script>
+
+<style>
+@keyframes revSpin { to { transform: rotate(360deg); } }
+#reveals-section { position: relative; }
+#reveals-refresh-icon { display: inline-block; }
+body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) !important; }
+</style>
+
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
   <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
@@ -6603,7 +7080,7 @@ if(_origShowTab){
   window.showTab=function(t){
     _origShowTab(t);
     if(t==='stats') setTimeout(renderSmartInsights,50);
-    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); }
+    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); setTimeout(initReveals,250); }
   };
 }
 
@@ -6614,6 +7091,7 @@ if(_origRenderDashboard){
     _origRenderDashboard();
     setTimeout(renderFuzeScore,100);
     setTimeout(renderConsistencyTracker,100);
+    setTimeout(initReveals,200);
   };
 }
 
