@@ -619,7 +619,7 @@ body{
   background:var(--bg);
   color:#e5e7eb;
   font-size:13px;
-  display:flex;
+  display:block;
   min-height:100vh;
   max-width:none;
   border-top:none;
@@ -766,10 +766,8 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
 /* ── Main content ── */
 #main-content{
   margin-left:220px;
-  width:calc(100% - 220px);
   padding:24px 28px 32px;
   min-height:100vh;
-  max-width:none;
   box-sizing:border-box;
 }
 
@@ -6585,7 +6583,7 @@ document.addEventListener('DOMContentLoaded',function(){
 /* --- Base (always) --- */
 *{box-sizing:border-box}
 html,body{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;padding:0!important;margin:0!important;max-width:none!important;border-top:none!important;box-shadow:none!important;min-height:100vh}
-body{display:flex!important}
+body{display:block!important}
 
 /* Sidebar always stays dark */
 #sidebar{background:#1a1a1a!important;border-right:1px solid rgba(255,255,255,0.07)!important}
