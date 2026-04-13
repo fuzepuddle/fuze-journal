@@ -4840,8 +4840,8 @@ function randomizeTrade(){
   document.getElementById('f-emotion').value=emotionPool[Math.floor(Math.random()*emotionPool.length)];
   // Post-close emotion — exact option text, correlated to outcome
   const postWin=['Satisfied — executed well ✓','Calm / indifferent ✓','Proud of the process ✓','Relieved — stuck to the plan ✓','Energised — great session ✓'];
-  const postWinNeg=['Overconfident / euphoric after win','Annoyed didn't size up'];
-  const postLoss=['Frustrated with the result','Revenge urge — wanted it back','Regret — held too long','Shaken / doubting the model','Angry at myself','Dwelling on the loss — couldn't let it go'];
+  const postWinNeg=['Overconfident / euphoric after win','Annoyed - did not size up'];
+  const postLoss=['Frustrated with the result','Revenge urge — wanted it back','Regret — held too long','Shaken / doubting the model','Angry at myself','Dwelling on the loss - could not let it go'];
   const postBE=['Neutral about the outcome','Glad I followed rules even though it lost','Calm / indifferent ✓'];
   const postPool=rOutcome==='win'?[...postWin,...postWin,postWinNeg[0]]:rOutcome==='loss'?postLoss:postBE;
   document.getElementById('f-emotion-post').value=postPool[Math.floor(Math.random()*postPool.length)];
