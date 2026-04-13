@@ -5,8 +5,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0d0d0d">
-<style>html,body{background:#0d0d0d!important}</style>
+<meta name="theme-color" content="#0a0f0a">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 <title>fuze · ICT Trading Journal</title>
@@ -40,16 +39,21 @@
   .green-bg { background: var(--color-win-bg) !important; color: #059669 !important; border-color: var(--color-win-border) !important }
   .cal-win { color: var(--color-win) !important }
   .star.lit { color: var(--color-win) !important }
-  
+
+  /* ── Theme customizer ── */
+  #theme-panel{position:fixed;bottom:80px;right:16px;z-index:9999;background:#111;border:1px solid #2a2a2a;border-radius:14px;width:290px;display:none;box-shadow:0 12px 40px rgba(0,0,0,0.85);overflow:hidden;font-family:'Plus Jakarta Sans',sans-serif}
+  #theme-panel.open{display:flex;flex-direction:column}
+  #theme-toggle-btn{position:fixed;bottom:16px;right:16px;z-index:9999;width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:background .2s}
+  #theme-toggle-btn:hover{filter:brightness(1.15)}
   /* Panel header */
   #tp-header{padding:12px 14px 0;display:flex;align-items:center;justify-content:space-between}
-  #tp-header-title{font-size:12px;font-weight:600;color:#e5e7eb;letter-spacing:.05em}
+  #tp-header-title{font-size:12px;font-weight:600;color:#111827;letter-spacing:.05em}
   #tp-reset{font-size:11px;color:#555;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
-  #tp-reset:hover{color:#9ca3af}
+  #tp-reset:hover{color:#4b5563}
   /* Section tabs */
   #tp-tabs{display:flex;gap:4px;padding:10px 10px 0;flex-wrap:wrap}
   .tp-tab{font-size:10px;padding:4px 8px;border-radius:20px;border:1px solid #2a2a2a;background:none;color:#666;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
-  .tp-tab:hover{color:#9ca3af;border-color:#444}
+  .tp-tab:hover{color:#4b5563;border-color:#444}
   .tp-tab.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
   /* Section panels */
   #tp-body{padding:12px 14px 14px}
@@ -84,24 +88,24 @@
   /* Current colour preview strip */
   .tp-cur-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
   .tp-cur-dot{width:22px;height:22px;border-radius:5px;border:1px solid #333;flex-shrink:0}
-  .tp-cur-hex{font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#9ca3af}
+  .tp-cur-hex{font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#4b5563}
 
   *{box-sizing:border-box;margin:0;padding:0}
   /* body overridden by redesign block */
   h1{font-size:16px;font-weight:600;margin-bottom:0;letter-spacing:.02em;color:var(--accent);text-shadow:0 0 16px var(--accent-glow)}
   .profile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.07)}
   .profile-btns{display:flex;gap:6px}
-  .profile-btn{padding:5px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:#9ca3af;transition:all .2s;font-family:inherit}
+  .profile-btn{padding:5px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:#4b5563;transition:all .2s;font-family:inherit}
   .profile-btn.active{background:var(--accent);color:#0a0f0a;border-color:var(--accent);font-weight:500;box-shadow:0 0 16px rgba(201,168,76,0.25)}
   .tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:1.5rem;background:linear-gradient(180deg,#0a0f0a 0%,transparent 100%)}
-  .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:#9ca3af;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+  .tab{padding:10px 18px;cursor:pointer;font-size:13px;color:#4b5563;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
   
-  .tab:hover:not(.active){color:#e5e7eb}
-  .page{display:none;width:100%}.page.active{display:block;width:100%}
-  label{font-size:13px;color:#9ca3af;display:block;margin-bottom:4px}
+  .tab:hover:not(.active){color:#111827}
+  .page{display:none}.page.active{display:block}
+  label{font-size:13px;color:#4b5563;display:block;margin-bottom:4px}
   input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
   input[type=date],input[type=time]{background:#f9fafb;color-scheme:dark}
-  input:focus,select:focus,textarea:focus{border-color:#9ca3af}
+  input:focus,select:focus,textarea:focus{border-color:#4b5563}
   textarea{resize:vertical;min-height:64px;line-height:1.5}
   select option{background:#f9fafb;color:#ffffff}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -110,10 +114,10 @@
   .gap{margin-bottom:14px}
   .card{background:linear-gradient(160deg,var(--bg-card) 0%,#0a0f0a 100%);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
   .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:10px}
-  .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#9ca3af;margin-bottom:1px;user-select:none}
+  .check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;color:#4b5563;margin-bottom:1px;user-select:none}
   .check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:var(--accent)}
-  .check-group-title{font-size:13px;font-weight:500;color:#e5e7eb;margin:10px 0 4px}
-  .gate{border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:rgba(15,26,18,0.58);color:#9ca3af}
+  .check-group-title{font-size:13px;font-weight:500;color:#111827;margin:10px 0 4px}
+  .gate{border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 14px;font-size:13px;margin:12px 0 0;transition:all .3s;background:rgba(15,26,18,0.58);color:#4b5563}
   /* gate overridden */
   /* gate fail overridden */
   .outcome-row{display:flex;gap:8px;margin-bottom:14px}
@@ -121,7 +125,7 @@
   /* outcome-win overridden */
   /* outcome-loss overridden */
   /* outcome-be overridden */
-  .outcome-btn.active-skip{background:#1e1e1e;border-color:#9ca3af;color:#e5e7eb}
+  .outcome-btn.active-skip{background:#1e1e1e;border-color:#4b5563;color:#111827}
   .stars{display:flex;gap:4px;margin-top:4px}
   .star{font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);transition:color .15s;line-height:1}
   /* star.lit overridden */
@@ -133,20 +137,20 @@
   .log-wrap{overflow-x:auto;border:1px solid rgba(255,255,255,0.07);border-radius:12px}
   .log-table{width:100%;border-collapse:collapse;font-size:13px}
   .log-table th{text-align:left;font-weight:500;color:#9ca3af;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.07);white-space:nowrap;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
-  .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:#e5e7eb}
+  .log-table td{padding:9px 10px;border-bottom:0.5px solid #1e1e1e;vertical-align:middle;color:#111827}
   
   .log-table tr:hover td{background:#f9fafb}
   .no-trades{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
   /* green-bg overridden */
   /* red-bg overridden */
   /* amber-bg overridden */
-  .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:#9ca3af;border:1px solid rgba(255,255,255,0.07)}
+  .badge{padding:2px 8px;border-radius:4px;font-size:13px;background:#1e1e1e;color:#4b5563;border:1px solid rgba(255,255,255,0.07)}
   .metric-card{background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px 14px;text-align:center}
   .metric-val{font-size:22px;font-weight:500;line-height:1.2;margin-top:4px;color:#ffffff}
   .metric-lbl{font-size:13px;color:#9ca3af}
   .flex-between{display:flex;align-items:center;justify-content:space-between}
   .mode-toggle{display:flex;gap:8px;margin-bottom:16px}
-  .mode-btn{padding:6px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:#9ca3af;transition:all .2s;font-family:inherit}
+  .mode-btn{padding:6px 14px;border:1px solid rgba(255,255,255,0.07);border-radius:20px;cursor:pointer;font-size:13px;background:var(--bg-card);color:#4b5563;transition:all .2s;font-family:inherit}
   .mode-btn.active{background:var(--accent);color:#0a0f0a;border-color:var(--accent)}
   .prog-bar{height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;margin-top:6px}
   .prog-fill{height:100%;border-radius:4px;transition:width .4s,background .3s}
@@ -156,13 +160,13 @@
 
   /* Mistakes multi-select styled */
   .mistakes-list{border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:rgba(15,26,18,0.58);max-height:260px;overflow-y:auto;padding:4px}
-  .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#9ca3af;user-select:none;transition:background .15s}
+  .mistake-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#4b5563;user-select:none;transition:background .15s}
   /* overridden */
   .mistake-item.selected{background:#1f1f0f;color:#ffffff;border-left:2px solid #f59e0b;padding-left:6px}
   .mistake-item input[type=checkbox]{display:none}
   /* mistake-dot overridden */
   /* overridden */
-  .mistake-cat{font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;padding:8px 8px 2px;pointer-events:none}
+  .mistake-cat{font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#4b5563;padding:8px 8px 2px;pointer-events:none}
 
   @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
   .profile-hide{display:none !important}
@@ -185,7 +189,7 @@
   /* Calendar */
   .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
   .cal-title{font-size:22px;font-weight:500}
-  .cal-sub{font-size:13px;color:#9ca3af;margin-top:2px}
+  .cal-sub{font-size:13px;color:#4b5563;margin-top:2px}
   .cal-nav{display:flex;gap:8px;align-items:center}
   .cal-nav button{padding:5px 12px;border:1px solid rgba(255,255,255,0.07);border-radius:6px;background:#f9fafb;color:#ffffff;cursor:pointer;font-size:13px;font-family:inherit}
   .cal-nav button:hover{background:rgba(15,26,18,0.82)}
@@ -199,7 +203,7 @@
   #cal-grid-wrap table{height:100%;table-layout:fixed}
   #cal-grid-wrap tbody{height:calc(100% - 40px)}
   #cal-grid-wrap tbody tr{height:16.666%}
-  .cal-grid th{font-size:13px;font-weight:500;color:#9ca3af;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
+  .cal-grid th{font-size:13px;font-weight:500;color:#4b5563;text-align:center;padding:10px 0;letter-spacing:.05em;text-transform:uppercase}
   .cal-grid td{vertical-align:top;border:1px solid rgba(255,255,255,0.07);width:14.28%;padding:10px 12px;font-size:13px;color:#9ca3af;background:#f9fafb;cursor:default}
   .cal-grid td.weekend{background:#f9fafb}
   .cal-grid td.has-trade{background:var(--bg-card);cursor:pointer}
@@ -207,7 +211,7 @@
   .cal-grid td.today{border:2px solid var(--accent) !important;background:rgba(16,185,129,0.06) !important}
   .cal-day{font-size:15px;font-weight:500;margin-bottom:8px}
   .cal-pnl{font-size:18px;font-weight:500;margin-bottom:4px}
-  .cal-count{font-size:13px;color:#9ca3af}
+  .cal-count{font-size:13px;color:#4b5563}
   .cal-win{color:#10b981}
   .cal-loss{color:#ef4444}
   .cal-be{color:#f59e0b}
@@ -484,7 +488,7 @@
       gap:14px;
       padding:16px 18px;
       font-size:16px;
-      color:#e5e7eb;
+      color:#111827;
       border-radius:10px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
@@ -610,14 +614,48 @@ body.dark-mode #auth-overlay{background:rgba(0,0,0,0.92)!important}
 body.dark-mode .auth-card p{color:#9ca3af!important}
 body.dark-mode select option{background:#1a1a1a!important;color:#f0f0f0!important}
 
-
+/* ── Dark/light toggle button ── */
+#dl-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  padding:7px 9px;
+  border:none;
+  border-radius:6px;
+  background:none;
+  color:rgba(255,255,255,0.4);
+  cursor:pointer;
+  font-size:12px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-weight:400;
+  text-align:left;
+  transition:background .12s,color .12s;
+  margin-top:6px;
+}
+#dl-toggle:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8)}
+#dl-toggle-track{
+  width:32px;height:18px;border-radius:9px;
+  background:rgba(255,255,255,0.12);
+  position:relative;flex-shrink:0;
+  transition:background .2s;
+}
+#dl-toggle-thumb{
+  position:absolute;top:2px;left:2px;
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(255,255,255,0.5);
+  transition:transform .2s,background .2s;
+}
+body.dark-mode #dl-toggle-track{background:var(--accent,#10b981)}
+body.dark-mode #dl-toggle-thumb{transform:translateX(14px);background:#fff}
+body.dark-mode #dl-toggle{color:rgba(255,255,255,0.7)}
 
 /* ── Reset / Base ── */
 *{box-sizing:border-box;margin:0;padding:0}
 body{
   font-family:'Plus Jakarta Sans',system-ui,sans-serif;
   background:var(--bg);
-  color:#e5e7eb;
+  color:#111827;
   font-size:13px;
   display:flex;
   min-height:100vh;
@@ -756,11 +794,11 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
   cursor:pointer;
   font-size:12px;
   background:rgba(255,255,255,0.03);
-  color:#9ca3af;
+  color:#4b5563;
   transition:all .15s;
   font-family:'Plus Jakarta Sans',sans-serif;
 }
-.profile-btn:hover{background:rgba(255,255,255,0.06);color:#e5e7eb}
+.profile-btn:hover{background:rgba(255,255,255,0.06);color:#111827}
 .profile-btn.active{background:var(--win-bg);color:var(--win);border-color:var(--border-accent);font-weight:500}
 
 /* ── Main content ── */
@@ -769,9 +807,7 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
   flex:1;
   padding:24px 28px 32px;
   min-height:100vh;
-  box-sizing:border-box;
-  min-width:0;
-  max-width:1400px;
+  max-width:none;
 }
 
 /* ── Page header ── */
@@ -784,7 +820,7 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
 .page-header h2,.page-header h1{
   font-size:20px;
   font-weight:600;
-  color:#e5e7eb;
+  color:#111827;
   letter-spacing:-.01em;
 }
 .page-header p{font-size:12px;color:#9ca3af;margin-top:2px}
@@ -813,14 +849,14 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
 }
 
 /* ── Inputs ── */
-label{font-size:11.5px;color:#9ca3af;display:block;margin-bottom:4px}
+label{font-size:11.5px;color:#4b5563;display:block;margin-bottom:4px}
 input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{
   width:100%;
   padding:8px 10px;
   border:1px solid var(--border);
   border-radius:7px;
   background:#f9fafb;
-  color:#e5e7eb;
+  color:#111827;
   font-family:'Plus Jakarta Sans',sans-serif;
   font-size:12.5px;
   outline:none;
@@ -828,7 +864,7 @@ input[type=date],input[type=number],input[type=text],input[type=time],select,tex
 }
 input[type=date],input[type=time]{color-scheme:dark}
 input:focus,select:focus,textarea:focus{border-color:rgba(16,185,129,0.5);background:#fff}
-select option{background:#fff;color:#e5e7eb}
+select option{background:#fff;color:#111827}
 textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Buttons ── */
@@ -842,7 +878,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   cursor:pointer;
   font-size:12.5px;
   background:#ffffff;
-  color:#e5e7eb;
+  color:#111827;
   transition:all .15s;
   font-family:'Plus Jakarta Sans',sans-serif;
 }
@@ -871,7 +907,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .gate.fail{border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.04);color:#dc2626}
 
 /* ── Check items ── */
-.check-item{color:#9ca3af;padding:6px 0;font-size:12.5px}
+.check-item{color:#4b5563;padding:6px 0;font-size:12.5px}
 .check-item input[type=checkbox]{accent-color:var(--win);width:14px;height:14px}
 .check-group-title{color:#374151;font-size:11px;font-weight:600;letter-spacing:.04em;margin:12px 0 5px;text-transform:uppercase}
 
@@ -896,7 +932,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .outcome-btn.active-win{background:var(--win-bg);border:2px solid var(--win);color:var(--win);box-shadow:0 0 12px rgba(16,185,129,0.15)}
 .outcome-btn.active-loss{background:var(--loss-bg);border:2px solid var(--loss);color:var(--loss);box-shadow:0 0 12px rgba(239,68,68,0.15)}
 .outcome-btn.active-be{background:var(--be-bg);border:2px solid var(--be);color:var(--be);box-shadow:0 0 12px rgba(245,158,11,0.15)}
-.outcome-btn.active-skip{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);color:#e5e7eb}
+.outcome-btn.active-skip{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);color:#111827}
 
 /* ── Metric card ── */
 .metric-card{
@@ -910,7 +946,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   font-size:20px;
   font-weight:600;
   font-family:'Plus Jakarta Sans',sans-serif;
-  color:#e5e7eb;
+  color:#111827;
   margin-top:4px;
   line-height:1.2;
 }
@@ -920,7 +956,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .green-bg{background:var(--win-bg)!important;color:var(--win)!important;border:1px solid rgba(16,185,129,0.25)!important;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:500}
 .red-bg{background:var(--loss-bg)!important;color:var(--loss)!important;border:1px solid rgba(239,68,68,0.25)!important;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:500}
 .amber-bg{background:var(--be-bg)!important;color:var(--be)!important;border:1px solid rgba(245,158,11,0.25)!important;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:500}
-.badge{padding:2px 8px;border-radius:4px;font-size:11.5px;background:rgba(255,255,255,0.04);color:#9ca3af;border:1px solid var(--border)}
+.badge{padding:2px 8px;border-radius:4px;font-size:11.5px;background:rgba(255,255,255,0.04);color:#4b5563;border:1px solid var(--border)}
 
 /* ── Progress bars ── */
 .prog-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:6px}
@@ -932,30 +968,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Table ── */
 .log-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
-.log-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-.log-table th:nth-child(1){width:100px} /* Date */
-.log-table th:nth-child(2){width:80px}  /* Instr */
-.log-table th:nth-child(3){width:70px}  /* Bias */
-.log-table th:nth-child(4){width:55px}  /* Dir */
-.log-table th:nth-child(5){width:130px} /* Draw */
-.log-table th:nth-child(6){width:95px}  /* RR got */
-.log-table th:nth-child(7){width:70px}  /* P&L */
-.log-table th:nth-child(8){width:55px}  /* Risk */
-.log-table th:nth-child(9){width:80px}  /* Outcome */
-.log-table th:nth-child(10){width:80px} /* Disc */
-.log-table th:nth-child(11){width:55px} /* Actions */
-.log-table td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.log-table th:nth-child(1){width:105px}
-.log-table th:nth-child(2){width:85px}
-.log-table th:nth-child(3){width:75px}
-.log-table th:nth-child(4){width:60px}
-.log-table th:nth-child(5){width:130px}
-.log-table th:nth-child(6){width:90px}
-.log-table th:nth-child(7){width:75px}
-.log-table th:nth-child(8){width:55px}
-.log-table th:nth-child(9){width:80px}
-.log-table th:nth-child(10){width:85px}
-.log-table th:nth-child(11){width:45px}
+.log-table{width:100%;border-collapse:collapse;font-size:12px}
 .log-table th{
   text-align:left;
   font-weight:600;
@@ -972,7 +985,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   padding:9px 10px;
   border-bottom:1px solid rgba(255,255,255,0.03);
   vertical-align:middle;
-  color:#e5e7eb;
+  color:#111827;
   font-size:12.5px;
 }
 
@@ -986,7 +999,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-page-header h2{
   font-size:20px;
   font-weight:600;
-  color:#e5e7eb;
+  color:#111827;
   letter-spacing:-.01em;
 }
 .dash-page-header p{font-size:12px;color:#9ca3af;margin-top:2px}
@@ -1022,7 +1035,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   font-size:22px;
   font-weight:700;
   font-family:'Plus Jakarta Sans',sans-serif;
-  color:#e5e7eb;
+  color:#111827;
   line-height:1.1;
   margin-bottom:4px;
 }
@@ -1090,9 +1103,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   border-bottom:1px solid rgba(0,0,0,0.05);
 }
 .dash-legend-item:last-child{border-bottom:none}
-.dash-legend-left{display:flex;align-items:center;gap:7px;font-size:12px;color:#9ca3af}
+.dash-legend-left{display:flex;align-items:center;gap:7px;font-size:12px;color:#4b5563}
 .dash-legend-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.dash-legend-val{font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;color:#e5e7eb}
+.dash-legend-val{font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;color:#111827}
 
 /* Recent trades on dashboard */
 .dash-trade-row{
@@ -1105,8 +1118,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 }
 .dash-trade-row:last-child{border-bottom:none}
 .dash-trade-date{font-size:11px;color:#9ca3af;font-family:'Plus Jakarta Sans',sans-serif}
-.dash-trade-dir{font-size:11px;color:#9ca3af}
-.dash-trade-draw{font-size:11px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-trade-dir{font-size:11px;color:#4b5563}
+.dash-trade-draw{font-size:11px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dash-no-trades{text-align:center;padding:24px;color:#9ca3af;font-size:12px}
 
 /* ── Mini calendar on dashboard ── */
@@ -1179,7 +1192,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Collapsible ── */
 .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.collapsible-header:hover .collapse-icon{color:#e5e7eb}
+.collapsible-header:hover .collapse-icon{color:#111827}
 .collapse-icon{font-size:11px;color:#9ca3af;transition:transform .2s;display:inline-block}
 .collapsible-body.collapsed{display:none}
 
@@ -1192,7 +1205,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   cursor:pointer;
   font-size:12px;
   background:rgba(255,255,255,0.02);
-  color:#9ca3af;
+  color:#4b5563;
   transition:all .15s;
   font-family:'Plus Jakarta Sans',sans-serif;
 }
@@ -1210,11 +1223,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .mistake-item{
   display:flex;align-items:center;gap:8px;
   padding:6px 8px;border-radius:5px;
-  cursor:pointer;font-size:12px;color:#9ca3af;
+  cursor:pointer;font-size:12px;color:#4b5563;
   user-select:none;transition:background .12s;
 }
 .mistake-item:hover{background:rgba(0,0,0,0.03)}
-.mistake-item.selected{background:rgba(245,158,11,0.07);color:#e5e7eb;border-left:2px solid var(--be);padding-left:6px}
+.mistake-item.selected{background:rgba(245,158,11,0.07);color:#111827;border-left:2px solid var(--be);padding-left:6px}
 .mistake-item input[type=checkbox]{display:none}
 .mistake-dot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);flex-shrink:0;transition:all .12s}
 .mistake-item.selected .mistake-dot{background:var(--be);border-color:var(--be)}
@@ -1238,9 +1251,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Log page ── */
 #page-log{max-width:720px}
-
-/* ── All pages fill full width ── */
-.page{width:100%}
 
 /* ── Glows ── */
 @keyframes glow-green{0%,100%{box-shadow:0 0 0px #1a4010}50%{box-shadow:0 0 20px rgba(16,185,129,0.2)}}
@@ -1290,17 +1300,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   .dash-metrics{grid-template-columns:1fr 1fr}
   .dash-charts-row,.dash-bottom-row{grid-template-columns:1fr}
   .dash-metric-val{font-size:18px}
-  #page-log,#page-journal,#page-stats,#page-missed,#page-weekly,#page-prop{max-width:100%}
+  #page-log{max-width:100%}
 }
 </style>
 </head>
-<body class="dark-mode">
+<body>
 
 <div id="auth-overlay" class="auth-show" aria-live="polite">
   <div class="auth-card">
     <div class="section-label" style="margin-bottom:14px">Sign in</div>
     <p style="font-size:13px;color:#888;margin-bottom:14px;line-height:1.5">Your cloud backup is tied to your account. Without signing in, data is only on this device (localStorage).</p>
-    <div id="auth-checking" style="font-size:14px;color:#9ca3af;margin-bottom:8px">Checking session…</div>
+    <div id="auth-checking" style="font-size:14px;color:#4b5563;margin-bottom:8px">Checking session…</div>
     <div id="auth-form-wrap" style="display:none">
       <label>Email</label>
       <input type="email" id="auth-email" autocomplete="username" placeholder="you@email.com">
@@ -1345,12 +1355,29 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <div class="sb-bottom">
+    <div class="sb-clocks">
+      <div class="sb-clock">
+        <div class="sb-clock-label">🇬🇧 UK</div>
+        <div class="sb-clock-time" id="clock-uk">--:--</div>
+      </div>
+      <div class="sb-clock">
+        <div class="sb-clock-label">🇺🇸 NY</div>
+        <div class="sb-clock-time" id="clock-ny">--:--</div>
+      </div>
+    </div>
     <div class="sb-profile-btns">
       <button class="profile-btn" onclick="switchProfile('challenge',this)" id="pbtn-challenge">Challenge</button>
       <button class="profile-btn" onclick="switchProfile('funded',this)" id="pbtn-funded">Funded</button>
       <button class="profile-btn" onclick="switchProfile('demo',this)" id="pbtn-demo">Demo</button>
     </div>
     <div class="sb-streak" id="journal-streak">🔥 —</div>
+    <button id="dl-toggle" onclick="toggleDarkLight()">
+      <span id="dl-icon" style="font-size:13px;width:16px;text-align:center;flex-shrink:0">🌙</span>
+      <span id="dl-label">Dark mode</span>
+      <span style="margin-left:auto">
+        <span id="dl-toggle-track"><span id="dl-toggle-thumb"></span></span>
+      </span>
+    </button>
     <button id="sb-signout-btn" onclick="authSignOut()" style="display:none;width:100%;padding:7px 9px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);cursor:pointer;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;text-align:left;transition:background .12s,color .12s;display:none">
       <span style="margin-right:8px;opacity:.6">⎋</span>Log out
     </button>
@@ -1507,10 +1534,17 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </div>
 <!-- LOG -->
 <div class="page" id="page-log">
-<div class="dash-page-header"><h2>Log Trade</h2><p>NY Session · 14:30–16:00 UK</p></div>
+<div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:600;color:#111827;letter-spacing:-.01em">Log Trade</h2></div>
 <div id="log-form-col">
 
-
+  <!-- QOTD on Log page -->
+  <div class="card qotd-log-card" id="qotd-card-log" style="margin-bottom:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px">
+    <div style="font-size:20px;line-height:1;margin-top:2px">💬</div>
+    <div style="flex:1">
+      <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Quote of the day</div>
+      <div id="qotd-text" style="font-size:13px;color:#111827;line-height:1.6;font-style:italic"></div>
+      <div id="qotd-author" style="font-size:12px;color:#555;margin-top:4px"></div>
+    </div>
   </div>
 
   <!-- SESSION TIMER -->
@@ -1821,61 +1855,53 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 <!-- ALL TRADES -->
 <div class="page" id="page-journal">
-  <div class="dash-page-header"><h2>All Trades</h2><p>Full trade log — NQ</p></div>
-
-  <!-- Mini metric strip — mirrors dashboard -->
-  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px">
-    <div class="dash-metric"><div class="dash-metric-label">Net P&amp;L</div><div class="dash-metric-val" id="jm-pnl">—</div><div class="dash-metric-sub">All trades</div></div>
-    <div class="dash-metric"><div class="dash-metric-label">Win Rate</div><div class="dash-metric-val" id="jm-wr">—</div><div class="dash-metric-sub" id="jm-wl">—</div></div>
-    <div class="dash-metric"><div class="dash-metric-label">Trades</div><div class="dash-metric-val" id="jm-total">—</div><div class="dash-metric-sub">Logged</div></div>
-    <div class="dash-metric"><div class="dash-metric-label">Avg RR</div><div class="dash-metric-val" id="jm-rr">—</div><div class="dash-metric-sub">Realised</div></div>
-    <div class="dash-metric"><div class="dash-metric-label">Profit Factor</div><div class="dash-metric-val" id="jm-pf">—</div><div class="dash-metric-sub">Wins ÷ Losses</div></div>
+  <div class="page-header"><h2>All Trades</h2></div>
+  <div class="flex-between" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="section-label" style="margin-bottom:0">Trade log</div>
+      <span id="trade-count-badge" style="background:#1e1e1e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2px 10px;font-size:13px;color:#4b5563"></span>
+    </div>
+    <button class="btn btn-sm" onclick="exportTradesToCSV()" title="Download all trades as a spreadsheet">⬇ Export CSV</button>
   </div>
-
-  <div class="dash-chart-card">
-    <div class="flex-between" style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="dash-card-title" style="margin-bottom:0">Trade log</div>
-        <span id="trade-count-badge" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2px 10px;font-size:11px;color:#9ca3af"></span>
-      </div>
-      <button class="btn btn-sm" onclick="exportTradesToCSV()" title="Download all trades as a spreadsheet">&#8595; Export CSV</button>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
-      <input type="text" id="journal-search" placeholder="Search notes, draws, mistakes..." oninput="renderJournal()" style="font-size:12px;padding:6px 11px;width:260px;flex-shrink:0">
-      <select id="filter-out" onchange="renderJournal()" style="font-size:12px;padding:6px 8px;width:auto">
-        <option value="">All outcomes</option>
-        <option value="win">Win</option><option value="loss">Loss</option>
-        <option value="be">BE</option>
-      </select>
-      <select id="filter-bias" onchange="renderJournal()" style="font-size:12px;padding:6px 8px;width:auto">
-        <option value="">All biases</option>
-        <option value="Bullish">Bullish</option>
-        <option value="Bearish">Bearish</option>
-        <option value="Chop">Chop</option>
-      </select>
-      <button onclick="clearFilters()" style="font-size:12px;padding:5px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:6px;background:rgba(255,255,255,0.04);color:#9ca3af;cursor:pointer;font-family:inherit">Clear</button>
-    </div>
-    <div class="log-wrap" style="border-radius:8px">
-      <table class="log-table">
-        <thead>
-          <tr>
-            <th>Date</th><th>Instr.</th><th>Bias</th><th>Dir</th>
-            <th>Draw</th><th>RR got</th><th>P&amp;L</th><th>Risk</th>
-            <th>Outcome</th><th>Disc.</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="journal-body"></tbody>
-      </table>
-    </div>
-    <div id="journal-empty" class="no-trades" style="display:none">No trades yet.</div>
+  <div style="margin-bottom:10px">
+    <input type="text" id="journal-search" placeholder="Search notes, draws, mistakes..." oninput="renderJournal()" style="font-size:13px;padding:7px 12px;max-width:340px">
   </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <select id="filter-out" onchange="renderJournal()" style="font-size:13px;padding:5px 8px;width:auto">
+      <option value="">All outcomes</option>
+      <option value="win">Win</option><option value="loss">Loss</option>
+      <option value="be">BE</option>
+    </select>
+
+    <select id="filter-bias" onchange="renderJournal()" style="font-size:13px;padding:5px 8px;width:auto">
+      <option value="">All biases</option>
+      <option value="Bullish">Bullish</option>
+      <option value="Bearish">Bearish</option>
+      <option value="Chop">Chop</option>
+    </select>
+    <button onclick="clearFilters()" style="font-size:13px;padding:5px 10px;border:0.5px solid #2a2a2a;border-radius:6px;background:#0d0d0d;color:#666;cursor:pointer;font-family:inherit">Clear filters</button>
+  </div>
+  <div class="log-wrap">
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Instr.</th><th>Bias</th><th>Dir</th>
+          <th>Draw</th><th>RR got</th><th>P&amp;L</th><th>Risk</th>
+          <th>Outcome</th><th>Disc.</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="journal-body"></tbody>
+    </table>
+  </div>
+  <div id="journal-empty" class="no-trades" style="display:none">No trades yet.</div>
 </div>
 
 <!-- STATS -->
 <div class="page" id="page-stats">
-  <div class="dash-page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div><h2>Statistics</h2><p>Performance breakdown — NQ</p></div>
-    <div id="s-tilt" style="margin-top:4px"></div>
+  <div class="page-header"><h2>Statistics</h2></div>
+  <!-- Filter bar -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+    <div id="s-tilt"></div>
   </div>
 
   <!-- Smart Insights strip -->
@@ -1919,7 +1945,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div class="section-label">Avg win / loss</div>
       <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;margin-top:6px">
         <div id="s-wl-ratio" style="font-size:26px;font-weight:500;color:#ffffff">—</div>
-        <div style="font-size:13px;color:#9ca3af">ratio</div>
+        <div style="font-size:13px;color:#4b5563">ratio</div>
       </div>
       <div style="position:relative;height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px">
         <div id="s-wl-green" style="height:100%;background:#3a6e3a;transition:width .4s"></div>
@@ -1930,8 +1956,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <span id="s-avg-loss" style="font-size:13px;font-weight:500;color:#ef4444">—</span>
       </div>
       <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:12px">
-        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:#e5e7eb">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#10b981">—</span></div>
-        <div class="flex-between"><span style="font-size:13px;color:#e5e7eb">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#ef4444">—</span></div>
+        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:13px;color:#111827">Largest win</span><span id="s-largestwin" style="font-size:13px;font-weight:500;color:#10b981">—</span></div>
+        <div class="flex-between"><span style="font-size:13px;color:#111827">Largest loss</span><span id="s-largestloss" style="font-size:13px;font-weight:500;color:#ef4444">—</span></div>
       </div>
     </div>
     <div class="card">
@@ -1953,19 +1979,19 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Streaks</div>
-      <div id="s-streaks" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-streaks" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Time of day</div>
-      <div id="s-timeofday" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-timeofday" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Emotional state</div>
-      <div id="s-emotions" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-emotions" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Momentum at entry</div>
-      <div id="s-momentum" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-momentum" style="font-size:13px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -1973,15 +1999,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Draw success rate</div>
-      <div id="s-draws" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-draws" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Best day &amp; bias</div>
-      <div id="s-bestday" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-bestday" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Top mistakes</div>
-      <div id="s-mistakes" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-mistakes" style="font-size:13px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -1989,11 +2015,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Long vs Short</div>
-      <div id="s-longshort" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-longshort" style="font-size:13px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">Discipline vs outcome</div>
-      <div id="s-disc-corr" style="font-size:13px;color:#9ca3af">No data</div>
+      <div id="s-disc-corr" style="font-size:13px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -2004,7 +2030,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div style="margin-bottom:12px">
     <div class="card">
       <div class="section-label" style="margin-bottom:12px">Valid vs invalid setup breakdown</div>
-      <div id="s-class-stats" style="font-size:13px;color:#9ca3af">No classifications logged yet — tag your trades as valid/invalid when logging.</div>
+      <div id="s-class-stats" style="font-size:13px;color:#4b5563">No classifications logged yet — tag your trades as valid/invalid when logging.</div>
     </div>
   </div>
 
@@ -2014,11 +2040,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 <!-- MISSED TRADES -->
 <div class="page" id="page-missed">
-  <div class="dash-page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div><h2>Missed Trades</h2><p>Setups you saw but didn't take — review the pattern</p></div>
-    <button class="btn btn-primary" onclick="saveMissed()">Log missed setup &#8594;</button>
+  <div class="page-header"><h2>Missed Trades</h2></div>
+  <div class="flex-between" style="margin-bottom:14px">
+    <div class="section-label" style="margin-bottom:0">Missed trades</div>
+    <button class="btn btn-primary" onclick="saveMissed()">Log missed setup →</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;align-items:start">
   <div class="card gap">
     <div class="section-label">Log a missed setup</div>
     <div class="grid-3 gap">
@@ -2091,37 +2117,18 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div><label>Notes</label><textarea id="m-notes" placeholder="What did you see? What stopped you?" style="min-height:50px"></textarea></div>
     <div style="margin-top:10px"><label>Exact thought that stopped you <span style="color:#9ca3af;font-size:13px;font-weight:400">— be specific</span></label><textarea id="m-hesitation" placeholder="e.g. I told myself maybe we get a bigger pullback. By the time the real entry came I'd already mentally checked out..." style="min-height:60px"></textarea></div>
   </div>
-  <!-- right column: log -->
-  <div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:14px 18px 10px;border-bottom:1px solid rgba(255,255,255,0.06)">
-        <div class="dash-card-title" style="margin-bottom:0">Missed setup log</div>
-      </div>
-      <div class="log-wrap" style="border:none;border-radius:0">
-        <table class="log-table">
-          <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>Reason skipped</th><th>Notes</th><th></th></tr></thead>
-          <tbody id="missed-body"></tbody>
-        </table>
-      </div>
-      <div id="missed-empty" class="no-trades">No missed trades logged yet.</div>
-    </div>
+  <div class="log-wrap" style="margin-top:4px">
+    <table class="log-table">
+      <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>Reason skipped</th><th>Notes</th><th></th></tr></thead>
+      <tbody id="missed-body"></tbody>
+    </table>
   </div>
-  </div><!-- end grid -->
+  <div id="missed-empty" class="no-trades" style="display:none">No missed trades logged yet.</div>
 </div>
 
 <!-- WEEKLY REVIEW -->
 <div class="page" id="page-weekly">
-  <div class="dash-page-header"><h2>Weekly Review</h2><p>Reflect on the week's sessions</p></div>
-  <!-- QOTD -->
-  <div class="card qotd-log-card" id="qotd-card-log" style="margin-bottom:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px">
-    <div style="font-size:20px;line-height:1;margin-top:2px">💬</div>
-    <div style="flex:1">
-      <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Quote of the day</div>
-      <div id="qotd-text" style="font-size:13px;color:#e5e7eb;line-height:1.6;font-style:italic"></div>
-      <div id="qotd-author" style="font-size:12px;color:#9ca3af;margin-top:4px"></div>
-    </div>
-  </div>
-
+  <div class="page-header"><h2>Weekly Review</h2></div>
   <div class="flex-between" style="margin-bottom:14px">
     <div class="section-label" style="margin-bottom:0">Weekly review</div>
     <div class="cal-nav">
@@ -2141,52 +2148,45 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="grid-2">
       <div>
         <div class="section-label" style="margin-bottom:8px">Top mistake this week</div>
-        <div id="w-mistake" style="font-size:13px;color:#9ca3af">—</div>
+        <div id="w-mistake" style="font-size:13px;color:#4b5563">—</div>
       </div>
       <div>
         <div class="section-label" style="margin-bottom:8px">Outcomes</div>
-        <div id="w-outcomes" style="font-size:13px;color:#9ca3af">—</div>
+        <div id="w-outcomes" style="font-size:13px;color:#4b5563">—</div>
       </div>
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start">
-    <!-- Left: notes -->
-    <div class="card">
-      <div class="section-label">Your notes for this week</div>
-      <div class="gap">
-        <label>What went well?</label>
-        <textarea id="w-well" placeholder="Key wins this week, good executions, discipline moments..." style="min-height:70px"></textarea>
-      </div>
-      <div class="gap">
-        <label>What to improve?</label>
-        <textarea id="w-improve" placeholder="Patterns you noticed, mistakes to fix, rules to reinforce..." style="min-height:70px"></textarea>
-      </div>
-      <div class="gap">
-        <label>Focus for next week</label>
-        <textarea id="w-focus" placeholder="One thing to nail next week..." style="min-height:54px"></textarea>
-      </div>
-      <div style="display:flex;justify-content:flex-end;margin-top:4px">
-        <button class="btn btn-primary" onclick="saveWeeklyNotes()">Save notes →</button>
-      </div>
+  <div class="card">
+    <div class="section-label">Your notes for this week</div>
+    <div class="gap">
+      <label>What went well?</label>
+      <textarea id="w-well" placeholder="Key wins this week, good executions, discipline moments..." style="min-height:60px"></textarea>
     </div>
-    <!-- Right: emotional + compare -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="card">
-        <div class="section-label" style="margin-bottom:10px">Emotional pattern this week</div>
-        <div id="w-emotion-breakdown" style="font-size:13px;color:#9ca3af">No trades this week.</div>
-      </div>
-      <div class="card">
-        <div class="section-label" style="margin-bottom:10px">vs last week</div>
-        <div id="w-emotion-compare" style="font-size:13px;color:#9ca3af">No comparison data yet.</div>
-      </div>
+    <div class="gap">
+      <label>What to improve?</label>
+      <textarea id="w-improve" placeholder="Patterns you noticed, mistakes to fix, rules to reinforce..." style="min-height:60px"></textarea>
     </div>
+    <div class="gap">
+      <label>Focus for next week</label>
+      <textarea id="w-focus" placeholder="One thing to nail next week..." style="min-height:50px"></textarea>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn btn-primary" onclick="saveWeeklyNotes()">Save notes →</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="section-label" style="margin-bottom:10px">Emotional pattern this week</div>
+    <div id="w-emotion-breakdown" style="font-size:13px;color:#4b5563">No trades this week.</div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="section-label" style="margin-bottom:10px">vs last week</div>
+    <div id="w-emotion-compare" style="font-size:13px;color:#4b5563">No comparison data yet.</div>
   </div>
 </div>
 
 <!-- PROP FIRM -->
 <div class="page" id="page-prop">
-  <div class="dash-page-header"><h2>Prop Firm Tracker</h2><p>Challenge &amp; funded account rules</p></div>
-  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;align-items:start">
+  <div class="page-header"><h2>Prop Firm Tracker</h2></div>
   <div class="card gap">
     <div class="flex-between" style="margin-bottom:12px">
       <div class="section-label" style="margin-bottom:0">Prop firm settings</div>
@@ -2212,8 +2212,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   </div>
 
-  <!-- right column -->
-  <div>
   <div class="card" id="prop-tracker" style="display:none">
     <div class="flex-between" style="margin-bottom:14px">
       <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
@@ -2223,7 +2221,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Profit progress -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:#e5e7eb">Profit target</span>
+        <span style="font-size:13px;color:#111827">Profit target</span>
         <span style="font-size:13px;font-weight:500" id="prop-profit-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-profit-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -2233,7 +2231,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Drawdown -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:#e5e7eb">Max drawdown used</span>
+        <span style="font-size:13px;color:#111827">Max drawdown used</span>
         <span style="font-size:13px;font-weight:500" id="prop-dd-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-dd-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -2243,7 +2241,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Daily loss -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:13px;color:#e5e7eb">Today's P&amp;L vs daily limit</span>
+        <span style="font-size:13px;color:#111827">Today's P&amp;L vs daily limit</span>
         <span style="font-size:13px;font-weight:500" id="prop-ddl-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-ddl-bar" style="width:0%;background:#3a6e3a"></div></div>
@@ -2263,21 +2261,19 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  </div><!-- close right column div for tracker -->
-  <div id="prop-empty" style="padding:40px;color:#9ca3af;font-size:13px;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:10px">Fill in your prop firm settings above and hit Save to start tracking.</div>
-  </div><!-- end right column -->
-  </div><!-- end grid -->
+  <div id="prop-empty" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">Fill in your prop firm settings above and hit Save to start tracking.</div>
 </div>
 
 
 <!-- CALENDAR -->
 <div class="page" id="page-calendar">
-  <div class="dash-page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+  <div class="page-header"><h2>Calendar</h2></div>
+  <div class="cal-header">
     <div>
-      <h2 id="cal-month-title">Calendar</h2>
-      <p id="cal-month-pnl" style="margin-top:2px"></p>
+      <div class="cal-title" id="cal-month-title">March 2026</div>
+      <div class="cal-sub" id="cal-month-pnl"></div>
     </div>
-    <div class="cal-nav" style="margin-top:4px">
+    <div class="cal-nav">
       <button onclick="calPrev()">&#8249;</button>
       <button onclick="calToday()">Today</button>
       <button onclick="calNext()">&#8250;</button>
@@ -3194,7 +3190,7 @@ function renderJournal(){
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:14px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:13px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'rgba(255,255,255,0.07)'};
-    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:13px;color:#9ca3af">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:13px;color:#9ca3af">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 6px">×</button></td></tr>';
+    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:13px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:13px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 6px">×</button></td></tr>';
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
@@ -3207,38 +3203,21 @@ function renderJournal(){
           +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:1px solid rgba(255,255,255,0.07);cursor:pointer;background:var(--bg-card)" '
           +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.07)\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:#e5e7eb;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#111827;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#e5e7eb;line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#e5e7eb;line-height:1.6">'+t.improve+'</div></div>':'';
-    const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Emotion after close</div><div style="font-size:13px;color:#9ca3af">'+t.emotionPost+'</div></div>':'';
+    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What happened</div><div style="font-size:13px;color:#111827;line-height:1.6">'+t.narrative+'</div></div>':'';
+    const improveHtml=t.improve?'<div><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What to improve</div><div style="font-size:13px;color:#111827;line-height:1.6">'+t.improve+'</div></div>':'';
+    const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Emotion after close</div><div style="font-size:13px;color:#4b5563">'+t.emotionPost+'</div></div>':'';
     const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Momentum at entry</div><div style="font-size:13px;color:'+(t.momentum.includes('Aggressive')?'#10b981':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#ef4444':'#f59e0b')+'">'+t.momentum+'</div></div>':'';
-    const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#9ca3af;line-height:1.6">'+t.similar+'</div></div>':'';
+    const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Similar past trade</div><div style="font-size:13px;color:#4b5563;line-height:1.6">'+t.similar+'</div></div>':'';
     const classBadgeHtml=t.tradeClass?'<div style="margin-bottom:10px">'+( classBadges[t.tradeClass]||'')+'</div>':'';
-    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#f3f4f6;cursor:pointer;color:#9ca3af;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
+    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#f3f4f6;cursor:pointer;color:#4b5563;font-size:13px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
     const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#f9fafb;border-bottom:1px solid rgba(0,0,0,0.06)">'+classBadgeHtml+ssHtml+momentumHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
-
-  // Update All Trades metric strip
-  const wins=f.filter(t=>t.outcome==='win');
-  const losses=f.filter(t=>t.outcome==='loss');
-  const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
-  const wr=f.length?Math.round(wins.length/f.length*100):null;
-  const rrVals=f.filter(t=>t.rrActual&&parseFloat(t.rrActual)).map(t=>parseFloat(t.rrActual));
-  const avgRR=rrVals.length?(rrVals.reduce((a,b)=>a+b,0)/rrVals.length).toFixed(2):null;
-  const grossW=wins.reduce((s,t)=>s+(t.pnl||0),0);
-  const grossL=Math.abs(losses.reduce((s,t)=>s+(t.pnl||0),0));
-  const pf=grossL>0?(grossW/grossL).toFixed(2):wins.length?'∞':null;
-  const set=(id,val,cls)=>{const el=document.getElementById(id);if(el){el.textContent=val||'—';el.className='dash-metric-val'+(cls?' '+cls:'');}};
-  set('jm-pnl',(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toFixed(0),totalPnl>0?'positive':totalPnl<0?'negative':'');
-  set('jm-wr',wr!=null?wr+'%':null);
-  const wlEl=document.getElementById('jm-wl');if(wlEl)wlEl.textContent=f.length?wins.length+'W · '+losses.length+'L':'—';
-  set('jm-total',f.length||null);
-  set('jm-rr',avgRR?avgRR+'R':null);
-  set('jm-pf',pf);
 }
+
 
 function toggleDetail(id, btn){
   const row = document.getElementById('detail-'+id);
@@ -3593,12 +3572,12 @@ function renderBestDayBias(f){
   el.innerHTML='<div style="margin-bottom:10px">'
     +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:4px">Best day</div>'
     +'<div style="font-size:16px;font-weight:500;color:#10b981">'+bestDay+'</div>'
-    +'<div style="font-size:13px;color:#9ca3af">'+days.map(d=>'<span style="margin-right:8px;color:'+(dayPnl[d]>=0?'#10b981':'#ef4444')+'">'+d+' '+(dayPnl[d]>=0?'+$':'-$')+Math.abs(dayPnl[d]).toFixed(0)+'</span>').join('')+'</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+days.map(d=>'<span style="margin-right:8px;color:'+(dayPnl[d]>=0?'#10b981':'#ef4444')+'">'+d+' '+(dayPnl[d]>=0?'+$':'-$')+Math.abs(dayPnl[d]).toFixed(0)+'</span>').join('')+'</div>'
     +'</div>'
     +'<div>'
     +'<div style="font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:4px">Best bias</div>'
     +'<div style="font-size:16px;font-weight:500;color:'+(bestBias[1]>=0?'#10b981':'#ef4444')+'">'+bestBias[0]+'</div>'
-    +'<div style="font-size:13px;color:#9ca3af">'+Object.entries(biasPnl).map(([k,v])=>'<span style="margin-right:8px;color:'+(v>=0?'#10b981':'#ef4444')+'">'+k+' '+(v>=0?'+$':'-$')+Math.abs(v).toFixed(0)+'</span>').join('')+'</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+Object.entries(biasPnl).map(([k,v])=>'<span style="margin-right:8px;color:'+(v>=0?'#10b981':'#ef4444')+'">'+k+' '+(v>=0?'+$':'-$')+Math.abs(v).toFixed(0)+'</span>').join('')+'</div>'
     +'</div>';
 }
 
@@ -4058,15 +4037,15 @@ function calcRisk(){
     +'<div style="background:rgba(15,26,18,0.58);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px 10px">'
     +'<div style="font-size:13px;color:#9ca3af;margin-bottom:3px">1% risk ($'+risk1pct.toFixed(0)+')</div>'
     +'<div style="font-size:13px;font-weight:500;color:#10b981">'+nq1.toFixed(2)+' NQ</div>'
-    +'<div style="font-size:13px;color:#9ca3af">'+Math.round(mnq1)+' MNQ</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+Math.round(mnq1)+' MNQ</div>'
     +'</div>'
     +'<div style="background:rgba(15,26,18,0.58);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px 10px">'
     +'<div style="font-size:13px;color:#9ca3af;margin-bottom:3px">0.5% risk ($'+risk05pct.toFixed(0)+')</div>'
     +'<div style="font-size:13px;font-weight:500;color:#10b981">'+nq05.toFixed(2)+' NQ</div>'
-    +'<div style="font-size:13px;color:#9ca3af">'+Math.round(mnq05)+' MNQ</div>'
+    +'<div style="font-size:13px;color:#4b5563">'+Math.round(mnq05)+' MNQ</div>'
     +'</div>'
     +'</div>'
-    +'<div style="font-size:13px;color:#9ca3af;margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
+    +'<div style="font-size:13px;color:#4b5563;margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
 }
 
 // Pre-fill calc from prop settings if available
@@ -4108,7 +4087,7 @@ function openSSLightbox(url){
     lb = document.createElement('div');
     lb.id = 'trade-ss-lightbox';
     lb.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out';
-    lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#9ca3af;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
+    lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#4b5563;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
     lb.addEventListener('click', closeLightbox);
     document.body.appendChild(lb);
   }
@@ -4528,7 +4507,7 @@ function renderMissed(){
   const empty=document.getElementById('missed-empty');
   if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:13px;color:#9ca3af">'+(m.draw||'—')+'</td><td style="font-size:13px;color:#9ca3af">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:13px;color:#9ca3af;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:12px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 6px">×</button></td></tr>').join('');
+  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:13px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:13px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:13px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:12px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 6px">×</button></td></tr>').join('');
 }
 function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();}
 
@@ -4626,9 +4605,9 @@ function renderWeekly(){
     const pnlDiff=pnl-lastPnl;
     if(cmpEl)cmpEl.innerHTML=
       '<div style="margin-bottom:8px"><span style="color:#9ca3af;font-size:13px">Dominant emotion: </span>'
-      +'<span style="color:#e5e7eb">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
+      +'<span style="color:#111827">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
       +' <span style="color:#555;font-size:13px">vs last week: </span>'
-      +'<span style="color:#e5e7eb">'+(lastWeekTop?lastWeekTop[0]:'—')+'</span></div>'
+      +'<span style="color:#111827">'+(lastWeekTop?lastWeekTop[0]:'—')+'</span></div>'
       +(wrDiff!=null?'<div style="margin-bottom:6px"><span style="color:#9ca3af;font-size:13px">Win rate: </span>'
       +'<span style="color:'+(wrDiff>=0?'#10b981':'#ef4444')+'">'+(wrDiff>=0?'+':'')+wrDiff+'% vs last week</span></div>':'')
       +'<div><span style="color:#9ca3af;font-size:13px">P&L: </span>'
@@ -5351,6 +5330,22 @@ function loadSavedTheme(){
   cpSyncFromHex(tpColors[tpSection]||tpColors.accent);
 }
 
+function toggleThemePanel(){
+  themeOpen=!themeOpen;
+  const p=document.getElementById('theme-panel');
+  if(!p) return;
+  p.classList.toggle('open',themeOpen);
+  if(themeOpen){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      cpSizeCanvas(); cpUpdateCursor(); cpUpdatePreview();
+      const hEl=document.getElementById('cp-hue');
+      if(hEl) hEl.value=Math.round(cpHue);
+      // Sync bg swatches
+      document.querySelectorAll('.cp-bg-sw').forEach(s=>s.classList.toggle('active',s.dataset.bg===tpColors.bg));
+      updateCurDots();
+    }));
+  }
+}
 
 document.addEventListener('click',function(e){
   const p=document.getElementById('theme-panel');
@@ -5400,7 +5395,7 @@ document.addEventListener('DOMContentLoaded',function(){
   <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
       <div style="font-size:15px;font-weight:500">Edit trade</div>
-      <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:20px;padding:0 4px">×</button>
+      <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:20px;padding:0 4px">×</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Date</label><input type="date" id="e-date"></div>
@@ -5478,8 +5473,8 @@ document.addEventListener('DOMContentLoaded',function(){
   <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
     <div style="font-size:48px;margin-bottom:16px">🏆</div>
     <div style="font-size:22px;font-weight:600;color:#10b981;margin-bottom:8px">Challenge passed!</div>
-    <div style="font-size:14px;color:#e5e7eb;margin-bottom:6px" id="popup-passed-name"></div>
-    <div style="font-size:13px;color:#9ca3af;margin-bottom:28px;line-height:1.6">You hit the profit target. The discipline, the patience, the process — it all showed. Now go get that funded account.</div>
+    <div style="font-size:14px;color:#111827;margin-bottom:6px" id="popup-passed-name"></div>
+    <div style="font-size:13px;color:#4b5563;margin-bottom:28px;line-height:1.6">You hit the profit target. The discipline, the patience, the process — it all showed. Now go get that funded account.</div>
     <button onclick="closePassedPopup()" style="padding:12px 32px;border:none;border-radius:8px;background:#10b981;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Let's go 🚀</button>
   </div>
 </div>
@@ -5489,8 +5484,8 @@ document.addEventListener('DOMContentLoaded',function(){
   <div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
     <div style="font-size:48px;margin-bottom:16px">📉</div>
     <div style="font-size:22px;font-weight:600;color:#ef4444;margin-bottom:8px">Account blown</div>
-    <div style="font-size:14px;color:#e5e7eb;margin-bottom:6px" id="popup-blown-name"></div>
-    <div style="font-size:13px;color:#9ca3af;margin-bottom:28px;line-height:1.6">You hit the max drawdown limit. Go through your journal, find the patterns, fix the holes in the model. Every blown account is a lesson — make sure you learn it.</div>
+    <div style="font-size:14px;color:#111827;margin-bottom:6px" id="popup-blown-name"></div>
+    <div style="font-size:13px;color:#4b5563;margin-bottom:28px;line-height:1.6">You hit the max drawdown limit. Go through your journal, find the patterns, fix the holes in the model. Every blown account is a lesson — make sure you learn it.</div>
     <button onclick="closeBlownPopup()" style="padding:12px 32px;border:0.5px solid #6e2a2a;border-radius:8px;background:#ef4444;color:#ffffff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.03em">Back to the drawing board</button>
   </div>
 </div>
@@ -5515,9 +5510,9 @@ document.addEventListener('DOMContentLoaded',function(){
   <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;border-bottom:0.5px solid #1e1e1e">
     <div style="display:flex;gap:8px;align-items:center" id="lb-thumbs"></div>
     <div style="display:flex;align-items:center;gap:12px">
-      <span style="font-size:13px;color:#9ca3af" id="lb-zoom-label">100%</span>
-      <button onclick="lbResetZoom()" style="border:1px solid rgba(255,255,255,0.07);background:rgba(15,26,18,0.58);cursor:pointer;color:#9ca3af;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
-      <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:26px;line-height:1;padding:2px 6px">×</button>
+      <span style="font-size:13px;color:#4b5563" id="lb-zoom-label">100%</span>
+      <button onclick="lbResetZoom()" style="border:1px solid rgba(255,255,255,0.07);background:rgba(15,26,18,0.58);cursor:pointer;color:#4b5563;font-size:13px;padding:4px 10px;border-radius:5px;font-family:inherit">Reset zoom</button>
+      <button onclick="closeTradeLightbox()" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:26px;line-height:1;padding:2px 6px">×</button>
     </div>
   </div>
   <!-- Main image area -->
@@ -5530,9 +5525,73 @@ document.addEventListener('DOMContentLoaded',function(){
   </div>
   <!-- Bottom dots -->
   <div style="display:flex;gap:8px;justify-content:center;padding:10px 0;flex-shrink:0" id="lb-dots"></div>
-  <div style="text-align:center;font-size:13px;color:#9ca3af;padding-bottom:8px">← → navigate · scroll to zoom · drag to pan · Esc close</div>
+  <div style="text-align:center;font-size:13px;color:#4b5563;padding-bottom:8px">← → navigate · scroll to zoom · drag to pan · Esc close</div>
 </div>
 
+
+<!-- PRE-SESSION REVIEW (hidden tab, content kept for pinned reminders) -->
+<!-- THEME CUSTOMIZER -->
+<button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
+<div id="theme-panel">
+  <div id="tp-header">
+    <span id="tp-header-title">🎨 Customise theme</span>
+    <button id="tp-reset" onclick="tpReset()">Reset all</button>
+  </div>
+  <div id="tp-tabs">
+    <button class="tp-tab active" data-sec="accent" onclick="tpSwitch('accent',this)">Accent</button>
+    <button class="tp-tab" data-sec="bg"     onclick="tpSwitch('bg',this)">Background</button>
+    <button class="tp-tab" data-sec="text"   onclick="tpSwitch('text',this)">Text</button>
+    <button class="tp-tab" data-sec="cards"  onclick="tpSwitch('cards',this)">Cards</button>
+    <button class="tp-tab" data-sec="timer"  onclick="tpSwitch('timer',this)">Timer</button>
+    <button class="tp-tab" data-sec="check"  onclick="tpSwitch('check',this)">Checklist</button>
+    <button class="tp-tab" data-sec="win"    onclick="tpSwitch('win',this)">Win</button>
+  </div>
+  <div id="tp-body">
+    <div class="mini-cp">
+      <div class="cp-presets" id="cp-presets"></div>
+      <div id="cp-spectrum-wrap">
+        <canvas id="cp-spectrum" height="120"></canvas>
+        <div id="cp-cursor"></div>
+      </div>
+      <div id="cp-hue-wrap">
+        <input type="range" id="cp-hue" min="0" max="360" value="157">
+      </div>
+      <div class="cp-hex-row">
+        <div id="cp-preview"></div>
+        <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
+        <button class="cp-apply" onclick="cpApply()">Apply</button>
+      </div>
+    </div>
+    <div class="tp-section active" id="tp-sec-accent">
+      <div class="tp-sect-label">Accent — tabs, borders, highlights</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-accent"></div><span class="tp-cur-hex" id="cur-hex-accent"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-bg">
+      <div class="tp-sect-label">Page background</div>
+      <div class="cp-bg-swatches" id="cp-bg-swatches"></div>
+    </div>
+    <div class="tp-section" id="tp-sec-text">
+      <div class="tp-sect-label">Body text colour</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-text"></div><span class="tp-cur-hex" id="cur-hex-text"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-cards">
+      <div class="tp-sect-label">Card background</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-cards"></div><span class="tp-cur-hex" id="cur-hex-cards"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-timer">
+      <div class="tp-sect-label">Timer &amp; clocks</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-timer"></div><span class="tp-cur-hex" id="cur-hex-timer"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-check">
+      <div class="tp-sect-label">Checklist pass colour</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-check"></div><span class="tp-cur-hex" id="cur-hex-check"></span></div>
+    </div>
+    <div class="tp-section" id="tp-sec-win">
+      <div class="tp-sect-label">Win colour</div>
+      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-win"></div><span class="tp-cur-hex" id="cur-hex-win"></span></div>
+    </div>
+  </div>
+</div>
 
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
@@ -6654,7 +6713,7 @@ document.addEventListener('DOMContentLoaded',function(){
 /* --- Base (always) --- */
 *{box-sizing:border-box}
 html,body{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;padding:0!important;margin:0!important;max-width:none!important;border-top:none!important;box-shadow:none!important;min-height:100vh}
-
+body{display:flex!important}
 
 /* Sidebar always stays dark */
 #sidebar{background:#1a1a1a!important;border-right:1px solid rgba(255,255,255,0.07)!important}
@@ -6672,50 +6731,162 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;padding
 #sidebar .profile-btn.active{background:rgba(255,255,255,0.12)!important;color:#fff!important;border-color:rgba(255,255,255,0.25)!important}
 
 /* --- Light mode only --- */
+body:not(.dark-mode){background:#f5f5f5!important;color:#111!important;--text-primary:#111827}
+body:not(.dark-mode) #main-content{background:#f5f5f5!important;margin-left:220px!important}
+body:not(.dark-mode) .page-header h2,body:not(.dark-mode) .page-header h1,body:not(.dark-mode) h1,body:not(.dark-mode) h2{color:#111!important}
+body:not(.dark-mode) .page-header p{color:#999!important}
 
 /* --- Cards --- */
+body:not(.dark-mode) .card,body:not(.dark-mode) .dash-chart-card,body:not(.dark-mode) .dash-recent,body:not(.dark-mode) .dash-metric,body:not(.dark-mode) .metric-card{background:#fff!important;border:1px solid #e0e0e0!important;border-radius:10px!important;color:#111!important}
+body:not(.dark-mode) .card:hover,body:not(.dark-mode) .dash-metric:hover{border-color:#ccc!important}
+body:not(.dark-mode) .section-label,body:not(.dark-mode) .dash-metric-label,body:not(.dark-mode) .dash-card-title,body:not(.dark-mode) .metric-lbl{color:#999!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.08em!important;font-weight:600!important}
+body:not(.dark-mode) .dash-metric-val,body:not(.dark-mode) .metric-val{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .metric-val.positive{color:#16a34a!important}
+body:not(.dark-mode) .metric-val.negative{color:#dc2626!important}
+body:not(.dark-mode) .metric-val.be{color:#d97706!important}
+body:not(.dark-mode) .dash-metric-val.positive{color:#16a34a!important}
+body:not(.dark-mode) .dash-metric-val.negative{color:#dc2626!important}
+body:not(.dark-mode) .dash-metric-sub,body:not(.dark-mode) .dash-trade-date,body:not(.dark-mode) .dash-trade-draw,body:not(.dark-mode) .dash-legend-left{color:#999!important}
 
 /* --- Inputs & labels --- */
+body:not(.dark-mode) label{color:#555!important;font-size:12px!important}
+body:not(.dark-mode) input[type=date],body:not(.dark-mode) input[type=number],body:not(.dark-mode) input[type=text],body:not(.dark-mode) input[type=time],body:not(.dark-mode) select,body:not(.dark-mode) textarea{background:#fff!important;border:1px solid #ddd!important;color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important;border-radius:7px!important;font-size:13px!important}
+body:not(.dark-mode) input:focus,body:not(.dark-mode) select:focus,body:not(.dark-mode) textarea:focus{border-color:#999!important;outline:none!important;background:#fff!important}
+body:not(.dark-mode) input[type=date],body:not(.dark-mode) input[type=time]{color-scheme:light!important}
+body:not(.dark-mode) select option{background:#fff!important;color:#111!important}
 
 /* --- Buttons --- */
+body:not(.dark-mode) .btn{background:#fff!important;border:1px solid #ddd!important;color:#111!important;border-radius:7px!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .btn:hover{background:#f5f5f5!important;border-color:#bbb!important}
+body:not(.dark-mode) .btn-primary{background:#111!important;color:#fff!important;border-color:#111!important;box-shadow:none!important}
+body:not(.dark-mode) .btn-primary:hover{background:#333!important}
+body:not(.dark-mode) .btn-sm{padding:5px 11px!important;font-size:12px!important}
 
 /* --- Gate --- */
+body:not(.dark-mode) .gate{background:#f9f9f9!important;border:1px solid #e0e0e0!important;color:#999!important}
+body:not(.dark-mode) .gate.pass{background:#f0fdf4!important;border-color:#86efac!important;color:#16a34a!important}
+body:not(.dark-mode) .gate.fail{background:#fef2f2!important;border-color:#fca5a5!important;color:#dc2626!important}
 
 /* --- Checklist --- */
+body:not(.dark-mode) .check-item{color:#555!important}
+body:not(.dark-mode) .check-item input[type=checkbox]{accent-color:#111!important}
+body:not(.dark-mode) .check-group-title{color:#111!important;font-size:11px!important;font-weight:600!important;text-transform:uppercase!important;letter-spacing:.05em!important}
+body:not(.dark-mode) .collapse-icon{color:#999!important}
 
 /* --- Stars --- */
+body:not(.dark-mode) .star{color:#ddd!important;font-size:20px!important}
+body:not(.dark-mode) .star.lit{color:#111!important}
 
 /* --- Outcome buttons --- */
+body:not(.dark-mode) .outcome-btn{background:#fff!important;border:1px solid #ddd!important;color:#999!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .outcome-btn:hover{border-color:#999!important;color:#555!important}
+body:not(.dark-mode) .outcome-btn.active-win{background:#f0fdf4!important;border:2px solid #16a34a!important;color:#16a34a!important}
+body:not(.dark-mode) .outcome-btn.active-loss{background:#fef2f2!important;border:2px solid #dc2626!important;color:#dc2626!important}
+body:not(.dark-mode) .outcome-btn.active-be{background:#fffbeb!important;border:2px solid #d97706!important;color:#d97706!important}
+body:not(.dark-mode) .outcome-btn.active-skip{background:#f5f5f5!important;border-color:#999!important;color:#111!important}
 
 /* --- Trade classification --- */
+body:not(.dark-mode) .tclass-btn{background:#fff!important;border:1px solid #ddd!important;color:#999!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 
 /* --- Badges --- */
+body:not(.dark-mode) .green-bg{background:#f0fdf4!important;color:#16a34a!important;border:1px solid #86efac!important}
+body:not(.dark-mode) .red-bg{background:#fef2f2!important;color:#dc2626!important;border:1px solid #fca5a5!important}
+body:not(.dark-mode) .amber-bg{background:#fffbeb!important;color:#d97706!important;border:1px solid #fcd34d!important}
+body:not(.dark-mode) .badge{background:#f5f5f5!important;color:#555!important;border:1px solid #e0e0e0!important}
+body:not(.dark-mode) .cal-win{color:#16a34a!important}
+body:not(.dark-mode) .cal-loss{color:#dc2626!important}
+body:not(.dark-mode) .cal-be{color:#d97706!important}
 
 /* --- Tables --- */
+body:not(.dark-mode) .log-wrap{border:1px solid #e0e0e0!important;border-radius:10px!important;background:#fff!important}
+body:not(.dark-mode) .log-table th{background:#f9f9f9!important;color:#999!important;border-bottom:1px solid #e0e0e0!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.07em!important;font-weight:600!important}
+body:not(.dark-mode) .log-table td{color:#111!important;border-bottom:1px solid #f0f0f0!important}
+body:not(.dark-mode) .log-table tr:hover td{background:#fafafa!important}
+body:not(.dark-mode) .log-table tr:last-child td{border-bottom:none!important}
+body:not(.dark-mode) .no-trades{color:#999!important}
 
 /* --- Mistakes --- */
+body:not(.dark-mode) .mistakes-list{background:#fff!important;border:1px solid #e0e0e0!important}
+body:not(.dark-mode) .mistake-item{color:#555!important}
+body:not(.dark-mode) .mistake-item:hover{background:#f5f5f5!important}
+body:not(.dark-mode) .mistake-item.selected{background:#fafafa!important;color:#111!important;border-left:2px solid #999!important}
+body:not(.dark-mode) .mistake-dot{border-color:#ccc!important}
+body:not(.dark-mode) .mistake-item.selected .mistake-dot{background:#111!important;border-color:#111!important}
+body:not(.dark-mode) .mistake-cat{color:#bbb!important}
 
 /* --- Progress bars --- */
+body:not(.dark-mode) .prog-bar{background:#e0e0e0!important}
+body:not(.dark-mode) .warn-bar{background:#fffbeb!important;border:1px solid #fcd34d!important;color:#d97706!important}
+body:not(.dark-mode) .danger-bar{background:#fef2f2!important;border:1px solid #fca5a5!important;color:#dc2626!important}
 
 /* --- Mode toggle --- */
+body:not(.dark-mode) .mode-btn{background:#fff!important;border:1px solid #ddd!important;color:#555!important}
+body:not(.dark-mode) .mode-btn.active{background:#111!important;color:#fff!important;border-color:#111!important}
 
 /* --- Calendar --- */
 .cal-grid{border-collapse:separate!important;border-spacing:2px!important}
+body:not(.dark-mode) .cal-grid th{color:#999!important;font-size:11px!important;font-weight:600!important}
+body:not(.dark-mode) .cal-grid td{background:#fff!important;border:1px solid #e8e8e8!important;color:#999!important}
+body:not(.dark-mode) .cal-grid td.has-trade{background:#fff!important;cursor:pointer!important}
+body:not(.dark-mode) .cal-grid td.cal-day-win{background:rgba(16,185,129,0.12)!important;border-color:rgba(16,185,129,0.4)!important}
+body:not(.dark-mode) .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.12)!important;border-color:rgba(239,68,68,0.4)!important}
+body:not(.dark-mode) .cal-grid td.cal-day-be{background:rgba(245,158,11,0.1)!important;border-color:rgba(245,158,11,0.35)!important}
+body:not(.dark-mode) .cal-grid td.today{border:2px solid #111!important;background:#fafafa!important}
+body:not(.dark-mode) .cal-grid td:hover{background:#f9f9f9!important}
+body:not(.dark-mode) .cal-day{color:#111!important;font-weight:500!important}
+body:not(.dark-mode) .dash-cal-grid th{color:#999!important}
+body:not(.dark-mode) .dash-cal-grid td{background:#fafafa!important;border:1px solid #f0f0f0!important;color:#999!important}
+body:not(.dark-mode) .dash-cal-grid td.dcal-win{background:#f0fdf4!important;border-color:#bbf7d0!important}
+body:not(.dark-mode) .dash-cal-grid td.dcal-loss{background:#fef2f2!important;border-color:#fecaca!important}
+body:not(.dark-mode) .dash-cal-grid td.dcal-be{background:#fffbeb!important;border-color:#fde68a!important}
+body:not(.dark-mode) .dash-cal-grid td.dcal-today{border-color:#111!important;background:#f5f5f5!important}
+body:not(.dark-mode) .dcal-day{color:#999!important}
+body:not(.dark-mode) .dcal-win .dcal-pnl{color:#16a34a!important}
+body:not(.dark-mode) .dcal-loss .dcal-pnl{color:#dc2626!important}
+body:not(.dark-mode) .dcal-be .dcal-pnl{color:#d97706!important}
+body:not(.dark-mode) .dash-cal-nav-title{color:#111!important}
+body:not(.dark-mode) .dash-cal-nav button{background:#fff!important;border:1px solid #ddd!important;color:#555!important}
+body:not(.dark-mode) .dash-cal-nav button:hover{background:#f5f5f5!important}
 
 /* --- Session timer --- */
+body:not(.dark-mode) #session-timer-card{background:#fff!important}
+body:not(.dark-mode) #timer-label,body:not(.dark-mode) #timer-sub{color:#999!important}
+body:not(.dark-mode) #timer-display{color:#111!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) #timer-bar{background:#111!important}
+body:not(.dark-mode) #timer-bar-wrap{background:#e0e0e0!important}
 
 /* --- QOTD --- */
+body:not(.dark-mode) .qotd-log-card{background:#fff!important;border-left:3px solid #111!important}
+body:not(.dark-mode) #qotd-text{color:#111!important}
+body:not(.dark-mode) #qotd-author{color:#999!important}
 
 /* --- Modals --- */
+body:not(.dark-mode) #edit-modal>div{background:#fff!important;border:1px solid #e0e0e0!important;border-radius:12px!important}
+body:not(.dark-mode) #cal-day-popup>div{background:#0d1117!important;border:1px solid rgba(255,255,255,0.1)!important}
+body:not(.dark-mode) tr[id^="detail-"] td{background:#f9f9f9!important;border-bottom:1px solid #f0f0f0!important}
+body:not(.dark-mode) .week-card,body:not(.dark-mode) .month-total-card{background:#fff!important;border:1px solid #e0e0e0!important}
+body:not(.dark-mode) .week-lbl,body:not(.dark-mode) .week-trades{color:#999!important}
+body:not(.dark-mode) .week-pnl.pnl-pos{color:#16a34a!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .week-pnl.pnl-neg{color:#dc2626!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .week-pnl.pnl-zero{color:#d97706!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 
 /* --- Mobile nav --- */
+body:not(.dark-mode) #mobile-nav{background:rgba(255,255,255,0.97)!important;border-top:1px solid #e0e0e0!important}
+body:not(.dark-mode) .mob-btn{color:#bbb!important}
+body:not(.dark-mode) .mob-btn.active{color:#111!important}
+body:not(.dark-mode) #mobile-more-menu{background:#fff!important;border-top:1px solid #e0e0e0!important}
+body:not(.dark-mode) .more-item{color:#111!important}
+body:not(.dark-mode) .more-item:active{background:#f5f5f5!important}
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
+body:not(.dark-mode) ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
 body.dark-mode ::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
 
 /* --- Auth & Popups --- */
+body:not(.dark-mode) #auth-overlay .auth-card{background:#fff!important;border:1px solid #e0e0e0!important}
+body:not(.dark-mode) #popup-passed>div,body:not(.dark-mode) #popup-blown>div{background:#fff!important;border:1px solid #e0e0e0!important}
 
 /* ── Dark mode — wins over everything above ── */
 body.dark-mode{background:#0d0d0d!important;color:#f0f0f0!important;--text-primary:#e5e7eb}
