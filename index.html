@@ -1982,11 +1982,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 <!-- MISSED TRADES -->
 <div class="page" id="page-missed">
-  <div class="page-header"><h2>Missed Trades</h2></div>
-  <div class="flex-between" style="margin-bottom:14px">
-    <div class="section-label" style="margin-bottom:0">Missed trades</div>
+  <div class="page-header">
+    <div><h2>Missed Trades</h2><p style="font-size:12px;color:#9ca3af;margin-top:2px">Setups you saw but didn't take — review the pattern</p></div>
     <button class="btn btn-primary" onclick="saveMissed()">Log missed setup →</button>
   </div>
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;align-items:start">
   <div class="card gap">
     <div class="section-label">Log a missed setup</div>
     <div class="grid-3 gap">
@@ -2059,13 +2059,22 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div><label>Notes</label><textarea id="m-notes" placeholder="What did you see? What stopped you?" style="min-height:50px"></textarea></div>
     <div style="margin-top:10px"><label>Exact thought that stopped you <span style="color:#9ca3af;font-size:13px;font-weight:400">— be specific</span></label><textarea id="m-hesitation" placeholder="e.g. I told myself maybe we get a bigger pullback. By the time the real entry came I'd already mentally checked out..." style="min-height:60px"></textarea></div>
   </div>
-  <div class="log-wrap" style="margin-top:4px">
-    <table class="log-table">
-      <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>Reason skipped</th><th>Notes</th><th></th></tr></thead>
-      <tbody id="missed-body"></tbody>
-    </table>
+  <!-- right column: log -->
+  <div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 18px 10px;border-bottom:1px solid rgba(255,255,255,0.06)">
+        <div class="dash-card-title" style="margin-bottom:0">Missed setup log</div>
+      </div>
+      <div class="log-wrap" style="border:none;border-radius:0">
+        <table class="log-table">
+          <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>Reason skipped</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="missed-body"></tbody>
+        </table>
+      </div>
+      <div id="missed-empty" class="no-trades">No missed trades logged yet.</div>
+    </div>
   </div>
-  <div id="missed-empty" class="no-trades" style="display:none">No missed trades logged yet.</div>
+  </div><!-- end grid -->
 </div>
 
 <!-- WEEKLY REVIEW -->
@@ -2108,37 +2117,44 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       </div>
     </div>
   </div>
-  <div class="card">
-    <div class="section-label">Your notes for this week</div>
-    <div class="gap">
-      <label>What went well?</label>
-      <textarea id="w-well" placeholder="Key wins this week, good executions, discipline moments..." style="min-height:60px"></textarea>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start">
+    <!-- Left: notes -->
+    <div class="card">
+      <div class="section-label">Your notes for this week</div>
+      <div class="gap">
+        <label>What went well?</label>
+        <textarea id="w-well" placeholder="Key wins this week, good executions, discipline moments..." style="min-height:70px"></textarea>
+      </div>
+      <div class="gap">
+        <label>What to improve?</label>
+        <textarea id="w-improve" placeholder="Patterns you noticed, mistakes to fix, rules to reinforce..." style="min-height:70px"></textarea>
+      </div>
+      <div class="gap">
+        <label>Focus for next week</label>
+        <textarea id="w-focus" placeholder="One thing to nail next week..." style="min-height:54px"></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:4px">
+        <button class="btn btn-primary" onclick="saveWeeklyNotes()">Save notes →</button>
+      </div>
     </div>
-    <div class="gap">
-      <label>What to improve?</label>
-      <textarea id="w-improve" placeholder="Patterns you noticed, mistakes to fix, rules to reinforce..." style="min-height:60px"></textarea>
+    <!-- Right: emotional + compare -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="section-label" style="margin-bottom:10px">Emotional pattern this week</div>
+        <div id="w-emotion-breakdown" style="font-size:13px;color:#9ca3af">No trades this week.</div>
+      </div>
+      <div class="card">
+        <div class="section-label" style="margin-bottom:10px">vs last week</div>
+        <div id="w-emotion-compare" style="font-size:13px;color:#9ca3af">No comparison data yet.</div>
+      </div>
     </div>
-    <div class="gap">
-      <label>Focus for next week</label>
-      <textarea id="w-focus" placeholder="One thing to nail next week..." style="min-height:50px"></textarea>
-    </div>
-    <div style="display:flex;justify-content:flex-end">
-      <button class="btn btn-primary" onclick="saveWeeklyNotes()">Save notes →</button>
-    </div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="section-label" style="margin-bottom:10px">Emotional pattern this week</div>
-    <div id="w-emotion-breakdown" style="font-size:13px;color:#9ca3af">No trades this week.</div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="section-label" style="margin-bottom:10px">vs last week</div>
-    <div id="w-emotion-compare" style="font-size:13px;color:#9ca3af">No comparison data yet.</div>
   </div>
 </div>
 
 <!-- PROP FIRM -->
 <div class="page" id="page-prop">
   <div class="page-header"><h2>Prop Firm Tracker</h2></div>
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;align-items:start">
   <div class="card gap">
     <div class="flex-between" style="margin-bottom:12px">
       <div class="section-label" style="margin-bottom:0">Prop firm settings</div>
@@ -2164,6 +2180,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   </div>
 
+  <!-- right column -->
+  <div>
   <div class="card" id="prop-tracker" style="display:none">
     <div class="flex-between" style="margin-bottom:14px">
       <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
@@ -2213,7 +2231,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <div id="prop-empty" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">Fill in your prop firm settings above and hit Save to start tracking.</div>
+  </div><!-- close right column div for tracker -->
+  <div id="prop-empty" style="padding:40px;color:#9ca3af;font-size:13px;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:10px">Fill in your prop firm settings above and hit Save to start tracking.</div>
+  </div><!-- end right column -->
+  </div><!-- end grid -->
 </div>
 
 
