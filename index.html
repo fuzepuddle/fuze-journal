@@ -1215,6 +1215,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 /* ── Log page ── */
 #page-log{max-width:720px}
 
+/* ── All pages fill full width ── */
+.page{width:100%}
+
 /* ── Glows ── */
 @keyframes glow-green{0%,100%{box-shadow:0 0 0px #1a4010}50%{box-shadow:0 0 20px rgba(16,185,129,0.2)}}
 @keyframes glow-red{0%,100%{box-shadow:0 0 0px #4a1a1a}50%{box-shadow:0 0 16px rgba(239,68,68,0.3)}}
@@ -5462,64 +5465,6 @@ document.addEventListener('DOMContentLoaded',function(){
 </div>
 
 
-<!-- PRE-SESSION REVIEW (hidden tab, content kept for pinned reminders) -->
-<!-- THEME CUSTOMIZER -->
-  <div id="tp-tabs">
-    <button class="tp-tab active" data-sec="accent" onclick="tpSwitch('accent',this)">Accent</button>
-    <button class="tp-tab" data-sec="bg"     onclick="tpSwitch('bg',this)">Background</button>
-    <button class="tp-tab" data-sec="text"   onclick="tpSwitch('text',this)">Text</button>
-    <button class="tp-tab" data-sec="cards"  onclick="tpSwitch('cards',this)">Cards</button>
-    <button class="tp-tab" data-sec="timer"  onclick="tpSwitch('timer',this)">Timer</button>
-    <button class="tp-tab" data-sec="check"  onclick="tpSwitch('check',this)">Checklist</button>
-    <button class="tp-tab" data-sec="win"    onclick="tpSwitch('win',this)">Win</button>
-  </div>
-  <div id="tp-body">
-    <div class="mini-cp">
-      <div class="cp-presets" id="cp-presets"></div>
-      <div id="cp-spectrum-wrap">
-        <canvas id="cp-spectrum" height="120"></canvas>
-        <div id="cp-cursor"></div>
-      </div>
-      <div id="cp-hue-wrap">
-        <input type="range" id="cp-hue" min="0" max="360" value="157">
-      </div>
-      <div class="cp-hex-row">
-        <div id="cp-preview"></div>
-        <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
-        <button class="cp-apply" onclick="cpApply()">Apply</button>
-      </div>
-    </div>
-    <div class="tp-section active" id="tp-sec-accent">
-      <div class="tp-sect-label">Accent — tabs, borders, highlights</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-accent"></div><span class="tp-cur-hex" id="cur-hex-accent"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-bg">
-      <div class="tp-sect-label">Page background</div>
-      <div class="cp-bg-swatches" id="cp-bg-swatches"></div>
-    </div>
-    <div class="tp-section" id="tp-sec-text">
-      <div class="tp-sect-label">Body text colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-text"></div><span class="tp-cur-hex" id="cur-hex-text"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-cards">
-      <div class="tp-sect-label">Card background</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-cards"></div><span class="tp-cur-hex" id="cur-hex-cards"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-timer">
-      <div class="tp-sect-label">Timer &amp; clocks</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-timer"></div><span class="tp-cur-hex" id="cur-hex-timer"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-check">
-      <div class="tp-sect-label">Checklist pass colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-check"></div><span class="tp-cur-hex" id="cur-hex-check"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-win">
-      <div class="tp-sect-label">Win colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-win"></div><span class="tp-cur-hex" id="cur-hex-win"></span></div>
-    </div>
-  </div>
-</div>
-
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
   <button class="mob-btn" id="mobnav-dashboard" onclick="mobNav('dashboard')"><span class="mob-icon">⊞</span>Home</button>
@@ -6640,7 +6585,7 @@ document.addEventListener('DOMContentLoaded',function(){
 /* --- Base (always) --- */
 *{box-sizing:border-box}
 html,body{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;padding:0!important;margin:0!important;max-width:none!important;border-top:none!important;box-shadow:none!important;min-height:100vh}
-body{display:block!important}
+body{display:flex!important}
 
 /* Sidebar always stays dark */
 #sidebar{background:#1a1a1a!important;border-right:1px solid rgba(255,255,255,0.07)!important}
