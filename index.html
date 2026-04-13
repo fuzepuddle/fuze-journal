@@ -1530,107 +1530,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════
-       WHAT YOUR TRADE DATA REVEALS
-  ════════════════════════════════════════════════════════ -->
-  <div id="reveals-section" style="margin-top:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div>
-        <div style="font-size:16px;font-weight:700;color:var(--accent);letter-spacing:-.01em">What Your Trade Data Reveals</div>
-        <div id="reveals-meta" style="font-size:11px;color:#6b7280;margin-top:2px"></div>
-      </div>
-      <button id="reveals-refresh-btn" onclick="startRevealsAnalysis()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:20px;background:rgba(255,255,255,0.04);color:#9ca3af;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
-        <span id="reveals-refresh-icon">⟳</span> Analyse
-      </button>
-    </div>
-
-    <!-- Dot nav -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px" id="reveals-dots"></div>
-
-    <!-- Slides wrapper -->
-    <div id="reveals-slides-wrap" style="position:relative;overflow:hidden;border-radius:14px">
-      <div id="reveals-slides" style="display:flex;transition:transform .35s cubic-bezier(.4,0,.2,1)">
-
-        <!-- SLIDE 1: Fuze Score -->
-        <div class="rev-slide" style="min-width:100%;padding:20px 22px;background:linear-gradient(135deg,rgba(16,185,129,0.06) 0%,rgba(0,0,0,0) 60%);border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
-          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:14px">FUZE SCORE</div>
-          <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
-            <!-- Big ring -->
-            <div style="position:relative;width:120px;height:120px;flex-shrink:0">
-              <svg width="120" height="120" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12"/>
-                <circle id="rev-score-ring" cx="60" cy="60" r="50" fill="none" stroke="#10b981" stroke-width="12"
-                  stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"
-                  transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease,stroke .5s"/>
-              </svg>
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-                <div id="rev-score-val" style="font-size:32px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;color:#e5e7eb;line-height:1">—</div>
-                <div style="font-size:10px;color:#6b7280;letter-spacing:.06em">/100</div>
-              </div>
-            </div>
-            <!-- Breakdown bars -->
-            <div id="rev-score-bars" style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:9px"></div>
-          </div>
-          <!-- Key takeaway -->
-          <div id="rev-slide0-takeaway" class="rev-takeaway" style="margin-top:16px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
-          </div>
-          <div class="rev-loading" style="display:none;margin-top:14px;font-size:12px;color:#6b7280;font-style:italic;display:none">⏳ Generating AI insight...</div>
-        </div>
-
-        <!-- SLIDE 2: Trading Consistency -->
-        <div class="rev-slide" style="min-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
-          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:10px;font-weight:700;letter-spacing:.08em;color:#9ca3af;text-transform:uppercase;margin-bottom:14px">TRADING CONSISTENCY</div>
-          <div style="font-size:17px;font-weight:700;color:#e5e7eb;margin-bottom:14px">Your Trading Consistency Dashboard</div>
-          <!-- Tabs -->
-          <div style="display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:10px">
-            <button class="rev-tab active" onclick="revConsistTab(0)" style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:rgba(16,185,129,0.15);color:var(--accent);cursor:pointer;font-family:inherit;font-weight:600">Essential Stats</button>
-            <button class="rev-tab" onclick="revConsistTab(1)" style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:none;color:#6b7280;cursor:pointer;font-family:inherit">Advanced Stats</button>
-          </div>
-          <div id="rev-consist-essential" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-          <div id="rev-consist-advanced" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-          <div id="rev-slide1-takeaway" class="rev-takeaway" style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
-          </div>
-        </div>
-
-        <!-- SLIDE 3: Day of Week Performance -->
-        <div class="rev-slide" style="min-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
-          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:10px;font-weight:700;letter-spacing:.08em;color:#9ca3af;text-transform:uppercase;margin-bottom:14px">DAY OF WEEK</div>
-          <div style="font-size:17px;font-weight:700;color:#e5e7eb;margin-bottom:14px">Day of Week Performance</div>
-          <div style="display:flex;gap:16px;flex-wrap:wrap">
-            <div id="rev-dow-list" style="display:flex;flex-direction:column;gap:6px;min-width:200px;flex:0 0 auto"></div>
-            <div style="flex:1;min-width:220px;position:relative;height:160px">
-              <canvas id="rev-dow-chart" style="width:100%;height:160px"></canvas>
-            </div>
-          </div>
-          <div id="rev-slide2-takeaway" class="rev-takeaway" style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
-          </div>
-        </div>
-
-        <!-- SLIDE 4: Patterns -->
-        <div class="rev-slide" style="min-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:14px;box-sizing:border-box">
-          <div style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:10px;font-weight:700;letter-spacing:.08em;color:#9ca3af;text-transform:uppercase;margin-bottom:14px">PATTERNS</div>
-          <div style="font-size:17px;font-weight:700;color:#e5e7eb;margin-bottom:14px">Trading Patterns & Habits</div>
-          <div id="rev-patterns-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-          <div id="rev-slide3-takeaway" class="rev-takeaway" style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">🔑 Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:12px;color:#d1d5db;line-height:1.6"></div>
-          </div>
-        </div>
-
-      </div><!-- /slides -->
-    </div><!-- /wrap -->
-
-    <!-- Prev / Next arrows -->
-    <button onclick="revNav(-1)" style="position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(20,20,20,0.9);color:#9ca3af;cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center" id="rev-prev-btn">‹</button>
-    <button onclick="revNav(1)"  style="position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(20,20,20,0.9);color:#9ca3af;cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center" id="rev-next-btn">›</button>
-
-  </div><!-- /reveals-section -->
+  <!-- WHAT YOUR TRADE DATA REVEALS — trigger button -->
+  <div style="margin-top:16px;display:flex;justify-content:center">
+    <button onclick="openRevealsModal()" style="display:flex;align-items:center;gap:10px;padding:13px 28px;border-radius:14px;border:1px solid rgba(16,185,129,0.3);background:linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.04) 100%);color:var(--accent);cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.01em;transition:all .2s;width:100%;max-width:460px;justify-content:center" onmouseover="this.style.background='linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(16,185,129,0.08) 100%)';this.style.borderColor='rgba(16,185,129,0.5)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.04) 100%)';this.style.borderColor='rgba(16,185,129,0.3)'">
+      <span style="font-size:18px">📊</span>
+      <span>What Your Trade Data Reveals</span>
+      <span style="font-size:11px;color:#6b7280;font-weight:400;margin-left:4px">AI-powered</span>
+    </button>
+  </div>
 
 </div>
 <!-- LOG -->
@@ -5511,6 +5418,8 @@ function revGoTo(idx){
   revRenderSlide(idx);
 }
 
+const _revSlideLabels = ['FUZE SCORE','TRADING CONSISTENCY','DAY OF WEEK','PATTERNS & HABITS'];
+
 function revUpdateDots(){
   const dotsEl = document.getElementById('reveals-dots');
   if(!dotsEl) return;
@@ -5519,6 +5428,10 @@ function revUpdateDots(){
     html += '<div onclick="revGoTo('+i+')" style="width:'+(i===_revSlide?22:7)+'px;height:7px;border-radius:20px;background:'+(i===_revSlide?'var(--accent)':'rgba(255,255,255,0.15)')+';cursor:pointer;transition:all .25s"></div>';
   }
   dotsEl.innerHTML = html;
+  const lbl = document.getElementById('reveals-slide-label');
+  if(lbl) lbl.textContent = _revSlideLabels[_revSlide] || '';
+  const ctr = document.getElementById('reveals-page-counter');
+  if(ctr) ctr.textContent = (_revSlide+1) + ' of ' + _revTotal;
 }
 
 function initReveals(){
@@ -7080,7 +6993,7 @@ if(_origShowTab){
   window.showTab=function(t){
     _origShowTab(t);
     if(t==='stats') setTimeout(renderSmartInsights,50);
-    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); setTimeout(initReveals,250); }
+    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); }
   };
 }
 
@@ -7091,7 +7004,6 @@ if(_origRenderDashboard){
     _origRenderDashboard();
     setTimeout(renderFuzeScore,100);
     setTimeout(renderConsistencyTracker,100);
-    setTimeout(initReveals,200);
   };
 }
 
@@ -7394,5 +7306,124 @@ body.dark-mode #consistency-grid>div[style*="rgba(0,0,0,0.05)"]{background:rgba(
 body.dark-mode #fuze-score-breakdown>div>div:first-child>span:first-child{color:#9ca3af!important}
 body.dark-mode #fuze-score-label{color:#6b7280!important}
 </style>
+
+<!-- WHAT YOUR TRADE DATA REVEALS MODAL -->
+<div id="reveals-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 16px;backdrop-filter:blur(4px)">
+  <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:20px;max-width:640px;width:100%;margin:0 auto;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,0.07)">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#e5e7eb;letter-spacing:-.01em">What Your Trade Data Reveals</div>
+        <div id="reveals-meta" style="font-size:11px;color:#6b7280;margin-top:2px"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button id="reveals-refresh-btn" onclick="startRevealsAnalysis()" title="Re-run AI analysis" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9ca3af;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><span id="reveals-refresh-icon">&#x21BB;</span></button>
+        <button onclick="closeRevealsModal()" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9ca3af;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">&#215;</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px 0">
+      <div id="reveals-slide-label" style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280"></div>
+      <div id="reveals-dots" style="display:flex;gap:5px;align-items:center"></div>
+    </div>
+    <div style="overflow:hidden;margin:14px 0 0">
+      <div id="reveals-slides" style="display:flex;transition:transform .35s cubic-bezier(.4,0,.2,1)">
+
+        <!-- SLIDE 0: Fuze Score -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px 22px;box-sizing:border-box">
+          <div style="font-size:20px;font-weight:700;color:#e5e7eb;margin-bottom:18px">Fuze Score</div>
+          <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+            <div style="position:relative;width:130px;height:130px;flex-shrink:0">
+              <svg width="130" height="130" viewBox="0 0 130 130">
+                <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="13"/>
+                <circle id="rev-score-ring" cx="65" cy="65" r="54" fill="none" stroke="#10b981" stroke-width="13" stroke-linecap="round" stroke-dasharray="339.29" stroke-dashoffset="339.29" transform="rotate(-90 65 65)" style="transition:stroke-dashoffset 1.2s ease,stroke .5s"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <div id="rev-score-val" style="font-size:36px;font-weight:800;color:#e5e7eb;line-height:1">&#8212;</div>
+                <div style="font-size:10px;color:#6b7280;letter-spacing:.06em">/100</div>
+              </div>
+            </div>
+            <div id="rev-score-bars" style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+          <div id="rev-slide0-takeaway" class="rev-takeaway" style="margin-top:18px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:13px;color:#d1d5db;line-height:1.65"></div>
+          </div>
+        </div>
+
+        <!-- SLIDE 1: Trading Consistency -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px 22px;box-sizing:border-box">
+          <div style="font-size:20px;font-weight:700;color:#e5e7eb;margin-bottom:4px">Trading Consistency</div>
+          <div style="font-size:12px;color:#6b7280;margin-bottom:16px">Core metrics across all your trades</div>
+          <div style="display:flex;gap:6px;margin-bottom:14px">
+            <button class="rev-tab" onclick="revConsistTab(0)" style="font-size:11px;padding:5px 13px;border-radius:7px;border:1px solid rgba(16,185,129,0.4);background:rgba(16,185,129,0.15);color:var(--accent);cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s">Essential</button>
+            <button class="rev-tab" onclick="revConsistTab(1)" style="font-size:11px;padding:5px 13px;border-radius:7px;border:1px solid rgba(255,255,255,0.08);background:none;color:#6b7280;cursor:pointer;font-family:inherit;transition:all .15s">Advanced</button>
+          </div>
+          <div id="rev-consist-essential" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div id="rev-consist-advanced" style="display:none;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div id="rev-slide1-takeaway" class="rev-takeaway" style="margin-top:16px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:13px;color:#d1d5db;line-height:1.65"></div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Day of Week -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px 22px;box-sizing:border-box">
+          <div style="font-size:20px;font-weight:700;color:#e5e7eb;margin-bottom:4px">Day of Week Performance</div>
+          <div style="font-size:12px;color:#6b7280;margin-bottom:16px">Which days are making or costing you</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div id="rev-dow-list" style="display:flex;flex-direction:column;gap:7px;flex:0 0 auto;min-width:190px"></div>
+            <div style="flex:1;min-width:200px;height:165px;position:relative">
+              <canvas id="rev-dow-chart" style="width:100%;height:165px"></canvas>
+            </div>
+          </div>
+          <div id="rev-slide2-takeaway" class="rev-takeaway" style="margin-top:16px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:13px;color:#d1d5db;line-height:1.65"></div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Patterns -->
+        <div class="rev-slide" style="min-width:100%;padding:20px 22px 22px;box-sizing:border-box">
+          <div style="font-size:20px;font-weight:700;color:#e5e7eb;margin-bottom:4px">Patterns &amp; Habits</div>
+          <div style="font-size:12px;color:#6b7280;margin-bottom:16px">What your behaviour data shows</div>
+          <div id="rev-patterns-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div id="rev-slide3-takeaway" class="rev-takeaway" style="margin-top:16px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
+            <div class="rev-takeaway-text" style="font-size:13px;color:#d1d5db;line-height:1.65"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid rgba(255,255,255,0.07);margin-top:4px">
+      <button onclick="revNav(-1)" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#9ca3af;cursor:pointer;font-size:13px;font-family:inherit;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">&#8249; Prev</button>
+      <div id="reveals-page-counter" style="font-size:12px;color:#6b7280"></div>
+      <button onclick="revNav(1)" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#9ca3af;cursor:pointer;font-size:13px;font-family:inherit;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">Next &#8250;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openRevealsModal(){
+  var m=document.getElementById('reveals-modal');
+  if(!m) return;
+  m.style.display='flex';
+  document.body.style.overflow='hidden';
+  _revSlide=0;
+  _revAiCache={};
+  initReveals();
+  revGoTo(0);
+}
+function closeRevealsModal(){
+  var m=document.getElementById('reveals-modal');
+  if(m) m.style.display='none';
+  document.body.style.overflow='';
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var m=document.getElementById('reveals-modal');
+  if(m) m.addEventListener('click',function(e){if(e.target===m)closeRevealsModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeRevealsModal();});
+});
+</script>
+
 </body>
 </html>
