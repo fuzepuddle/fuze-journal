@@ -1355,16 +1355,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <div class="sb-bottom">
-    <div class="sb-clocks">
-      <div class="sb-clock">
-        <div class="sb-clock-label">🇬🇧 UK</div>
-        <div class="sb-clock-time" id="clock-uk">--:--</div>
-      </div>
-      <div class="sb-clock">
-        <div class="sb-clock-label">🇺🇸 NY</div>
-        <div class="sb-clock-time" id="clock-ny">--:--</div>
-      </div>
-    </div>
+
     <div class="sb-profile-btns">
       <button class="profile-btn" onclick="switchProfile('challenge',this)" id="pbtn-challenge">Challenge</button>
       <button class="profile-btn" onclick="switchProfile('funded',this)" id="pbtn-funded">Funded</button>
@@ -5531,67 +5522,8 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- PRE-SESSION REVIEW (hidden tab, content kept for pinned reminders) -->
 <!-- THEME CUSTOMIZER -->
-<button id="theme-toggle-btn" onclick="toggleThemePanel()" title="Customise theme">🎨</button>
-<div id="theme-panel">
-  <div id="tp-header">
-    <span id="tp-header-title">🎨 Customise theme</span>
-    <button id="tp-reset" onclick="tpReset()">Reset all</button>
-  </div>
-  <div id="tp-tabs">
-    <button class="tp-tab active" data-sec="accent" onclick="tpSwitch('accent',this)">Accent</button>
-    <button class="tp-tab" data-sec="bg"     onclick="tpSwitch('bg',this)">Background</button>
-    <button class="tp-tab" data-sec="text"   onclick="tpSwitch('text',this)">Text</button>
-    <button class="tp-tab" data-sec="cards"  onclick="tpSwitch('cards',this)">Cards</button>
-    <button class="tp-tab" data-sec="timer"  onclick="tpSwitch('timer',this)">Timer</button>
-    <button class="tp-tab" data-sec="check"  onclick="tpSwitch('check',this)">Checklist</button>
-    <button class="tp-tab" data-sec="win"    onclick="tpSwitch('win',this)">Win</button>
-  </div>
-  <div id="tp-body">
-    <div class="mini-cp">
-      <div class="cp-presets" id="cp-presets"></div>
-      <div id="cp-spectrum-wrap">
-        <canvas id="cp-spectrum" height="120"></canvas>
-        <div id="cp-cursor"></div>
-      </div>
-      <div id="cp-hue-wrap">
-        <input type="range" id="cp-hue" min="0" max="360" value="157">
-      </div>
-      <div class="cp-hex-row">
-        <div id="cp-preview"></div>
-        <input type="text" id="cp-hex" maxlength="7" placeholder="#10b981">
-        <button class="cp-apply" onclick="cpApply()">Apply</button>
-      </div>
-    </div>
-    <div class="tp-section active" id="tp-sec-accent">
-      <div class="tp-sect-label">Accent — tabs, borders, highlights</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-accent"></div><span class="tp-cur-hex" id="cur-hex-accent"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-bg">
-      <div class="tp-sect-label">Page background</div>
-      <div class="cp-bg-swatches" id="cp-bg-swatches"></div>
-    </div>
-    <div class="tp-section" id="tp-sec-text">
-      <div class="tp-sect-label">Body text colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-text"></div><span class="tp-cur-hex" id="cur-hex-text"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-cards">
-      <div class="tp-sect-label">Card background</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-cards"></div><span class="tp-cur-hex" id="cur-hex-cards"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-timer">
-      <div class="tp-sect-label">Timer &amp; clocks</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-timer"></div><span class="tp-cur-hex" id="cur-hex-timer"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-check">
-      <div class="tp-sect-label">Checklist pass colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-check"></div><span class="tp-cur-hex" id="cur-hex-check"></span></div>
-    </div>
-    <div class="tp-section" id="tp-sec-win">
-      <div class="tp-sect-label">Win colour</div>
-      <div class="tp-cur-row"><div class="tp-cur-dot" id="cur-dot-win"></div><span class="tp-cur-hex" id="cur-hex-win"></span></div>
-    </div>
-  </div>
-</div>
+
+
 
 <!-- Mobile bottom nav -->
 <nav id="mobile-nav">
