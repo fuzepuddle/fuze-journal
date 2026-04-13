@@ -4787,7 +4787,7 @@ setInterval(()=>{
 // ── Keyboard shortcuts ──
 document.addEventListener('keydown',function(e){
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
-  const activeTab=document.querySelector('.sb-nav-item.active')||document.querySelector('.tab.active');
+  const activeTab=document.querySelector('.tab.active');
   const tab=activeTab?activeTab.getAttribute('data-tab'):'';
   if(e.key==='s'&&tab==='log'){e.preventDefault();saveTrade();}
   if(e.key==='r'&&tab==='log'){e.preventDefault();randomizeTrade();}
@@ -4796,21 +4796,23 @@ document.addEventListener('keydown',function(e){
 
 // ── Confetti on new PB ──
 function randomizeTrade(){
+  // Direction & draw must be correlated
   const direction=Math.random()>0.5?'Long':'Short';
   const bullishDraws=['PDH','CDH','Asia High','London High','EQH'];
   const bearishDraws=['PDL','CDL','Asia Low','London Low','EQL'];
   const draws=direction==='Long'?bullishDraws:bearishDraws;
   const draw=draws[Math.floor(Math.random()*draws.length)];
   const bias=direction==='Long'?'Bullish':'Bearish';
+  // Outcome
   const outcomes=['win','loss','be'];
   const outcomeWeights=[0.55,0.30,0.15];
   let r=Math.random(),cumW=0,rOutcome='win';
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
+  // RR & PnL correlated to outcome
   const rrActualOptions=rOutcome==='win'?['+1.00R','+1.25R','+1.50R','+1.75R','+2.00R']:rOutcome==='loss'?['-1.00R']:['0.00R (BE)'];
   const rrActual=rrActualOptions[Math.floor(Math.random()*rrActualOptions.length)];
   const pnlBase=Math.floor(Math.random()*400)+50;
   const pnl=rOutcome==='win'?pnlBase:rOutcome==='loss'?-pnlBase:0;
-  const emotions=['Neutral ✓','Patient / waiting','FOMO / chasing','Neutral ✓','Neutral ✓'];
   const risks=['1','0.5'];
   let rDate;
   do{const daysAgo=Math.floor(Math.random()*90);rDate=new Date();rDate.setDate(rDate.getDate()-daysAgo);}
@@ -4827,20 +4829,23 @@ function randomizeTrade(){
   document.getElementById('f-actual-rr').value=rrActual;
   document.getElementById('f-pnl').value=pnl;
   document.getElementById('f-risk').value=risks[Math.floor(Math.random()*risks.length)];
-  document.getElementById('f-emotion').value=emotions[Math.floor(Math.random()*emotions.length)];
-  const postEmotions=['Satisfied ✓','Calm / indifferent','Frustrated','Relieved','Overconfident / euphoric'];
-  document.getElementById('f-emotion-post').value=rOutcome==='win'?postEmotions[Math.floor(Math.random()*2)]:rOutcome==='loss'?postEmotions[2+Math.floor(Math.random()*2)]:postEmotions[1];
-  const momentumOptions=[
-    'Aggressive expansion — strong displacement',
-    'Strong but starting to slow',
-    'Moderate — steady push',
-    'Slowing — losing volume',
-    'V-shape recovery off FVG',
-    'Slow corrective retrace — textbook',
-    'Grinding — small candles, slow grind',
-  ];
-  // Weight toward good momentum on wins, weaker on losses
-  const momPool=rOutcome==='win'?momentumOptions.slice(0,5):rOutcome==='loss'?momentumOptions.slice(2):momentumOptions;
+  // Pre-entry emotion — wins more likely with clear headspace
+  const emotionsGood=['Neutral ✓','Patient / waiting ✓','Calm and focused ✓','Confident — setup was clear ✓','In flow state ✓'];
+  const emotionsBad=['Anxious / hesitant','FOMO / chasing','Impatient — forced entry','Overconfident / ego','Distracted / not focused'];
+  const emotionPool=rOutcome==='win'?[...emotionsGood,...emotionsGood,emotionsBad[0]]:rOutcome==='loss'?[...emotionsBad,...emotionsGood]:[...emotionsGood,emotionsBad[0]];
+  document.getElementById('f-emotion').value=emotionPool[Math.floor(Math.random()*emotionPool.length)];
+  // Post-close emotion — exact option text, correlated to outcome
+  const postWin=['Satisfied — executed well ✓','Calm / indifferent ✓','Proud of the process ✓','Relieved — stuck to the plan ✓','Energised — great session ✓'];
+  const postWinNeg=['Overconfident / euphoric after win','Annoyed didn't size up'];
+  const postLoss=['Frustrated with the result','Revenge urge — wanted it back','Regret — held too long','Shaken / doubting the model','Angry at myself','Dwelling on the loss — couldn't let it go'];
+  const postBE=['Neutral about the outcome','Glad I followed rules even though it lost','Calm / indifferent ✓'];
+  const postPool=rOutcome==='win'?[...postWin,...postWin,postWinNeg[0]]:rOutcome==='loss'?postLoss:postBE;
+  document.getElementById('f-emotion-post').value=postPool[Math.floor(Math.random()*postPool.length)];
+  // Momentum — exact option text, wins = strong displacement + textbook retrace
+  const momStrongDisp=['Aggressive expansion — large bodied candles, clear BOS','Strong push — displacement visible on 15M and 5M','Strong but starting to slow near entry','Moderate — steady directional push'];
+  const momGoodRetrace=['Slow corrective retrace — textbook pullback ✓','V-shape recovery off FVG — sharp reaction ✓','Clean expansion off gap — immediate move ✓'];
+  const momBadRetrace=['Violent retrace — entered anyway','Retrace was choppy — lots of back and forth','Deep retrace — more than 75% of displacement','Choppy at entry — indecision','Stalled completely — no directional momentum'];
+  const momPool=rOutcome==='win'?[...momStrongDisp,...momGoodRetrace,...momGoodRetrace]:rOutcome==='loss'?[...momBadRetrace,...momStrongDisp.slice(2)]:[...momStrongDisp,...momGoodRetrace,...momBadRetrace.slice(0,2)];
   document.getElementById('f-momentum').value=momPool[Math.floor(Math.random()*momPool.length)];
   outcome=rOutcome;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
