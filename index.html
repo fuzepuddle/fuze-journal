@@ -1274,12 +1274,20 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   cursor:pointer;
   font-size:12px;
   font-weight:500;
-  background:#f9fafb;
+  background:var(--bg-card,#0a0f18);
   color:#9ca3af;
   text-align:center;
-  transition:all .15s;
+  transition:all .2s;
   font-family:'Plus Jakarta Sans',sans-serif;
+  line-height:1.4;
 }
+.tclass-btn span{color:#555;font-weight:400;font-size:11px;transition:color .2s}
+.tclass-btn.active-good{background:rgba(16,185,129,0.15)!important;border:2px solid #10b981!important;color:#10b981!important;box-shadow:0 0 14px rgba(16,185,129,0.25)!important}
+.tclass-btn.active-good span{color:#10b981!important}
+.tclass-btn.active-bad{background:rgba(245,158,11,0.15)!important;border:2px solid #f59e0b!important;color:#f59e0b!important;box-shadow:0 0 14px rgba(245,158,11,0.25)!important}
+.tclass-btn.active-bad span{color:#f59e0b!important}
+.tclass-btn.active-invalid{background:rgba(239,68,68,0.15)!important;border:2px solid #ef4444!important;color:#ef4444!important;box-shadow:0 0 14px rgba(239,68,68,0.25)!important}
+.tclass-btn.active-invalid span{color:#ef4444!important}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -1642,9 +1650,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div style="margin-top:14px">
       <label style="margin-bottom:6px">Trade classification</label>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px" id="trade-class-row">
-        <button type="button" id="tclass-valid-good" class="tclass-btn" onclick="setTradeClass('valid-good',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">✅ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">good execution</span></button>
-        <button type="button" id="tclass-valid-bad" class="tclass-btn" onclick="setTradeClass('valid-bad',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">⚠️ Valid setup<br><span style="font-weight:400;font-size:11px;color:#444">bad execution</span></button>
-        <button type="button" id="tclass-invalid" class="tclass-btn" onclick="setTradeClass('invalid',this)" style="padding:10px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#f9fafb;color:#555;transition:all .2s;font-family:inherit;line-height:1.4;text-align:center">❌ Invalid setup<br><span style="font-weight:400;font-size:11px;color:#444">shouldn't have taken</span></button>
+        <button type="button" id="tclass-valid-good" class="tclass-btn" onclick="setTradeClass('valid-good',this)">✅ Valid setup<br><span>good execution</span></button>
+        <button type="button" id="tclass-valid-bad" class="tclass-btn" onclick="setTradeClass('valid-bad',this)">⚠️ Valid setup<br><span>bad execution</span></button>
+        <button type="button" id="tclass-invalid" class="tclass-btn" onclick="setTradeClass('invalid',this)">❌ Invalid setup<br><span>shouldn't have taken</span></button>
       </div>
     </div>
 
@@ -3010,7 +3018,7 @@ function setOutcome(type,btn){
   outcome=type;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   tradeClass='';
-  document.querySelectorAll('.tclass-btn').forEach(b=>{b.style.background='#0a0f18';b.style.borderColor='rgba(255,255,255,0.07)';b.style.color='#555';b.querySelectorAll('span').forEach(s=>s.style.color='#444');});
+  document.querySelectorAll('.tclass-btn').forEach(b=>{b.classList.remove('active-good','active-bad','active-invalid');b.removeAttribute('style');});
   btn.classList.add('active-'+type);
   const pnlField=document.getElementById('f-pnl');
   const cur=pnlField.value;
@@ -3029,16 +3037,11 @@ function setOutcome(type,btn){
 function setTradeClass(type, btn){
   tradeClass=type;
   document.querySelectorAll('.tclass-btn').forEach(b=>{
-    b.style.background='#0a0f18';
-    b.style.borderColor='rgba(255,255,255,0.07)';
-    b.querySelectorAll('span').forEach(s=>s.style.color='#444');
+    b.classList.remove('active-good','active-bad','active-invalid');
+    b.removeAttribute('style');
   });
-  const colors={'valid-good':['#0a2010','#10b981','#10b981'],'valid-bad':['#1a1400','#f59e0b','#f59e0b'],'invalid':['#1f0808','#ef4444','#ef4444']};
-  const [bg,border,text]=colors[type]||['#0a0f18','rgba(255,255,255,0.07)','#555'];
-  btn.style.background=bg;
-  btn.style.borderColor=border;
-  btn.style.color=text;
-  btn.querySelectorAll('span').forEach(s=>s.style.color=text);
+  const classMap={'valid-good':'active-good','valid-bad':'active-bad','invalid':'active-invalid'};
+  if(classMap[type]) btn.classList.add(classMap[type]);
 }
 
 // ── Save trade ──
