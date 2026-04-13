@@ -4787,7 +4787,7 @@ setInterval(()=>{
 // ── Keyboard shortcuts ──
 document.addEventListener('keydown',function(e){
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
-  const activeTab=document.querySelector('.tab.active');
+  const activeTab=document.querySelector('.sb-nav-item.active')||document.querySelector('.tab.active');
   const tab=activeTab?activeTab.getAttribute('data-tab'):'';
   if(e.key==='s'&&tab==='log'){e.preventDefault();saveTrade();}
   if(e.key==='r'&&tab==='log'){e.preventDefault();randomizeTrade();}
@@ -5685,7 +5685,7 @@ async function revRequestAI(slideIdx){
   takeawayEl.style.opacity='0.6';
 
   try{
-    var resp = await fetch('/api/claude',{
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
