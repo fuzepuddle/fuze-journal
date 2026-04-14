@@ -107,10 +107,10 @@
   input[type=date],input[type=time]{background:#f9fafb;color-scheme:dark}
   input:focus,select:focus,textarea:focus{border-color:#4b5563}
   textarea{resize:vertical;min-height:64px;line-height:1.5}
-  select option{background:#f9fafb;color:#ffffff}
+  select option{background:#f9fafb;color:#111111}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-  .grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   .gap{margin-bottom:14px}
   .card{background:linear-gradient(160deg,var(--bg-card) 0%,#0a0f0a 100%);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
   .section-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:10px}
@@ -174,7 +174,7 @@
   .collapsible-header:hover .collapse-icon{color:#ffffff}
   .collapse-icon{font-size:13px;color:#9ca3af;transition:transform .2s;display:inline-block}
   .collapse-icon.collapsed{transform:rotate(-90deg)}
-  .collapsible-body{transition:none}
+  .collapsible-body{}
   @keyframes glow-green{0%,100%{box-shadow:0 0 0px #1a4010}50%{box-shadow:0 0 24px rgba(57,255,20,0.25)}}
   @keyframes glow-red{0%,100%{box-shadow:0 0 0px #6e2a2a}50%{box-shadow:0 0 18px rgba(192,96,96,0.4)}}
   .glow-green{animation:glow-green 2s ease-in-out infinite}
@@ -183,7 +183,7 @@
   .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .collapsible-header:hover .collapse-icon{color:var(--accent)}
   .collapse-icon{font-size:13px;color:#9ca3af;transition:transform .2s;display:inline-block}
-  .collapsed .collapse-icon{transform:rotate(-90deg)}
+  .collapse-icon.collapsed{transform:rotate(-90deg)}
   .collapsible-body{overflow:hidden;transition:max-height .25s ease}
 
   /* Calendar */
@@ -269,7 +269,7 @@
     .profile-btns{
       width:100%;
       display:grid;
-      grid-template-columns:repeat(3,1fr);
+      grid-template-columns:repeat(4,1fr);
       gap:5px;
     }
     .profile-btn{
@@ -864,7 +864,7 @@ input[type=date],input[type=number],input[type=text],input[type=time],select,tex
 }
 input[type=date],input[type=time]{color-scheme:dark}
 input:focus,select:focus,textarea:focus{border-color:rgba(16,185,129,0.5);background:#fff}
-select option{background:#fff;color:#e5e7eb}
+select option{background:#fff;color:#111111}
 textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 /* ── Buttons ── */
@@ -1246,7 +1246,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .gap{margin-bottom:14px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.grid-4{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
 
 /* ── Log page ── */
@@ -1266,7 +1266,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 
 /* ── Trade classification ── */
-#trade-class-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#trade-class-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .tclass-btn{
   padding:10px 8px;
   border:1px solid var(--border);
@@ -1558,7 +1558,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <div class="card gap">
     <div class="section-label">Session</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
       <div><label>Date</label><input type="date" id="f-date"></div>
       <div><label>Entry time (UK)</label><input type="time" id="f-entry-time" min="14:30" max="16:00"></div>
       <div><label>Exit time (UK)</label><input type="time" id="f-exit-time" min="14:30" max="16:30"></div>
@@ -2750,13 +2750,8 @@ function renderProp(){
   const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const account=propSettings.account||0;
   const maxddAmt=propSettings.maxdd||0;
+  const mllFloor=account-maxddAmt;
   const currentBalance=account+totalPnl;
-  // Trailing MLL: floor trails up with peak balance, never comes back down
-  // Rebuild peak balance by walking trades in chronological order
-  const sortedTrades=[...liveTrades].sort((a,b)=>new Date(a.date)-new Date(b.date));
-  let runningBal=account, peakBal=account;
-  sortedTrades.forEach(t=>{runningBal+=parseFloat(t.pnl)||0;if(runningBal>peakBal)peakBal=runningBal;});
-  const mllFloor=peakBal-maxddAmt;
   const bufferRemaining=parseFloat((currentBalance-mllFloor).toFixed(2));
   const today=new Date().toISOString().split('T')[0];
   const todayPnl=liveTrades.filter(t=>t.date===today).reduce((s,t)=>s+(t.pnl||0),0);
@@ -2771,10 +2766,10 @@ function renderProp(){
   document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
   // Drawdown bar
   const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
-  document.getElementById('prop-dd-lbl').textContent='MLL floor: $'+mllFloor.toLocaleString()+' (peak: $'+peakBal.toLocaleString()+') · Buffer: $'+bufferRemaining.toFixed(0);
+  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString()+' · MLL floor: $'+mllFloor.toLocaleString();
   document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#3a6e3a';
-  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(0)+' remaining before MLL · floor trails your peak balance';
+  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt?'#ef4444':'#3a6e3a';
+  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining before MLL floor';
   // DDL bar
   const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
   document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / -$'+propSettings.ddl.toLocaleString()+' limit';
@@ -4098,11 +4093,11 @@ function openSSLightbox(url){
     lb = document.createElement('div');
     lb.id = 'trade-ss-lightbox';
     lb.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out';
-    lb.innerHTML = '<img id="ss-lb-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#4b5563;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
+    lb.innerHTML = '<img id="lb-main-img" style="max-width:92vw;max-height:88vh;border-radius:8px;object-fit:contain"><div style="position:absolute;top:16px;right:20px;font-size:28px;color:#4b5563;cursor:pointer;line-height:1" onclick="closeLightbox()">×</div>';
     lb.addEventListener('click', closeLightbox);
     document.body.appendChild(lb);
   }
-  document.getElementById('ss-lb-img').src = url;
+  document.getElementById('lb-main-img').src = url;
   lb.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
