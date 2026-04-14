@@ -4812,12 +4812,18 @@ function randomizeTrade(){
   const outcomeWeights=[0.55,0.30,0.15];
   let r=Math.random(),cumW=0,rOutcome='win';
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
-  // RR & PnL correlated to outcome
-  const rrActualOptions=rOutcome==='win'?['+1.00R','+1.25R','+1.50R','+1.75R','+2.00R']:rOutcome==='loss'?['-1.00R']:['0.00R (BE)'];
-  const rrActual=rrActualOptions[Math.floor(Math.random()*rrActualOptions.length)];
-  const pnlBase=Math.floor(Math.random()*400)+50;
-  const pnl=rOutcome==='win'?pnlBase:rOutcome==='loss'?-pnlBase:0;
-  const risks=['1','0.5'];
+  // Use prop firm account balance (or 50k fallback), and risk % based on profile
+  const account=(propSettings&&propSettings.account)?propSettings.account:50000;
+  const riskPct=currentProfile==='funded'?0.5:1;
+  const riskAmt=account*(riskPct/100);
+  // RR & PnL correlated to outcome — loss always = -1R = -riskAmt, win = random RR * riskAmt
+  const winRRValues=[1.00,1.25,1.50,1.75,2.00];
+  const winPartialRRValues=[0.50,0.60,0.75,0.80];
+  const allWinRRs=[...winRRValues,...winPartialRRValues];
+  const chosenWinRR=allWinRRs[Math.floor(Math.random()*allWinRRs.length)];
+  const rrActual=rOutcome==='win'?'+'+chosenWinRR.toFixed(2)+'R':rOutcome==='loss'?'-1.00R':'0.00R (BE)';
+  const pnl=rOutcome==='win'?Math.round(riskAmt*chosenWinRR):rOutcome==='loss'?-Math.round(riskAmt):0;
+  const risks=[String(riskPct)];
   let rDate;
   do{const daysAgo=Math.floor(Math.random()*90);rDate=new Date();rDate.setDate(rDate.getDate()-daysAgo);}
   while(rDate.getDay()===0||rDate.getDay()===6);
@@ -4832,7 +4838,7 @@ function randomizeTrade(){
   document.getElementById('f-draw').value=draw;
   document.getElementById('f-actual-rr').value=rrActual;
   document.getElementById('f-pnl').value=pnl;
-  document.getElementById('f-risk').value=risks[Math.floor(Math.random()*risks.length)];
+  document.getElementById('f-risk').value=risks[0];
   // Pre-entry emotion — wins more likely with clear headspace
   const emotionsGood=['Neutral ✓','Patient / waiting ✓','Calm and focused ✓','Confident — setup was clear ✓','In flow state ✓'];
   const emotionsBad=['Anxious / hesitant','FOMO / chasing','Impatient — forced entry','Overconfident / ego','Distracted / not focused'];
