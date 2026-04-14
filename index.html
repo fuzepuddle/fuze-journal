@@ -4812,17 +4812,28 @@ function randomizeTrade(){
   const outcomeWeights=[0.55,0.30,0.15];
   let r=Math.random(),cumW=0,rOutcome='win';
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
-  // Use prop firm account balance (or 50k fallback), and risk % based on profile
+  // Use prop firm account balance (or 50k fallback), risk % locked to profile
   const account=(propSettings&&propSettings.account)?propSettings.account:50000;
   const riskPct=currentProfile==='funded'?0.5:1;
   const riskAmt=account*(riskPct/100);
-  // RR & PnL correlated to outcome — loss always = -1R = -riskAmt, win = random RR * riskAmt
-  const winRRValues=[1.00,1.25,1.50,1.75,2.00];
-  const winPartialRRValues=[0.50,0.60,0.75,0.80];
-  const allWinRRs=[...winRRValues,...winPartialRRValues];
-  const chosenWinRR=allWinRRs[Math.floor(Math.random()*allWinRRs.length)];
-  const rrActual=rOutcome==='win'?'+'+chosenWinRR.toFixed(2)+'R':rOutcome==='loss'?'-1.00R':'0.00R (BE)';
-  const pnl=rOutcome==='win'?Math.round(riskAmt*chosenWinRR):rOutcome==='loss'?-Math.round(riskAmt):0;
+  // PnL-first approach: generate realistic random dollar amount, back-calc RR
+  // Trailing stop under lows = you exit wherever the market takes you, not clean RR increments
+  let pnl, rrActual;
+  if(rOutcome==='win'){
+    const minWin=Math.round(riskAmt*0.5);
+    const maxWin=Math.round(riskAmt*2.5);
+    const rawWin=Math.floor(Math.random()*(maxWin-minWin+1))+minWin;
+    const noise=Math.floor(Math.random()*19)-9;
+    pnl=rawWin+noise;
+    const r=pnl/riskAmt;
+    rrActual='+'+r.toFixed(2)+'R';
+  } else if(rOutcome==='loss'){
+    pnl=-Math.round(riskAmt);
+    rrActual='-1.00R';
+  } else {
+    pnl=0;
+    rrActual='0.00R (BE)';
+  }
   const risks=[String(riskPct)];
   let rDate;
   do{const daysAgo=Math.floor(Math.random()*90);rDate=new Date();rDate.setDate(rDate.getDate()-daysAgo);}
