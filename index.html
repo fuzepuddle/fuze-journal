@@ -2750,8 +2750,13 @@ function renderProp(){
   const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const account=propSettings.account||0;
   const maxddAmt=propSettings.maxdd||0;
-  const mllFloor=account-maxddAmt;
   const currentBalance=account+totalPnl;
+  // Trailing MLL: floor trails up with peak balance, never comes back down
+  // Rebuild peak balance by walking trades in chronological order
+  const sortedTrades=[...liveTrades].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  let runningBal=account, peakBal=account;
+  sortedTrades.forEach(t=>{runningBal+=parseFloat(t.pnl)||0;if(runningBal>peakBal)peakBal=runningBal;});
+  const mllFloor=peakBal-maxddAmt;
   const bufferRemaining=parseFloat((currentBalance-mllFloor).toFixed(2));
   const today=new Date().toISOString().split('T')[0];
   const todayPnl=liveTrades.filter(t=>t.date===today).reduce((s,t)=>s+(t.pnl||0),0);
@@ -2766,10 +2771,10 @@ function renderProp(){
   document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
   // Drawdown bar
   const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
-  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString()+' · MLL floor: $'+mllFloor.toLocaleString();
+  document.getElementById('prop-dd-lbl').textContent='MLL floor: $'+mllFloor.toLocaleString()+' (peak: $'+peakBal.toLocaleString()+') · Buffer: $'+bufferRemaining.toFixed(0);
   document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt?'#ef4444':'#3a6e3a';
-  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining before MLL floor';
+  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#3a6e3a';
+  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(0)+' remaining before MLL · floor trails your peak balance';
   // DDL bar
   const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
   document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / -$'+propSettings.ddl.toLocaleString()+' limit';
