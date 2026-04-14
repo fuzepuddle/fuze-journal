@@ -4790,13 +4790,20 @@ setInterval(()=>{
 
 // ── Keyboard shortcuts ──
 document.addEventListener('keydown',function(e){
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
-  const activeTab=document.querySelector('.tab.active');
-  const tab=activeTab?activeTab.getAttribute('data-tab'):'';
-  if(e.key==='s'&&tab==='log'){e.preventDefault();saveTrade();}
-  if(e.key==='r'&&tab==='log'){e.preventDefault();randomizeTrade();}
+  // Get active tab from sb-nav-item (primary nav) or .tab (fallback)
+  const activeSbNav=document.querySelector('.sb-nav-item.active');
+  const activeTabEl=document.querySelector('.tab.active');
+  const tab=(activeSbNav?activeSbNav.getAttribute('data-tab'):null)||(activeTabEl?activeTabEl.getAttribute('data-tab'):null)||'';
+  if(tab!=='log')return;
+  // Plain r/s when NOT typing in a field
+  if(!e.ctrlKey&&!e.metaKey&&!e.target.matches('input,textarea,select')){
+    if(e.key==='s'){e.preventDefault();saveTrade();}
+    if(e.key==='r'){e.preventDefault();randomizeTrade();}
+  }
+  // Ctrl/Cmd+S and Ctrl/Cmd+R work even when a field is focused
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();saveTrade();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='r'){e.preventDefault();randomizeTrade();}
 });
-
 
 // ── Confetti on new PB ──
 function randomizeTrade(){
