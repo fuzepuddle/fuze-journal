@@ -4842,9 +4842,20 @@ function randomizeTrade(){
     rrActual='0.00R (BE)';
   }
   const risks=[String(riskPct)];
-  let rDate;
-  do{const daysAgo=Math.floor(Math.random()*90);rDate=new Date();rDate.setDate(rDate.getDate()-daysAgo);}
-  while(rDate.getDay()===0||rDate.getDay()===6);
+  // 180-day shuffled pool — no repeat until all days used, then reshuffles
+  if(!window._randDayPool||window._randDayPool.length===0){
+    // Build list of all weekdays in the past 180 days
+    const pool=[];
+    const today=new Date();today.setHours(0,0,0,0);
+    for(let i=1;i<=180;i++){
+      const d=new Date(today);d.setDate(today.getDate()-i);
+      if(d.getDay()!==0&&d.getDay()!==6) pool.push(d.toISOString().split('T')[0]);
+    }
+    // Fisher-Yates shuffle
+    for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    window._randDayPool=pool;
+  }
+  const rDate=new Date(window._randDayPool.pop()+'T12:00:00');
   document.getElementById('f-date').value=rDate.toISOString().split('T')[0];
   const entryTimes=['14:30','14:45','15:00','15:15','15:30','15:45'];
   const entryT=entryTimes[Math.floor(Math.random()*entryTimes.length)];
