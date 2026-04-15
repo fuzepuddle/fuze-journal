@@ -1155,11 +1155,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-cal-grid td.dcal-today{border:1.5px solid var(--accent)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)}
 .dcal-day{font-size:11px;font-weight:600;color:#9ca3af;margin-bottom:3px;line-height:1}
 .dcal-today .dcal-day{color:var(--accent);font-weight:700}
-.dcal-pnl{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.1;letter-spacing:-.02em}
+.dcal-pnl{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.1;letter-spacing:-.02em}
 .dcal-win .dcal-pnl{color:#10b981}
 .dcal-loss .dcal-pnl{color:#ef4444}
 .dcal-be .dcal-pnl{color:#f59e0b}
-.dcal-count{font-size:9px;font-weight:500;color:#6b7280;margin-top:2px;letter-spacing:.02em}
 .dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
 .dash-cal-nav-title{font-size:13px;font-weight:700;color:#e5e7eb;letter-spacing:.06em;text-transform:uppercase;flex:1;text-align:center}
 .dash-cal-nav button{
@@ -2984,7 +2983,7 @@ function renderDashMiniCal(){
       else if(info.outcome==='loss')cls+=' dcal-loss';
       else cls+=' dcal-be';
     }
-    const pnlHtml=info?`<div class="dcal-pnl">${info.pnl>=0?'+':''}${info.pnl.toFixed(0)}</div><div class="dcal-count">${info.trades}t</div>`:'';
+    const pnlHtml=info?`<div class="dcal-pnl">${info.pnl>=0?'+':''}${info.pnl.toFixed(0)}</div>`:'';
     const clickAttr=info?` onclick="calDayClick('${dateStr}')" title="Click to view trades"`:'';
     html+=`<td class="${cls.trim()}"${clickAttr}><div class="dcal-day">${d}</div>${pnlHtml}</td>`;
     cell++;
