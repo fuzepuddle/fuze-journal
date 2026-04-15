@@ -1153,9 +1153,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.22)}
 .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.2)}
 .dash-cal-grid td.dcal-today{border:1.5px solid var(--accent)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)}
-.dcal-day{font-size:11px;font-weight:600;color:#9ca3af;margin-bottom:3px;line-height:1}
+.dcal-day{font-size:11px;font-weight:600;color:#9ca3af;margin-bottom:3px;line-height:1;text-align:center}
 .dcal-today .dcal-day{color:var(--accent);font-weight:700}
-.dcal-pnl{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.1;letter-spacing:-.02em}
+.dcal-pnl{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.1;letter-spacing:-.02em;text-align:center}
 .dcal-win .dcal-pnl{color:#10b981}
 .dcal-loss .dcal-pnl{color:#ef4444}
 .dcal-be .dcal-pnl{color:#f59e0b}
@@ -2983,9 +2983,9 @@ function renderDashMiniCal(){
       else if(info.outcome==='loss')cls+=' dcal-loss';
       else cls+=' dcal-be';
     }
-    const pnlHtml=info?`<div class="dcal-pnl">${info.pnl>=0?'+':''}${info.pnl.toFixed(0)}</div>`:'';
+    const pnlHtml=info?`<div class="dcal-pnl">${info.pnl>=0?'+$':'-$'}${Math.abs(info.pnl).toFixed(0)}</div>`:'';
     const clickAttr=info?` onclick="calDayClick('${dateStr}')" title="Click to view trades"`:'';
-    html+=`<td class="${cls.trim()}"${clickAttr}><div class="dcal-day">${d}</div>${pnlHtml}</td>`;
+    html+=`<td class="${cls.trim()}"${clickAttr} style="text-align:center;vertical-align:middle"><div class="dcal-day">${d}</div>${pnlHtml}</td>`;
     cell++;
     if(cell%7===0&&d<daysInMonth)html+='</tr><tr>';
   }
