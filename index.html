@@ -3229,15 +3229,51 @@ function renderJournal(){
         :'<a href="'+s[1]+'" target="_blank" style="color:#e5e7eb;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
-    const narrativeHtml=t.narrative?'<div style="margin-bottom:'+(t.improve?'10px':'0')+'"><div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What happened</div><div style="font-size:14px;color:#e5e7eb;line-height:1.6">'+t.narrative+'</div></div>':'';
-    const improveHtml=t.improve?'<div><div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">What to improve</div><div style="font-size:14px;color:#e5e7eb;line-height:1.6">'+t.improve+'</div></div>':'';
-    const emotionPostHtml=t.emotionPost?'<div style="margin-bottom:10px"><div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Emotion after close</div><div style="font-size:14px;color:#4b5563">'+t.emotionPost+'</div></div>':'';
-    const momentumHtml=t.momentum?'<div style="margin-bottom:10px"><div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Momentum at entry</div><div style="font-size:14px;color:'+(t.momentum.includes('Aggressive')?'#10b981':t.momentum.includes('Slowing')||t.momentum.includes('Stalled')||t.momentum.includes('Grinding')?'#ef4444':'#f59e0b')+'">'+t.momentum+'</div></div>':'';
-    const fvgZoneHtml=t.fvgZone?'<div style="margin-bottom:10px"><div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">FVG entry zone</div><div style="font-size:14px;color:'+(t.fvgZone==='Top of gap'?'#10b981':t.fvgZone==='Bottom of gap'?'#ef4444':'#f59e0b')+'">'+t.fvgZone+'</div></div>':'';
-    const similarHtml=t.similar?'<div style="margin-bottom:10px"><div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Similar past trade</div><div style="font-size:14px;color:#4b5563;line-height:1.6">'+t.similar+'</div></div>':'';
-    const classBadgeHtml=t.tradeClass?'<div style="margin-bottom:10px">'+( classBadges[t.tradeClass]||'')+'</div>':'';
-    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:#f3f4f6;cursor:pointer;color:#4b5563;font-size:14px;padding:5px 10px;border-radius:6px;margin-top:12px;font-family:inherit">Edit trade</button>';
-    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:12px 16px;background:#f9fafb;border-bottom:1px solid rgba(0,0,0,0.06)">'+classBadgeHtml+ssHtml+momentumHtml+fvgZoneHtml+emotionPostHtml+similarHtml+narrativeHtml+improveHtml+editBtn+'</td></tr>';
+    // ── Compact detail row ──
+    const momCol=t.momentum?(t.momentum.toLowerCase().includes('aggressive')||t.momentum.toLowerCase().includes('strong')?'#10b981':t.momentum.toLowerCase().includes('slow')||t.momentum.toLowerCase().includes('stall')||t.momentum.toLowerCase().includes('grind')||t.momentum.toLowerCase().includes('fad')?'#ef4444':'#f59e0b'):'#9ca3af';
+    const fvgCol=t.fvgZone?(t.fvgZone==='Top of gap'?'#10b981':t.fvgZone==='Bottom of gap'?'#ef4444':'#f59e0b'):'#9ca3af';
+
+    // mistakes pill list
+    const mistakePills=(t.mistakes&&t.mistakes.length)?
+      '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">'
+      +t.mistakes.map(m=>'<span style="font-size:11px;padding:2px 7px;border-radius:4px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2)">'+m+'</span>').join('')
+      +'</div>'
+    :'<span style="color:#4b5563;font-size:12px">None logged</span>';
+
+    // timing row
+    const timingStr=(t.entryTime||t.exitTime)?((t.entryTime||'?')+' → '+(t.exitTime||'?')):'—';
+
+    // info grid — compact key-value pairs
+    const pill=(lbl,val,col)=>'<div style="display:flex;flex-direction:column;gap:1px"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280">'+lbl+'</span><span style="font-size:13px;font-weight:500;color:'+(col||'#e5e7eb')+'">'+val+'</span></div>';
+
+    const infoGrid='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;padding:10px 14px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)">'
+      +pill('Entry time', timingStr)
+      +pill('Momentum', t.momentum||'—', momCol)
+      +pill('FVG zone', t.fvgZone||'—', fvgCol)
+      +pill('Emotion', t.emotionPost||'—', '#9ca3af')
+      +'</div>';
+
+    // mistakes row
+    const mistakesRow='<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;white-space:nowrap;padding-top:3px">Mistakes</span>'+mistakePills+'</div>';
+
+    // notes — show as compact stacked blocks only if present
+    const notesHtml=(t.narrative||t.improve)?
+      '<div style="display:grid;grid-template-columns:'+(t.narrative&&t.improve?'1fr 1fr':'1fr')+';gap:8px;margin-bottom:10px">'
+      +(t.narrative?'<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:7px;padding:8px 10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:4px">What happened</div><div style="font-size:12px;color:#d1d5db;line-height:1.5">'+t.narrative+'</div></div>':'')
+      +(t.improve?'<div style="background:rgba(245,158,11,0.03);border:1px solid rgba(245,158,11,0.12);border-radius:7px;padding:8px 10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#f59e0b;margin-bottom:4px">Improve</div><div style="font-size:12px;color:#d1d5db;line-height:1.5">'+t.improve+'</div></div>':'')
+      +'</div>'
+    :'';
+
+    const classBadgeHtml=t.tradeClass?'<span style="margin-right:8px">'+(classBadges[t.tradeClass]||'')+'</span>':'';
+    const similarChip=t.similar?'<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(99,102,241,0.1);color:#818cf8;border:1px solid rgba(99,102,241,0.2)">📎 '+t.similar+'</span>':'';
+
+    const topBar='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+classBadgeHtml+similarChip+'</div>';
+
+    const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:rgba(255,255,255,0.04);cursor:pointer;color:#9ca3af;font-size:12px;padding:4px 10px;border-radius:6px;font-family:inherit;transition:background .15s" onmouseover="this.style.background=\'rgba(255,255,255,0.08)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.04)\'">Edit trade</button>';
+
+    const bottomBar='<div style="display:flex;align-items:center;justify-content:flex-end;margin-top:4px">'+editBtn+'</div>';
+
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:10px 14px 12px;background:rgba(10,15,10,0.6);border-bottom:1px solid rgba(255,255,255,0.05)">'+(classBadgeHtml||similarChip?topBar:'')+infoGrid+mistakesRow+ssHtml+notesHtml+bottomBar+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
 }
