@@ -3217,16 +3217,17 @@ function renderJournal(){
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
-    const ssHtml=ssLinks.length?'<div style="margin-bottom:'+(t.narrative||t.improve?'14px':'4px')+'">'
-      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    const _cdnThumb=u=>{if(!_isCDN(u))return u;return u.replace('/upload/','/upload/q_100,w_360,h_226,c_fill,f_auto/');};
+    const ssHtml=ssLinks.length?'<div style="margin-bottom:'+(t.narrative||t.improve?'10px':'4px')+'">'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
       +ssLinks.map((s,i)=>_isCDN(s[1])
         ?'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
-          +'<div style="font-size:14px;color:#9ca3af">'+s[0]+'</div>'
-          +'<img src="'+s[1]+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
-          +'style="width:120px;height:75px;object-fit:cover;border-radius:7px;border:1px solid rgba(255,255,255,0.07);cursor:pointer;background:var(--bg-card)" '
-          +'onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.07)\'">'
+          +'<div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#6b7280">'+s[0]+'</div>'
+          +'<img src="'+_cdnThumb(s[1])+'" loading="lazy" onclick="openTradeSSLightbox('+t.id+','+i+')" '
+          +'style="width:130px;height:82px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.07);cursor:pointer;background:var(--bg-card);transition:border-color .15s,transform .15s" '
+          +'onmouseover="this.style.borderColor=\'#10b981\';this.style.transform=\'scale(1.03)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.07)\';this.style.transform=\'scale(1)\'">'
           +'</div>'
-        :'<a href="'+s[1]+'" target="_blank" style="color:#e5e7eb;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
+        :'<a href="'+s[1]+'" target="_blank" style="color:#e5e7eb;font-size:12px;text-decoration:none;border:1px solid rgba(255,255,255,0.07);padding:4px 10px;border-radius:6px;background:rgba(15,26,18,0.58)">'+s[0]+' ↗</a>'
       ).join('')
       +'</div></div>':'';
     // ── Compact detail row ──
@@ -3244,13 +3245,32 @@ function renderJournal(){
     const timingStr=(t.entryTime||t.exitTime)?((t.entryTime||'?')+' → '+(t.exitTime||'?')):'—';
 
     // info grid — compact key-value pairs
-    const pill=(lbl,val,col)=>'<div style="display:flex;flex-direction:column;gap:1px"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280">'+lbl+'</span><span style="font-size:13px;font-weight:500;color:'+(col||'#e5e7eb')+'">'+val+'</span></div>';
+    const pill=(lbl,val,col)=>'<div style="display:flex;flex-direction:column;gap:1px"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280">'+lbl+'</span><span style="font-size:12px;font-weight:500;color:'+(col||'#e5e7eb')+';line-height:1.35">'+val+'</span></div>';
+
+    // checks gate
+    const checksTotal=t.checksTotal||0;
+    const checksPassed=t.checksPassed||0;
+    const checksPct=checksTotal?Math.round(checksPassed/checksTotal*100):0;
+    const checksCol=checksPct>=80?'#10b981':checksPct>=60?'#f59e0b':'#ef4444';
+    const checksStr=checksTotal?(checksPassed+'/'+checksTotal+' ('+checksPct+'%)'):'—';
+
+    // emotion strings — truncate if long
+    const emotionPreStr=t.emotion?(t.emotion.length>28?t.emotion.slice(0,26)+'…':t.emotion):'—';
+    const emotionPostStr=t.emotionPost?(t.emotionPost.length>28?t.emotionPost.slice(0,26)+'…':t.emotionPost):'—';
+
+    // mode badge
+    const modeStr=t.mode?t.mode.charAt(0).toUpperCase()+t.mode.slice(1):'—';
+    const modeCol=t.mode==='live'?'#10b981':t.mode==='demo'?'#818cf8':'#f59e0b';
 
     const infoGrid='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;padding:10px 14px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)">'
-      +pill('Entry time', timingStr)
-      +pill('Momentum', t.momentum||'—', momCol)
+      +pill('Time', timingStr)
+      +pill('Mode', modeStr, modeCol)
+      +pill('Checks', checksStr, checksCol)
       +pill('FVG zone', t.fvgZone||'—', fvgCol)
-      +pill('Emotion', t.emotionPost||'—', '#9ca3af')
+      +pill('Momentum', t.momentum||'—', momCol)
+      +pill('Emotion (pre)', emotionPreStr, '#9ca3af')
+      +pill('Emotion (post)', emotionPostStr, '#9ca3af')
+      +pill('Similar trade', t.similar?(t.similar.length>28?t.similar.slice(0,26)+'…':t.similar):'—', '#818cf8')
       +'</div>';
 
     // mistakes row
@@ -3265,15 +3285,13 @@ function renderJournal(){
     :'';
 
     const classBadgeHtml=t.tradeClass?'<span style="margin-right:8px">'+(classBadges[t.tradeClass]||'')+'</span>':'';
-    const similarChip=t.similar?'<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(99,102,241,0.1);color:#818cf8;border:1px solid rgba(99,102,241,0.2)">📎 '+t.similar+'</span>':'';
-
-    const topBar='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+classBadgeHtml+similarChip+'</div>';
+    const topBar=classBadgeHtml?'<div style="margin-bottom:8px">'+classBadgeHtml+'</div>':'';
 
     const editBtn='<button onclick="openEdit('+t.id+')" style="border:0.5px solid #2a2a2a;background:rgba(255,255,255,0.04);cursor:pointer;color:#9ca3af;font-size:12px;padding:4px 10px;border-radius:6px;font-family:inherit;transition:background .15s" onmouseover="this.style.background=\'rgba(255,255,255,0.08)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.04)\'">Edit trade</button>';
 
     const bottomBar='<div style="display:flex;align-items:center;justify-content:flex-end;margin-top:4px">'+editBtn+'</div>';
 
-    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:10px 14px 12px;background:rgba(10,15,10,0.6);border-bottom:1px solid rgba(255,255,255,0.05)">'+(classBadgeHtml||similarChip?topBar:'')+infoGrid+mistakesRow+ssHtml+notesHtml+bottomBar+'</td></tr>';
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:10px 14px 12px;background:rgba(10,15,10,0.6);border-bottom:1px solid rgba(255,255,255,0.05)">'+topBar+infoGrid+mistakesRow+ssHtml+notesHtml+bottomBar+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
 }
