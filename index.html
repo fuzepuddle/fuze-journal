@@ -4298,7 +4298,7 @@ function _lbApply(){
   if(!img||!wrap||!img.naturalWidth) return;
   const wW=wrap.clientWidth, wH=wrap.clientHeight;
   const nW=img.naturalWidth, nH=img.naturalHeight;
-  const base=Math.min(wW/nW, wH/nH) * 0.88; // 88% of container = not quite full screen
+  const base=Math.min(wW/nW, wH/nH) * 0.95; // 95% of container
   const scale=base*_lbZoom;
   const iW=nW*scale, iH=nH*scale;
   // Clamp pan
