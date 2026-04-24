@@ -1565,19 +1565,19 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Within NY window (14:30–16:00 UK) — hard close 16:30</span></div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>No major news pending</span></div>
     <div class="check-group-title">Where Is Price Going? (1H)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clear untapped target — prev high/low, session high/low, or gap</span></div>
-    <div class="check-group-title">Bigger Picture (4H/1H)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Structure &amp; momentum point toward target — no chop, no small candles</span></div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clear untapped draw — S/A tier preferred · B tier valid · C tier alone = skip</span></div>
+    <div class="check-group-title">Bigger Picture (4H)</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Structure &amp; momentum point toward target — no chop, no small candles, not delivering from opposing HTF gap</span></div>
     <div class="check-group-title">Strong Displacement? (15M) 🔥</div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Strong push toward target breaking structure</span></div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement visibly stronger than the pullback</span></div>
-    <div class="check-group-title">Clean Gap Left? (5M) 🎯</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement left a clean price gap toward target — not formed in chop</span></div>
+    <div class="check-group-title">Singular Clean Gap? (5M) 🎯</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Singular obvious 5M FVG (or two adjacent combined) — visible from far left, not formed in chop</span></div>
     <div class="check-group-title">Pullback Slow &amp; Weak? (5M)</div>
     <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Price retraces slowly and calmly into the gap — not fast or aggressive</span></div>
-    <div class="check-group-title">Confirmation &amp; Entry (1M) 🚀</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>1M mini trend (HH + HL) forms in gap, price reacts out of gap</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Last higher low marked — entered on 1M candle close only</span></div>
+    <div class="check-group-title">IFVG Entry (1M) 🚀</div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Price pulls into 5M FVG — 1M candle slightly violates gap → IFVG forms</span></div>
+    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Strong momentum → enter on 1M IFVG candle close · Slow momentum → wait for IFVG zone retest</span></div>
     <div id="gate" class="gate">Complete checklist to see verdict</div>
     </div>
   </div>
@@ -1599,23 +1599,61 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>HTF draw targeted</label>
         <select id="f-draw">
           <option value="">Select draw</option>
-          <optgroup label="Daily levels">
+          <optgroup label="Daily / Weekly / Monthly / Yearly">
             <option>PDH</option><option>PDL</option>
             <option>CDH</option><option>CDL</option>
             <option>PWH</option><option>PWL</option>
             <option>PMH</option><option>PML</option>
+            <option>Yearly High</option><option>Yearly Low</option>
+          </optgroup>
+          <optgroup label="Opening Prices">
+            <option>Daily Open (Midnight)</option>
+            <option>Weekly Open</option>
+            <option>Monthly Open</option>
+            <option>Yearly Open</option>
+          </optgroup>
+          <optgroup label="Opening Gaps">
+            <option>NDOG High</option><option>NDOG Low</option>
+            <option>NWOG High</option><option>NWOG Low</option>
+            <option>NMOG High</option><option>NMOG Low</option>
           </optgroup>
           <optgroup label="Session levels">
             <option>Asia High</option><option>Asia Low</option>
             <option>London High</option><option>London Low</option>
             <option>NY High</option><option>NY Low</option>
-            <option>Midnight Open</option>
+            <option>Opening Range High</option><option>Opening Range Low</option>
+          </optgroup>
+          <optgroup label="News / Data Wicks">
+            <option>8:30 Data Wick High</option>
+            <option>8:30 Data Wick Low</option>
+            <option>10:00 Data Wick High</option>
+            <option>10:00 Data Wick Low</option>
           </optgroup>
           <optgroup label="Equal levels">
             <option>EQH</option><option>EQL</option>
+            <option>Relative EQH</option><option>Relative EQL</option>
           </optgroup>
-          <optgroup label="Other">
-            <option>HTF Swing Point</option>
+          <optgroup label="HTF FVGs / Inefficiencies">
+            <option>Daily FVG</option>
+            <option>4H FVG</option>
+            <option>Weekly FVG</option>
+            <option>Daily IFVG</option>
+            <option>4H IFVG</option>
+          </optgroup>
+          <optgroup label="Range / Dealing Levels">
+            <option>Dealing Range High</option>
+            <option>Dealing Range Low</option>
+            <option>Equilibrium (50%)</option>
+            <option>Premium Array</option>
+            <option>Discount Array</option>
+          </optgroup>
+          <optgroup label="Swing / Structure">
+            <option>HTF Swing High</option>
+            <option>HTF Swing Low</option>
+            <option>Old High</option>
+            <option>Old Low</option>
+            <option>HTF Order Block High</option>
+            <option>HTF Order Block Low</option>
           </optgroup>
         </select>
       </div>
@@ -2064,7 +2102,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="grid-3 gap">
       <div><label>Date</label><input type="date" id="m-date"></div>
       <div><label>Direction</label><select id="m-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Midnight Open</option><option>EQH</option><option>EQL</option><option>HTF Swing Point</option></select></div>
+      <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><optgroup label="Daily / Weekly / Monthly / Yearly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Yearly High</option><option>Yearly Low</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option><option>Yearly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="Equal levels"><option>EQH</option><option>EQL</option><option>Relative EQH</option><option>Relative EQL</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
     </div>
     <div class="grid-2 gap">
       <div><label>Why skipped?</label><select id="m-reason">
@@ -2099,15 +2137,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <option>Missed the retrace — wasn't watching</option>
           <option>Retrace happened too fast</option>
         </optgroup>
-        <optgroup label="1M Confirmation">
-          <option>No 1M candle close — still waiting</option>
-          <option>No 1M mini trend (no HH + HL)</option>
-          <option>No clear higher low to mark</option>
-          <option>BOS candle was going away from draw</option>
-          <option>BOS was a wick not a close</option>
-          <option>1M structure broke before confirmation</option>
-          <option>Confirmation candle was too large — bad fill</option>
-          <option>Missed the 1M entry — came back too late</option>
+        <optgroup label="IFVG Entry">
+          <option>No IFVG formed — 1M never violated the 5M FVG</option>
+          <option>Entered before IFVG formed — anticipated it</option>
+          <option>Entered on IFVG candle open not close</option>
+          <option>1M closed back below IFVG — entry was invalid</option>
+          <option>Wrong execution mode — strong momentum but waited for retest</option>
+          <option>Wrong execution mode — slow momentum but entered on candle close</option>
+          <option>IFVG zone too wide — bad risk structure</option>
+          <option>Held after 1M close below IFVG — broke hard rule</option>
         </optgroup>
         <optgroup label="Session / Timing">
           <option>After 16:00 UK cutoff</option>
@@ -2392,7 +2430,10 @@ const MISTAKES=[
     'Target was inside a major opposing HTF level',
     'Draw was too close — not enough RR potential',
     'Draw was a weak swing — not a clean level',
-    'Didn\'t account for opposing draw in the way'
+    'Didn\'t account for opposing draw in the way',
+    'Used C tier draw alone — no S/A confluence',
+    'Slow momentum but aimed for full S/A level — should have taken nearest minor liquidity',
+    'Draw tier was overrated — wasn\'t truly equal highs/lows'
   ]},
   {cat:'HTF Context',items:[
     'HTF structure misread — was actually bearish',
@@ -2409,16 +2450,17 @@ const MISTAKES=[
   {cat:'Displacement',items:[
     'No displacement at all — entered on chop',
     'Displacement weaker than the retrace',
-    'No clear BOS on displacement candle',
+    'No clear structure break on displacement',
     'Displacement was a single candle wick — not a real move',
     'Displacement happened but no 5M FVG was left behind',
     '5M FVG formed in chop, not from clean displacement',
-    'FVG was too large — low quality imbalance',
-    'Displacement was on wrong timeframe (1M not 15M)',
-    'Multiple overlapping FVGs — messy area',
+    'Multiple messy FVGs left behind — no singular obvious gap',
+    'Two adjacent FVGs were not combined — picked the wrong one',
+    'FVG not visible from far left — too small / hidden',
     'Gap was partially filled before entry — invalidated',
     'Displacement was against HTF trend',
-    'Retrace already came before I noticed the gap'
+    'Retrace already came before I noticed the gap',
+    'Displacement was on wrong timeframe — not 15M'
   ]},
   {cat:'Retrace',items:[
     'Violent / aggressive retrace — should have skipped',
@@ -2432,24 +2474,24 @@ const MISTAKES=[
     'Multiple retrace attempts before entry — structure weakened',
     'Gap was hit and closed — no longer valid'
   ]},
-  {cat:'1M Confirmation',items:[
-    'No 1M candle close confirmation — entered on open',
-    'Entered on a wick, not a candle body close',
-    'No 1M mini trend (no HH + HL structure)',
-    'BOS candle was driving away from draw',
-    'BOS was a wick, not a close',
-    '1M BOS candle was too large — terrible entry price',
-    'Entered on momentum, not on structure break',
-    'Mistook a liquidity grab for confirmation',
-    'No higher low to reference — structure unclear',
-    'Confirmation happened but I entered late — chased it',
-    '1M structure broke below last HL before entry',
-    'Multiple 1M BOS attempts — first was a fake'
+  {cat:'IFVG Entry',items:[
+    'No IFVG formed — 1M never violated the 5M FVG',
+    'Entered before IFVG formed — anticipated instead of waited',
+    'Entered on IFVG candle open, not candle close',
+    '1M closed back below IFVG — entry was invalid, should have exited',
+    'IFVG formed on slow momentum but entered as if strong — wrong execution',
+    'Strong momentum — should have entered on IFVG close but waited for retest instead',
+    'Waited for retest but price never came back — missed valid entry',
+    'IFVG formed inside chop, not from clean displacement',
+    'IFVG zone was too wide — poor risk-to-structure',
+    'Stop placed at IFVG instead of swing extreme',
+    'Multiple IFVG attempts in same gap — should have invalidated',
+    'Held after 1M close back below IFVG — broke hard rule'
   ]},
   {cat:'Stop / Trade Management',items:[
     'Stop was unprotected — no structure behind it',
     'Stop too tight — wicked out then moved',
-    'Didn\'t move to break even after 1:1',
+    'Didn\'t move to break even at first internal swing',
     'Moved stop further away mid-trade',
     'Moved BE back to entry after being ahead',
     'Closed early — target not reached',
@@ -2459,7 +2501,12 @@ const MISTAKES=[
     'Scaled out too early — missed the full move',
     'Manually closed on drawdown out of fear',
     'Moved TP closer because price was slow',
-    'Widened risk without adjusting size'
+    'Widened risk without adjusting size',
+    'Price stalled at internal swing — should have accepted BE, didn\'t',
+    'After 4PM — didn\'t trail SL to low of each closed 5M candle',
+    'Held past 4:30PM hard close',
+    'Price hit target then chopped — didn\'t close immediately',
+    'Slow momentum trade — held for full target instead of nearest liquidity'
   ]},
   {cat:'Psychology',items:[
     'Forced the setup — no valid entry',
@@ -6041,7 +6088,7 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Bias</label><select id="e-bias"><option value="">—</option><option>Bullish</option><option>Bearish</option><option>Chop</option></select></div>
       <div><label>Direction</label><select id="e-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>HTF draw</label><select id="e-draw"><option value="">—</option><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Midnight Open</option><option>EQH</option><option>EQL</option><option>HTF Swing Point</option></select></div>
+      <div><label>HTF draw</label><select id="e-draw"><option value="">—</option><optgroup label="Daily / Weekly / Monthly / Yearly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Yearly High</option><option>Yearly Low</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option><option>Yearly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="Equal levels"><option>EQH</option><option>EQL</option><option>Relative EQH</option><option>Relative EQL</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
 <div>
