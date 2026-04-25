@@ -1599,23 +1599,34 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>HTF draw targeted</label>
         <select id="f-draw">
           <option value="">Select draw</option>
-          <optgroup label="Daily / Weekly / Monthly / Yearly">
+          <optgroup label="All Time / Yearly">
+            <option>All Time High (ATH)</option><option>All Time Low (ATL)</option>
+            <option>Yearly High</option><option>Yearly Low</option>
+            <option>Yearly Open</option>
+          </optgroup>
+          <optgroup label="Daily / Weekly / Monthly">
             <option>PDH</option><option>PDL</option>
             <option>CDH</option><option>CDL</option>
             <option>PWH</option><option>PWL</option>
             <option>PMH</option><option>PML</option>
-            <option>Yearly High</option><option>Yearly Low</option>
           </optgroup>
           <optgroup label="Opening Prices">
             <option>Daily Open (Midnight)</option>
             <option>Weekly Open</option>
             <option>Monthly Open</option>
-            <option>Yearly Open</option>
           </optgroup>
           <optgroup label="Opening Gaps">
             <option>NDOG High</option><option>NDOG Low</option>
             <option>NWOG High</option><option>NWOG Low</option>
             <option>NMOG High</option><option>NMOG Low</option>
+          </optgroup>
+          <optgroup label="Liquidity">
+            <option>BSL (Buyside Liquidity)</option>
+            <option>SSL (Sellside Liquidity)</option>
+            <option>EQH (Equal Highs)</option><option>EQL (Equal Lows)</option>
+            <option>Relative EQH</option><option>Relative EQL</option>
+            <option>Stops above swing high</option>
+            <option>Stops below swing low</option>
           </optgroup>
           <optgroup label="Session levels">
             <option>Asia High</option><option>Asia Low</option>
@@ -1628,10 +1639,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
             <option>8:30 Data Wick Low</option>
             <option>10:00 Data Wick High</option>
             <option>10:00 Data Wick Low</option>
-          </optgroup>
-          <optgroup label="Equal levels">
-            <option>EQH</option><option>EQL</option>
-            <option>Relative EQH</option><option>Relative EQL</option>
           </optgroup>
           <optgroup label="HTF FVGs / Inefficiencies">
             <option>Daily FVG</option>
@@ -1657,7 +1664,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           </optgroup>
         </select>
       </div>
-      <div><label>FVG entry zone <span style="color:#6b7280;font-weight:400;font-size:11px">— where in the gap did price tap</span></label>
+      <div><label>FVG entry zone</label>
         <select id="f-fvg-zone">
           <option value="">—</option>
           <option>Top of gap</option>
@@ -2102,7 +2109,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="grid-3 gap">
       <div><label>Date</label><input type="date" id="m-date"></div>
       <div><label>Direction</label><select id="m-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><optgroup label="Daily / Weekly / Monthly / Yearly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Yearly High</option><option>Yearly Low</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option><option>Yearly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="Equal levels"><option>EQH</option><option>EQL</option><option>Relative EQH</option><option>Relative EQL</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
+      <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><optgroup label="All Time / Yearly"><option>All Time High (ATH)</option><option>All Time Low (ATL)</option><option>Yearly High</option><option>Yearly Low</option><option>Yearly Open</option></optgroup><optgroup label="Daily / Weekly / Monthly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Liquidity"><option>BSL (Buyside Liquidity)</option><option>SSL (Sellside Liquidity)</option><option>EQH (Equal Highs)</option><option>EQL (Equal Lows)</option><option>Relative EQH</option><option>Relative EQL</option><option>Stops above swing high</option><option>Stops below swing low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
     </div>
     <div class="grid-2 gap">
       <div><label>Why skipped?</label><select id="m-reason">
@@ -6088,7 +6095,7 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Bias</label><select id="e-bias"><option value="">—</option><option>Bullish</option><option>Bearish</option><option>Chop</option></select></div>
       <div><label>Direction</label><select id="e-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>HTF draw</label><select id="e-draw"><option value="">—</option><optgroup label="Daily / Weekly / Monthly / Yearly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Yearly High</option><option>Yearly Low</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option><option>Yearly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="Equal levels"><option>EQH</option><option>EQL</option><option>Relative EQH</option><option>Relative EQL</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
+      <div><label>HTF draw</label><select id="e-draw"><option value="">—</option><optgroup label="All Time / Yearly"><option>All Time High (ATH)</option><option>All Time Low (ATL)</option><option>Yearly High</option><option>Yearly Low</option><option>Yearly Open</option></optgroup><optgroup label="Daily / Weekly / Monthly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Liquidity"><option>BSL (Buyside Liquidity)</option><option>SSL (Sellside Liquidity)</option><option>EQH (Equal Highs)</option><option>EQL (Equal Lows)</option><option>Relative EQH</option><option>Relative EQL</option><option>Stops above swing high</option><option>Stops below swing low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
 <div>
