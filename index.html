@@ -1558,7 +1558,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
       <div class="section-label" style="margin-bottom:0">Model checklist</div>
-      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span><span class="collapse-icon">▼</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button id="check-all-btn" onclick="event.stopPropagation();toggleCheckAll()" style="font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.12);background:none;color:#6b7280;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='#6b7280';this.style.borderColor='rgba(255,255,255,0.12)'">Check all</button>
+        <span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span>
+        <span class="collapse-icon">▼</span>
+      </div>
     </div>
     <div id="checklist-body" class="collapsible-body">
     <div class="check-group-title">Can I Trade?</div>
@@ -3114,10 +3118,20 @@ function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=
 
 // ── Checklist ──
 function toggle(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateChecks();}}
+function toggleCheckAll(){
+  const boxes=[...document.querySelectorAll('.check-item input[type=checkbox]')];
+  const allChecked=boxes.every(b=>b.checked);
+  boxes.forEach(b=>b.checked=!allChecked);
+  const btn=document.getElementById('check-all-btn');
+  if(btn)btn.textContent=allChecked?'Check all':'Uncheck all';
+  updateChecks();
+}
 function updateChecks(){
   const boxes=[...document.querySelectorAll('.check-item input[type=checkbox]')];
   const passed=boxes.filter(b=>b.checked).length;
   document.getElementById('check-count').textContent=passed+' / '+boxes.length;
+  const btn=document.getElementById('check-all-btn');
+  if(btn)btn.textContent=passed===boxes.length?'Uncheck all':'Check all';
   const gate=document.getElementById('gate');
   if(passed===boxes.length){gate.className='gate pass';gate.textContent='All checks passed — valid setup';}
   else if(passed===0){gate.className='gate';gate.textContent='Complete checklist to see verdict';}
@@ -3427,7 +3441,7 @@ function openEdit(id){
   const eFvg=document.getElementById('e-fvg-zone');if(eFvg)eFvg.value=t.fvgZone||'';
   const eEmP=document.getElementById('e-emotion-post');if(eEmP)eEmP.value=t.emotionPost||'';
   eDiscRating=t.discRating||0;
-  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#10b981':'rgba(255,255,255,0.07)';});
+  eUpdateDiscDisplay();
   const esSec=document.getElementById('e-ss-section');
   if(esSec)esSec.style.display=currentProfile==='backtesting'?'none':'grid';
   document.getElementById('edit-modal').style.display='block';
@@ -3441,8 +3455,15 @@ function closeEdit(){
 }
 
 function eRateStar(n){
-  eDiscRating=n;
-  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<n?'#10b981':'rgba(255,255,255,0.07)';});
+  if(eDiscRating===n){eDiscRating=0;}else{eDiscRating=n;}
+  const labels=['','1★ — poor discipline','2★ — below average','3★ — decent','4★ — good discipline','5★ — perfect execution'];
+  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#10b981':'#d1d5db';});
+  const lbl=document.getElementById('e-disc-label');if(lbl)lbl.textContent=eDiscRating?labels[eDiscRating]:'not rated';
+}
+function eUpdateDiscDisplay(){
+  const labels=['','1★ — poor discipline','2★ — below average','3★ — decent','4★ — good discipline','5★ — perfect execution'];
+  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#10b981':'#d1d5db';});
+  const lbl=document.getElementById('e-disc-label');if(lbl)lbl.textContent=eDiscRating?labels[eDiscRating]:'not rated';
 }
 
 function saveEdit(){
@@ -6122,13 +6143,14 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       <div><label>Emotional state <span style="color:#6b7280;font-weight:400;font-size:11px">— before entry</span></label><select id="e-emotion"><option value="">—</option><optgroup label="Positive / ready"><option>Neutral ✓</option><option>Patient / waiting ✓</option><option>Calm and focused ✓</option><option>Confident — setup was clear ✓</option><option>In flow state ✓</option></optgroup><optgroup label="Negative / off"><option>Anxious / hesitant</option><option>FOMO / chasing</option><option>Impatient — forced entry</option><option>Revenge trading after a loss</option><option>Overconfident / ego</option><option>Frustrated — bad day</option><option>Distracted / not focused</option><option>Tired / low energy</option><option>Stressed about money</option><option>Doubting the model</option><option>Bored — needed something to happen</option><option>Pressured — felt I had to trade</option><option>Detached / going through the motions</option></optgroup></select></div>
     </div>
     <div style="margin-bottom:12px">
-      <label>Discipline</label>
-      <div style="display:flex;gap:4px;margin-top:4px" id="e-stars">
-        <span class="star" onclick="eRateStar(1)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(2)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(3)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(4)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(5)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
+      <label>Discipline <span style="color:#6b7280;font-weight:400;font-size:11px">— followed model?</span></label>
+      <div style="display:flex;gap:4px;margin-top:6px;align-items:center" id="e-stars">
+        <span class="star" data-n="1" onclick="eRateStar(1)" style="font-size:22px;cursor:pointer;color:#d1d5db;line-height:1;transition:color .15s">★</span>
+        <span class="star" data-n="2" onclick="eRateStar(2)" style="font-size:22px;cursor:pointer;color:#d1d5db;line-height:1;transition:color .15s">★</span>
+        <span class="star" data-n="3" onclick="eRateStar(3)" style="font-size:22px;cursor:pointer;color:#d1d5db;line-height:1;transition:color .15s">★</span>
+        <span class="star" data-n="4" onclick="eRateStar(4)" style="font-size:22px;cursor:pointer;color:#d1d5db;line-height:1;transition:color .15s">★</span>
+        <span class="star" data-n="5" onclick="eRateStar(5)" style="font-size:22px;cursor:pointer;color:#d1d5db;line-height:1;transition:color .15s">★</span>
+        <span id="e-disc-label" style="font-size:13px;color:#6b7280;margin-left:8px"></span>
       </div>
     </div>
 
