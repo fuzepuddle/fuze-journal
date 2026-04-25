@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  .qotd-log-card{border-left:3px solid var(--accent) !important}A-Z
+  .qotd-log-card{border-left:3px solid var(--accent) !important}
   :root {
     --accent: #10b981;
     --accent-rgb: 16,185,129;
@@ -2283,6 +2283,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         </select>
       </div>
     </div>
+    <div class="grid-2 gap">
+      <div><label>Consistency rule <span style="color:#9ca3af;font-weight:400;font-size:13px">— max % any single day of total profit</span></label><input type="number" id="p-consist-rule" placeholder="e.g. 30" min="1" max="100"></div>
+      <div><label>Min trading days <span style="color:#9ca3af;font-weight:400;font-size:13px">— required by firm</span></label><input type="number" id="p-min-days" placeholder="e.g. 4" min="1"></div>
+    </div>
 
   </div>
 
@@ -2327,9 +2331,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Consistency row -->
     <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.07)">
       <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px">CONSISTENCY</div>
-        <div style="font-size:22px;font-weight:800" id="prop-consist-pct" style="color:#10b981">—</div>
-        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-consist-sub">win rate</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px">CONSISTENCY RULE</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+          <div style="font-size:22px;font-weight:800" id="prop-consist-pct">—</div>
+          <div style="font-size:12px;color:#6b7280" id="prop-consist-limit"></div>
+        </div>
+        <div style="font-size:12px;color:#6b7280" id="prop-consist-sub">best day / total profit</div>
+        <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+          <div id="prop-consist-bar" style="height:100%;border-radius:99px;width:0%;transition:width .5s ease,background .3s"></div>
+        </div>
       </div>
       <!-- Balance progress bar (MLL → Target) -->
       <div style="padding:16px 20px;display:flex;flex-direction:column;justify-content:center">
@@ -2356,9 +2366,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Warnings -->
     <div id="prop-warn" class="warn-bar" style="margin:0;border-radius:0;display:none"></div>
     <div id="prop-danger" class="danger-bar" style="margin:0;border-radius:0;display:none"></div>
+    <div id="prop-consist-warn" style="margin:0;border-radius:0;display:none;padding:10px 20px;font-size:13px;font-weight:500;background:rgba(245,158,11,0.1);border-top:1px solid rgba(245,158,11,0.2);color:#f59e0b"></div>
 
-    <!-- Bottom stats: P&L | Today | DD Buffer | Daily Limit -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:0">
+    <!-- Bottom stats: P&L | Today | DD Buffer | Daily Limit | Min Days -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;padding:0">
       <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
         <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Live P&amp;L</div>
         <div style="font-size:15px;font-weight:700" id="prop-total-pnl">$0</div>
@@ -2371,9 +2382,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">DD Buffer</div>
         <div style="font-size:15px;font-weight:700" id="prop-wins">—</div>
       </div>
-      <div style="padding:14px 18px">
+      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
         <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Daily Left</div>
         <div style="font-size:15px;font-weight:700" id="prop-losses">—</div>
+      </div>
+      <div id="prop-min-days-cell" style="padding:14px 18px;display:none">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Min Days</div>
+        <div style="font-size:15px;font-weight:700" id="prop-min-days-val">—</div>
+        <div style="font-size:11px;color:#6b7280;margin-top:2px" id="prop-min-days-sub"></div>
       </div>
     </div>
 
@@ -2887,6 +2903,8 @@ function savePropSettings(){
     maxdd:parseFloat(document.getElementById('p-maxdd').value)||0,
     ddl:parseFloat(document.getElementById('p-ddl').value)||0,
     ddtype:document.getElementById('p-ddtype').value,
+    consistRule:parseFloat(document.getElementById('p-consist-rule').value)||0,
+    minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
   saveProp();renderProp();
 }
@@ -2897,6 +2915,8 @@ function loadPropSettings(){
   if(propSettings.maxdd)document.getElementById('p-maxdd').value=propSettings.maxdd;
   if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
   if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
+  if(propSettings.consistRule)document.getElementById('p-consist-rule').value=propSettings.consistRule;
+  if(propSettings.minDays)document.getElementById('p-min-days').value=propSettings.minDays;
 }
 function renderProp(){
   const tracker=document.getElementById('prop-tracker');
@@ -2947,16 +2967,73 @@ function renderProp(){
   const daysEl=document.getElementById('prop-days-display');
   if(daysEl){const uniqueDays=new Set(liveTrades.map(t=>t.date)).size;daysEl.textContent=uniqueDays;}
 
-  // ── Consistency (win rate) ──
-  const totalTrades=liveWins+liveLosses;
-  const winRate=totalTrades>0?Math.round(liveWins/totalTrades*100):0;
+  // ── Consistency rule (best day % of total profit) ──
+  const consistRule=propSettings.consistRule||0;
   const consistEl=document.getElementById('prop-consist-pct');
-  if(consistEl){
-    consistEl.textContent=totalTrades>0?winRate+'%':'—';
-    consistEl.style.color=winRate>=60?'#10b981':winRate>=45?'#f59e0b':'#ef4444';
-  }
+  const consistLimitEl=document.getElementById('prop-consist-limit');
   const consistSubEl=document.getElementById('prop-consist-sub');
-  if(consistSubEl) consistSubEl.textContent=totalTrades>0?liveWins+'W / '+liveLosses+'L':'no trades yet';
+  const consistBarEl=document.getElementById('prop-consist-bar');
+  // Build daily P&L map
+  const dailyPnl={};
+  liveTrades.forEach(t=>{if(t.date&&t.pnl!=null){dailyPnl[t.date]=(dailyPnl[t.date]||0)+(t.pnl||0);}});
+  const dailyValues=Object.values(dailyPnl);
+  const bestDayPnl=dailyValues.length?Math.max(...dailyValues.map(v=>Math.abs(v))):0;
+  const bestDayActual=dailyValues.length?dailyValues.reduce((a,b)=>Math.abs(b)>Math.abs(a)?b:a,0):0;
+  const totalPnlPositive=Math.max(0,totalPnl);
+  const bestDayPct=totalPnlPositive>0?Math.round(bestDayActual/totalPnlPositive*100):0;
+  if(consistEl){
+    if(dailyValues.length===0){consistEl.textContent='—';consistEl.style.color='#6b7280';}
+    else if(consistRule>0){
+      const over=bestDayPct>consistRule;
+      consistEl.textContent=bestDayPct+'%';
+      consistEl.style.color=over?'#ef4444':bestDayPct>consistRule*0.8?'#f59e0b':'#10b981';
+    } else {
+      consistEl.textContent=bestDayPct>0?bestDayPct+'%':'—';
+      consistEl.style.color='#e5e7eb';
+    }
+  }
+  if(consistLimitEl) consistLimitEl.textContent=consistRule>0?'/ '+consistRule+'% limit':'';
+  if(consistSubEl) consistSubEl.textContent=bestDayActual>0?'best day +$'+bestDayActual.toFixed(0):'best day / total profit';
+  if(consistBarEl){
+    const barPct=consistRule>0?Math.min(100,(bestDayPct/consistRule)*100):Math.min(100,bestDayPct);
+    consistBarEl.style.width=barPct+'%';
+    consistBarEl.style.background=barPct>=100?'#ef4444':barPct>=80?'#f59e0b':'#10b981';
+  }
+
+  // ── Consistency warn banner ──
+  const consistWarnEl=document.getElementById('prop-consist-warn');
+  if(consistWarnEl){
+    if(consistRule>0&&bestDayPct>consistRule&&totalPnlPositive>0){
+      consistWarnEl.style.display='block';
+      consistWarnEl.textContent='⚠ Consistency rule violated — best day is '+bestDayPct+'% of total profit (limit: '+consistRule+'%). Some firms will reject the payout.';
+    } else if(consistRule>0&&bestDayPct>consistRule*0.8&&totalPnlPositive>0){
+      consistWarnEl.style.display='block';
+      consistWarnEl.style.background='rgba(245,158,11,0.07)';
+      consistWarnEl.style.borderTopColor='rgba(245,158,11,0.15)';
+      consistWarnEl.textContent='⚠ Approaching consistency limit — best day is '+bestDayPct+'% of total profit (limit: '+consistRule+'%). Be careful not to let one day dominate.';
+    } else {
+      consistWarnEl.style.display='none';
+    }
+  }
+
+  // ── Min trading days ──
+  const minDaysRequired=propSettings.minDays||0;
+  const uniqueDays=new Set(liveTrades.map(t=>t.date)).size;
+  const minDaysCell=document.getElementById('prop-min-days-cell');
+  const minDaysValEl=document.getElementById('prop-min-days-val');
+  const minDaysSubEl=document.getElementById('prop-min-days-sub');
+  if(minDaysCell){
+    if(minDaysRequired>0){
+      minDaysCell.style.display='block';
+      if(minDaysValEl){
+        minDaysValEl.textContent=uniqueDays+' / '+minDaysRequired;
+        minDaysValEl.style.color=uniqueDays>=minDaysRequired?'#10b981':'#f59e0b';
+      }
+      if(minDaysSubEl) minDaysSubEl.textContent=uniqueDays>=minDaysRequired?'requirement met':(minDaysRequired-uniqueDays)+' more needed';
+    } else {
+      minDaysCell.style.display='none';
+    }
+  }
 
   // ── Balance progress bar (MLL → TARGET) ──
   // range: mllFloor to (account + target)
@@ -6645,6 +6722,10 @@ document.addEventListener('click',function(e){
   #page-prop div[style*="repeat(4,1fr)"],
   #page-prop .grid-4 {
     grid-template-columns: 1fr 1fr !important;
+  }
+  /* 5-col bottom stats row */
+  #page-prop div[style*="1fr 1fr 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr 1fr !important;
   }
 
   /* ── 14. WEEKLY REVIEW — grid ── */
