@@ -2284,52 +2284,108 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   </div>
 
-  <div class="card" id="prop-tracker" style="display:none">
-    <div class="flex-between" style="margin-bottom:14px">
-      <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
-      <span style="font-size:14px;color:#9ca3af" id="prop-account-lbl"></span>
+  <!-- LucidFlex-style tracker card -->
+  <div id="prop-tracker" style="display:none;border-radius:16px;background:#111827;border:1px solid rgba(255,255,255,0.08);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);font-family:'Plus Jakarta Sans',sans-serif">
+
+    <!-- Header bar -->
+    <div style="padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,0.07)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span id="prop-firm-name" style="font-size:17px;font-weight:700;color:#e5e7eb;letter-spacing:.01em">Prop Firm</span>
+            <span id="prop-phase-badge" style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.35);letter-spacing:.05em">EVAL</span>
+          </div>
+          <div id="prop-account-id" style="font-size:12px;color:#6b7280;margin-top:4px;font-family:'JetBrains Mono',monospace"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="prop-status-dot" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.3)">● Active</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Profit progress -->
-    <div class="gap">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Profit target</span>
-        <span style="font-size:14px;font-weight:500" id="prop-profit-lbl">$0 / $0</span>
+    <!-- Top metrics: Balance | Profit Target | Trading Days -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.07)">
+      <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">ACCOUNT BALANCE</div>
+        <div style="font-size:18px;font-weight:700;color:#e5e7eb" id="prop-balance-display">$0</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-mll-display">/ $0</div>
       </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-profit-bar" style="width:0%;background:#3a6e3a"></div></div>
-      <div class="hint" id="prop-profit-pct">0% complete</div>
+      <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">PROFIT TARGET</div>
+        <div style="font-size:18px;font-weight:700;color:#10b981" id="prop-profit-display">$0</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-profit-target-display">/ $0</div>
+      </div>
+      <div style="padding:16px 20px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">TRADING DAYS</div>
+        <div style="font-size:18px;font-weight:700;color:#10b981" id="prop-days-display">0</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px">days logged</div>
+      </div>
     </div>
 
-    <!-- Drawdown -->
-    <div class="gap">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Max drawdown used</span>
-        <span style="font-size:14px;font-weight:500" id="prop-dd-lbl">$0 / $0</span>
+    <!-- Consistency row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.07)">
+      <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px">CONSISTENCY</div>
+        <div style="font-size:22px;font-weight:800" id="prop-consist-pct" style="color:#10b981">—</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-consist-sub">win rate</div>
       </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-dd-bar" style="width:0%;background:#3a6e3a"></div></div>
-      <div class="hint" id="prop-dd-pct">0% of max drawdown used</div>
+      <!-- Balance progress bar (MLL → Target) -->
+      <div style="padding:16px 20px;display:flex;flex-direction:column;justify-content:center">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <div>
+            <div style="font-size:10px;color:#6b7280;font-weight:600;letter-spacing:.07em">MLL</div>
+            <div style="font-size:12px;color:#9ca3af;font-weight:600" id="prop-bar-mll">$0</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:#6b7280;letter-spacing:.07em;align-self:flex-end;padding-bottom:1px">START ▼</div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:#10b981;font-weight:600;letter-spacing:.07em">TARGET</div>
+            <div style="font-size:12px;color:#10b981;font-weight:600" id="prop-bar-target">$0</div>
+          </div>
+        </div>
+        <!-- Track -->
+        <div style="position:relative;height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:visible">
+          <div id="prop-balance-bar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#059669,#10b981);transition:width .6s ease;width:0%"></div>
+          <!-- start marker -->
+          <div id="prop-start-marker" style="position:absolute;top:-4px;width:3px;height:16px;background:#fff;border-radius:2px;opacity:0.5"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Daily loss -->
-    <div class="gap">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Today's P&amp;L vs daily limit</span>
-        <span style="font-size:14px;font-weight:500" id="prop-ddl-lbl">$0 / $0</span>
+    <!-- Warnings -->
+    <div id="prop-warn" class="warn-bar" style="margin:0;border-radius:0;display:none"></div>
+    <div id="prop-danger" class="danger-bar" style="margin:0;border-radius:0;display:none"></div>
+
+    <!-- Bottom stats: P&L | Today | DD Buffer | Daily Limit -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:0">
+      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Live P&amp;L</div>
+        <div style="font-size:15px;font-weight:700" id="prop-total-pnl">$0</div>
       </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-ddl-bar" style="width:0%;background:#3a6e3a"></div></div>
+      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Today</div>
+        <div style="font-size:15px;font-weight:700" id="prop-today-pnl">$0</div>
+      </div>
+      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">DD Buffer</div>
+        <div style="font-size:15px;font-weight:700" id="prop-wins">—</div>
+      </div>
+      <div style="padding:14px 18px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Daily Left</div>
+        <div style="font-size:15px;font-weight:700" id="prop-losses">—</div>
+      </div>
     </div>
 
-    <div id="prop-warn" class="warn-bar"></div>
-    <div id="prop-danger" class="danger-bar"></div>
-
-    <!-- Stats row -->
-    <div style="border-top:1px solid rgba(255,255,255,0.07);margin-top:16px;padding-top:14px">
-      <div class="grid-4">
-        <div class="metric-card"><div class="metric-lbl">Live P&amp;L</div><div class="metric-val" id="prop-total-pnl">$0</div></div>
-        <div class="metric-card"><div class="metric-lbl">Today's P&amp;L</div><div class="metric-val" id="prop-today-pnl">$0</div></div>
-        <div class="metric-card"><div class="metric-lbl">Live wins</div><div class="metric-val" id="prop-wins">0</div></div>
-        <div class="metric-card"><div class="metric-lbl">Live losses</div><div class="metric-val" id="prop-losses">0</div></div>
-      </div>
+    <!-- Hidden elements kept for JS compat (not visible) -->
+    <div style="display:none">
+      <span id="prop-account-lbl"></span>
+      <span id="prop-profit-lbl"></span>
+      <div id="prop-profit-bar"></div>
+      <div id="prop-profit-pct"></div>
+      <span id="prop-dd-lbl"></span>
+      <div id="prop-dd-bar"></div>
+      <div id="prop-dd-pct"></div>
+      <span id="prop-ddl-lbl"></span>
+      <div id="prop-ddl-bar"></div>
     </div>
   </div>
 
@@ -2846,8 +2902,22 @@ function renderProp(){
   if(!propSettings.target){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
   if(tracker)tracker.style.display='block';
   if(empty)empty.style.display='none';
-  document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop firm tracker';
-  document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+propSettings.account.toLocaleString()+' account':'';
+  // ── Firm name & badge ──
+  document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop Firm';
+  const phaseBadge=document.getElementById('prop-phase-badge');
+  if(phaseBadge){
+    const ph=currentProfile==='funded'?'FUNDED':currentProfile==='demo'?'DEMO':'EVAL';
+    phaseBadge.textContent=ph;
+    phaseBadge.style.color=currentProfile==='funded'?'#f59e0b':currentProfile==='demo'?'#6b7280':'#10b981';
+    phaseBadge.style.background=currentProfile==='funded'?'rgba(245,158,11,0.13)':currentProfile==='demo'?'rgba(107,114,128,0.13)':'rgba(16,185,129,0.15)';
+    phaseBadge.style.borderColor=currentProfile==='funded'?'rgba(245,158,11,0.35)':currentProfile==='demo'?'rgba(107,114,128,0.3)':'rgba(16,185,129,0.35)';
+  }
+  // Account ID line
+  const accIdEl=document.getElementById('prop-account-id');
+  if(accIdEl) accIdEl.textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
+  // Legacy compat
+  document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
+
   const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
   const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const account=propSettings.account||0;
@@ -2860,32 +2930,83 @@ function renderProp(){
   const todayLoss=todayPnl<0?Math.abs(todayPnl):0;
   const liveWins=liveTrades.filter(t=>t.pnl>0).length;
   const liveLosses=liveTrades.filter(t=>t.pnl<0).length;
-  // Profit bar
+
+  // ── Top metrics ──
+  const balEl=document.getElementById('prop-balance-display');
+  if(balEl){balEl.textContent='$'+currentBalance.toLocaleString();balEl.style.color=totalPnl>=0?'#e5e7eb':'#ef4444';}
+  const mllEl=document.getElementById('prop-mll-display');
+  if(mllEl) mllEl.textContent='/ $'+mllFloor.toLocaleString();
+  const profitDispEl=document.getElementById('prop-profit-display');
+  if(profitDispEl){profitDispEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();profitDispEl.style.color=totalPnl>=0?'#10b981':'#ef4444';}
+  const profitTargDispEl=document.getElementById('prop-profit-target-display');
+  if(profitTargDispEl) profitTargDispEl.textContent='/ $'+(propSettings.target||0).toLocaleString();
+
+  // Trading days (unique dates with trades)
+  const daysEl=document.getElementById('prop-days-display');
+  if(daysEl){const uniqueDays=new Set(liveTrades.map(t=>t.date)).size;daysEl.textContent=uniqueDays;}
+
+  // ── Consistency (win rate) ──
+  const totalTrades=liveWins+liveLosses;
+  const winRate=totalTrades>0?Math.round(liveWins/totalTrades*100):0;
+  const consistEl=document.getElementById('prop-consist-pct');
+  if(consistEl){
+    consistEl.textContent=totalTrades>0?winRate+'%':'—';
+    consistEl.style.color=winRate>=60?'#10b981':winRate>=45?'#f59e0b':'#ef4444';
+  }
+  const consistSubEl=document.getElementById('prop-consist-sub');
+  if(consistSubEl) consistSubEl.textContent=totalTrades>0?liveWins+'W / '+liveLosses+'L':'no trades yet';
+
+  // ── Balance progress bar (MLL → TARGET) ──
+  // range: mllFloor to (account + target)
+  const targetBalance=account+(propSettings.target||0);
+  const barMllEl=document.getElementById('prop-bar-mll');
+  const barTargEl=document.getElementById('prop-bar-target');
+  if(barMllEl) barMllEl.textContent='$'+mllFloor.toLocaleString();
+  if(barTargEl) barTargEl.textContent='$'+targetBalance.toLocaleString();
+  const totalRange=targetBalance-mllFloor;
+  const balancePct=totalRange>0?Math.max(0,Math.min(100,(currentBalance-mllFloor)/totalRange*100)):50;
+  const startPct=totalRange>0?Math.max(0,Math.min(100,(account-mllFloor)/totalRange*100)):50;
+  const barEl=document.getElementById('prop-balance-bar');
+  if(barEl){
+    barEl.style.width=balancePct+'%';
+    barEl.style.background=totalPnl<0?'linear-gradient(90deg,#dc2626,#ef4444)':'linear-gradient(90deg,#059669,#10b981)';
+  }
+  const startMarker=document.getElementById('prop-start-marker');
+  if(startMarker) startMarker.style.left=startPct+'%';
+
+  // ── Legacy hidden elements (keep JS compat) ──
   const profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
-  document.getElementById('prop-profit-lbl').textContent='$'+totalPnl.toLocaleString()+' / $'+propSettings.target.toLocaleString();
+  document.getElementById('prop-profit-lbl').textContent='$'+totalPnl.toLocaleString()+' / $'+(propSettings.target||0).toLocaleString();
   document.getElementById('prop-profit-bar').style.width=profitPct+'%';
-  document.getElementById('prop-profit-bar').style.background=totalPnl<0?'#6e2a2a':profitPct>80?'#5aae5a':'#3a6e3a';
   document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
-  // Drawdown bar
   const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
-  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString()+' · MLL floor: $'+mllFloor.toLocaleString();
+  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2);
   document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt?'#ef4444':'#3a6e3a';
-  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining before MLL floor';
-  // DDL bar
+  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining';
   const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
-  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / -$'+propSettings.ddl.toLocaleString()+' limit';
+  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+'$'+todayPnl.toLocaleString();
   document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
-  document.getElementById('prop-ddl-bar').style.background=todayPnl<0?'#ef4444':'#3a6e3a';
-  // Metric cards
+
+  // ── Bottom row: P&L | Today | DD Buffer | Daily left ──
   const tpEl=document.getElementById('prop-total-pnl');
   tpEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();
   tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';
   const tdEl=document.getElementById('prop-today-pnl');
   tdEl.textContent=(todayPnl>=0?'+$':'-$')+Math.abs(todayPnl).toLocaleString();
   tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';
-  document.getElementById('prop-wins').textContent=liveWins;
-  document.getElementById('prop-losses').textContent=liveLosses;
+  // DD Buffer (repurpose prop-wins slot)
+  const ddBufEl=document.getElementById('prop-wins');
+  ddBufEl.textContent='$'+bufferRemaining.toFixed(0);
+  ddBufEl.style.color=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#10b981';
+  // Daily left (repurpose prop-losses slot)
+  const dailyLeft=propSettings.ddl?(propSettings.ddl-todayLoss):null;
+  const dlEl=document.getElementById('prop-losses');
+  if(dailyLeft!==null){
+    dlEl.textContent=(dailyLeft>=0?'$':'-$')+Math.abs(dailyLeft).toFixed(0);
+    dlEl.style.color=ddlPct>=100?'#ef4444':ddlPct>=80?'#f59e0b':'#10b981';
+  } else {
+    dlEl.textContent='—';dlEl.style.color='#6b7280';
+  }
   // Warnings
   const warn=document.getElementById('prop-warn');
   const danger=document.getElementById('prop-danger');
