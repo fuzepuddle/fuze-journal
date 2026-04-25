@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  .qotd-log-card{border-left:3px solid var(--accent) !important}
+  .qotd-log-card{border-left:3px solid var(--accent) !important}A-Z
   :root {
     --accent: #10b981;
     --accent-rgb: 16,185,129;
@@ -2110,64 +2110,66 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
   <div class="card gap">
     <div class="section-label">Log a missed setup</div>
-    <div class="grid-3 gap">
+    <div class="gap" style="max-width:220px">
       <div><label>Date</label><input type="date" id="m-date"></div>
-      <div><label>Direction</label><select id="m-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><optgroup label="All Time / Yearly"><option>All Time High (ATH)</option><option>All Time Low (ATL)</option><option>Yearly High</option><option>Yearly Low</option><option>Yearly Open</option></optgroup><optgroup label="Daily / Weekly / Monthly"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option></optgroup><optgroup label="Opening Prices"><option>Daily Open (Midnight)</option><option>Weekly Open</option><option>Monthly Open</option></optgroup><optgroup label="Opening Gaps"><option>NDOG High</option><option>NDOG Low</option><option>NWOG High</option><option>NWOG Low</option><option>NMOG High</option><option>NMOG Low</option></optgroup><optgroup label="Liquidity"><option>BSL (Buyside Liquidity)</option><option>SSL (Sellside Liquidity)</option><option>EQH (Equal Highs)</option><option>EQL (Equal Lows)</option><option>Relative EQH</option><option>Relative EQL</option><option>Stops above swing high</option><option>Stops below swing low</option></optgroup><optgroup label="Session levels"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Opening Range High</option><option>Opening Range Low</option></optgroup><optgroup label="News / Data Wicks"><option>8:30 Data Wick High</option><option>8:30 Data Wick Low</option><option>10:00 Data Wick High</option><option>10:00 Data Wick Low</option></optgroup><optgroup label="HTF FVGs / Inefficiencies"><option>Daily FVG</option><option>4H FVG</option><option>Weekly FVG</option><option>Daily IFVG</option><option>4H IFVG</option></optgroup><optgroup label="Range / Dealing Levels"><option>Dealing Range High</option><option>Dealing Range Low</option><option>Equilibrium (50%)</option><option>Premium Array</option><option>Discount Array</option></optgroup><optgroup label="Swing / Structure"><option>HTF Swing High</option><option>HTF Swing Low</option><option>Old High</option><option>Old Low</option><option>HTF Order Block High</option><option>HTF Order Block Low</option></optgroup></select></div>
     </div>
     <div class="grid-2 gap">
       <div><label>Why skipped?</label><select id="m-reason">
         <option value="">—</option>
-        <optgroup label="Draw / Target">
-          <option>No clear single draw</option>
+        <optgroup label="Step 2 — Draw on Liquidity">
+          <option>No clear untapped draw on 1H</option>
+          <option>C tier draw only — no S/A/B tier backing</option>
           <option>Multiple competing draws — couldn't decide</option>
           <option>Draw already tapped earlier in session</option>
           <option>Target felt too far — doubted the move</option>
-          <option>Opposing HTF level in the way</option>
+          <option>Opposing HTF level blocking the path</option>
         </optgroup>
-        <optgroup label="HTF Context">
-          <option>HTF chop — no clear structure</option>
-          <option>4H and 1H misaligned</option>
-          <option>Small candles on higher timeframe</option>
-          <option>Traded against HTF trend — hesitated</option>
+        <optgroup label="Step 3 — 4H Bias">
+          <option>4H ranging — small candles, no clear structure</option>
+          <option>4H and 1H misaligned — no consensus</option>
+          <option>Price delivering from opposite HTF gap</option>
           <option>Wasn't sure of overall bias</option>
+          <option>Momentum on 4H pointing against the draw</option>
         </optgroup>
-        <optgroup label="Displacement">
+        <optgroup label="Step 4 — Displacement (15M)">
           <option>No displacement visible on 15M</option>
-          <option>Displacement looked weak</option>
-          <option>Displacement weaker than retrace — unsure</option>
-          <option>No 5M FVG left behind</option>
-          <option>5M FVG formed in chop — ignored</option>
-          <option>FVG too large / messy</option>
-          <option>Gap already partially filled</option>
+          <option>Displacement too weak — lacked conviction</option>
+          <option>Pullback stronger than the displacement</option>
+          <option>Structure break not clean — ambiguous</option>
         </optgroup>
-        <optgroup label="Retrace">
-          <option>Retrace was violent — scared me off</option>
-          <option>Retrace too deep — went through FVG</option>
-          <option>Price consolidated inside gap — no clean tap</option>
+        <optgroup label="Step 5 — 5M FVG">
+          <option>No 5M FVG left behind by displacement</option>
+          <option>FVG formed in chop — not valid</option>
+          <option>Multiple messy FVGs — no singular obvious gap</option>
+          <option>FVG too large or overlapping other gaps</option>
+          <option>Gap already partially filled before entry</option>
+          <option>Two adjacent FVGs didn't combine cleanly</option>
+        </optgroup>
+        <optgroup label="Step 6 — Pullback">
+          <option>Pullback was fast and aggressive — not slow/weak</option>
+          <option>Retrace too deep — blew through the FVG</option>
+          <option>Price consolidated inside the gap — no clean tap</option>
           <option>Missed the retrace — wasn't watching</option>
-          <option>Retrace happened too fast</option>
         </optgroup>
-        <optgroup label="IFVG Entry">
+        <optgroup label="Step 7 — IFVG Entry (1M)">
           <option>No IFVG formed — 1M never violated the 5M FVG</option>
-          <option>Entered before IFVG formed — anticipated it</option>
+          <option>1M closed back below IFVG — entry invalidated</option>
+          <option>Entered before IFVG formed — anticipated too early</option>
           <option>Entered on IFVG candle open not close</option>
-          <option>1M closed back below IFVG — entry was invalid</option>
-          <option>Wrong execution mode — strong momentum but waited for retest</option>
-          <option>Wrong execution mode — slow momentum but entered on candle close</option>
-          <option>IFVG zone too wide — bad risk structure</option>
-          <option>Held after 1M close below IFVG — broke hard rule</option>
+          <option>Wrong mode — strong momentum but waited for retest</option>
+          <option>Wrong mode — slow momentum but entered on candle close</option>
+          <option>IFVG zone too wide — risk structure was bad</option>
         </optgroup>
         <optgroup label="Session / Timing">
-          <option>After 16:00 UK cutoff</option>
-          <option>News event pending</option>
-          <option>Setup appeared outside session window</option>
-          <option>Didn't have enough time left in session</option>
+          <option>After 16:00 UK cutoff — hard rule</option>
+          <option>News event pending — skipped correctly</option>
+          <option>Setup appeared outside 14:30–16:00 window</option>
+          <option>Not enough time left before hard close</option>
         </optgroup>
         <optgroup label="Psychology">
           <option>Emotional state not neutral</option>
           <option>Still shaken from previous loss</option>
-          <option>Hesitated — doubted myself</option>
+          <option>Hesitated — doubted the setup</option>
           <option>Overthought it — analysis paralysis</option>
           <option>Got distracted — missed the window</option>
           <option>Didn't trust the setup even though it was valid</option>
@@ -2182,7 +2184,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
   <div class="log-wrap" style="margin-top:4px">
     <table class="log-table">
-      <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>Reason skipped</th><th>Notes</th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Reason skipped</th><th>Notes</th><th></th></tr></thead>
       <tbody id="missed-body"></tbody>
     </table>
   </div>
@@ -2285,7 +2287,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <!-- LucidFlex-style tracker card -->
-  <div id="prop-tracker" style="display:none;border-radius:16px;background:#111827;border:1px solid rgba(255,255,255,0.08);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);font-family:'Plus Jakarta Sans',sans-serif">
+  <div id="prop-tracker" style="display:none;border-radius:16px;background:#0c1410;border:1px solid rgba(16,185,129,0.12);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);font-family:'Plus Jakarta Sans',sans-serif">
 
     <!-- Header bar -->
     <div style="padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,0.07)">
@@ -4899,9 +4901,9 @@ function saveMissedStore(){
 function saveMissed(){
   const date=document.getElementById('m-date').value;
   if(!date){alert('Add a date');return;}
-  const m={id:Date.now(),date,direction:document.getElementById('m-direction').value,draw:document.getElementById('m-draw').value,reason:document.getElementById('m-reason').value,notes:document.getElementById('m-notes').value,hesitation:document.getElementById('m-hesitation').value};
+  const m={id:Date.now(),date,reason:document.getElementById('m-reason').value,notes:document.getElementById('m-notes').value,hesitation:document.getElementById('m-hesitation').value};
   missedTrades.unshift(m);saveMissedStore();
-  ['m-date','m-direction','m-draw','m-reason','m-notes','m-hesitation'].forEach(id=>document.getElementById(id).value='');
+  ['m-date','m-reason','m-notes','m-hesitation'].forEach(id=>document.getElementById(id).value='');
   renderMissed();
 }
 function renderMissed(){
@@ -4909,7 +4911,7 @@ function renderMissed(){
   const empty=document.getElementById('missed-empty');
   if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>').join('');
+  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">D83DDCAD '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>').join('');
 }
 function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();}
 
@@ -7215,7 +7217,7 @@ function renderSmartInsights(){
       const worse=better==='long'?'short':'long';
       const betterPct=Math.round(Math.max(longWR,shortWR)*100);
       const worsePct=Math.round(Math.min(longWR,shortWR)*100);
-      insights.push({icon:'↕',color:'#3b82f6',text:`Your <strong>${better}</strong> trades win at ${betterPct}% vs ${worsePct}% on ${worse}s. Consider being more selective on ${worse} setups.`});
+      insights.push({icon:'↕',color:'#10b981',text:`Your <strong>${better}</strong> trades win at ${betterPct}% vs ${worsePct}% on ${worse}s. Consider being more selective on ${worse} setups.`});
     }
   }
 
