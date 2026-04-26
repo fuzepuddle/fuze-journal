@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  .qotd-log-card{border-left:3px solid var(--accent) !important}A-Z
+  .qotd-log-card{border-left:3px solid var(--accent) !important}
   :root {
     --accent: #10b981;
     --accent-rgb: 16,185,129;
@@ -2283,6 +2283,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         </select>
       </div>
     </div>
+    <div class="grid-2 gap">
+      <div><label>Consistency rule <span style="color:#9ca3af;font-weight:400;font-size:13px">— max % any single day of total profit</span></label><input type="number" id="p-consist-rule" placeholder="e.g. 30" min="1" max="100"></div>
+      <div><label>Min trading days <span style="color:#9ca3af;font-weight:400;font-size:13px">— required by firm</span></label><input type="number" id="p-min-days" placeholder="e.g. 4" min="1"></div>
+    </div>
 
   </div>
 
@@ -2327,9 +2331,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Consistency row -->
     <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.07)">
       <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px">CONSISTENCY</div>
-        <div style="font-size:22px;font-weight:800" id="prop-consist-pct" style="color:#10b981">—</div>
-        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-consist-sub">win rate</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px">CONSISTENCY RULE</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+          <div style="font-size:22px;font-weight:800" id="prop-consist-pct">—</div>
+          <div style="font-size:12px;color:#6b7280" id="prop-consist-limit"></div>
+        </div>
+        <div style="font-size:12px;color:#6b7280" id="prop-consist-sub">best day / total profit</div>
+        <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+          <div id="prop-consist-bar" style="height:100%;border-radius:99px;width:0%;transition:width .5s ease,background .3s"></div>
+        </div>
       </div>
       <!-- Balance progress bar (MLL → Target) -->
       <div style="padding:16px 20px;display:flex;flex-direction:column;justify-content:center">
@@ -2356,9 +2366,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Warnings -->
     <div id="prop-warn" class="warn-bar" style="margin:0;border-radius:0;display:none"></div>
     <div id="prop-danger" class="danger-bar" style="margin:0;border-radius:0;display:none"></div>
+    <div id="prop-consist-warn" style="margin:0;border-radius:0;display:none;padding:10px 20px;font-size:13px;font-weight:500;background:rgba(245,158,11,0.1);border-top:1px solid rgba(245,158,11,0.2);color:#f59e0b"></div>
 
-    <!-- Bottom stats: P&L | Today | DD Buffer | Daily Limit -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:0">
+    <!-- Bottom stats: P&L | Today | DD Buffer | Daily Limit | Min Days -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;padding:0">
       <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
         <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Live P&amp;L</div>
         <div style="font-size:15px;font-weight:700" id="prop-total-pnl">$0</div>
@@ -2371,9 +2382,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">DD Buffer</div>
         <div style="font-size:15px;font-weight:700" id="prop-wins">—</div>
       </div>
-      <div style="padding:14px 18px">
+      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
         <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Daily Left</div>
         <div style="font-size:15px;font-weight:700" id="prop-losses">—</div>
+      </div>
+      <div id="prop-min-days-cell" style="padding:14px 18px;display:none">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Min Days</div>
+        <div style="font-size:15px;font-weight:700" id="prop-min-days-val">—</div>
+        <div style="font-size:11px;color:#6b7280;margin-top:2px" id="prop-min-days-sub"></div>
       </div>
     </div>
 
@@ -2474,6 +2490,10 @@ let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
 let trades=[];let mode=currentProfile==='demo'?'demo':'live';let discRating=0;let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
+
+// ── PnL rounding helper (eliminates float drift) ──
+function rp(v){return Math.round((+v||0)*100)/100;}
+function fmtPnl(v){const r=Math.round(+v||0);return(r>=0?'+$':'-$')+Math.abs(r).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});}
 let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
@@ -2887,6 +2907,8 @@ function savePropSettings(){
     maxdd:parseFloat(document.getElementById('p-maxdd').value)||0,
     ddl:parseFloat(document.getElementById('p-ddl').value)||0,
     ddtype:document.getElementById('p-ddtype').value,
+    consistRule:parseFloat(document.getElementById('p-consist-rule').value)||0,
+    minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
   saveProp();renderProp();
 }
@@ -2897,6 +2919,8 @@ function loadPropSettings(){
   if(propSettings.maxdd)document.getElementById('p-maxdd').value=propSettings.maxdd;
   if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
   if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
+  if(propSettings.consistRule)document.getElementById('p-consist-rule').value=propSettings.consistRule;
+  if(propSettings.minDays)document.getElementById('p-min-days').value=propSettings.minDays;
 }
 function renderProp(){
   const tracker=document.getElementById('prop-tracker');
@@ -2921,25 +2945,25 @@ function renderProp(){
   document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
 
   const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
-  const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
+  const totalPnl=rp(liveTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const account=propSettings.account||0;
   const maxddAmt=propSettings.maxdd||0;
   const mllFloor=account-maxddAmt;
   const currentBalance=account+totalPnl;
   const bufferRemaining=parseFloat((currentBalance-mllFloor).toFixed(2));
   const today=new Date().toISOString().split('T')[0];
-  const todayPnl=liveTrades.filter(t=>t.date===today).reduce((s,t)=>s+(t.pnl||0),0);
+  const todayPnl=rp(liveTrades.filter(t=>t.date===today).reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const todayLoss=todayPnl<0?Math.abs(todayPnl):0;
   const liveWins=liveTrades.filter(t=>t.pnl>0).length;
   const liveLosses=liveTrades.filter(t=>t.pnl<0).length;
 
   // ── Top metrics ──
   const balEl=document.getElementById('prop-balance-display');
-  if(balEl){balEl.textContent='$'+currentBalance.toLocaleString();balEl.style.color=totalPnl>=0?'#e5e7eb':'#ef4444';}
+  if(balEl){balEl.textContent='$'+Math.round(currentBalance).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});balEl.style.color=totalPnl>=0?'#e5e7eb':'#ef4444';}
   const mllEl=document.getElementById('prop-mll-display');
   if(mllEl) mllEl.textContent='/ $'+mllFloor.toLocaleString();
   const profitDispEl=document.getElementById('prop-profit-display');
-  if(profitDispEl){profitDispEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();profitDispEl.style.color=totalPnl>=0?'#10b981':'#ef4444';}
+  if(profitDispEl){profitDispEl.textContent=fmtPnl(totalPnl);profitDispEl.style.color=totalPnl>=0?'#10b981':'#ef4444';}
   const profitTargDispEl=document.getElementById('prop-profit-target-display');
   if(profitTargDispEl) profitTargDispEl.textContent='/ $'+(propSettings.target||0).toLocaleString();
 
@@ -2947,16 +2971,73 @@ function renderProp(){
   const daysEl=document.getElementById('prop-days-display');
   if(daysEl){const uniqueDays=new Set(liveTrades.map(t=>t.date)).size;daysEl.textContent=uniqueDays;}
 
-  // ── Consistency (win rate) ──
-  const totalTrades=liveWins+liveLosses;
-  const winRate=totalTrades>0?Math.round(liveWins/totalTrades*100):0;
+  // ── Consistency rule (best day % of total profit) ──
+  const consistRule=propSettings.consistRule||0;
   const consistEl=document.getElementById('prop-consist-pct');
-  if(consistEl){
-    consistEl.textContent=totalTrades>0?winRate+'%':'—';
-    consistEl.style.color=winRate>=60?'#10b981':winRate>=45?'#f59e0b':'#ef4444';
-  }
+  const consistLimitEl=document.getElementById('prop-consist-limit');
   const consistSubEl=document.getElementById('prop-consist-sub');
-  if(consistSubEl) consistSubEl.textContent=totalTrades>0?liveWins+'W / '+liveLosses+'L':'no trades yet';
+  const consistBarEl=document.getElementById('prop-consist-bar');
+  // Build daily P&L map
+  const dailyPnl={};
+  liveTrades.forEach(t=>{if(t.date&&t.pnl!=null){dailyPnl[t.date]=rp((dailyPnl[t.date]||0)+(t.pnl||0));}});
+  const dailyValues=Object.values(dailyPnl);
+  const bestDayPnl=dailyValues.length?Math.max(...dailyValues.map(v=>Math.abs(v))):0;
+  const bestDayActual=dailyValues.length?dailyValues.reduce((a,b)=>Math.abs(b)>Math.abs(a)?b:a,0):0;
+  const totalPnlPositive=Math.max(0,totalPnl);
+  const bestDayPct=totalPnlPositive>0?Math.round(bestDayActual/totalPnlPositive*100):0;
+  if(consistEl){
+    if(dailyValues.length===0){consistEl.textContent='—';consistEl.style.color='#6b7280';}
+    else if(consistRule>0){
+      const over=bestDayPct>consistRule;
+      consistEl.textContent=bestDayPct+'%';
+      consistEl.style.color=over?'#ef4444':bestDayPct>consistRule*0.8?'#f59e0b':'#10b981';
+    } else {
+      consistEl.textContent=bestDayPct>0?bestDayPct+'%':'—';
+      consistEl.style.color='#e5e7eb';
+    }
+  }
+  if(consistLimitEl) consistLimitEl.textContent=consistRule>0?'/ '+consistRule+'% limit':'';
+  if(consistSubEl) consistSubEl.textContent=bestDayActual>0?'best day +$'+bestDayActual.toFixed(0):'best day / total profit';
+  if(consistBarEl){
+    const barPct=consistRule>0?Math.min(100,(bestDayPct/consistRule)*100):Math.min(100,bestDayPct);
+    consistBarEl.style.width=barPct+'%';
+    consistBarEl.style.background=barPct>=100?'#ef4444':barPct>=80?'#f59e0b':'#10b981';
+  }
+
+  // ── Consistency warn banner ──
+  const consistWarnEl=document.getElementById('prop-consist-warn');
+  if(consistWarnEl){
+    if(consistRule>0&&bestDayPct>consistRule&&totalPnlPositive>0){
+      consistWarnEl.style.display='block';
+      consistWarnEl.textContent='⚠ Consistency rule violated — best day is '+bestDayPct+'% of total profit (limit: '+consistRule+'%). Some firms will reject the payout.';
+    } else if(consistRule>0&&bestDayPct>consistRule*0.8&&totalPnlPositive>0){
+      consistWarnEl.style.display='block';
+      consistWarnEl.style.background='rgba(245,158,11,0.07)';
+      consistWarnEl.style.borderTopColor='rgba(245,158,11,0.15)';
+      consistWarnEl.textContent='⚠ Approaching consistency limit — best day is '+bestDayPct+'% of total profit (limit: '+consistRule+'%). Be careful not to let one day dominate.';
+    } else {
+      consistWarnEl.style.display='none';
+    }
+  }
+
+  // ── Min trading days ──
+  const minDaysRequired=propSettings.minDays||0;
+  const uniqueDays=new Set(liveTrades.map(t=>t.date)).size;
+  const minDaysCell=document.getElementById('prop-min-days-cell');
+  const minDaysValEl=document.getElementById('prop-min-days-val');
+  const minDaysSubEl=document.getElementById('prop-min-days-sub');
+  if(minDaysCell){
+    if(minDaysRequired>0){
+      minDaysCell.style.display='block';
+      if(minDaysValEl){
+        minDaysValEl.textContent=uniqueDays+' / '+minDaysRequired;
+        minDaysValEl.style.color=uniqueDays>=minDaysRequired?'#10b981':'#f59e0b';
+      }
+      if(minDaysSubEl) minDaysSubEl.textContent=uniqueDays>=minDaysRequired?'requirement met':(minDaysRequired-uniqueDays)+' more needed';
+    } else {
+      minDaysCell.style.display='none';
+    }
+  }
 
   // ── Balance progress bar (MLL → TARGET) ──
   // range: mllFloor to (account + target)
@@ -2978,7 +3059,7 @@ function renderProp(){
 
   // ── Legacy hidden elements (keep JS compat) ──
   const profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
-  document.getElementById('prop-profit-lbl').textContent='$'+totalPnl.toLocaleString()+' / $'+(propSettings.target||0).toLocaleString();
+  document.getElementById('prop-profit-lbl').textContent=fmtPnl(totalPnl)+' / $'+(propSettings.target||0).toLocaleString();
   document.getElementById('prop-profit-bar').style.width=profitPct+'%';
   document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
   const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
@@ -2986,15 +3067,15 @@ function renderProp(){
   document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
   document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining';
   const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
-  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+'$'+todayPnl.toLocaleString();
+  document.getElementById('prop-ddl-lbl').textContent=fmtPnl(todayPnl);
   document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
 
   // ── Bottom row: P&L | Today | DD Buffer | Daily left ──
   const tpEl=document.getElementById('prop-total-pnl');
-  tpEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();
+  tpEl.textContent=fmtPnl(totalPnl);
   tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';
   const tdEl=document.getElementById('prop-today-pnl');
-  tdEl.textContent=(todayPnl>=0?'+$':'-$')+Math.abs(todayPnl).toLocaleString();
+  tdEl.textContent=fmtPnl(todayPnl);
   tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';
   // DD Buffer (repurpose prop-wins slot)
   const ddBufEl=document.getElementById('prop-wins');
@@ -3031,7 +3112,7 @@ function renderProp(){
   if(totalPnl>=propSettings.target&&propSettings.target>0){
     try{
       if(!localStorage.getItem(passedKey)){
-        document.getElementById('popup-passed-name').textContent=firmName+' · +$'+totalPnl.toLocaleString();
+        document.getElementById('popup-passed-name').textContent=firmName+' · '+fmtPnl(totalPnl);
         const el=document.getElementById('popup-passed');if(el)el.style.display='flex';
       }
     }catch(e){}
@@ -3039,7 +3120,7 @@ function renderProp(){
   if(bufferRemaining<=0&&maxddAmt>0){
     try{
       if(!localStorage.getItem(blownKey)){
-        document.getElementById('popup-blown-name').textContent=firmName+' · $'+totalPnl.toLocaleString();
+        document.getElementById('popup-blown-name').textContent=firmName+' · '+fmtPnl(totalPnl);
         const el=document.getElementById('popup-blown');if(el)el.style.display='flex';
       }
     }catch(e){}
@@ -3098,7 +3179,7 @@ function renderDashboard(){
   if(greetSub)greetSub.textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', fuze · NQ · NY Session · 14:30–16:00 UK';
 
   // P&L
-  const totalPnl=dashTrades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
+  const totalPnl=rp(dashTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
   const dm_pnl=document.getElementById('dm-pnl');
   if(dm_pnl){dm_pnl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});dm_pnl.className='dash-metric-val '+(totalPnl>0?'positive':totalPnl<0?'negative':'');}
   const dm_pnl_sub=document.getElementById('dm-pnl-sub');if(dm_pnl_sub)dm_pnl_sub.textContent=total+' trade'+(total!==1?'s':'');
@@ -3115,8 +3196,8 @@ function renderDashboard(){
   const dm_rr=document.getElementById('dm-rr');if(dm_rr)dm_rr.textContent=avgRR!='—'?avgRR+'R':avgRR;
 
   // Profit factor
-  const grossWin=wins.reduce((s,t)=>s+Math.abs(parseFloat(t.pnl)||0),0);
-  const grossLoss=losses.reduce((s,t)=>s+Math.abs(parseFloat(t.pnl)||0),0);
+  const grossWin=rp(wins.reduce((s,t)=>rp(s+Math.abs(parseFloat(t.pnl)||0)),0));
+  const grossLoss=rp(losses.reduce((s,t)=>rp(s+Math.abs(parseFloat(t.pnl)||0)),0));
   const pf=grossLoss>0?(grossWin/grossLoss).toFixed(2):(grossWin>0?'∞':'—');
   const dm_pf=document.getElementById('dm-pf');if(dm_pf){dm_pf.textContent=pf;dm_pf.className='dash-metric-val '+(parseFloat(pf)>=1?'positive':parseFloat(pf)<1&&pf!=='—'?'negative':'');}
 
@@ -3143,11 +3224,11 @@ function renderDashboard(){
   if(eCanvas&&typeof Chart!=='undefined'){
     if(_dashEquityChart){_dashEquityChart.destroy();_dashEquityChart=null;}
     const eq=[0];
-    sorted.forEach(t=>{eq.push(eq[eq.length-1]+(parseFloat(t.pnl)||0));});
+    sorted.forEach(t=>{eq.push(rp(eq[eq.length-1]+(parseFloat(t.pnl)||0)));});
     const labels=sorted.map(t=>t.date?t.date.slice(5):'');labels.unshift('');
     const lineColor=eq[eq.length-1]>=0?'rgba(16,185,129,0.9)':'rgba(239,68,68,0.9)';
     const fillColor=eq[eq.length-1]>=0?'rgba(16,185,129,0.06)':'rgba(239,68,68,0.06)';
-    _dashEquityChart=new Chart(eCanvas,{type:'line',data:{labels,datasets:[{data:eq,borderColor:lineColor,backgroundColor:fillColor,borderWidth:2,fill:true,tension:.35,pointRadius:sorted.length>30?0:4,pointHoverRadius:8,hitRadius:16,pointBackgroundColor:lineColor,pointBorderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.raw.toFixed(0)}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'Plus Jakarta Sans'}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'Plus Jakarta Sans'},callback:v=>'$'+v}}}}});
+    _dashEquityChart=new Chart(eCanvas,{type:'line',data:{labels,datasets:[{data:eq,borderColor:lineColor,backgroundColor:fillColor,borderWidth:2,fill:true,tension:.35,pointRadius:sorted.length>30?0:4,pointHoverRadius:8,hitRadius:16,pointBackgroundColor:lineColor,pointBorderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+Math.round(ctx.raw).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'Plus Jakarta Sans'}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'Plus Jakarta Sans'},callback:v=>'$'+v}}}}});
   }
 
   // Recent trades
@@ -3158,7 +3239,7 @@ function renderDashboard(){
     else{
       const pnlColor=p=>parseFloat(p)>0?'var(--win)':parseFloat(p)<0?'var(--loss)':'var(--be)';
       const dirColor=d=>d==='Long'?'var(--win)':d==='Short'?'var(--loss)':'var(--text-secondary)';
-      recentEl.innerHTML=recent.map(t=>`<div class="dash-trade-row"><span class="dash-trade-date">${t.date||'—'}</span><span style="font-size:12px;color:${dirColor(t.direction)};font-weight:500">${t.direction||'—'}</span><span class="dash-trade-draw">${t.draw||'—'}</span><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:${pnlColor(t.pnl)};text-align:right">${t.pnl!=null?(parseFloat(t.pnl)>0?'+':'')+parseFloat(t.pnl).toFixed(0):'—'}</span></div>`).join('');
+      recentEl.innerHTML=recent.map(t=>`<div class="dash-trade-row"><span class="dash-trade-date">${t.date||'—'}</span><span style="font-size:12px;color:${dirColor(t.direction)};font-weight:500">${t.direction||'—'}</span><span class="dash-trade-draw">${t.draw||'—'}</span><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:${pnlColor(t.pnl)};text-align:right">${t.pnl!=null?fmtPnl(parseFloat(t.pnl)):'—'}</span></div>`).join('');
     }
   }
   renderDashMiniCal();
@@ -3183,7 +3264,7 @@ function renderDashMiniCal(){
     const d=new Date(t.date+'T12:00:00');
     if(d.getFullYear()!==y||d.getMonth()!==m)return;
     if(!dayMap[t.date])dayMap[t.date]={pnl:0,trades:0,outcome:null};
-    dayMap[t.date].pnl+=parseFloat(t.pnl)||0;
+    dayMap[t.date].pnl=rp(dayMap[t.date].pnl+(parseFloat(t.pnl)||0));
     dayMap[t.date].trades++;
     if(t.outcome==='win'&&dayMap[t.date].outcome!=='loss')dayMap[t.date].outcome='win';
     else if(t.outcome==='loss')dayMap[t.date].outcome='loss';
@@ -3667,9 +3748,9 @@ function renderStats(){
   if(wrCard)wrCard.style.background=completedTrades.length?(wins.length/completedTrades.length>=0.5?'rgba(16,185,129,0.07)':'rgba(239,68,68,0.07)'):'var(--bg-card)';
   const withDisc=f.filter(t=>t.discRating);
   document.getElementById('s-disc').textContent=withDisc.length?'★ '+(withDisc.reduce((s,t)=>s+t.discRating,0)/withDisc.length).toFixed(1):'—';
-  const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
+  const totalPnl=rp(f.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const pnlEl=document.getElementById('s-pnl');
-  pnlEl.textContent=(totalPnl>=0?'+$':'−$')+Math.abs(totalPnl).toLocaleString();
+  pnlEl.textContent=fmtPnl(totalPnl);
   pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(totalPnl>0?' positive':totalPnl<0?' negative':' be');
   const outCanvas=document.getElementById('s-outcomes-chart');
   const outLegend=document.getElementById('s-outcomes-legend');
@@ -3685,12 +3766,12 @@ function renderStats(){
   }
   const winTrades=f.filter(t=>t.pnl!=null&&t.pnl>0);
   const lossTrades=f.filter(t=>t.pnl!=null&&t.pnl<0);
-  const avgWin=winTrades.length?winTrades.reduce((s,t)=>s+t.pnl,0)/winTrades.length:0;
-  const avgLoss=lossTrades.length?Math.abs(lossTrades.reduce((s,t)=>s+t.pnl,0)/lossTrades.length):0;
+  const avgWin=winTrades.length?rp(winTrades.reduce((s,t)=>rp(s+t.pnl),0)/winTrades.length):0;
+  const avgLoss=lossTrades.length?rp(Math.abs(lossTrades.reduce((s,t)=>rp(s+t.pnl),0)/lossTrades.length)):0;
   const ratio=avgLoss>0?(avgWin/avgLoss).toFixed(2):'—';
   document.getElementById('s-wl-ratio').textContent=ratio;
-  document.getElementById('s-avg-win').textContent=avgWin?'+$'+avgWin.toFixed(2):'—';
-  document.getElementById('s-avg-loss').textContent=avgLoss?'-$'+avgLoss.toFixed(2):'—';
+  document.getElementById('s-avg-win').textContent=avgWin?fmtPnl(avgWin):'—';
+  document.getElementById('s-avg-loss').textContent=avgLoss?'-'+fmtPnl(avgLoss).replace('+',''):'—';
   const total2=avgWin+avgLoss;
   const greenPct=total2?Math.round(avgWin/total2*100):50;
   document.getElementById('s-wl-green').style.width=greenPct+'%';
@@ -3798,8 +3879,8 @@ function renderKeyMetrics(f){
   const withPnl=f.filter(t=>t.pnl!=null);
   const wins=withPnl.filter(t=>t.pnl>0);
   const losses=withPnl.filter(t=>t.pnl<0);
-  const grossProfit=wins.reduce((s,t)=>s+t.pnl,0);
-  const grossLoss=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));
+  const grossProfit=rp(wins.reduce((s,t)=>rp(s+t.pnl),0));
+  const grossLoss=rp(Math.abs(losses.reduce((s,t)=>rp(s+t.pnl),0)));
   const avgWin=wins.length?grossProfit/wins.length:0;
   const avgLoss=losses.length?grossLoss/losses.length:0;
   const wr=withPnl.length?(wins.length/withPnl.length):0;
@@ -3917,11 +3998,11 @@ function renderCalendar(){
   // Update month stats
   const monthStr=calYear+'-'+String(calMonth+1).padStart(2,'0');
   const monthTrades=trades.filter(t=>t.date&&t.date.startsWith(monthStr));
-  const monthPnl=monthTrades.reduce((s,t)=>s+(t.pnl||0),0);
+  const monthPnl=rp(monthTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
   const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
   const mPnlEl=document.getElementById('cal-m-pnl');
-  if(mPnlEl){mPnlEl.textContent=(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2);mPnlEl.className=(mPnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(monthPnl>0?' positive':monthPnl<0?' negative':' be');}
+  if(mPnlEl){mPnlEl.textContent=fmtPnl(monthPnl);mPnlEl.className=(mPnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(monthPnl>0?' positive':monthPnl<0?' negative':' be');}
   const mTradesEl=document.getElementById('cal-m-trades');if(mTradesEl)mTradesEl.textContent=monthTotal;
   const mWrEl=document.getElementById('cal-m-wr');if(mWrEl)mWrEl.textContent=monthTotal?Math.round(monthWins/monthTotal*100)+'%':'—';
   const mWlEl=document.getElementById('cal-m-wl');if(mWlEl)mWlEl.textContent=monthTrades.filter(t=>t.outcome==='win').length+' / '+monthTrades.filter(t=>t.outcome==='loss').length;
@@ -4167,7 +4248,7 @@ function renderChecklistWR(f){
     const wr=wins+losses>0?Math.round(wins/(wins+losses)*100):null;
     const wrStr=wr!==null?wr+'%':'—';
     const col=wr===null?'#6b7280':wr>=60?'#10b981':wr>=40?'#f59e0b':'#ef4444';
-    const avgPnl=b.trades.reduce((s,t)=>s+(t.pnl||0),0)/b.trades.length;
+    const avgPnl=rp(b.trades.reduce((s,t)=>rp(s+(t.pnl||0)),0)/b.trades.length);
     const pnlStr=(avgPnl>=0?'+$':'-$')+Math.abs(avgPnl).toFixed(0)+' avg';
     return'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);margin-bottom:7px">'
       +'<div><div style="font-size:13px;color:#e5e7eb;font-weight:500;margin-bottom:2px">'+b.label+'</div>'
@@ -4948,9 +5029,9 @@ function renderWeekly(){
   const wrEl=document.getElementById('w-wr');
   wrEl.textContent=active.length?Math.round(wins.length/active.length*100)+'%':'—';
   wrEl.style.color=active.length?(wins.length/active.length>=0.5?'#10b981':'#ef4444'):'';
-  const pnl=weekTrades.reduce((s,t)=>s+(t.pnl||0),0);
+  const pnl=rp(weekTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const pnlEl=document.getElementById('w-pnl');
-  pnlEl.textContent=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2);
+  pnlEl.textContent=fmtPnl(pnl);
   pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
   const mm={};weekTrades.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
   const topMistake=Object.entries(mm).sort((a,b)=>b[1]-a[1])[0];
@@ -5004,7 +5085,7 @@ function renderWeekly(){
     const lastActive=lastWeekTrades.filter(t=>t.outcome!=='skip');
     const lastWins=lastActive.filter(t=>t.outcome==='win');
     const lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
-    const lastPnl=lastWeekTrades.reduce((s,t)=>s+(t.pnl||0),0);
+    const lastPnl=rp(lastWeekTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
     const wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
     const pnlDiff=pnl-lastPnl;
     if(cmpEl)cmpEl.innerHTML=
@@ -5959,13 +6040,13 @@ function revRenderConsistSlide(){
   const losses = completed.filter(function(t){return t.outcome==='loss';});
   const total = completed.length;
   const wr = total?Math.round(wins.length/total*100):0;
-  const grossWin = wins.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
-  const grossLoss = losses.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
+  const grossWin = rp(wins.reduce(function(s,t){return rp(s+Math.abs(parseFloat(t.pnl)||0));},0));
+  const grossLoss = rp(losses.reduce(function(s,t){return rp(s+Math.abs(parseFloat(t.pnl)||0));},0));
   const pf = grossLoss>0?(grossWin/grossLoss):null;
   const avgWin = wins.length?grossWin/wins.length:0;
   const avgLoss = losses.length?grossLoss/losses.length:0;
   const wlRatio = avgLoss>0?(avgWin/avgLoss):null;
-  const totalPnl = completed.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
+  const totalPnl = rp(completed.reduce(function(s,t){return rp(s+(parseFloat(t.pnl)||0));},0));
   let peak=0,dd=0,runPnl=0;
   var sortedT=[].concat(completed).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
   sortedT.forEach(function(t){runPnl+=parseFloat(t.pnl)||0;if(runPnl>peak)peak=runPnl;if(peak-runPnl>dd)dd=peak-runPnl;});
@@ -6645,6 +6726,10 @@ document.addEventListener('click',function(e){
   #page-prop div[style*="repeat(4,1fr)"],
   #page-prop .grid-4 {
     grid-template-columns: 1fr 1fr !important;
+  }
+  /* 5-col bottom stats row */
+  #page-prop div[style*="1fr 1fr 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr 1fr !important;
   }
 
   /* ── 14. WEEKLY REVIEW — grid ── */
