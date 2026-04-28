@@ -2934,9 +2934,11 @@ function savePropSettings(){
     minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
   saveProp();renderProp();
-  // Sync dashboard balance card and risk dropdown labels
+  // Sync risk dropdown labels
   if(typeof updateRiskDropdownLabels==='function') updateRiskDropdownLabels();
-  if(typeof renderDashboard==='function') renderDashboard();
+  // Only re-render dashboard if it's currently visible
+  const dashPage=document.getElementById('page-dashboard');
+  if(dashPage&&dashPage.classList.contains('active')&&typeof renderDashboard==='function') renderDashboard();
 }
 function loadPropSettings(){
   if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
@@ -5315,9 +5317,8 @@ function switchProfile(p, btn){
   }
   clearForm();
   applyProfileUI();
-  // Update risk dropdown and dashboard balance to reflect this profile's account
+  // Update risk dropdown labels to reflect this profile's account
   if(typeof updateRiskDropdownLabels==='function') updateRiskDropdownLabels();
-  if(typeof renderDashboard==='function') setTimeout(renderDashboard,50);
 }
 
 // Apply profile data after all vars declared
