@@ -286,7 +286,6 @@
       grid-template-columns:1fr 1fr !important;
       display:grid !important;
     }
-    #dash-metrics-row{grid-template-columns:1fr 1fr !important;}
     #page-stats [style*="repeat(5,1fr)"]{
       grid-template-columns:1fr 1fr !important;
       display:grid !important;
@@ -366,6 +365,7 @@
     /* Charts — sensible height */
     canvas{max-height:160px !important}
     #s-daily-stats{grid-template-columns:repeat(3,1fr) !important}
+    #dash-metrics-row{grid-template-columns:1fr 1fr 1fr !important}
 
     /* Presession grid */
     #page-presession [style*="1fr 1fr"]{grid-template-columns:1fr !important}
@@ -2928,8 +2928,7 @@ function savePropSettings(){
     consistRule:parseFloat(document.getElementById('p-consist-rule').value)||0,
     minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
-  saveProp();renderProp();
-  updateRiskDropdownLabels();
+  saveProp();renderProp();_updateRiskLabels();
 }
 function loadPropSettings(){
   if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
@@ -3198,30 +3197,31 @@ function renderDashboard(){
   const greetSub=document.getElementById('dash-greeting-sub');
   if(greetSub)greetSub.textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', fuze · NQ · NY Session · 14:30–16:00 UK';
 
+  // Account Balance card
+  (function(){
+    var _a=propSettings&&propSettings.account?parseFloat(propSettings.account):0;
+    var _el=document.getElementById('dm-balance');
+    if(!_el)return;
+    if(_a>0){
+      var _p=rp((allTrades[currentProfile]||[]).filter(function(t){return t.pnl!=null&&!isNaN(parseFloat(t.pnl));}).reduce(function(s,t){return rp(s+(parseFloat(t.pnl)||0));},0));
+      var _b=_a+_p;
+      _el.textContent='$'+Math.round(_b).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
+      _el.className='dash-metric-val '+(_b>_a?'positive':_b<_a?'negative':'');
+      var _s=document.getElementById('dm-balance-sub');
+      if(_s)_s.textContent=(_p>=0?'+$':'-$')+Math.abs(Math.round(_p)).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})+' P&L';
+      var _l=document.getElementById('dm-balance-label');
+      if(_l)_l.textContent=(propSettings.name?propSettings.name+' ':'')+'Balance';
+      var _c=document.getElementById('dm-balance-card');
+      if(_c)_c.style.borderColor='rgba(16,185,129,0.25)';
+    }else{
+      _el.textContent='—';_el.className='dash-metric-val';
+      var _s2=document.getElementById('dm-balance-sub');if(_s2)_s2.textContent='Set in Prop Firm';
+      var _l2=document.getElementById('dm-balance-label');if(_l2)_l2.textContent='Account Balance';
+      var _c2=document.getElementById('dm-balance-card');if(_c2)_c2.style.borderColor='';
+    }
+  })();
   // P&L
   const totalPnl=rp(dashTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
-  // ── Account Balance card (reads from prop firm settings for this profile) ──
-  const _balAcct=propSettings&&propSettings.account?parseFloat(propSettings.account):0;
-  const _balEl=document.getElementById('dm-balance');
-  if(_balEl){
-    if(_balAcct>0){
-      const _allPnl=rp((allTrades[currentProfile]||[]).filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl))).reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
-      const _liveBal=_balAcct+_allPnl;
-      _balEl.textContent='$'+Math.round(_liveBal).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
-      _balEl.className='dash-metric-val '+(_liveBal>_balAcct?'positive':_liveBal<_balAcct?'negative':'');
-      const _balSub=document.getElementById('dm-balance-sub');
-      if(_balSub)_balSub.textContent=(_allPnl>=0?'+$':'-$')+Math.abs(Math.round(_allPnl)).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})+' P&L';
-      const _balLbl=document.getElementById('dm-balance-label');
-      if(_balLbl)_balLbl.textContent=(propSettings.name?propSettings.name+' ':'')+'Balance';
-      const _balCard=document.getElementById('dm-balance-card');
-      if(_balCard)_balCard.style.borderColor='rgba(16,185,129,0.25)';
-    } else {
-      _balEl.textContent='—';_balEl.className='dash-metric-val';
-      const _balSub=document.getElementById('dm-balance-sub');if(_balSub)_balSub.textContent='Set in Prop Firm';
-      const _balLbl=document.getElementById('dm-balance-label');if(_balLbl)_balLbl.textContent='Account Balance';
-      const _balCard=document.getElementById('dm-balance-card');if(_balCard)_balCard.style.borderColor='';
-    }
-  }
   const dm_pnl=document.getElementById('dm-pnl');
   if(dm_pnl){dm_pnl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});dm_pnl.className='dash-metric-val '+(totalPnl>0?'positive':totalPnl<0?'negative':'');}
   const dm_pnl_sub=document.getElementById('dm-pnl-sub');if(dm_pnl_sub)dm_pnl_sub.textContent=total+' trade'+(total!==1?'s':'');
@@ -4578,31 +4578,30 @@ function calcRisk(){
 
 // Pre-fill calc from prop settings if available
 function prefillCalc(){
-  const accEl=document.getElementById('calc-account');
+  var accEl=document.getElementById('calc-account');
   if(accEl&&propSettings&&propSettings.account&&!accEl.value){
     accEl.value=propSettings.account;
     calcRisk();
   }
-  updateRiskDropdownLabels();
+  _updateRiskLabels();
 }
-
-function updateRiskDropdownLabels(){
-  const acct=propSettings&&propSettings.account?parseFloat(propSettings.account):0;
-  const profilePnl=rp((allTrades[currentProfile]||[]).filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl))).reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
-  const liveBal=acct>0?(acct+profilePnl):0;
-  const opt1=document.getElementById('f-risk-opt-1');
-  const opt05=document.getElementById('f-risk-opt-05');
-  const hint=document.getElementById('f-risk-balance-hint');
-  if(liveBal>0){
-    const r1=Math.round(liveBal*0.01);
-    const r05=Math.round(liveBal*0.005);
-    if(opt1)opt1.textContent='1% — $'+r1.toLocaleString()+' (Challenge)';
-    if(opt05)opt05.textContent='0.5% — $'+r05.toLocaleString()+' (Funded)';
-    if(hint)hint.textContent='balance: $'+Math.round(liveBal).toLocaleString();
-  } else {
-    if(opt1)opt1.textContent='1% (Challenge)';
-    if(opt05)opt05.textContent='0.5% (Funded)';
-    if(hint)hint.textContent='';
+function _updateRiskLabels(){
+  var a=propSettings&&propSettings.account?parseFloat(propSettings.account):0;
+  var p=rp((allTrades[currentProfile]||[]).filter(function(t){return t.pnl!=null&&!isNaN(parseFloat(t.pnl));}).reduce(function(s,t){return rp(s+(parseFloat(t.pnl)||0));},0));
+  var bal=a>0?(a+p):0;
+  var o1=document.getElementById('f-risk-opt-1');
+  var o05=document.getElementById('f-risk-opt-05');
+  var h=document.getElementById('f-risk-balance-hint');
+  if(bal>0){
+    var r1=Math.round(bal*0.01);
+    var r05=Math.round(bal*0.005);
+    if(o1)o1.textContent='1% — $'+r1.toLocaleString()+' (Challenge)';
+    if(o05)o05.textContent='0.5% — $'+r05.toLocaleString()+' (Funded)';
+    if(h)h.textContent='balance: $'+Math.round(bal).toLocaleString();
+  }else{
+    if(o1)o1.textContent='1% (Challenge)';
+    if(o05)o05.textContent='0.5% (Funded)';
+    if(h)h.textContent='';
   }
 }
 
