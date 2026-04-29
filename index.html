@@ -2869,8 +2869,75 @@ function authSignOut(){
   location.reload();
 }
 
+function normalizeAllTradesRoot(raw){
+  if(raw==null)return {challenge:[],funded:[],demo:[]};
+  if(Array.isArray(raw))return {challenge:raw.slice(),funded:[],demo:[]};
+  if(typeof raw!=='object')return {challenge:[],funded:[],demo:[]};
+  return raw;
+}
+function mergeTradesProfiles(prevStore, incomingStore){
+  var P=normalizeAllTradesRoot(prevStore||{});
+  var R=normalizeAllTradesRoot(incomingStore||{});
+  var out={challenge:[],funded:[],demo:[]};
+  PROFILES.forEach(function(p){
+    var map=new Map();
+    function add(arr){
+      if(!Array.isArray(arr))return;
+      arr.forEach(function(t){
+        if(!t||t.id==null)return;
+        map.set(String(t.id),t);
+      });
+    }
+    add(P[p]);
+    add(R[p]);
+    out[p]=Array.from(map.values());
+  });
+  return out;
+}
+function mergeKeyedProfileObjs(prevStore, incomingStore){
+  function countKeys(o){
+    if(!o||typeof o!=='object'||Array.isArray(o))return 0;
+    return Object.keys(o).length;
+  }
+  var L=prevStore&&typeof prevStore==='object'&&!Array.isArray(prevStore)?prevStore:{};
+  var X=incomingStore&&typeof incomingStore==='object'&&!Array.isArray(incomingStore)?incomingStore:{};
+  var out={};
+  PROFILES.forEach(function(p){
+    var Pa=L[p];var Ia=X[p];
+    if(Pa!=null&&typeof Pa==='object'&&!Array.isArray(Pa)&&Ia!=null&&typeof Ia==='object'&&!Array.isArray(Ia))
+      out[p]=countKeys(Ia)?Object.assign({},Pa,Ia):(countKeys(Pa)?Pa:{});
+    else if(Pa!=null)
+      out[p]=Pa;
+    else if(Ia!=null)
+      out[p]=Ia;
+    else out[p]={};
+  });
+  return out;
+}
+function mergeArrayRowsById(prevArr, incomArr){
+  var map=new Map();
+  function add(arr){
+    if(!Array.isArray(arr))return;
+    arr.forEach(function(x){if(x&&x.id!=null)map.set(String(x.id),x);});
+  }
+  add(prevArr);
+  add(incomArr);
+  return Array.from(map.values());
+}
+function mergeKeyedProfileArrays(prevStore, incomingStore){
+  var L=prevStore&&typeof prevStore==='object'&&!Array.isArray(prevStore)?prevStore:{};
+  var X=incomingStore&&typeof incomingStore==='object'&&!Array.isArray(incomingStore)?incomingStore:{};
+  var out={};
+  PROFILES.forEach(function(p){
+    var Pa=Array.isArray(L[p])?L[p]:[];
+    var Ia=Array.isArray(X[p])?X[p]:[];
+    out[p]=mergeArrayRowsById(Pa,Ia);
+  });
+  return out;
+}
+
 function ensureProfileStoresShape(){
-  if(!allTrades||typeof allTrades!=='object')allTrades={};
+  allTrades=normalizeAllTradesRoot(allTrades);
   PROFILES.forEach(function(p){if(!Array.isArray(allTrades[p]))allTrades[p]=[];});
   if(!allPropSettings||typeof allPropSettings!=='object')allPropSettings={};
   PROFILES.forEach(function(p){if(!allPropSettings[p]||typeof allPropSettings[p]!=='object')allPropSettings[p]={};});
@@ -2907,10 +2974,10 @@ async function loadAllData(){
     const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles'];
     const results=await Promise.all(keys.map(k=>supaGet(k)));
     const [trades_d,prop_d,weekly_d,missed_d]=results;
-    if(trades_d&&typeof trades_d==='object')allTrades=trades_d;
-    if(prop_d&&typeof prop_d==='object')allPropSettings=prop_d;
-    if(weekly_d&&typeof weekly_d==='object')allWeeklyNotes=weekly_d;
-    if(missed_d&&typeof missed_d==='object')allMissedTrades=missed_d;
+    if(trades_d&&typeof trades_d==='object') allTrades=mergeTradesProfiles(allTrades, trades_d);
+    if(prop_d&&typeof prop_d==='object') allPropSettings=mergeKeyedProfileObjs(allPropSettings, prop_d);
+    if(weekly_d&&typeof weekly_d==='object') allWeeklyNotes=mergeKeyedProfileObjs(allWeeklyNotes, weekly_d);
+    if(missed_d&&typeof missed_d==='object') allMissedTrades=mergeKeyedProfileArrays(allMissedTrades, missed_d);
     ensureProfileStoresShape();
     const ps_d=await supaGet('ict_presession').catch(()=>null);
     if(ps_d&&typeof ps_d==='object')presessionData=ps_d;
@@ -2924,6 +2991,12 @@ async function loadAllData(){
     applyProfileUI();
     renderJournal&&renderJournal();
     renderDashboard&&renderDashboard();
+    try{
+      localStorage.setItem('ict_profiles', JSON.stringify(allTrades));
+      localStorage.setItem('ict_prop_profiles', JSON.stringify(allPropSettings));
+      localStorage.setItem('ict_weekly_profiles', JSON.stringify(allWeeklyNotes));
+      localStorage.setItem('ict_missed_profiles', JSON.stringify(allMissedTrades));
+    }catch(e){}
   }catch(e){console.error('Init error',e);}
 }
 function save(){
