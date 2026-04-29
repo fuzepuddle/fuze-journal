@@ -482,8 +482,8 @@
     .more-item-icon{font-size:20px;width:28px;text-align:center}
   }
   /* Auth gate — blocks the app until signed in */
-  #auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(6,10,8,0.96);display:none;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
-  #auth-overlay.auth-show{display:flex}
+  #auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(6,10,8,0.92);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;opacity:0;visibility:hidden;transition:opacity .36s cubic-bezier(.22,1,.36,1),visibility .36s;pointer-events:none}
+  #auth-overlay.auth-show{opacity:1;visibility:visible;pointer-events:auto}
   #auth-overlay .auth-card{max-width:400px;width:100%;padding:24px;border:1px solid rgba(255,255,255,0.07);border-radius:12px;background:var(--bg-card)}
   #auth-overlay input{margin-bottom:12px}
   #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
@@ -775,6 +775,33 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
   padding:24px 28px 32px;
   min-height:100vh;
   max-width:none;
+}
+
+/* ── Smooth open: shell + tabs (respects reduced motion) ── */
+body.journal-entrance #sidebar,
+body.journal-entrance #main-content{
+  opacity:0;
+  transform:translateY(14px);
+  filter:blur(0);
+  transition:opacity .52s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);
+  will-change:opacity,transform;
+}
+body.journal-entrance #sidebar{transition-delay:.05s}
+body.journal-entrance #main-content{transition-delay:.12s}
+body.journal-entrance.journal-entrance-ready #sidebar,
+body.journal-entrance.journal-entrance-ready #main-content{
+  opacity:1;
+  transform:translateY(0);
+  will-change:auto;
+}
+.page{display:none}
+.page.active{
+  display:block;
+  animation:journalTabReveal .38s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes journalTabReveal{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
 /* ── Page header ── */
@@ -1254,9 +1281,24 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .glow-red{animation:glow-red 2s ease-in-out infinite}
 
 /* ── Auth ── */
-#auth-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(15,18,30,0.85);display:none;align-items:center;justify-content:center;padding:24px}
-#auth-overlay.auth-show{display:flex}
-#auth-overlay .auth-card{max-width:400px;width:100%;padding:28px;border:1px solid var(--border);border-radius:12px;background:#141414}
+#auth-overlay{
+  position:fixed;inset:0;z-index:2147483000;
+  display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter:saturate(140%) blur(14px);
+  -webkit-backdrop-filter:saturate(140%) blur(14px);
+  opacity:0;visibility:hidden;
+  transition:opacity .38s cubic-bezier(.22,1,.36,1),visibility .38s;
+  pointer-events:none;
+}
+#auth-overlay.auth-show{opacity:1;visibility:visible;pointer-events:auto}
+#auth-overlay .auth-card{
+  max-width:400px;width:100%;padding:28px;border:1px solid var(--border);border-radius:12px;background:#141414;
+  transform:translateY(12px);
+  opacity:.92;
+  transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .45s cubic-bezier(.22,1,.36,1);
+}
+#auth-overlay.auth-show .auth-card{transform:translateY(0);opacity:1}
 #auth-overlay input{margin-bottom:12px}
 #auth-overlay .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 
@@ -1305,9 +1347,21 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   .dash-metric-val{font-size:18px}
   #page-log{max-width:100%;padding:0 4px 32px}
 }
+@media (prefers-reduced-motion: reduce){
+  body.journal-entrance #sidebar,
+  body.journal-entrance #main-content{
+    opacity:1!important;
+    transform:none!important;
+    transition:none!important;
+    filter:none!important;
+    will-change:auto!important;
+  }
+  .page.active{animation:none!important}
+  #auth-overlay,#auth-overlay .auth-card{transition:none!important}
+}
 </style>
 </head>
-<body class="dark-mode">
+<body class="dark-mode journal-entrance">
 
 <div id="auth-overlay" class="auth-show" aria-live="polite">
   <div class="auth-card">
@@ -2944,9 +2998,41 @@ function authShowForm(msg){
   if(m&&msg) m.textContent=msg;
 }
 
+function journalRevealShell(){
+  try{
+    const b=document.body;
+    if(!b||b.classList.contains('journal-entrance-ready'))return;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      b.classList.add('journal-entrance-ready');
+      return;
+    }
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){b.classList.add('journal-entrance-ready');});
+    });
+  }catch(e){}
+}
+
 function authHideOverlay(){
   const ov=document.getElementById('auth-overlay');
-  if(ov) ov.classList.remove('auth-show');
+  if(!ov){
+    journalRevealShell();
+    return;
+  }
+  if(!ov.classList.contains('auth-show')){
+    journalRevealShell();
+    return;
+  }
+  const onEnd=function(e){
+    if(!e||e.target!==ov||e.propertyName!=='opacity')return;
+    ov.removeEventListener('transitionend',onEnd);
+    journalRevealShell();
+  };
+  ov.addEventListener('transitionend',onEnd);
+  ov.classList.remove('auth-show');
+  setTimeout(function(){
+    ov.removeEventListener('transitionend',onEnd);
+    journalRevealShell();
+  },480);
 }
 
 async function onAuthSuccess(){
