@@ -365,6 +365,7 @@
     /* Charts — sensible height */
     canvas{max-height:160px !important}
     #s-daily-stats{grid-template-columns:repeat(3,1fr) !important}
+    #dash-metrics-row{grid-template-columns:1fr 1fr 1fr !important}
 
     /* Presession grid */
     #page-presession [style*="1fr 1fr"]{grid-template-columns:1fr !important}
@@ -1002,7 +1003,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 .dash-metrics{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(6,1fr);
   gap:10px;
   margin-bottom:18px;
 }
@@ -1393,6 +1394,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <!-- Metric strip -->
   <div class="dash-metrics" id="dash-metrics-row">
+    <div class="dash-metric" id="dm-balance-card">
+      <div class="dash-metric-label" id="dm-balance-label">Account Balance</div>
+      <div class="dash-metric-val" id="dm-balance">—</div>
+      <div class="dash-metric-sub" id="dm-balance-sub">Set in Prop Firm</div>
+    </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
       <div class="dash-metric-val" id="dm-pnl">—</div>
@@ -1706,11 +1712,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>P&amp;L ($) <span style="color:#9ca3af;font-weight:400">— negative for a loss e.g. -120</span></label>
         <input type="number" id="f-pnl" placeholder="e.g. 250 or -120" step="1" oninput="calcAutoRR()">
       </div>
-      <div><label>Risk taken</label>
+      <div><label>Risk taken <span id="f-risk-balance-hint" style="color:#9ca3af;font-weight:400;font-size:13px"></span></label>
         <select id="f-risk" onchange="calcAutoRR()">
           <option value="">—</option>
-          <option value="1">1% (Challenge)</option>
-          <option value="0.5">0.5% (Funded)</option>
+          <option value="1" id="f-risk-opt-1">1% (Challenge)</option>
+          <option value="0.5" id="f-risk-opt-05">0.5% (Funded)</option>
         </select>
       </div>
     </div>
@@ -2863,11 +2869,36 @@ function authSignOut(){
   location.reload();
 }
 
-function applyLoadedData(){
+function ensureProfileStoresShape(){
+  if(!allTrades||typeof allTrades!=='object')allTrades={};
+  PROFILES.forEach(function(p){if(!Array.isArray(allTrades[p]))allTrades[p]=[];});
+  if(!allPropSettings||typeof allPropSettings!=='object')allPropSettings={};
+  PROFILES.forEach(function(p){if(!allPropSettings[p]||typeof allPropSettings[p]!=='object')allPropSettings[p]={};});
+  if(!allWeeklyNotes||typeof allWeeklyNotes!=='object')allWeeklyNotes={};
+  PROFILES.forEach(function(p){if(!allWeeklyNotes[p]||typeof allWeeklyNotes[p]!=='object')allWeeklyNotes[p]={};});
+  if(!allMissedTrades||typeof allMissedTrades!=='object')allMissedTrades={};
+  PROFILES.forEach(function(p){if(!Array.isArray(allMissedTrades[p]))allMissedTrades[p]=[];});
+}
+function refreshActiveProfileData(){
+  if(currentProfile==='all'){
+    const merged=[];
+    PROFILES.forEach(function(prof){
+      (allTrades[prof]||[]).forEach(function(t){merged.push(Object.assign({},t,{_profile:prof}));});
+    });
+    trades=merged;
+    propSettings={};
+    weeklyNotes={};
+    missedTrades=[];
+    return;
+  }
   trades=allTrades[currentProfile]||[];
   propSettings=allPropSettings[currentProfile]||{};
   weeklyNotes=allWeeklyNotes[currentProfile]||{};
   missedTrades=allMissedTrades[currentProfile]||[];
+}
+function applyLoadedData(){
+  ensureProfileStoresShape();
+  refreshActiveProfileData();
   setTimeout(updateJournalStreak,200);
 }
 
@@ -2880,6 +2911,7 @@ async function loadAllData(){
     if(prop_d&&typeof prop_d==='object')allPropSettings=prop_d;
     if(weekly_d&&typeof weekly_d==='object')allWeeklyNotes=weekly_d;
     if(missed_d&&typeof missed_d==='object')allMissedTrades=missed_d;
+    ensureProfileStoresShape();
     const ps_d=await supaGet('ict_presession').catch(()=>null);
     if(ps_d&&typeof ps_d==='object')presessionData=ps_d;
     const nn_d=await supaGet('ict_nonneg').catch(()=>null);
@@ -2895,6 +2927,7 @@ async function loadAllData(){
   }catch(e){console.error('Init error',e);}
 }
 function save(){
+  if(currentProfile==='all')return;
   allTrades[currentProfile]=trades;
   try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
   supaSet('ict_profiles',allTrades);
@@ -2959,7 +2992,7 @@ function savePropSettings(){
     consistRule:parseFloat(document.getElementById('p-consist-rule').value)||0,
     minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
-  saveProp();renderProp();
+  saveProp();renderProp();_updateRiskLabels();
 }
 function loadPropSettings(){
   if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
@@ -3230,6 +3263,29 @@ function renderDashboard(){
   const greetSub=document.getElementById('dash-greeting-sub');
   if(greetSub)greetSub.textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', fuze · NQ · NY Session · 14:30–16:00 UK';
 
+  // Account Balance card
+  (function(){
+    var _a=asNum(propSettings?(propSettings.account??propSettings.accountSize):0);
+    var _el=document.getElementById('dm-balance');
+    if(!_el)return;
+    if(_a>0){
+      var _p=rp((trades||[]).filter(function(t){return t.pnl!=null&&!isNaN(parseFloat(t.pnl));}).reduce(function(s,t){return rp(s+(parseFloat(t.pnl)||0));},0));
+      var _b=_a+_p;
+      _el.textContent='$'+Math.round(_b).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
+      _el.className='dash-metric-val '+(_b>_a?'positive':_b<_a?'negative':'');
+      var _s=document.getElementById('dm-balance-sub');
+      if(_s)_s.textContent=(_p>=0?'+$':'-$')+Math.abs(Math.round(_p)).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})+' P&L';
+      var _l=document.getElementById('dm-balance-label');
+      if(_l)_l.textContent=(propSettings.name?propSettings.name+' ':'')+'Balance';
+      var _c=document.getElementById('dm-balance-card');
+      if(_c)_c.style.borderColor='rgba(16,185,129,0.25)';
+    }else{
+      _el.textContent='—';_el.className='dash-metric-val';
+      var _s2=document.getElementById('dm-balance-sub');if(_s2)_s2.textContent='Set in Prop Firm';
+      var _l2=document.getElementById('dm-balance-label');if(_l2)_l2.textContent='Account Balance';
+      var _c2=document.getElementById('dm-balance-card');if(_c2)_c2.style.borderColor='';
+    }
+  })();
   // P&L
   const totalPnl=rp(dashTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
   const dm_pnl=document.getElementById('dm-pnl');
@@ -4601,10 +4657,30 @@ function calcRisk(){
 
 // Pre-fill calc from prop settings if available
 function prefillCalc(){
-  const accEl=document.getElementById('calc-account');
+  var accEl=document.getElementById('calc-account');
   if(accEl&&propSettings&&propSettings.account&&!accEl.value){
     accEl.value=propSettings.account;
     calcRisk();
+  }
+  _updateRiskLabels();
+}
+function _updateRiskLabels(){
+  var a=asNum(propSettings?(propSettings.account??propSettings.accountSize):0);
+  var p=rp((trades||[]).filter(function(t){return t.pnl!=null&&!isNaN(parseFloat(t.pnl));}).reduce(function(s,t){return rp(s+(parseFloat(t.pnl)||0));},0));
+  var bal=a>0?(a+p):0;
+  var o1=document.getElementById('f-risk-opt-1');
+  var o05=document.getElementById('f-risk-opt-05');
+  var h=document.getElementById('f-risk-balance-hint');
+  if(bal>0){
+    var r1=Math.round(bal*0.01);
+    var r05=Math.round(bal*0.005);
+    if(o1)o1.textContent='1% — $'+r1.toLocaleString()+' (Challenge)';
+    if(o05)o05.textContent='0.5% — $'+r05.toLocaleString()+' (Funded)';
+    if(h)h.textContent='balance: $'+Math.round(bal).toLocaleString();
+  }else{
+    if(o1)o1.textContent='1% (Challenge)';
+    if(o05)o05.textContent='0.5% (Funded)';
+    if(h)h.textContent='';
   }
 }
 
@@ -5285,22 +5361,7 @@ function switchProfile(p, btn){
   try{localStorage.setItem('ict_last_profile',p);}catch(e){}
   document.querySelectorAll('.profile-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if(p==='all'){
-    // Merge all profiles; tag each trade with its source
-    const merged=[];
-    ['challenge','funded','demo'].forEach(prof=>{
-      (allTrades[prof]||[]).forEach(t=>merged.push(Object.assign({},t,{_profile:prof})));
-    });
-    trades=merged;
-    propSettings={};
-    weeklyNotes={};
-    missedTrades=[];
-  } else {
-    trades=allTrades[currentProfile]||[];
-    propSettings=allPropSettings[currentProfile]||{};
-    weeklyNotes=allWeeklyNotes[currentProfile]||{};
-    missedTrades=allMissedTrades[currentProfile]||[];
-  }
+  refreshActiveProfileData();
   // Destroy all chart instances so they redraw cleanly
   if(equityChartInstance){equityChartInstance.destroy();equityChartInstance=null;}
   if(dailyChartInstance){dailyChartInstance.destroy();dailyChartInstance=null;}
@@ -5329,10 +5390,8 @@ function switchProfile(p, btn){
 }
 
 // Apply profile data after all vars declared
-trades=allTrades[currentProfile]||[];
-propSettings=allPropSettings[currentProfile]||{};
-weeklyNotes=allWeeklyNotes[currentProfile]||{};
-missedTrades=allMissedTrades[currentProfile]||[];
+ensureProfileStoresShape();
+refreshActiveProfileData();
 
 // ── Autosave draft ──
 function saveDraft(){
@@ -5651,6 +5710,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       if(_pp){const d=JSON.parse(_pp);if(d&&typeof d==='object')allPropSettings=d;}
       if(_pw){const d=JSON.parse(_pw);if(d&&typeof d==='object')allWeeklyNotes=d;}
       if(_pm){const d=JSON.parse(_pm);if(d&&typeof d==='object')allMissedTrades=d;}
+      ensureProfileStoresShape();
       if(_ps){const d=JSON.parse(_ps);if(d&&typeof d==='object')presessionData=d;}
       if(_nn){const d=JSON.parse(_nn);if(d&&typeof d==='object')psNonNeg=d;}
     }catch(e){}
