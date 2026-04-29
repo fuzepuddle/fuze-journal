@@ -1690,7 +1690,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
       <div class="section-label" style="margin-bottom:0">Model checklist · NASDAQ NY Continuation</div>
-      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span><span class="collapse-icon">▼</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" class="btn btn-sm" onclick="event.stopPropagation();checklistCheckAll()" title="Tick every checklist box">Check all</button>
+        <span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span>
+        <span class="collapse-icon">▼</span>
+      </div>
     </div>
     <div id="checklist-body" class="collapsible-body">
     <div class="check-group-title">⏱️ Session</div>
@@ -1784,9 +1788,13 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       </div>
     </div>
     <div style="max-width:100%">
-      <label>RR achieved <span id="f-rr-auto" style="font-size:13px;margin-left:6px;font-weight:600"></span></label>
-      <input type="text" id="f-actual-rr" placeholder="auto-fills from P&amp;L below" oninput="syncRRField()" style="font-family:'Plus Jakarta Sans',sans-serif">
-      <div style="font-size:12px;color:#555;margin-top:4px">Enter P&amp;L + risk → R calculates automatically</div>
+      <label>Risk taken</label>
+      <select id="f-risk" onchange="calcAutoRR()">
+        <option value="">—</option>
+        <option value="1">1% (Challenge)</option>
+        <option value="0.5">0.5% (Funded)</option>
+      </select>
+      <div style="font-size:12px;color:#555;margin-top:4px">Used to auto-calc R from P&amp;L</div>
     </div>
   </div>
 
@@ -1801,12 +1809,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>P&amp;L ($) <span style="color:#9ca3af;font-weight:400">— negative for a loss e.g. -120</span></label>
         <input type="number" id="f-pnl" placeholder="e.g. 250 or -120" step="1" oninput="calcAutoRR()">
       </div>
-      <div><label>Risk taken</label>
-        <select id="f-risk" onchange="calcAutoRR()">
-          <option value="">—</option>
-          <option value="1">1% (Challenge)</option>
-          <option value="0.5">0.5% (Funded)</option>
-        </select>
+      <div>
+        <label>RR achieved <span id="f-rr-auto" style="font-size:13px;margin-left:6px;font-weight:600"></span></label>
+        <input type="text" id="f-actual-rr" placeholder="auto-fills from P&amp;L + risk" oninput="syncRRField()" style="font-family:'Plus Jakarta Sans',sans-serif">
       </div>
     </div>
     <div style="margin-top:14px">
@@ -1821,17 +1826,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <div class="card gap">
-    <div class="section-label">Plan vs execution</div>
+    <div class="section-label">Tags</div>
     <div class="grid-2 gap">
-      <div>
-        <label>Planned vs reactive <span style="color:#dc2626">*</span></label>
-        <select id="f-plan-type">
-          <option value="">— Select</option>
-          <option value="planned">Planned — morning / preset plan</option>
-          <option value="mixed">Mixed — some plan + discretion</option>
-          <option value="impulsive">Reactive / impulsive</option>
-        </select>
-      </div>
       <div>
         <label>Playbook</label>
         <select id="f-playbook" onchange="togglePlaybookCustom()">
@@ -1842,16 +1838,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <option value="custom">Custom label…</option>
         </select>
       </div>
-    </div>
-    <div class="grid-2 gap" style="margin-top:12px">
-      <div>
-        <label id="f-playbook-custom-label" style="display:none">Custom playbook name</label>
-        <input type="text" id="f-playbook-custom" placeholder="e.g. After Jan rule update" style="display:none;font-family:inherit" onfocus="togglePlaybookCustom()">
-      </div>
       <div>
         <label>Extra tags <span style="color:#9ca3af;font-size:12px;font-weight:400">comma-separated</span></label>
         <input type="text" id="f-tags-extra" placeholder="news-day, NFP, revenge-block">
       </div>
+    </div>
+    <div style="margin-top:12px">
+      <label id="f-playbook-custom-label" style="display:none">Custom playbook name</label>
+      <input type="text" id="f-playbook-custom" placeholder="e.g. After Jan rule update" style="display:none;font-family:inherit" onfocus="togglePlaybookCustom()">
     </div>
     <div class="hint"><span style="font-weight:600;color:#e5e7eb">Realised R</span> uses P&amp;L ÷ (account × risk %) with the account size stored for this profile (default $50k).</div>
   </div>
@@ -1862,16 +1856,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <span class="collapse-icon">▼</span>
     </div>
     <div id="execution-body" class="collapsible-body">
-    <div class="gap">
-      <label>Discipline (followed model?)</label>
-      <div class="stars" id="stars-disc">
-        <span class="star" onclick="rateStar(1)">★</span>
-        <span class="star" onclick="rateStar(2)">★</span>
-        <span class="star" onclick="rateStar(3)">★</span>
-        <span class="star" onclick="rateStar(4)">★</span>
-        <span class="star" onclick="rateStar(5)">★</span>
-      </div>
-    </div>
+    <!-- Discipline stars removed -->
     <div class="gap" id="emotion-field">
       <label>Emotional state <span style="color:#555;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0">— before entry</span></label>
       <select id="f-emotion">
@@ -2030,10 +2015,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         </optgroup>
       </select>
     </div>
-    <div class="gap">
-      <label>Similar past trade <span style="color:#9ca3af;font-size:14px;font-weight:400">— date of a trade this setup resembles</span></label>
-      <input type="text" id="f-similar" placeholder="e.g. 2025-03-14 — same PDH draw, slowing momentum, got stopped">
-    </div>
+    <!-- Similar past trade removed -->
     <div class="gap">
       <label>What happened?</label>
       <textarea id="f-narrative" placeholder="Brief description of the setup / price action..." style="min-height:50px"></textarea>
@@ -2087,7 +2069,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <tr>
           <th>Date</th><th>Instr.</th><th>Bias</th><th>Dir</th>
           <th>Draw</th><th>RR got</th><th>P&amp;L</th><th>Risk</th>
-          <th>Outcome</th><th>Disc.</th><th></th>
+          <th>Outcome</th><th></th>
         </tr>
       </thead>
       <tbody id="journal-body"></tbody>
@@ -2110,14 +2092,13 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div id="smart-insights-list" style="display:flex;flex-direction:column;gap:7px"></div>
   </div>
 
-  <!-- Row 1: 6 key metrics -->
-  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px">
+  <!-- Row 1: key metrics -->
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">
     <div class="metric-card"><div class="metric-lbl">Total P&amp;L</div><div class="metric-val" id="s-pnl" style="font-size:18px">$0</div></div>
     <div class="metric-card" id="s-wr-card"><div class="metric-lbl">Win rate</div><div class="metric-val" id="s-wr" style="font-size:18px">—</div></div>
     <div class="metric-card"><div class="metric-lbl">Trades</div><div class="metric-val" id="s-total" style="font-size:18px">0</div></div>
     <div class="metric-card"><div class="metric-lbl">Profit factor</div><div class="metric-val" id="s-profitfactor" style="font-size:18px">—</div></div>
     <div class="metric-card"><div class="metric-lbl">Expectancy</div><div class="metric-val" id="s-expectancy" style="font-size:18px">—</div></div>
-    <div class="metric-card"><div class="metric-lbl">Avg disc.</div><div class="metric-val" id="s-disc" style="font-size:18px">—</div></div>
     
   </div>
 
@@ -2207,15 +2188,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <!-- Row 6: Long vs Short + Discipline vs outcome + FVG zone -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+  <!-- Row 6: Long vs Short + FVG zone -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">Long vs Short</div>
       <div id="s-longshort" style="font-size:14px;color:#4b5563">No data</div>
-    </div>
-    <div class="card">
-      <div class="section-label">Discipline vs outcome</div>
-      <div id="s-disc-corr" style="font-size:14px;color:#4b5563">No data</div>
     </div>
     <div class="card">
       <div class="section-label">FVG entry zone</div>
@@ -2699,7 +2676,7 @@ let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMonthlyReviews={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
-let trades=[];let mode=currentProfile==='demo'?'demo':'live';let discRating=0;let outcome='';let tradeClass='';let tradeInterference='';
+let trades=[];let mode=currentProfile==='demo'?'demo':'live';let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
 let mrMonthOffset=0;
@@ -3483,7 +3460,15 @@ function updateChecks(){
   }
 }
 
-function rateStar(n){discRating=n;document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function enforcePnlSign(inputEl, out){
+  if(!inputEl) return;
+  if(out!=='loss') return;
+  const raw=String(inputEl.value||'').trim();
+  if(raw==='') return;
+  const n=parseFloat(raw);
+  if(isNaN(n)) return;
+  if(n>0) inputEl.value = -Math.abs(n);
+}
 function setOutcome(type,btn){
   outcome=type;
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
@@ -3501,6 +3486,8 @@ function setOutcome(type,btn){
   } else {
     pnlField.placeholder='e.g. 250 or -120';
   }
+  enforcePnlSign(pnlField, type);
+  calcAutoRR&&calcAutoRR();
 }
 
 // ── Trade classification ──
@@ -3537,8 +3524,6 @@ async function saveTrade(){
   if(!tradeClass) missing.push('Trade classification');
   if(pnlRaw==='') missing.push('P&L');
   if(!risk) missing.push('Risk');
-  if(!discRating) missing.push('Discipline stars');
-  if(!document.getElementById('f-plan-type')||!document.getElementById('f-plan-type').value) missing.push('Planned vs reactive');
   var fPb=document.getElementById('f-playbook');var fPbC=document.getElementById('f-playbook-custom');
   if(fPb&&fPb.value==='custom'&&!(fPbC&&fPbC.value.trim())) missing.push('Custom playbook label');
   if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state (before entry)');
@@ -3582,17 +3567,15 @@ async function saveTrade(){
     entryTime:document.getElementById('f-entry-time').value,
     exitTime:(document.getElementById('f-exit-time')||{}).value||'',
     session:'',
-    planType:document.getElementById('f-plan-type').value||'',
     realisedR:realisedR!=null?realisedR:undefined,
     entryPrice:optFloatField('f-entry-price'),exitPrice:optFloatField('f-exit-price'),
     contracts:optFloatField('f-contracts'),
-    bias, direction, draw, rrActual, pnl, outcome, discRating,
+    bias, direction, draw, rrActual, pnl, outcome,
     emotion:document.getElementById('f-emotion')?document.getElementById('f-emotion').value:'',
     emotionPost:document.getElementById('f-emotion-post')?document.getElementById('f-emotion-post').value:'',
     mistakes:[...selectedMistakes],
     fvgZone:document.getElementById('f-fvg-zone')?document.getElementById('f-fvg-zone').value:'',
     momentum:document.getElementById('f-momentum').value,
-    similar:document.getElementById('f-similar').value,
     narrative:document.getElementById('f-narrative').value,
     improve:document.getElementById('f-improve').value,
     ss1m:ssUrls['1m']||'', ss5m:ssUrls['5m']||'',
@@ -3612,7 +3595,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-similar','f-momentum','f-emotion','f-emotion-post','f-plan-type','f-playbook','f-playbook-custom','f-tags-extra','f-entry-price','f-exit-price','f-contracts'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-playbook','f-playbook-custom','f-tags-extra','f-entry-price','f-exit-price','f-contracts'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   var pf=document.getElementById('f-playbook-custom');var pl=document.getElementById('f-playbook-custom-label');if(pl)pl.style.display='none';if(pf)pf.style.display='none';togglePlaybookCustom();
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
@@ -3623,7 +3606,7 @@ function clearForm(){
   window._pendingSSFiles={};
   document.querySelectorAll('#checklist-body .check-item input').forEach(b=>b.checked=false);
   const ms=document.getElementById('mistake-search');if(ms)ms.value='';
-  discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   tradeClass='';tradeInterference='';
   selectedMistakes=[];
@@ -3646,7 +3629,7 @@ function renderJournal(){
   if(fb)f=f.filter(t=>t.bias===fb);
   if(fs){
     const q=fs.toLowerCase();
-    f=f.filter(t=>(t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||(t.tags||[]).join(' ').toLowerCase().includes(q)||String(t.planType||'').toLowerCase().includes(q)||(t.date||'').includes(q));
+    f=f.filter(t=>(t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||(t.tags||[]).join(' ').toLowerCase().includes(q)||(t.date||'').includes(q));
   }
   f.sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id));
   const badge=document.getElementById('trade-count-badge');
@@ -3667,7 +3650,7 @@ function renderJournal(){
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'rgba(255,255,255,0.07)'};
     var dateLbl=t.date+(currentProfile==='all'&&t._profile?' <span style="font-size:11px;color:#818cf8;font-weight:600">['+String(t._profile).toUpperCase()+']</span>':'');
-    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+dateLbl+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:14px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';
+    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+dateLbl+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:14px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
@@ -3761,7 +3744,7 @@ function renderJournal(){
 
     const bottomBar='<div style="display:flex;align-items:center;justify-content:flex-end;margin-top:4px">'+editBtn+'</div>';
 
-    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="11" style="padding:10px 14px 12px;background:rgba(10,15,10,0.6);border-bottom:1px solid rgba(255,255,255,0.05)">'+topBar+infoGrid+mistakesRow+ssHtml+notesHtml+bottomBar+'</td></tr>';
+    const detailRow='<tr id="detail-'+t.id+'" style="display:none"><td colspan="10" style="padding:10px 14px 12px;background:rgba(10,15,10,0.6);border-bottom:1px solid rgba(255,255,255,0.05)">'+topBar+infoGrid+mistakesRow+ssHtml+notesHtml+bottomBar+'</td></tr>';
     return mainRow+detailRow;
   }).join('');
 }
@@ -3785,7 +3768,7 @@ function toggleDetail(id, btn){
 
 
 let editingId=null;
-let eDiscRating=0;
+// discipline removed
 
 function openEdit(id){
   const t=trades.find(tr=>tr.id===id);
@@ -3811,17 +3794,16 @@ function openEdit(id){
   document.getElementById('e-narrative').value=t.narrative||'';
   document.getElementById('e-improve').value=t.improve||'';
   const eMom=document.getElementById('e-momentum');if(eMom)eMom.value=t.momentum||'';
-  const eSim=document.getElementById('e-similar');if(eSim)eSim.value=t.similar||'';
+  // similar removed
   const eFvg=document.getElementById('e-fvg-zone');if(eFvg)eFvg.value=t.fvgZone||'';
   const eEmP=document.getElementById('e-emotion-post');if(eEmP)eEmP.value=t.emotionPost||'';
-  const ep=document.getElementById('e-plan-type');if(ep)ep.value=t.planType||'mixed';
+  // plan type removed
   tagsIntoEditForm(t.tags);
   var eep=document.getElementById('e-entry-price'),exp=document.getElementById('e-exit-price'),ect=document.getElementById('e-contracts');
   if(eep)eep.value=t.entryPrice!=null&&t.entryPrice!==''?t.entryPrice:'';
   if(exp)exp.value=t.exitPrice!=null&&t.exitPrice!==''?t.exitPrice:'';
   if(ect)ect.value=t.contracts!=null&&t.contracts!==''?t.contracts:'';
-  eDiscRating=t.discRating||0;
-  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<eDiscRating?'#10b981':'rgba(255,255,255,0.07)';});
+  // discipline removed
   const esSec=document.getElementById('e-ss-section');
   if(esSec)esSec.style.display=currentProfile==='backtesting'?'none':'grid';
   document.getElementById('edit-modal').style.display='block';
@@ -3835,9 +3817,11 @@ function closeEdit(){
   editingId=null;
 }
 
-function eRateStar(n){
-  eDiscRating=n;
-  document.querySelectorAll('#e-stars .star').forEach((s,i)=>{s.style.color=i<n?'#10b981':'rgba(255,255,255,0.07)';});
+function enforceEditPnlSign(){
+  try{
+    const out=(document.getElementById('e-outcome')||{}).value||'';
+    enforcePnlSign(document.getElementById('e-pnl'), out);
+  }catch(e){}
 }
 
 function saveEdit(){
@@ -3857,11 +3841,11 @@ function saveEdit(){
   if(!(document.getElementById('e-tradeClass')||{}).value) missing.push('Trade classification');
   if(pnlRaw==='') missing.push('P&L');
   if(!document.getElementById('e-risk').value) missing.push('Risk');
-  if(!eDiscRating) missing.push('Discipline stars');
+  // discipline removed
   if(document.getElementById('e-emotion')&&!document.getElementById('e-emotion').value) missing.push('Emotional state');
   if(document.getElementById('e-emotion-post')&&!document.getElementById('e-emotion-post').value) missing.push('Emotional state (after close)');
   if(document.getElementById('e-momentum')&&!document.getElementById('e-momentum').value) missing.push('Momentum at entry');
-  if(!(document.getElementById('e-plan-type')||{}).value) missing.push('Plan vs reactive');
+  // plan removed
   var epub=document.getElementById('e-playbook');var epbc=document.getElementById('e-playbook-custom');
   if(epub&&epub.value==='custom'&&!(epbc&&epbc.value.trim())) missing.push('Custom playbook label');
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
@@ -3879,7 +3863,7 @@ function saveEdit(){
     rrActual:document.getElementById('e-actual-rr').value,
     outcome:document.getElementById('e-outcome').value,
     pnl:ePnl!==''?parseFloat(ePnl):null,
-    planType:(document.getElementById('e-plan-type')||{}).value||'',
+    // planType removed
     realisedR:eReal!=null?eReal:undefined,
     entryPrice:(function(){var v=document.getElementById('e-entry-price');if(!v||v.value==='')return null;var n=parseFloat(v.value);return isFinite(n)?n:null;})(),
     exitPrice:(function(){var v=document.getElementById('e-exit-price');if(!v||v.value==='')return null;var n=parseFloat(v.value);return isFinite(n)?n:null;})(),
@@ -3889,7 +3873,7 @@ function saveEdit(){
     exitTime:(document.getElementById('e-exit-time')||{}).value||'',
     session:'',
     emotion:document.getElementById('e-emotion').value,
-    discRating:eDiscRating,
+    // discRating removed
     ss1m:document.getElementById('e-ss-1m').value,
     ss5m:document.getElementById('e-ss-5m').value,
     ss15m:document.getElementById('e-ss-15m').value,
@@ -3899,7 +3883,7 @@ function saveEdit(){
     narrative:document.getElementById('e-narrative').value,
     improve:document.getElementById('e-improve').value,
     momentum:(document.getElementById('e-momentum')||{}).value||'',
-    similar:(document.getElementById('e-similar')||{}).value||'',
+    // similar removed
     fvgZone:(document.getElementById('e-fvg-zone')||{}).value||'',
     emotionPost:(document.getElementById('e-emotion-post')||{}).value||'',
     tradeClass:(document.getElementById('e-tradeClass')||{}).value||'',
@@ -3929,7 +3913,7 @@ let monthlyChartInstance=null;
 function renderStats(){
   const f=trades;
   // Reset all metric cards first so stale data never shows
-  ['s-pnl','s-wr','s-total','s-disc','s-profitfactor','s-expectancy'].forEach(id=>{
+  ['s-pnl','s-wr','s-total','s-profitfactor','s-expectancy'].forEach(id=>{
     const el=document.getElementById(id);if(el){el.textContent='—';el.style.color='';}
   });
   document.getElementById('s-total').textContent=f.length;
@@ -3940,8 +3924,6 @@ function renderStats(){
   wrEl.style.color=completedTrades.length?(wins.length/completedTrades.length>=0.5?'#10b981':'#ef4444'):'';
   const wrCard=document.getElementById('s-wr-card');
   if(wrCard)wrCard.style.background=completedTrades.length?(wins.length/completedTrades.length>=0.5?'rgba(16,185,129,0.07)':'rgba(239,68,68,0.07)'):'var(--bg-card)';
-  const withDisc=f.filter(t=>t.discRating);
-  document.getElementById('s-disc').textContent=withDisc.length?'★ '+(withDisc.reduce((s,t)=>s+t.discRating,0)/withDisc.length).toFixed(1):'—';
   const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
   const pnlEl=document.getElementById('s-pnl');
   pnlEl.textContent=(totalPnl>=0?'+$':'−$')+Math.abs(totalPnl).toLocaleString();
@@ -3989,7 +3971,6 @@ function renderStats(){
   renderMonthlyChart(f);
   renderMomentumStats(f);
   renderLongShort(f);
-  renderDiscCorr(f);
   renderFvgZoneStats(f);
   renderChecklistWR(f);
   renderHoldDuration(f);
@@ -4299,11 +4280,7 @@ function calDayClick(dateStr){
         +'<span style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#6b7280">'+label+'</span>'
         +'<span style="font-size:14px;font-weight:600;color:#e5e7eb">'+val+'</span>'
         +'</div>':'';
-    const filledStar='<span style="color:#10b981">★</span>';
-    const emptyStar='<span style="color:rgba(255,255,255,0.1)">★</span>';
-    const discStars=t.discRating
-      ?filledStar.repeat(t.discRating)+emptyStar.repeat(5-t.discRating)
-      :'--';
+    // discipline removed
     return'<div style="background:#1a1f2e;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;margin-bottom:10px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
         +'<div style="display:flex;align-items:center;gap:10px">'
@@ -4313,14 +4290,10 @@ function calDayClick(dateStr){
         +'</div>'
         +'<span style="font-size:18px;font-weight:700;color:'+pnlColor+'">'+pnlStr+'</span>'
       +'</div>'
-      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px">'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px">'
         +chip('Draw',t.draw||null)
         +chip('RR',t.rrActual||null)
         +chip('Risk',t.risk?t.risk+'%':null)
-        +'<div style="display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:7px 11px">'
-          +'<span style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#6b7280">Disc</span>'
-          +'<span style="font-size:13px;line-height:1.8">'+discStars+'</span>'
-          +'</div>'
       +'</div>'
       +ssHtml+narrativeHtml+improveHtml
       +'</div>';
@@ -4362,34 +4335,7 @@ function renderLongShort(f){
   }).join('<div style="border-top:1px solid rgba(255,255,255,0.07);margin-bottom:12px"></div>');
 }
 
-// ── Discipline vs outcome correlation ──
-function renderDiscCorr(f){
-  const el=document.getElementById('s-disc-corr');if(!el)return;
-  const withDisc=f.filter(t=>t.discRating&&t.outcome);
-  if(!withDisc.length){el.textContent='No data';return;}
-  // Group by discipline rating
-  const groups={};
-  withDisc.forEach(t=>{
-    const r=t.discRating;
-    if(!groups[r])groups[r]={win:0,loss:0,be:0,total:0,pnl:0};
-    groups[r].total++;
-    groups[r][t.outcome]=(groups[r][t.outcome]||0)+1;
-    if(t.pnl!=null)groups[r].pnl+=t.pnl;
-  });
-  const sorted=Object.entries(groups).sort((a,b)=>Number(b[0])-Number(a[0]));
-  el.innerHTML=sorted.map(([stars,d])=>{
-    const wr=Math.round(d.win/d.total*100);
-    const col=wr>=60?'#10b981':wr>=40?'#f59e0b':'#ef4444';
-    const pnlCol=d.pnl>=0?'#10b981':'#ef4444';
-    return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-      +'<span style="font-size:14px;color:var(--accent)">'+'★'.repeat(Number(stars))+'</span>'
-      +'<div style="display:flex;gap:12px;align-items:center">'
-      +'<span style="font-size:14px;color:#888">'+d.total+' trades</span>'
-      +'<span style="font-size:14px;font-weight:500;color:'+col+'">'+wr+'% WR</span>'
-      +'<span style="font-size:14px;color:'+pnlCol+'">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</span>'
-      +'</div></div>';
-  }).join('');
-}
+// discipline correlation removed
 
 
 
@@ -5426,14 +5372,14 @@ function saveDraft(){
     emotion:document.getElementById('f-emotion').value,
     narrative:document.getElementById('f-narrative').value,
     improve:document.getElementById('f-improve').value,
-    planType:document.getElementById('f-plan-type')?document.getElementById('f-plan-type').value:'',
+    planType:'',
     playbook:document.getElementById('f-playbook')?document.getElementById('f-playbook').value:'',
     playbookCustom:document.getElementById('f-playbook-custom')?document.getElementById('f-playbook-custom').value:'',
     tagsExtra:document.getElementById('f-tags-extra')?document.getElementById('f-tags-extra').value:'',
     entryPrice:document.getElementById('f-entry-price')?document.getElementById('f-entry-price').value:'',
     exitPrice:document.getElementById('f-exit-price')?document.getElementById('f-exit-price').value:'',
     contracts:document.getElementById('f-contracts')?document.getElementById('f-contracts').value:'',
-    outcome,discRating,selectedMistakes:[...selectedMistakes]
+    outcome,selectedMistakes:[...selectedMistakes]
   };
   try{localStorage.setItem('ict_draft_'+currentProfile,JSON.stringify(draft));}catch(e){}
 }
@@ -5453,7 +5399,7 @@ function loadDraft(){
       if(el&&draft[k])el.value=draft[k];
     });
     document.getElementById('f-actual-rr').value=draft.rrActual||'';
-    var fPt=document.getElementById('f-plan-type');if(fPt&&draft.planType)fPt.value=draft.planType;
+    // plan type removed
     var fPb=document.getElementById('f-playbook');if(fPb&&draft.playbook)fPb.value=draft.playbook;togglePlaybookCustom();
     var fPbC=document.getElementById('f-playbook-custom');if(fPbC&&draft.playbookCustom)fPbC.value=draft.playbookCustom;
     var fTx=document.getElementById('f-tags-extra');if(fTx&&draft.tagsExtra)fTx.value=draft.tagsExtra;
@@ -5467,7 +5413,7 @@ function loadDraft(){
       const btn=document.querySelectorAll('.outcome-btn')[outcomeMap[draft.outcome]];
       if(btn){document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');btn.classList.add('active-'+draft.outcome);}
     }
-    if(draft.discRating){discRating=draft.discRating;document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<draft.discRating));}
+    // discipline removed
     if(draft.selectedMistakes&&draft.selectedMistakes.length){
       selectedMistakes=draft.selectedMistakes;
       buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'');
@@ -5614,9 +5560,7 @@ function randomizeTrade(){
   }
   if(pickedBtn) setTradeClass(picked, pickedBtn);
 
-  const disc=rOutcome==='win'?Math.floor(Math.random()*3)+3:Math.floor(Math.random()*3)+1;
-  discRating=disc;
-  document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<disc));
+  // discipline removed
   const lossMistakePools={displacement:['Displacement weaker than retrace','No clear BOS on displacement'],retrace:['Violent retrace ignored','Retrace stronger than displacement'],confirmation:['No 1M close confirmation','BOS not driving toward draw'],management:['Didn\'t move to BE','Stop too tight — wicked out'],psychology:['Forced the setup','FOMO — chased price']};
   const beMistakePools={management:['Didn\'t move to BE','Closed early — TP not reached'],draw:['Unclear draw on liquidity','Multiple competing draws']};
   let randMistakes=[];
@@ -5639,8 +5583,7 @@ function randomizeTrade(){
   document.getElementById('f-narrative').value=narratives[Math.floor(Math.random()*narratives.length)];
   const mainMistake=randMistakes.length?randMistakes[0]:null;
   document.getElementById('f-improve').value=rOutcome==='loss'&&mainMistake?'Key issue: '+mainMistake+'. Review this step before next entry.':rOutcome==='be'&&mainMistake?'Partial execution: '+mainMistake+'.':'Execution was clean. Continue following model.';
-  const planPool=rOutcome==='win'?['planned','planned','mixed']:rOutcome==='loss'?['mixed','impulsive','impulsive']:['planned','mixed'];
-  var fPt=document.getElementById('f-plan-type');if(fPt)fPt.value=planPool[Math.floor(Math.random()*planPool.length)];
+  // plan type removed
   var fPv=document.getElementById('f-playbook');if(fPv)fPv.value=['v1','v2','v3'][Math.floor(Math.random()*3)];
   togglePlaybookCustom();
   var ft=document.getElementById('f-tags-extra');if(ft)ft.value='';
@@ -5671,6 +5614,7 @@ function launchConfetti(){
 
 // ── RR auto-calculator ──
 function calcAutoRR(){
+  enforcePnlSign(document.getElementById('f-pnl'), outcome);
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
   const account=getAccountForRisk();
@@ -5699,6 +5643,7 @@ function syncRRField(){
 }
 
 function calcEditAutoRR(){
+  enforceEditPnlSign();
   const pnl=parseFloat(document.getElementById('e-pnl').value);
   const riskPct=parseFloat(document.getElementById('e-risk').value);
   const account=getAccountForRiskEdit()||50000;
@@ -6521,10 +6466,8 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       <div><label>HTF draw</label><select id="e-draw"><option value="">—</option><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>Midnight Open</option><option>EQH</option><option>EQL</option><option>HTF Swing Point</option></select></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-<div>
-  <label>RR achieved <span id="e-rr-auto" style="color:var(--accent);font-size:13px;margin-left:6px"></span></label>
-  <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="font-family:'Plus Jakarta Sans',sans-serif" oninput="this.dataset.autoFilled='0'">
-</div>      <div><label>Outcome</label><select id="e-outcome"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
+      <div><label>Risk</label><select id="e-risk" onchange="calcEditAutoRR()"><option value="">—</option><option value="1">1% (Challenge)</option><option value="0.5">0.5% (Funded)</option></select></div>
+      <div><label>Outcome</label><select id="e-outcome" onchange="enforceEditPnlSign();calcEditAutoRR()"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
     </div>
     <div style="margin-bottom:12px">
       <label style="margin-bottom:6px">Trade classification</label>
@@ -6536,39 +6479,31 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       </select>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Plan vs reactive</label><select id="e-plan-type" style="width:100%"><option value="">—</option><option value="planned">Planned</option><option value="mixed">Mixed</option><option value="impulsive">Reactive / impulsive</option></select></div>
       <div><label>Playbook</label><select id="e-playbook" style="width:100%" onchange="toggleEditPlaybookCustom()"><option value="">—</option><option value="v1">Playbook 1</option><option value="v2">Playbook 2</option><option value="v3">Playbook 3</option><option value="custom">Custom…</option></select></div>
+      <div><label>Extra tags <span style="color:#9ca3af;font-size:12px">comma-separated</span></label><input type="text" id="e-tags-extra" style="width:100%" placeholder="news-day, focus-week"></div>
     </div>
     <div style="margin-bottom:12px">
       <label>Custom playbook label</label><input type="text" id="e-playbook-custom" placeholder="If Playbook = Custom" style="width:100%;display:none">
     </div>
-    <div style="margin-bottom:12px">
-      <label>Extra tags <span style="color:#9ca3af;font-size:12px">comma-separated</span></label><input type="text" id="e-tags-extra" style="width:100%" placeholder="news-day, focus-week">
-    </div>
+    <!-- tags moved above -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Entry price</label><input type="number" id="e-entry-price" step="0.25"></div>
       <div><label>Exit price</label><input type="number" id="e-exit-price" step="0.25"></div>
       <div><label>Contracts</label><input type="number" id="e-contracts" step="1" min="0"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>P&L ($)</label><input type="number" id="e-pnl" step="1" oninput="calcEditAutoRR()"></div>
-      <div><label>Risk</label><select id="e-risk" onchange="calcEditAutoRR()"><option value="">—</option><option value="1">1% (Challenge)</option><option value="0.5">0.5% (Funded)</option></select></div>
+      <div><label>P&L ($)</label><input type="number" id="e-pnl" step="1" oninput="enforceEditPnlSign();calcEditAutoRR()"></div>
+      <div>
+        <label>RR achieved <span id="e-rr-auto" style="color:var(--accent);font-size:13px;margin-left:6px"></span></label>
+        <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="font-family:'Plus Jakarta Sans',sans-serif" oninput="this.dataset.autoFilled='0'">
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Entry time (UK)</label><input type="time" id="e-entry-time" min="14:30" max="16:00"></div>
       <div><label>Exit time (UK)</label><input type="time" id="e-exit-time" min="14:30" max="16:30"></div>
       <div><label>Emotional state</label><select id="e-emotion"><option value="">—</option><option>Neutral ✓</option><option>Patient / waiting</option><option>FOMO / chasing</option><option>Revenge trading</option><option>Overconfident</option><option>Anxious / hesitant</option><option>Distracted</option><option>Tired / low energy</option></select></div>
     </div>
-    <div style="margin-bottom:12px">
-      <label>Discipline</label>
-      <div style="display:flex;gap:4px;margin-top:4px" id="e-stars">
-        <span class="star" onclick="eRateStar(1)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(2)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(3)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(4)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-        <span class="star" onclick="eRateStar(5)" style="font-size:20px;cursor:pointer;color:rgba(255,255,255,0.07);line-height:1">★</span>
-      </div>
-    </div>
+    <!-- discipline removed -->
 
         <div id="e-ss-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>1M screenshot</label><input type="text" id="e-ss-1m" placeholder="TradingView link"></div>
@@ -6589,7 +6524,6 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive expansion — strong displacement</option><option>Strong but starting to slow</option><option>Moderate — steady push</option><option>Slowing — losing volume</option><option>Grinding — small candles, slow grind</option><option>Choppy — back and forth</option><option>Stalled — no directional momentum</option><option>V-shape recovery off FVG</option><option>Slow corrective retrace — textbook</option><option>Violent retrace — entered anyway</option><option>Price consolidating inside FVG</option></select></div>
       <div><label>FVG entry zone</label><select id="e-fvg-zone" style="width:100%"><option value="">—</option><option>Top of gap</option><option>Middle of gap</option><option>Bottom of gap</option></select></div>
-      <div><label>Similar past trade</label><input type="text" id="e-similar" placeholder="e.g. 2025-03-14 — same draw"></div>
       <div><label>Emotion after close</label><select id="e-emotion-post" style="width:100%"><option value="">—</option><option>Satisfied ✓</option><option>Calm / indifferent</option><option>Frustrated</option><option>Relieved</option><option>Overconfident / euphoric</option><option>Revenge urge</option><option>Regret (closed too early)</option><option>Regret (held too long)</option><option>Shaken / doubting model</option></select></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
@@ -7556,7 +7490,7 @@ function renderSmartInsights(){
 function exportTradesToCSV(){
   if(!trades||trades.length===0){ alert('No trades to export.'); return; }
   function csvTxt(v){ return String(v==null?'':v).replace(/[\n\r]/g,' '); }
-  const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Realised R','Risk','Plan','Tags','Entry price','Exit price','Contracts','Discipline','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
+const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Realised R','Risk','Tags','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
   const rows=trades.map(t=>[
     t.date||'',
     t.entryTime||'',
