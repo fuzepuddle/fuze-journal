@@ -2526,6 +2526,23 @@ function normalizeTradeDate(v){
   }
   return null;
 }
+function parsePnl(v){
+  if(v==null)return null;
+  if(typeof v==='number')return Number.isFinite(v)?v:null;
+  const s=String(v).trim();
+  if(!s)return null;
+  const n=parseFloat(s.replace(/[^0-9.\-+]/g,''));
+  return Number.isFinite(n)?n:null;
+}
+function getLatestTradeDate(tradeList){
+  let latest=null;
+  (tradeList||[]).forEach(t=>{
+    const d=normalizeTradeDate(t&&t.date);
+    if(!d)return;
+    if(!latest||d>latest)latest=d;
+  });
+  return latest;
+}
 let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
@@ -4009,12 +4026,21 @@ function renderBestDayBias(f){
 // ── Calendar ──
 let calYear=new Date().getFullYear();
 let calMonth=new Date().getMonth();
+let calAutoFocused=false;
 
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMonth();renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 
 function renderCalendar(){
+  if(!calAutoFocused){
+    const latest=getLatestTradeDate(trades);
+    if(latest){
+      calYear=Number(latest.slice(0,4));
+      calMonth=Number(latest.slice(5,7))-1;
+    }
+    calAutoFocused=true;
+  }
   const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const titleEl=document.getElementById('cal-month-title');
   if(titleEl)titleEl.textContent=monthNames[calMonth]+' '+calYear;
@@ -4023,13 +4049,15 @@ function renderCalendar(){
   const today=new Date().toISOString().split('T')[0];
   // Build day map from trades
   const dayMap={};
-  trades.filter(t=>t.pnl!=null&&t.date).forEach(t=>{
+  trades.filter(t=>t.date).forEach(t=>{
+    const pnlVal=parsePnl(t.pnl);
+    if(pnlVal==null)return;
     const normDate=normalizeTradeDate(t.date);
     if(!normDate)return;
     const d=normDate.slice(0,7)===(calYear+'-'+String(calMonth+1).padStart(2,'0'))?normDate:null;
     if(!d)return;
     if(!dayMap[d])dayMap[d]={pnl:0,trades:[],wins:0,losses:0,be:0};
-    dayMap[d].pnl+=asNum(t.pnl);
+    dayMap[d].pnl+=pnlVal;
     dayMap[d].trades.push(t);
     if(t.outcome==='win')dayMap[d].wins++;
     else if(t.outcome==='loss')dayMap[d].losses++;
@@ -4038,7 +4066,7 @@ function renderCalendar(){
   // Update month stats
   const monthStr=calYear+'-'+String(calMonth+1).padStart(2,'0');
   const monthTrades=trades.filter(t=>{const d=normalizeTradeDate(t.date);return d&&d.startsWith(monthStr);});
-  const monthPnl=rp(monthTrades.reduce((s,t)=>rp(s+asNum(t.pnl)),0));
+  const monthPnl=rp(monthTrades.reduce((s,t)=>rp(s+asNum(parsePnl(t.pnl))),0));
   const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
   const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
   const mPnlEl=document.getElementById('cal-m-pnl');
@@ -5042,6 +5070,7 @@ function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.f
 
 // ── Weekly review ──
 let currentWeekOffset=0;
+let weeklyAutoFocused=false;
 
 function saveWeeklyStore(){
   allWeeklyNotes[currentProfile]=weeklyNotes;
@@ -5061,6 +5090,25 @@ function weekNext(){currentWeekOffset++;renderWeekly();}
 function weekCurrent(){currentWeekOffset=0;renderWeekly();}
 
 function renderWeekly(){
+  if(!weeklyAutoFocused){
+    const latest=getLatestTradeDate(trades);
+    if(latest){
+      const d=new Date(latest+'T12:00:00');
+      const now=new Date();
+      const thisMon=new Date(now);{
+        const day=now.getDay();
+        thisMon.setDate(now.getDate()-(day===0?6:day-1));
+        thisMon.setHours(0,0,0,0);
+      }
+      const latestMon=new Date(d);{
+        const day=d.getDay();
+        latestMon.setDate(d.getDate()-(day===0?6:day-1));
+        latestMon.setHours(0,0,0,0);
+      }
+      currentWeekOffset=Math.round((latestMon-thisMon)/(7*24*60*60*1000));
+    }
+    weeklyAutoFocused=true;
+  }
   const{mon,fri,key}=getWeekDates(currentWeekOffset);
   const fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
   document.getElementById('weekly-range-label').textContent=fmt(mon)+' – '+fmt(fri);
@@ -5076,7 +5124,7 @@ function renderWeekly(){
   const wrEl=document.getElementById('w-wr');
   wrEl.textContent=active.length?Math.round(wins.length/active.length*100)+'%':'—';
   wrEl.style.color=active.length?(wins.length/active.length>=0.5?'#10b981':'#ef4444'):'';
-  const pnl=rp(weekTrades.reduce((s,t)=>rp(s+asNum(t.pnl)),0));
+  const pnl=rp(weekTrades.reduce((s,t)=>rp(s+asNum(parsePnl(t.pnl))),0));
   const pnlEl=document.getElementById('w-pnl');
   pnlEl.textContent=fmtPnl(pnl);
   pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
@@ -5135,7 +5183,7 @@ function renderWeekly(){
     const lastActive=lastWeekTrades.filter(t=>t.outcome!=='skip');
     const lastWins=lastActive.filter(t=>t.outcome==='win');
     const lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
-    const lastPnl=rp(lastWeekTrades.reduce((s,t)=>rp(s+asNum(t.pnl)),0));
+    const lastPnl=rp(lastWeekTrades.reduce((s,t)=>rp(s+asNum(parsePnl(t.pnl))),0));
     const wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
     const pnlDiff=pnl-lastPnl;
     if(cmpEl)cmpEl.innerHTML=
