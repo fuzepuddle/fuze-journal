@@ -261,10 +261,10 @@
       font-size:13px;
     }
     #journal-streak{font-size:13px !important;padding:3px 8px !important}
-    .profile-btns{
+    .profile-btns,.sb-profile-btns{
       width:100%;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
+      display:grid !important;
+      grid-template-columns:repeat(5,1fr);
       gap:5px;
     }
     .profile-btn{
@@ -997,9 +997,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 .dash-metrics{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(7,1fr);
   gap:10px;
   margin-bottom:18px;
+}
+@media(max-width:1400px){
+  .dash-metrics{grid-template-columns:repeat(4,1fr)}
 }
 .dash-metric{
   background:var(--bg-card);
@@ -1358,6 +1361,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <button class="profile-btn" onclick="switchProfile('challenge',this)" id="pbtn-challenge">Challenge</button>
       <button class="profile-btn" onclick="switchProfile('funded',this)" id="pbtn-funded">Funded</button>
       <button class="profile-btn" onclick="switchProfile('demo',this)" id="pbtn-demo">Demo</button>
+      <button class="profile-btn" onclick="switchProfile('all',this)" id="pbtn-all" title="Combined Challenge + Funded + Demo">All</button>
     </div>
     <div class="sb-streak" id="journal-streak">🔥 —</div>
     <button id="dl-toggle" onclick="toggleDarkLight()">
@@ -1387,6 +1391,16 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <!-- Metric strip -->
   <div class="dash-metrics" id="dash-metrics-row">
+    <div class="dash-metric">
+      <div class="dash-metric-label">Total balance</div>
+      <div class="dash-metric-val" id="dm-equity-total">—</div>
+      <div class="dash-metric-sub" id="dm-equity-sub"><span style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="promptEditAccountBaseline()" title="Set once · saved in this browser">Set starting balance ($)</span> · Combined P&amp;L from all profiles</div>
+    </div>
+    <div class="dash-metric">
+      <div class="dash-metric-label">Combined net P&amp;L</div>
+      <div class="dash-metric-val" id="dm-combined-net">—</div>
+      <div class="dash-metric-sub" id="dm-combined-sub">Challenge + Funded + Demo</div>
+    </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
       <div class="dash-metric-val" id="dm-pnl">—</div>
@@ -1533,6 +1547,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <!-- LOG -->
 <div class="page" id="page-log">
 <div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:600;color:#e5e7eb;letter-spacing:-.01em">Log Trade</h2></div>
+<div id="all-profiles-banner" class="card" style="display:none;margin-bottom:14px;padding:12px 16px;background:rgba(148,130,255,0.06);border:1px solid rgba(148,130,255,0.22);border-radius:10px;font-size:14px;line-height:1.55;color:#c4b5fd"><strong>All profiles</strong> · merged Challenge + Funded + Demo. Switch profile above to log a new trade (with screenshots).</div>
 <div id="log-form-col">
 
   <!-- SESSION TIMER -->
@@ -2361,6 +2376,44 @@ Then: Authentication → Providers → Email → disable "Allow new users" after
 // ── State ──
 let currentProfile=(()=>{try{return localStorage.getItem('ict_last_profile')||'challenge';}catch(e){return 'challenge';}})();
 const PROFILES=['challenge','funded','demo'];
+/** Saved once in localStorage · combined with summed P&amp;L from all three profiles → Total balance */
+const FUZE_ACCOUNT_BASE_KEY='fuze_account_start_balance';
+function getAccountStartBalance(){ try{var x=parseFloat(localStorage.getItem(FUZE_ACCOUNT_BASE_KEY)||'0');return isFinite(x)?x:0;}catch(e){return 0;} }
+function setAccountStartBalance(n){
+  try{localStorage.setItem(FUZE_ACCOUNT_BASE_KEY,String(isFinite(Number(n))?Number(n):0));}catch(e){}
+  if(typeof renderDashboard==='function')renderDashboard();
+}
+function promptEditAccountBaseline(){
+  var cur=getAccountStartBalance();
+  var inp=prompt('Starting account balance in dollars (e.g. 50000). This is saved once in this browser. Total balance = this + combined net P&L.', cur?String(cur):'50000');
+  if(inp===null)return;
+  var num=parseFloat(String(inp).replace(/[$,]/g,''));
+  if(!isFinite(num)||num<0){alert('Enter a valid dollar amount');return;}
+  setAccountStartBalance(num);
+}
+/** Sum Net P&amp;L across Challenge, Funded, Demo · same counting rules as dashboard (closed trades only) */
+function computeCombinedClosedPnL(){
+  var sum=0;
+  PROFILES.forEach(function(prof){
+    (allTrades[prof]||[]).forEach(function(t){
+      if(!t||!t.outcome||t.outcome==='skip')return;
+      sum+=parseFloat(t.pnl)||0;
+    });
+  });
+  return Math.round(sum*100)/100;
+}
+function rebuildMergedProfileView(){
+  var merged=[];
+  PROFILES.forEach(function(prof){
+    (allTrades[prof]||[]).forEach(function(t){merged.push(Object.assign({},t,{_profile:prof}));});
+  });
+  trades=merged.sort(function(a,b){return String(a.date||'').localeCompare(String(b.date||''))||((a.id||0)-(b.id||0));});
+  propSettings={};
+  weeklyNotes={};
+  missedTrades=PROFILES.flatMap(function(prof){
+    return (allMissedTrades[prof]||[]).map(function(m){return Object.assign({},m,{_profile:prof});});
+  });
+}
 let allTrades={challenge:[],funded:[],demo:[]};
 let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
@@ -2679,10 +2732,13 @@ function authSignOut(){
 }
 
 function applyLoadedData(){
-  trades=allTrades[currentProfile]||[];
-  propSettings=allPropSettings[currentProfile]||{};
-  weeklyNotes=allWeeklyNotes[currentProfile]||{};
-  missedTrades=allMissedTrades[currentProfile]||[];
+  if(currentProfile==='all')rebuildMergedProfileView();
+  else{
+    trades=allTrades[currentProfile]||[];
+    propSettings=allPropSettings[currentProfile]||{};
+    weeklyNotes=allWeeklyNotes[currentProfile]||{};
+    missedTrades=allMissedTrades[currentProfile]||[];
+  }
   setTimeout(updateJournalStreak,200);
 }
 
@@ -2710,25 +2766,45 @@ async function loadAllData(){
   }catch(e){console.error('Init error',e);}
 }
 function save(){
+  if(currentProfile==='all')return;
   allTrades[currentProfile]=trades;
   try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
   supaSet('ict_profiles',allTrades);
 }
 function del(id){
-  const t=trades.find(t=>t.id===id);
+  var t=trades.find(function(x){return x.id===id;});
   if(!t)return;
-  const label=t.date+(t.draw?' · '+t.draw:'')+(t.outcome?' · '+t.outcome:'');
+  var label=t.date+(t.draw?' · '+t.draw:'')+(t.outcome?' · '+t.outcome:'');
   if(!confirm('Delete trade: '+label+'?\n\nThis cannot be undone.'))return;
-  trades=trades.filter(t=>t.id!==id);
+  if(currentProfile==='all'&&t._profile){
+    var src=t._profile;
+    if(PROFILES.indexOf(src)<0)return;
+    allTrades[src]=(allTrades[src]||[]).filter(function(x){return x.id!==id;});
+    trades=trades.filter(function(x){return x.id!==id;});
+    try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
+    supaSet('ict_profiles',allTrades);
+    renderJournal();
+    if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')){if(window.renderDashboard)window.renderDashboard();else if(renderDashboard)renderDashboard();}
+    return;
+  }
+  trades=trades.filter(function(x){return x.id!==id;});
   save();renderJournal();
 }
 function toggleFav(id,btn){
-  const t=trades.find(t=>t.id===id);
+  var t=trades.find(function(x){return x.id===id;});
   if(!t)return;
-  t.favourite=!t.favourite;
+  if(currentProfile==='all'&&t._profile){
+    var arr=allTrades[t._profile]||[];
+    var u=arr.find(function(x){return x.id===id;});
+    if(u){ u.favourite=!u.favourite;t.favourite=u.favourite; }
+    try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
+    supaSet('ict_profiles',allTrades);
+  }else{
+    t.favourite=!t.favourite;
+    save();
+  }
   btn.textContent=t.favourite?'★':'☆';
   btn.style.color=t.favourite?'#f59e0b':'#999';
-  save();
 }
 function saveProp(){
   allPropSettings[currentProfile]=propSettings;
@@ -2755,8 +2831,14 @@ function loadPropSettings(){
   if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
 }
 function renderProp(){
-  const tracker=document.getElementById('prop-tracker');
-  const empty=document.getElementById('prop-empty');
+  if(currentProfile==='all'){
+    var tr=document.getElementById('prop-tracker');if(tr)tr.style.display='none';
+    var emp=document.getElementById('prop-empty');if(emp){emp.style.display='block';emp.textContent='Prop targets are set per Challenge / Funded / Demo — switch profile above.';}
+    return;
+  }
+  var tracker=document.getElementById('prop-tracker');
+  var empty=document.getElementById('prop-empty');
+  if(emp)emp.textContent='Fill in prop settings above.';
   if(!propSettings.target){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
   if(tracker)tracker.style.display='block';
   if(empty)empty.style.display='none';
@@ -2892,13 +2974,35 @@ function renderDashboard(){
   const totalPnl=dashTrades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
   const dm_pnl=document.getElementById('dm-pnl');
   if(dm_pnl){dm_pnl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});dm_pnl.className='dash-metric-val '+(totalPnl>0?'positive':totalPnl<0?'negative':'');}
-  const dm_pnl_sub=document.getElementById('dm-pnl-sub');if(dm_pnl_sub)dm_pnl_sub.textContent=total+' trade'+(total!==1?'s':'');
+  const dm_pnl_sub=document.getElementById('dm-pnl-sub');
+  if(dm_pnl_sub)dm_pnl_sub.textContent=(currentProfile==='all'?'All profiles · ':'This profile · ')+total+' trade'+(total!==1?'s':'');
 
   // Win rate
   const wr=total?Math.round(wins.length/total*100):0;
   const dm_wr=document.getElementById('dm-wr');if(dm_wr){dm_wr.textContent=wr+'%';dm_wr.className='dash-metric-val '+(wr>=50?'positive':'');}
   const dm_wr_sub=document.getElementById('dm-wr-sub');if(dm_wr_sub)dm_wr_sub.textContent=wins.length+'W · '+losses.length+'L';
   const dashWrBig=document.getElementById('dash-wr-big');if(dashWrBig)dashWrBig.textContent=wr+'%';
+
+  // Combined-net + total equity (persisted baseline + summed P&amp;L from all profiles)
+  var comboNet=computeCombinedClosedPnL();
+  var startBal=getAccountStartBalance();
+  var equityTotal=startBal+comboNet;
+  var dmComb=document.getElementById('dm-combined-net');
+  if(dmComb){
+    dmComb.textContent=(comboNet>=0?'+$':'-$')+Math.abs(comboNet).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
+    dmComb.className='dash-metric-val '+(comboNet>0?'positive':comboNet<0?'negative':'');
+  }
+  var dmCombSub=document.getElementById('dm-combined-sub');
+  if(dmCombSub)dmCombSub.textContent='Across Challenge + Funded + Demo';
+  var dmEq=document.getElementById('dm-equity-total');
+  if(dmEq){
+    dmEq.textContent='$'+equityTotal.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
+    dmEq.className='dash-metric-val '+(equityTotal>startBal?'positive':equityTotal<startBal?'negative':'');
+  }
+  var dmEqSub=document.getElementById('dm-equity-sub');
+  if(dmEqSub){
+    dmEqSub.innerHTML='Starts $<span>'+Math.round(startBal).toLocaleString('en',{maximumFractionDigits:0})+'</span> · Combined P&amp;L '+(comboNet>=0?'+':'−')+'$'+Math.abs(Math.round(comboNet)).toLocaleString('en',{maximumFractionDigits:0})+' · <span style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="promptEditAccountBaseline()" title="Change starting balance">Edit start</span>';
+  }
 
   // Avg RR
   const rrs=dashTrades.filter(t=>t.rrActual&&t.outcome!=='be').map(t=>parseFloat(t.rrActual)).filter(n=>!isNaN(n));
@@ -3075,6 +3179,7 @@ function setTradeClass(type, btn){
 
 // ── Save trade ──
 async function saveTrade(){
+  if(currentProfile==='all'){alert('Switch to Challenge, Funded, or Demo to log a trade (All is read-only merged view).');return;}
   const date=document.getElementById('f-date').value;
   const bias=document.getElementById('f-bias').value;
   const direction=document.getElementById('f-direction').value;
@@ -3213,7 +3318,8 @@ function renderJournal(){
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:15px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'rgba(255,255,255,0.07)'};
-    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:14px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';
+    var dateLbl=t.date+(currentProfile==='all'&&t._profile?' <span style="font-size:11px;color:#818cf8;font-weight:600">['+String(t._profile).toUpperCase()+']</span>':'');
+    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+dateLbl+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:14px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
@@ -3385,7 +3491,7 @@ function saveEdit(){
   if(document.getElementById('e-emotion-post')&&!document.getElementById('e-emotion-post').value) missing.push('Emotional state (after close)');
   if(document.getElementById('e-momentum')&&!document.getElementById('e-momentum').value) missing.push('Momentum at entry');
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
-  trades[idx]={
+  var updated={
     ...trades[idx],
     date:document.getElementById('e-date').value,
     instrument:'NQ/MNQ',
@@ -3416,6 +3522,19 @@ function saveEdit(){
     emotionPost:(document.getElementById('e-emotion-post')||{}).value||'',
     tradeClass:(document.getElementById('e-tradeClass')||{}).value||'',
   };
+  if(currentProfile==='all'&&trades[idx]&&trades[idx]._profile){
+    var src=trades[idx]._profile;
+    var ix=(allTrades[src]||[]).findIndex(function(x){return x.id===editingId;});
+    if(ix>=0){
+      var persisted=Object.assign({},updated);delete persisted._profile;
+      allTrades[src][ix]=persisted;
+      trades[idx]=Object.assign({},persisted,{_profile:src});
+      try{localStorage.setItem('ict_profiles',JSON.stringify(allTrades));}catch(e){}
+      supaSet('ict_profiles',allTrades);
+      closeEdit();renderJournal();return;
+    }
+  }
+  trades[idx]=updated;
   save();closeEdit();renderJournal();
 }
 
@@ -4671,6 +4790,7 @@ function saveMissedStore(){
 }
 
 function saveMissed(){
+  if(currentProfile==='all'){alert('Switch to Challenge, Funded, or Demo to log a missed trade.');return;}
   const date=document.getElementById('m-date').value;
   if(!date){alert('Add a date');return;}
   const m={id:Date.now(),date,direction:document.getElementById('m-direction').value,draw:document.getElementById('m-draw').value,reason:document.getElementById('m-reason').value,notes:document.getElementById('m-notes').value,hesitation:document.getElementById('m-hesitation').value};
@@ -4683,9 +4803,23 @@ function renderMissed(){
   const empty=document.getElementById('missed-empty');
   if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>').join('');
+  tbody.innerHTML=missedTrades.map(function(m){var lbl=m.date+(m._profile?' <span style="font-size:11px;color:#818cf8">['+String(m._profile)+']</span>':'');return'<tr><td style="white-space:nowrap">'+lbl+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';}).join('');
 }
-function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();}
+function delMissed(id){
+  if(!confirm('Delete?'))return;
+  if(currentProfile==='all'){
+    var m=missedTrades.find(function(x){return x.id===id;});
+    if(!m||!m._profile)return;
+    var src=m._profile;
+    allMissedTrades[src]=(allMissedTrades[src]||[]).filter(function(x){return x.id!==id;});
+    missedTrades=missedTrades.filter(function(x){return x.id!==id;});
+    try{localStorage.setItem('ict_missed_profiles',JSON.stringify(allMissedTrades));}catch(e){}
+    supaSet('ict_missed_profiles',allMissedTrades);
+    renderMissed();
+    return;
+  }
+  missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();
+}
 
 // ── Weekly review ──
 let currentWeekOffset=0;
@@ -4791,6 +4925,7 @@ function renderWeekly(){
   }
 }
 function saveWeeklyNotes(){
+  if(currentProfile==='all'){alert('Switch to Challenge, Funded, or Demo to save weekly notes for that profile.');return;}
   const{key}=getWeekDates(currentWeekOffset);
   weeklyNotes[key]={well:document.getElementById('w-well').value,improve:document.getElementById('w-improve').value,focus:document.getElementById('w-focus').value};
   saveWeeklyStore();alert('Notes saved ✓');
@@ -4842,25 +4977,36 @@ function renderTimeOfDay(trades){
 
 function applyProfileUI(){
   const isBack=currentProfile==='backtesting';
+  const isAll=currentProfile==='all';
   ['screenshots-section','emotion-field'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
-    if(isBack)el.classList.add('profile-hide');
+    if(isBack||isAll)el.classList.add('profile-hide');
     else el.classList.remove('profile-hide');
   });
+  var logCol=document.getElementById('log-form-col');
+  if(logCol)logCol.style.display=isAll?'none':'block';
+  var allBanner=document.getElementById('all-profiles-banner');
+  if(allBanner)allBanner.style.display=isAll?'block':'none';
+  var missedTop=document.querySelector('#page-missed > .flex-between');
+  var missedCard=document.querySelector('#page-missed > .card.gap');
+  if(missedTop)missedTop.style.display=isAll?'none':'';
+  if(missedCard)missedCard.style.display=isAll?'none':'';
 }
 
 function switchProfile(p, btn){
   currentProfile=p;
-  // Auto-set mode to match profile
   mode = p === 'demo' ? 'demo' : 'live';
   try{localStorage.setItem('ict_last_profile',p);}catch(e){}
   document.querySelectorAll('.profile-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  trades=allTrades[currentProfile]||[];
-  propSettings=allPropSettings[currentProfile]||{};
-  weeklyNotes=allWeeklyNotes[currentProfile]||{};
-  missedTrades=allMissedTrades[currentProfile]||[];
+  if(p==='all')rebuildMergedProfileView();
+  else{
+    trades=allTrades[currentProfile]||[];
+    propSettings=allPropSettings[currentProfile]||{};
+    weeklyNotes=allWeeklyNotes[currentProfile]||{};
+    missedTrades=allMissedTrades[currentProfile]||[];
+  }
   // Destroy all chart instances so they redraw cleanly
   if(equityChartInstance){equityChartInstance.destroy();equityChartInstance=null;}
   if(dailyChartInstance){dailyChartInstance.destroy();dailyChartInstance=null;}
@@ -4889,10 +5035,13 @@ function switchProfile(p, btn){
 }
 
 // Apply profile data after all vars declared
+if(currentProfile==='all')rebuildMergedProfileView();
+else{
 trades=allTrades[currentProfile]||[];
 propSettings=allPropSettings[currentProfile]||{};
 weeklyNotes=allWeeklyNotes[currentProfile]||{};
 missedTrades=allMissedTrades[currentProfile]||[];
+}
 
 // ── Autosave draft ──
 function saveDraft(){
@@ -4917,6 +5066,7 @@ function saveDraft(){
   try{localStorage.setItem('ict_draft_'+currentProfile,JSON.stringify(draft));}catch(e){}
 }
 function loadDraft(){
+  if(currentProfile==='all')return;
   try{
     const d=localStorage.getItem('ict_draft_'+currentProfile);
     if(!d)return;
