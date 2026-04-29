@@ -1689,29 +1689,27 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
-      <div class="section-label" style="margin-bottom:0">Model checklist · NASDAQ NY Continuation v2</div>
-      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:14px;color:#9ca3af">0 / 13</span><span class="collapse-icon">▼</span></div>
+      <div class="section-label" style="margin-bottom:0">Model checklist · NASDAQ NY Continuation</div>
+      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span><span class="collapse-icon">▼</span></div>
     </div>
     <div id="checklist-body" class="collapsible-body">
-    <div class="check-group-title">v2 · Session &amp; rules</div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Trading within <strong>2:30–4:00 PM UK</strong>; plan respects hard close — <strong>no new risk after ~4:30 PM</strong></span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One trade / day</strong> for this model — this planned entry respects that slot</span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Neutral headspace; skipping if <strong>red-folder news spike</strong> conflicts with the window</span></div>
-    <div class="check-group-title">v2 · Draw &amp; HTF</div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One primary liquidity draw</strong> — S/A/B/C tier acknowledged; nearest vs full-target rule consciously applied vs momentum</span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>4H</strong> not tightening chop — <strong>directional context</strong> favours continuation <em>toward</em> that draw</span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>1H</strong> aligns with bullish/bearish delivery &amp; <strong>premium/discount</strong> read toward the tagged draw</span></div>
-    <div class="check-group-title">v2 · 15M displacement</div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Clean displacement on <strong>15M toward the draw</strong> with identifiable <strong>BOS</strong> — not lone wick fakeout</span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement leg visibly <strong>stronger than prior corrective pullback</strong> ahead of entry</span></div>
-    <div class="check-group-title">v2 · 5M singular gap</div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One singular obvious 5M gap/FVG</strong> toward trade — overlapping messy ladder = skip</span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Gap is <strong>quality</strong> (clear from tape, not scraped out of chop / low-quality fragmentation)</span></div>
-    <div class="check-group-title">v2 · Slow / weak pullback</div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>Slow, weak corrective</strong> retrace <em>into</em> imbalance — not violent displacement back through gap edge</span></div>
-    <div class="check-group-title">v2 · IFVG · 1M entry</div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>IFVG entry playbook</strong>: slight violation geometry + confirmation on accepted <strong>IFVG / candle close</strong>; strong‑momentum carve‑out honoured if live</span></div>
-    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>Mental invalidation</strong>: prior 1M close back <strong>through IFVG</strong> = structural exit rule internalised before click</span></div>
+    <div class="check-group-title">⏱️ Session</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Within <strong>2:30–4:00 PM UK</strong> window</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Hard close respected — <strong>no new entries after 4:00</strong>, manage-out by <strong>4:30</strong></span></div>
+    <div class="check-group-title">🧠 Rules</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One trade/day</strong> (no revenge / no second attempt)</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>No red-folder news chaos (or you’re intentionally waiting it out)</span></div>
+    <div class="check-group-title">🎯 Target</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clear draw (untapped) — you can say it in one sentence</span></div>
+    <div class="check-group-title">🔥 15M displacement</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>15M displacement <strong>toward the draw</strong> with a clean BOS (not a wick)</span></div>
+    <div class="check-group-title">🧩 5M gap</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clean 5M gap/FVG (not messy ladder / chop-made)</span></div>
+    <div class="check-group-title">🐢 Pullback</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Pullback is slow/weak into the gap (not violent)</span></div>
+    <div class="check-group-title">✅ Entry</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>IFVG / 1M confirmation is clean — entry on the close (no guessing)</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>If 1M closes back through IFVG → you’ll exit (rule agreed before clicking)</span></div>
     <div id="gate" class="gate">Complete checklist to see verdict</div>
     </div>
   </div>
@@ -1835,12 +1833,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         </select>
       </div>
       <div>
-        <label>Playbook version</label>
+        <label>Playbook</label>
         <select id="f-playbook" onchange="togglePlaybookCustom()">
           <option value="">— None</option>
-          <option value="v1">Playbook v1</option>
-          <option value="v2">Playbook v2</option>
-          <option value="v3">Playbook v3</option>
+          <option value="v1">Playbook 1</option>
+          <option value="v2">Playbook 2</option>
+          <option value="v3">Playbook 3</option>
           <option value="custom">Custom label…</option>
         </select>
       </div>
@@ -2327,53 +2325,53 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <option>Fear of another loss</option>
           <option>Just missed it — wasn't at the screen</option>
         </optgroup>
-        <optgroup label="v2 · Framework">
+        <optgroup label="Framework">
           <option>Missed unqualified setup — perfect execution</option>
           <option>Stopped at BE on slow trade — perfect execution</option>
           <option>Target reached then chop — closed immediately (done for day)</option>
         </optgroup>
-        <optgroup label="v2 · Can I trade?">
+        <optgroup label="Can I trade?">
           <option>Outside session window (2:30–4:00 PM UK)</option>
           <option>Major news — no neutral headspace</option>
           <option>Not neutral — skipped</option>
         </optgroup>
-        <optgroup label="v2 · Draw tier">
+        <optgroup label="Draw tier">
           <option>No clear single draw — skip</option>
           <option>C tier alone — skip</option>
           <option>Competing draws — could not pick one</option>
           <option>Draw not untapped / already taken</option>
         </optgroup>
-        <optgroup label="v2 · 4H bias">
+        <optgroup label="4H bias">
           <option>4H ranging / small candles — skip</option>
           <option>Delivering from opposite HTF gap — skip</option>
           <option>Structure not toward draw — skip</option>
         </optgroup>
-        <optgroup label="v2 · 15M displacement">
+        <optgroup label="15M displacement">
           <option>Weak displacement vs pullback — skip</option>
           <option>No clear BOS on displacement — skip</option>
         </optgroup>
-        <optgroup label="v2 · 5M gap">
+        <optgroup label="5M gap">
           <option>Multiple messy gaps — skip</option>
           <option>Gap formed in chop — skip</option>
           <option>Not singular obvious FVG — skip</option>
         </optgroup>
-        <optgroup label="v2 · Pullback">
+        <optgroup label="Pullback">
           <option>Fast / aggressive pullback — skip</option>
           <option>Pullback not slow &amp; weak — skip</option>
         </optgroup>
-        <optgroup label="v2 · IFVG 1M">
+        <optgroup label="IFVG 1M">
           <option>No IFVG / no slight violation into gap</option>
           <option>Waited for retest but never got clean reaction</option>
           <option>1M closed back through IFVG — invalid</option>
         </optgroup>
-        <optgroup label="v2 · Target / BE / exit">
+        <optgroup label="Target / BE / exit">
           <option>Slow momentum + aimed for full target (rule break)</option>
           <option>Did not move to BE at first internal swing</option>
           <option>Price stalled at BE zone — took BE per 60% rule</option>
           <option>After 4:00 PM — trailed per 5M rule / hard close 4:30</option>
           <option>Past 4:00 PM entry — hard no-trade</option>
         </optgroup>
-        <optgroup label="v2 · Hard no-trade">
+        <optgroup label="Hard no-trade">
           <option>Forcing a setup — hard no-trade</option>
           <option>HTF chop + attempted continuation — skip</option>
         </optgroup>
@@ -2707,7 +2705,7 @@ let propSettings={};let selectedMistakes=[];
 let mrMonthOffset=0;
 
 const FUZE_JOURNAL_TAGLINE_KEY='fuze_journal_tagline';
-const DEFAULT_JOURNAL_TAGLINE='NASDAQ NY Continuation Model v2 · 2:30–4:00 PM UK · Hard close 4:30 PM · 1 trade/day · 1% challenge / 0.5% funded · Min 1:1 RR';
+const DEFAULT_JOURNAL_TAGLINE='NASDAQ NY Continuation Model · 2:30–4:00 PM UK · Hard close 4:30 PM · 1 trade/day · 1% challenge / 0.5% funded · Min 1:1 RR';
 function getJournalTagline(){
   try{var t=localStorage.getItem(FUZE_JOURNAL_TAGLINE_KEY);if(t&&String(t).trim())return String(t).trim();}catch(e){}
   return DEFAULT_JOURNAL_TAGLINE;
@@ -2854,13 +2852,13 @@ const MISTAKES=[
     'Kept watching after entry and scared myself out',
     'Got attached to a bias and ignored contradicting signs'
   ]},
-  {cat:'v2 · Can I trade?',items:[
+  {cat:'Can I trade?',items:[
     'Outside 2:30–4:00 PM UK window',
     'Major news pending — skipped',
     'Headspace not neutral — skipped',
     'Second trade same day — rule break'
   ]},
-  {cat:'v2 · Draw / liquidity tier',items:[
+  {cat:'Draw / liquidity tier',items:[
     'No clear untapped target — skip',
     'C tier alone (unbalanced gap only) — skip',
     'S tier — perfect equal H/L not respected',
@@ -2870,32 +2868,32 @@ const MISTAKES=[
     'Draw already tapped earlier',
     'Opposing liquidity pool blocked path'
   ]},
-  {cat:'v2 · 4H bias',items:[
+  {cat:'4H bias',items:[
     '4H ranging / small candles — chop',
     'Structure not pointing toward draw',
     'Delivering away from opposite HTF gap — skip',
     'Premium/discount read wrong for direction'
   ]},
-  {cat:'v2 · 15M displacement',items:[
+  {cat:'15M displacement',items:[
     'Displacement weaker than pullback',
     'No clear BOS on displacement',
     '15M push not toward draw',
     'Single wick fakeout — not real displacement'
   ]},
-  {cat:'v2 · 5M singular gap',items:[
+  {cat:'5M singular gap',items:[
     'Multiple messy FVGs — not singular obvious gap',
     'FVG formed in chop',
     'Gap not visible from far left — quality fail',
     'Two adjacent gaps not read as one combined',
     'Gap partially filled before entry'
   ]},
-  {cat:'v2 · Slow weak pullback',items:[
+  {cat:'Slow weak pullback',items:[
     'Fast / aggressive pullback — should skip',
     'Consolidation inside gap instead of calm retrace',
     'Deep retrace through entire gap',
     'Chased after missing slow pullback'
   ]},
-  {cat:'v2 · IFVG 1M entry',items:[
+  {cat:'IFVG 1M entry',items:[
     'No slight violation into gap before IFVG',
     'Entered before IFVG candle close',
     'Strong momentum entry rule violated (should be IFVG close)',
@@ -2904,26 +2902,26 @@ const MISTAKES=[
     'Mental stop: 1M closed back through IFVG — did not exit',
     'Hard stop not at swing high/low'
   ]},
-  {cat:'v2 · Target selection',items:[
+  {cat:'Target selection',items:[
     'Slow momentum but aimed for full level',
     'B/C tier draw but targeted major liquidity',
     'Strong + S/A but took minor instead of full (wrong side of rule)',
     'Did not take nearest minor on slow momentum'
   ]},
-  {cat:'v2 · BE rule',items:[
+  {cat:'BE rule',items:[
     'Did not move SL to BE at first internal swing',
     'Price stalled at BE zone — did not accept BE',
     'Held for more after stall (60% fail warning ignored)',
     'Moved BE back against rule'
   ]},
-  {cat:'v2 · Exit / time',items:[
+  {cat:'Exit / time',items:[
     'Before 4PM mismanagement — no trail plan',
     'After 4PM did not trail to 5M candle lows/highs',
     'Past 4PM new entry — hard no-trade breach',
     'Held past 4:30 PM hard close',
     'Target hit then chop — did not close immediately'
   ]},
-  {cat:'v2 · Hard no-trade list',items:[
+  {cat:'Hard no-trade list',items:[
     'Forced setup',
     'HTF chop + continuation attempt',
     'Weak displacement entry',
@@ -2931,7 +2929,7 @@ const MISTAKES=[
     'Not neutral state',
     'Slow momentum + full target plan'
   ]},
-  {cat:'v2 · Framework',items:[
+  {cat:'Framework',items:[
     'Missed unqualified setup — correct (journal as win)',
     'Stopped at BE on slow trade — correct process',
     'Draw → displacement → gap → IFVG sequence broken',
@@ -3478,8 +3476,8 @@ function updateChecks(){
   const cc=document.getElementById('check-count');
   if(cc)cc.textContent=passed+' / '+boxes.length;
   const gate=document.getElementById('gate');
-  if(gate){
-    if(passed===boxes.length){gate.className='gate pass';gate.textContent='All checks passed — valid setup (v2)';}
+    if(gate){
+    if(passed===boxes.length){gate.className='gate pass';gate.textContent='All checks passed — valid setup';}
     else if(passed===0){gate.className='gate';gate.textContent='Complete checklist to see verdict';}
     else{gate.className='gate fail';gate.textContent=(boxes.length-passed)+' check(s) not met — model says skip';}
   }
@@ -6539,7 +6537,7 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Plan vs reactive</label><select id="e-plan-type" style="width:100%"><option value="">—</option><option value="planned">Planned</option><option value="mixed">Mixed</option><option value="impulsive">Reactive / impulsive</option></select></div>
-      <div><label>Playbook</label><select id="e-playbook" style="width:100%" onchange="toggleEditPlaybookCustom()"><option value="">—</option><option value="v1">v1</option><option value="v2">v2</option><option value="v3">v3</option><option value="custom">Custom…</option></select></div>
+      <div><label>Playbook</label><select id="e-playbook" style="width:100%" onchange="toggleEditPlaybookCustom()"><option value="">—</option><option value="v1">Playbook 1</option><option value="v2">Playbook 2</option><option value="v3">Playbook 3</option><option value="custom">Custom…</option></select></div>
     </div>
     <div style="margin-bottom:12px">
       <label>Custom playbook label</label><input type="text" id="e-playbook-custom" placeholder="If Playbook = Custom" style="width:100%;display:none">
