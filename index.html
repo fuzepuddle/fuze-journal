@@ -2234,16 +2234,24 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
     <div class="grid-2 gap">
       <div><label>Profit target ($)</label><input type="number" id="p-target" placeholder="e.g. 3000"></div>
-      <div><label>Max drawdown ($)</label><input type="number" id="p-maxdd" placeholder="e.g. 2500"></div>
+      <div><label>Max lifetime loss / drawdown ($)</label><input type="number" id="p-maxdd" placeholder="e.g. 2000"></div>
+    </div>
+    <div class="grid-2 gap">
+      <div><label>or max DD as % of account</label><input type="number" id="p-maxdd-pct" placeholder="e.g. 4" step="0.1" title="If set, overrides the $ field using account size"></div>
+      <div><label>Consistency rule — max % (best day ÷ total profit)</label><input type="number" id="p-consistency" placeholder="e.g. 50 (0 = off)" step="0.5" min="0" title="Prop evals: best single day ÷ total profit must stay at or below this %"></div>
     </div>
     <div class="grid-2 gap">
       <div><label>Daily loss limit ($)</label><input type="number" id="p-ddl" placeholder="e.g. 1200"></div>
+      <div><label>or daily limit as % of account</label><input type="number" id="p-ddl-pct" placeholder="e.g. 2.4" step="0.1" title="If set, overrides the $ daily limit"></div>
+    </div>
+    <div class="grid-2 gap">
       <div><label>Trailing / EOD drawdown</label>
         <select id="p-ddtype">
-          <option value="eod">EOD (End of Day)</option>
-          <option value="trailing">Trailing</option>
+          <option value="trailing">Trailing (floor moves with high-water mark)</option>
+          <option value="eod">Static from start balance</option>
         </select>
       </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:8px;font-size:12px;color:#9ca3af;line-height:1.5">Trailing: MLL floor = high-water equity − max loss. Static: floor fixed at balance − max loss.</div>
     </div>
 
   </div>
@@ -2267,11 +2275,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <!-- Drawdown -->
     <div class="gap">
       <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Max drawdown used</span>
-        <span style="font-size:14px;font-weight:500" id="prop-dd-lbl">$0 / $0</span>
+        <span style="font-size:14px;color:#e5e7eb">Lifetime loss / MLL buffer</span>
+        <span style="font-size:14px;font-weight:500;text-align:right;max-width:62%" id="prop-dd-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-dd-bar" style="width:0%;background:#3a6e3a"></div></div>
-      <div class="hint" id="prop-dd-pct">0% of max drawdown used</div>
+      <div class="hint" id="prop-dd-pct">Room before trailing or static floor</div>
     </div>
 
     <!-- Daily loss -->
@@ -2281,6 +2289,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <span style="font-size:14px;font-weight:500" id="prop-ddl-lbl">$0 / $0</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="prop-ddl-bar" style="width:0%;background:#3a6e3a"></div></div>
+    </div>
+
+    <div class="gap" id="prop-consistency-wrap" style="display:none">
+      <div class="flex-between" style="margin-bottom:6px">
+        <span style="font-size:14px;color:#e5e7eb">Consistency (best day ÷ profit)</span>
+        <span style="font-size:14px;font-weight:500" id="prop-consistency-lbl">—</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prop-consistency-bar" style="width:0%;background:#3a6e3a"></div></div>
+      <div class="hint" id="prop-consistency-hint">—</div>
     </div>
 
     <div id="prop-warn" class="warn-bar"></div>
@@ -2810,22 +2827,37 @@ function saveProp(){
   supaSet('ict_prop_profiles',allPropSettings);
 }
 function savePropSettings(){
+  const acc=parseFloat(document.getElementById('p-account').value)||0;
+  var mdp=parseFloat(document.getElementById('p-maxdd-pct').value);if(isNaN(mdp)||mdp<=0)mdp=0;
+  var dlp=parseFloat(document.getElementById('p-ddl-pct').value);if(isNaN(dlp)||dlp<=0)dlp=0;
+  var cns=parseFloat(document.getElementById('p-consistency').value);if(isNaN(cns)||cns<0)cns=0;
   propSettings={
     name:document.getElementById('p-name').value,
-    account:parseFloat(document.getElementById('p-account').value)||0,
+    account:acc,
     target:parseFloat(document.getElementById('p-target').value)||0,
     maxdd:parseFloat(document.getElementById('p-maxdd').value)||0,
+    maxddPct:mdp,
     ddl:parseFloat(document.getElementById('p-ddl').value)||0,
+    ddlPct:dlp,
+    consistencyPct:cns,
     ddtype:document.getElementById('p-ddtype').value,
   };
   saveProp();renderProp();
+}
+function propBlownStorageKey(){
+  var acc=propSettings.account||0;
+  var eff=propSettings.maxddPct>0?acc*propSettings.maxddPct/100:(propSettings.maxdd||0);
+  return 'prop_blown_'+currentProfile+'_'+Math.round(eff);
 }
 function loadPropSettings(){
   if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
   if(propSettings.account)document.getElementById('p-account').value=propSettings.account;
   if(propSettings.target)document.getElementById('p-target').value=propSettings.target;
   if(propSettings.maxdd)document.getElementById('p-maxdd').value=propSettings.maxdd;
+  document.getElementById('p-maxdd-pct').value=propSettings.maxddPct>0?propSettings.maxddPct:'';
   if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
+  document.getElementById('p-ddl-pct').value=propSettings.ddlPct>0?propSettings.ddlPct:'';
+  document.getElementById('p-consistency').value=propSettings.consistencyPct>0?propSettings.consistencyPct:'';
   if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
 }
 function renderProp(){
@@ -2845,9 +2877,16 @@ function renderProp(){
   const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
   const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const account=propSettings.account||0;
-  const maxddAmt=propSettings.maxdd||0;
-  const mllFloor=account-maxddAmt;
+  var maxddAmt=propSettings.maxdd||0;
+  if(propSettings.maxddPct>0)maxddAmt=account*propSettings.maxddPct/100;
+  var ddlAmt=propSettings.ddl||0;
+  if(propSettings.ddlPct>0)ddlAmt=account*propSettings.ddlPct/100;
+  const sortedForHwm=[...liveTrades].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+  var cum=account,hwm=account;
+  sortedForHwm.forEach(t=>{cum+=parseFloat(t.pnl)||0;if(cum>hwm)hwm=cum;});
   const currentBalance=account+totalPnl;
+  const trailing=(propSettings.ddtype==='trailing');
+  const mllFloor=trailing?parseFloat((hwm-maxddAmt).toFixed(2)):parseFloat((account-maxddAmt).toFixed(2));
   const bufferRemaining=parseFloat((currentBalance-mllFloor).toFixed(2));
   const today=new Date().toISOString().split('T')[0];
   const todayPnl=liveTrades.filter(t=>t.date===today).reduce((s,t)=>s+(t.pnl||0),0);
@@ -2860,17 +2899,42 @@ function renderProp(){
   document.getElementById('prop-profit-bar').style.width=profitPct+'%';
   document.getElementById('prop-profit-bar').style.background=totalPnl<0?'#6e2a2a':profitPct>80?'#5aae5a':'#3a6e3a';
   document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
-  // Drawdown bar
-  const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
-  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString()+' · MLL floor: $'+mllFloor.toLocaleString();
+  // Drawdown bar — portion of allowed $ cushion used below HWM/start
+  var ddPct=0;if(maxddAmt>0){ddPct=Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100));}
+  const ddHintExtra=trailing?' · HWM $'+hwm.toLocaleString(undefined,{maximumFractionDigits:0})+(propSettings.maxddPct>0?' · max loss '+propSettings.maxddPct+'%':' · max loss $'+maxddAmt.toLocaleString()):' · static from $'+account.toLocaleString()+(propSettings.maxddPct>0?' · max loss '+propSettings.maxddPct+'%':'');
+  document.getElementById('prop-dd-lbl').textContent='Buffer $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString(undefined,{maximumFractionDigits:2})+' · Floor $'+mllFloor.toLocaleString(undefined,{maximumFractionDigits:0})+ddHintExtra;
   document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-bar').style.background=bufferRemaining<maxddAmt?'#ef4444':'#3a6e3a';
-  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining before MLL floor';
+  document.getElementById('prop-dd-bar').style.background=bufferRemaining<=0?'#ef4444':(bufferRemaining<maxddAmt*0.2?'#f59e0b':'#3a6e3a');
+  document.getElementById('prop-dd-pct').textContent=(trailing?'Trailing':'Static')+' — $'+bufferRemaining.toFixed(2)+' room before MLL floor';
   // DDL bar
-  const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
-  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / -$'+propSettings.ddl.toLocaleString()+' limit';
+  const ddlPct=ddlAmt>0?Math.min(100,todayLoss/ddlAmt*100):0;
+  const ddlDollarLbl=propSettings.ddlPct>0?propSettings.ddlPct+'% (~$'+ddlAmt.toFixed(0)+')':'$'+ddlAmt.toLocaleString();
+  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / −'+ddlDollarLbl+' limit';
   document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
   document.getElementById('prop-ddl-bar').style.background=todayPnl<0?'#ef4444':'#3a6e3a';
+  // Consistency (best day ÷ total profit)
+  const cWrap=document.getElementById('prop-consistency-wrap');
+  const cMax=propSettings.consistencyPct||0;
+  var ratioPct=0,consPass=true;
+  if(cWrap){if(cMax>0)cWrap.style.display='block';else cWrap.style.display='none';}
+  if(cMax>0){
+    const byDay={};
+    liveTrades.forEach(t=>{const d=t.date?t.date.slice(0,10):'';if(!d)return;byDay[d]=(byDay[d]||0)+(parseFloat(t.pnl)||0);});
+    const dayList=Object.values(byDay);
+    const bestDay=dayList.length?Math.max.apply(null,dayList):0;
+    var consBar=0;
+    if(totalPnl>0){
+      ratioPct=(bestDay/totalPnl)*100;
+      consPass=ratioPct<=cMax+1e-9;
+      consBar=Math.min(100,(ratioPct/cMax)*100);
+    }
+    document.getElementById('prop-consistency-lbl').textContent=totalPnl>0?ratioPct.toFixed(1)+'% / max '+cMax+'%':'—';
+    document.getElementById('prop-consistency-bar').style.width=(totalPnl>0?consBar:0)+'%';
+    document.getElementById('prop-consistency-bar').style.background=totalPnl<=0?'#6b7280':(consPass?'#3a6e3a':'#ef4444');
+    var cHint=totalPnl<=0?'Log net profit to measure consistency (best day ÷ total profit).':
+      ('Best day $'+bestDay.toFixed(0)+' on a $'+totalPnl.toFixed(0)+' total — '+(consPass?'within rule':'over limit'));
+    document.getElementById('prop-consistency-hint').textContent=cHint;
+  }
   // Metric cards
   const tpEl=document.getElementById('prop-total-pnl');
   tpEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();
@@ -2886,18 +2950,21 @@ function renderProp(){
   if(warn)warn.style.display='none';
   if(danger)danger.style.display='none';
   if(ddlPct>=100&&danger){danger.style.display='block';danger.textContent='⚠ Daily loss limit hit — stop trading for today.';}
-  else if(ddlPct>=80&&warn){warn.style.display='block';warn.textContent='⚠ Approaching daily loss limit ('+Math.round(ddlPct)+'% used) — be careful.';}
   if(bufferRemaining<=0&&danger){danger.style.display='block';danger.textContent='⛔ MLL floor hit — account blown.';}
-  else if(bufferRemaining<maxddAmt*0.2&&ddlPct<100&&warn){warn.style.display='block';warn.textContent='⚠ Less than 20% of drawdown buffer remaining — protect the account.';}
+  var warnParts=[];
+  if(ddlPct<100&&ddlPct>=80)warnParts.push('Approaching daily loss limit ('+Math.round(ddlPct)+'% used).');
+  if(bufferRemaining>0&&bufferRemaining<maxddAmt*0.2&&ddlPct<100)warnParts.push('Less than 20% drawdown buffer before MLL floor.');
+  if(cMax>0&&totalPnl>0&&!consPass)warnParts.push('Consistency: best single day is '+ratioPct.toFixed(1)+'% of total profit (limit '+cMax+'%).');
+  if(warnParts.length&&warn&&(!danger||danger.style.display==='none')){warn.style.display='block';warn.textContent='⚠ '+warnParts.join(' · ');}
   // Glow
   if(tracker){
     tracker.classList.remove('glow-green','glow-red');
     if(totalPnl>=propSettings.target*0.8&&propSettings.target>0)tracker.classList.add('glow-green');
-    else if(bufferRemaining<maxddAmt*0.3&&maxddAmt>0)tracker.classList.add('glow-red');
+    else if(bufferRemaining<maxddAmt*0.3&&maxddAmt>0||cMax>0&&totalPnl>0&&!consPass)tracker.classList.add('glow-red');
   }
   // Popups — only show once per profile per target amount
   const passedKey='prop_passed_'+currentProfile+'_'+propSettings.target;
-  const blownKey='prop_blown_'+currentProfile+'_'+propSettings.maxdd;
+  const blownKey=propBlownStorageKey();
   const firmName=propSettings.name||'your eval';
   if(totalPnl>=propSettings.target&&propSettings.target>0){
     try{
@@ -2922,7 +2989,7 @@ function closePassedPopup(){
 }
 function closeBlownPopup(){
   const el=document.getElementById('popup-blown');if(el)el.style.display='none';
-  try{localStorage.setItem('prop_blown_'+currentProfile+'_'+(propSettings.maxdd||''),'1');}catch(e){}
+  try{localStorage.setItem(propBlownStorageKey(),'1');}catch(e){}
 }
 
 // ── Build mistakes list ──
