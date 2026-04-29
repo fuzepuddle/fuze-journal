@@ -102,6 +102,8 @@
   
   .tab:hover:not(.active){color:#e5e7eb}
   .page{display:none}.page.active{display:block}
+  /* Some theme overrides hid active pages; force visibility for main tab panels */
+  #main-content>.page.active{display:block!important;visibility:visible!important;opacity:1!important;position:relative;z-index:1}
   label{font-size:14px;color:#4b5563;display:block;margin-bottom:4px}
   input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s}
   input[type=date],input[type=time]{background:#f9fafb;color-scheme:dark}
@@ -2280,7 +2282,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <!-- PROP FIRM -->
 <div class="page" id="page-prop">
   <div class="page-header"><h2>Prop Firm Tracker</h2></div>
-  <div class="card gap">
+  <div id="prop-all-hint" class="card" style="display:none;margin-bottom:12px;padding:14px 16px;background:rgba(148,130,255,0.06);border:1px solid rgba(148,130,255,0.22);border-radius:10px;font-size:14px;line-height:1.5;color:#c4b5fd">
+    <strong>All profiles</strong> is selected. Prop firm targets are per-profile — switch to <strong>Challenge</strong>, <strong>Funded</strong>, or <strong>Demo</strong> below to edit settings and view the tracker. Calendar &amp; Weekly still use merged trades across profiles.
+  </div>
+  <div class="card gap" id="prop-settings-section">
     <div class="flex-between" style="margin-bottom:12px">
       <div class="section-label" style="margin-bottom:0">Prop firm settings</div>
       <button class="btn btn-sm btn-primary" onclick="savePropSettings()">Save settings</button>
@@ -5250,7 +5255,9 @@ function applyProfileUI(){
   // Hide/show log form in All view
   const logForm=document.getElementById('log-form');
   if(logForm)logForm.style.display=isAll?'none':'';
-  // Hide/show prop tracker + settings in All view
+  // All-profiles banner on Prop tab (otherwise the sheet looks empty — settings sheet is hidden in All mode)
+  const propAll=document.getElementById('prop-all-hint');
+  if(propAll)propAll.style.display=isAll?'block':'none';
   const propSettings2=document.getElementById('prop-settings-section');
   if(propSettings2)propSettings2.style.display=isAll?'none':'';
   const propTracker=document.getElementById('prop-tracker');
@@ -5620,6 +5627,17 @@ function calcEditAutoRR(){
     rrInput.dataset.autoFilled='1';
   }
 }
+
+/** Clear trades/prop/weekly/etc. in this browser then reload. Supabase data is separate — sign in again to re-pull. DevTools Console: resetFuzeLocalJournalData() */
+function resetFuzeLocalJournalData(){
+  if(!confirm('Clear all local journal data in this browser and reload?'))return;
+  ['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_presession','ict_nonneg','fuze_notebooks'].forEach(function(k){
+    try{localStorage.removeItem(k);}catch(e){}
+  });
+  ['challenge','funded','demo'].forEach(function(p){try{localStorage.removeItem('ict_draft_'+p);}catch(e){}});
+  location.reload();
+}
+window.resetFuzeLocalJournalData=resetFuzeLocalJournalData;
 
 // ── Init ──
 buildMistakes();
@@ -7905,6 +7923,7 @@ body:not(.dark-mode) #popup-passed>div,body:not(.dark-mode) #popup-blown>div{bac
 /* ── Dark mode — wins over everything above ── */
 body.dark-mode{background:#0d0d0d!important;color:#f0f0f0!important;--text-primary:#e5e7eb}
 body.dark-mode #main-content{background:#0d0d0d!important}
+body.dark-mode #main-content>.page.active,body:not(.dark-mode) #main-content>.page.active{display:block!important;visibility:visible!important;opacity:1!important}
 body.dark-mode h1,body.dark-mode h2,body.dark-mode h3{color:#f0f0f0!important}
 body.dark-mode .dash-page-header h2,body.dark-mode .page-header h2,body.dark-mode .page-header h1{color:#f0f0f0!important}
 body.dark-mode .card,body.dark-mode .dash-chart-card,body.dark-mode .dash-recent,body.dark-mode .dash-metric,body.dark-mode .metric-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important;color:#f0f0f0!important}
