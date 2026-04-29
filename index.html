@@ -102,6 +102,8 @@
   
   .tab:hover:not(.active){color:#e5e7eb}
   .page{display:none}.page.active{display:block}
+  /* Do not force #page-calendar — it uses flex in .calendar rules (journal_updated_3 behaviour) */
+  #main-content > .page.active:not(#page-calendar){display:block!important;visibility:visible!important;opacity:1!important;position:relative;z-index:1}
   label{font-size:14px;color:#4b5563;display:block;margin-bottom:4px}
   input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s}
   input[type=date],input[type=time]{background:#f9fafb;color-scheme:dark}
@@ -190,6 +192,7 @@
   .cal-nav button:hover{background:rgba(15,26,18,0.82)}
   .cal-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
   .cal-grid{width:100%;border-collapse:separate;border-spacing:2px;margin-bottom:0;height:100%}
+  /* Match journal_updated_3.html — flex column fills viewport; themed .page.active must not force display:block here */
   #page-calendar.active{display:flex;flex-direction:column;height:calc(100vh - 48px);overflow:hidden}
   #page-calendar .cal-header{margin-bottom:10px;flex-shrink:0}
   #page-calendar .cal-metrics{margin-bottom:10px;flex-shrink:0}
@@ -598,6 +601,11 @@ body.dark-mode .tab:hover:not(.active){color:#f0f0f0!important}
 body.dark-mode .cal-title{color:#f0f0f0!important}
 body.dark-mode .week-pnl.pnl-pos{color:#10b981!important}
 body.dark-mode .week-pnl.pnl-neg{color:#ef4444!important}
+/* ── Prop Tracker: theme-aware overrides ── */
+#prop-tracker{transition:background .2s,border-color .2s}
+body:not(.dark-mode) #prop-tracker .prop-label{color:var(--text-muted)}
+body:not(.dark-mode) #prop-consist-bar{filter:brightness(0.9)}
+
 body.dark-mode .week-pnl.pnl-zero{color:#f59e0b!important}
 body.dark-mode .metric-val{color:#f0f0f0!important}
 body.dark-mode .auth-card{background:#141414!important;border-color:rgba(255,255,255,0.08)!important}
@@ -795,7 +803,8 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
 /* ── Main content ── */
 #main-content{
   margin-left:220px;
-  flex:1;
+  flex:1 1 auto;
+  min-width:0;
   padding:24px 28px 32px;
   min-height:100vh;
   max-width:none;
@@ -997,7 +1006,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 .dash-metrics{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(6,1fr);
   gap:10px;
   margin-bottom:18px;
 }
@@ -1358,6 +1367,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <button class="profile-btn" onclick="switchProfile('challenge',this)" id="pbtn-challenge">Challenge</button>
       <button class="profile-btn" onclick="switchProfile('funded',this)" id="pbtn-funded">Funded</button>
       <button class="profile-btn" onclick="switchProfile('demo',this)" id="pbtn-demo">Demo</button>
+      <button class="profile-btn" onclick="switchProfile('all',this)" id="pbtn-all" style="position:relative">All</button>
     </div>
     <div class="sb-streak" id="journal-streak">🔥 —</div>
     <button id="dl-toggle" onclick="toggleDarkLight()">
@@ -1387,6 +1397,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <!-- Metric strip -->
   <div class="dash-metrics" id="dash-metrics-row">
+    <div class="dash-metric">
+      <div class="dash-metric-label" id="dm-bal-lbl">Account balance</div>
+      <div class="dash-metric-val" id="dm-balance">—</div>
+      <div class="dash-metric-sub" id="dm-balance-sub">Set account in Prop Firm</div>
+    </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
       <div class="dash-metric-val" id="dm-pnl">—</div>
@@ -1532,6 +1547,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </div>
 <!-- LOG -->
 <div class="page" id="page-log">
+  <!-- All-profiles banner -->
+  <div id="all-view-banner" style="display:none;background:rgba(148,130,255,0.07);border:1px solid rgba(148,130,255,0.18);border-radius:10px;padding:10px 16px;margin-bottom:14px;font-size:13px;color:#a78bfa;display:none">
+    <span style="font-weight:600">All profiles view</span> — showing combined data from Challenge, Funded &amp; Demo. Log form and Prop Tracker are hidden.
+  </div>
+
 <div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:600;color:#e5e7eb;letter-spacing:-.01em">Log Trade</h2></div>
 <div id="log-form-col">
 
@@ -1544,6 +1564,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div id="timer-bar" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1s linear"></div>
     </div>
     <div id="timer-sub" style="font-size:14px;color:#9ca3af;margin-top:4px"></div>
+  </div>
+
+  <div class="card gap" id="calc-risk-card">
+    <div class="section-label">Position size (NQ / MNQ)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div><label>Account ($)</label><input type="number" id="calc-account" placeholder="e.g. 50000" step="1" oninput="calcRisk()"></div>
+      <div><label>Stop (points)</label><input type="number" id="calc-stop" placeholder="e.g. 10" step="0.25" oninput="calcRisk()"></div>
+    </div>
+    <div id="calc-output" style="margin-top:10px;font-size:14px;min-height:24px"></div>
   </div>
 
   <div class="card gap">
@@ -1695,11 +1724,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>P&amp;L ($) <span style="color:#9ca3af;font-weight:400">— negative for a loss e.g. -120</span></label>
         <input type="number" id="f-pnl" placeholder="e.g. 250 or -120" step="1" oninput="calcAutoRR()">
       </div>
-      <div><label>Risk taken</label>
+      <div><label>Risk taken <span id="f-risk-bal-hint" style="font-size:12px;color:#6b7280;font-weight:400"></span></label>
         <select id="f-risk" onchange="calcAutoRR()">
           <option value="">—</option>
-          <option value="1">1% (Challenge)</option>
-          <option value="0.5">0.5% (Funded)</option>
+          <option value="1">1% — ($)</option>
+          <option value="0.5">0.5% — ($)</option>
         </select>
       </div>
     </div>
@@ -2104,6 +2133,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <!-- MISSED TRADES -->
 <div class="page" id="page-missed">
   <div class="page-header"><h2>Missed Trades</h2></div>
+  <div id="missed-form-section">
   <div class="flex-between" style="margin-bottom:14px">
     <div class="section-label" style="margin-bottom:0">Missed trades</div>
     <button class="btn btn-primary" onclick="saveMissed()">Log missed setup →</button>
@@ -2193,6 +2223,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 <!-- WEEKLY REVIEW -->
 <div class="page" id="page-weekly">
+  <div id="weekly-render-err" class="card" style="display:none;margin-bottom:14px;padding:12px 16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.45);color:#fecaca;font-size:14px;line-height:1.5"></div>
   <div class="page-header"><h2>Weekly Review</h2></div>
   <!-- QOTD on Weekly page -->
   <div class="card qotd-log-card" id="qotd-card-log" style="margin-bottom:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px">
@@ -2261,7 +2292,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <!-- PROP FIRM -->
 <div class="page" id="page-prop">
   <div class="page-header"><h2>Prop Firm Tracker</h2></div>
-  <div class="card gap">
+  <div id="prop-all-hint" class="card" style="display:none;margin-bottom:12px;padding:14px 16px;background:rgba(148,130,255,0.06);border:1px solid rgba(148,130,255,0.22);border-radius:10px;font-size:14px;line-height:1.5;color:#c4b5fd">
+    <strong>All profiles</strong> is selected. Prop firm targets are per-profile — switch to <strong>Challenge</strong>, <strong>Funded</strong>, or <strong>Demo</strong> below to edit settings and view the tracker. Calendar &amp; Weekly still use merged trades across profiles.
+  </div>
+  <div class="card gap" id="prop-settings-section">
     <div class="flex-between" style="margin-bottom:12px">
       <div class="section-label" style="margin-bottom:0">Prop firm settings</div>
       <button class="btn btn-sm btn-primary" onclick="savePropSettings()">Save settings</button>
@@ -2291,14 +2325,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <!-- LucidFlex-style tracker card -->
-  <div id="prop-tracker" style="display:none;border-radius:16px;background:#0c1410;border:1px solid rgba(16,185,129,0.12);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);font-family:'Plus Jakarta Sans',sans-serif">
+  <div id="prop-tracker" style="display:none;border-radius:16px;background:var(--bg-card);border:1px solid var(--border);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);font-family:'Plus Jakarta Sans',sans-serif">
 
     <!-- Header bar -->
-    <div style="padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,0.07)">
+    <div style="padding:18px 22px 14px;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
         <div>
           <div style="display:flex;align-items:center;gap:10px">
-            <span id="prop-firm-name" style="font-size:17px;font-weight:700;color:#e5e7eb;letter-spacing:.01em">Prop Firm</span>
+            <span id="prop-firm-name" style="font-size:17px;font-weight:700;color:var(--text-primary);letter-spacing:.01em">Prop Firm</span>
             <span id="prop-phase-badge" style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.35);letter-spacing:.05em">EVAL</span>
           </div>
           <div id="prop-account-id" style="font-size:12px;color:#6b7280;margin-top:4px;font-family:'JetBrains Mono',monospace"></div>
@@ -2310,34 +2344,34 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
 
     <!-- Top metrics: Balance | Profit Target | Trading Days -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.07)">
-      <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">ACCOUNT BALANCE</div>
-        <div style="font-size:18px;font-weight:700;color:#e5e7eb" id="prop-balance-display">$0</div>
-        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-mll-display">/ $0</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border)">
+      <div style="padding:16px 20px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">ACCOUNT BALANCE</div>
+        <div style="font-size:18px;font-weight:700;color:var(--text-primary)" id="prop-balance-display">$0</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="prop-mll-display">/ $0</div>
       </div>
-      <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">PROFIT TARGET</div>
+      <div style="padding:16px 20px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">PROFIT TARGET</div>
         <div style="font-size:18px;font-weight:700;color:#10b981" id="prop-profit-display">$0</div>
-        <div style="font-size:12px;color:#6b7280;margin-top:2px" id="prop-profit-target-display">/ $0</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="prop-profit-target-display">/ $0</div>
       </div>
       <div style="padding:16px 20px">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:6px">TRADING DAYS</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">TRADING DAYS</div>
         <div style="font-size:18px;font-weight:700;color:#10b981" id="prop-days-display">0</div>
-        <div style="font-size:12px;color:#6b7280;margin-top:2px">days logged</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">days logged</div>
       </div>
     </div>
 
     <!-- Consistency row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.07)">
-      <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px">CONSISTENCY RULE</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)">
+      <div style="padding:16px 20px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">CONSISTENCY RULE</div>
         <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
           <div style="font-size:22px;font-weight:800" id="prop-consist-pct">—</div>
           <div style="font-size:12px;color:#6b7280" id="prop-consist-limit"></div>
         </div>
         <div style="font-size:12px;color:#6b7280" id="prop-consist-sub">best day / total profit</div>
-        <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+        <div style="margin-top:8px;height:4px;background:var(--border);border-radius:99px;overflow:hidden">
           <div id="prop-consist-bar" style="height:100%;border-radius:99px;width:0%;transition:width .5s ease,background .3s"></div>
         </div>
       </div>
@@ -2345,20 +2379,20 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div style="padding:16px 20px;display:flex;flex-direction:column;justify-content:center">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px">
           <div>
-            <div style="font-size:10px;color:#6b7280;font-weight:600;letter-spacing:.07em">MLL</div>
-            <div style="font-size:12px;color:#9ca3af;font-weight:600" id="prop-bar-mll">$0</div>
+            <div style="font-size:10px;color:var(--text-muted);font-weight:600;letter-spacing:.07em">MLL</div>
+            <div style="font-size:12px;color:var(--text-secondary);font-weight:600" id="prop-bar-mll">$0</div>
           </div>
-          <div style="font-size:10px;font-weight:700;color:#6b7280;letter-spacing:.07em;align-self:flex-end;padding-bottom:1px">START ▼</div>
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.07em;align-self:flex-end;padding-bottom:1px">START ▼</div>
           <div style="text-align:right">
             <div style="font-size:10px;color:#10b981;font-weight:600;letter-spacing:.07em">TARGET</div>
             <div style="font-size:12px;color:#10b981;font-weight:600" id="prop-bar-target">$0</div>
           </div>
         </div>
         <!-- Track -->
-        <div style="position:relative;height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:visible">
+        <div style="position:relative;height:8px;background:var(--border);border-radius:99px;overflow:visible">
           <div id="prop-balance-bar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#059669,#10b981);transition:width .6s ease;width:0%"></div>
           <!-- start marker -->
-          <div id="prop-start-marker" style="position:absolute;top:-4px;width:3px;height:16px;background:#fff;border-radius:2px;opacity:0.5"></div>
+          <div id="prop-start-marker" style="position:absolute;top:-4px;width:3px;height:16px;background:var(--text-primary);border-radius:2px;opacity:0.3"></div>
         </div>
       </div>
     </div>
@@ -2370,26 +2404,26 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
     <!-- Bottom stats: P&L | Today | DD Buffer | Daily Limit | Min Days -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;padding:0">
-      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Live P&amp;L</div>
+      <div style="padding:14px 18px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px">Live P&amp;L</div>
         <div style="font-size:15px;font-weight:700" id="prop-total-pnl">$0</div>
       </div>
-      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Today</div>
+      <div style="padding:14px 18px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px">Today</div>
         <div style="font-size:15px;font-weight:700" id="prop-today-pnl">$0</div>
       </div>
-      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">DD Buffer</div>
+      <div style="padding:14px 18px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px">DD Buffer</div>
         <div style="font-size:15px;font-weight:700" id="prop-wins">—</div>
       </div>
-      <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Daily Left</div>
+      <div style="padding:14px 18px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px">Daily Left</div>
         <div style="font-size:15px;font-weight:700" id="prop-losses">—</div>
       </div>
       <div id="prop-min-days-cell" style="padding:14px 18px;display:none">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:5px">Min Days</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px">Min Days</div>
         <div style="font-size:15px;font-weight:700" id="prop-min-days-val">—</div>
-        <div style="font-size:11px;color:#6b7280;margin-top:2px" id="prop-min-days-sub"></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="prop-min-days-sub"></div>
       </div>
     </div>
 
@@ -2445,7 +2479,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<!-- Chart.js must NOT block parsing: a sync script here prevents the app from running if the CDN is slow/blocked (blank main panel on Vercel). -->
+<script async src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" onload="try{window._fuzeChartReady=true;var p=document.querySelector('.page.active');if(!p)return;var id=p.id;if(id==='page-dashboard'&&typeof renderDashboard==='function')renderDashboard();else if(id==='page-stats'&&typeof renderStats==='function')renderStats();}catch(_){}"></script>
 <!--
 FUZE_JOURNAL_RLS_SQL — Run in Supabase → SQL Editor (after creating your account in the app):
 
@@ -2494,6 +2529,24 @@ let weeklyNotes={};
 // ── PnL rounding helper (eliminates float drift) ──
 function rp(v){return Math.round((+v||0)*100)/100;}
 function fmtPnl(v){const r=Math.round(+v||0);return(r>=0?'+$':'-$')+Math.abs(r).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});}
+/** Starting prop account size + cumulative P&amp;L for the active profile (not used in All view). */
+function getProfileLiveEquity(){
+  if(currentProfile==='all')return 0;
+  const base=(propSettings&&propSettings.account)?Number(propSettings.account):0;
+  const liveTrades=(trades||[]).filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
+  const totalPnl=rp(liveTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
+  return rp(base+totalPnl);
+}
+function updateRiskDropdownLabels(){
+  const sel=document.getElementById('f-risk');
+  if(!sel||sel.options.length<3)return;
+  var eq=getProfileLiveEquity();
+  var mk=function(p,a){var d=Math.round(eq*p/100);return p+'% — $'+d.toLocaleString('en',{maximumFractionDigits:0})+' ('+a+')';};
+  sel.options[1].textContent=(currentProfile==='all')?'1% — pick a profile':mk(1,'Challenge');
+  sel.options[2].textContent=(currentProfile==='all')?'0.5% — pick a profile':mk(0.5,'Funded');
+  var hh=document.getElementById('f-risk-bal-hint');
+  if(hh){hh.textContent=(currentProfile==='all'||!propSettings||!propSettings.account)?'':" · balance $" +Math.round(eq).toLocaleString('en');}
+}
 let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
@@ -2843,6 +2896,14 @@ async function loadAllData(){
     applyProfileUI();
     renderJournal&&renderJournal();
     renderDashboard&&renderDashboard();
+    /* Re-render active tab so Calendar / Weekly / Prop never stay stale or blank after cloud load */
+    var ap=document.querySelector('#main-content > .page.active');
+    if(ap){
+      var lid=String(ap.id||'').replace('page-','');
+      if(lid==='calendar'&&typeof renderCalendar==='function')renderCalendar();
+      else if(lid==='weekly'&&typeof renderWeekly==='function')renderWeekly();
+      else if(lid==='prop'){if(typeof loadPropSettings==='function')loadPropSettings();if(typeof renderProp==='function')renderProp();}
+    }
   }catch(e){console.error('Init error',e);}
 }
 function save(){
@@ -2860,6 +2921,7 @@ function del(id){
   _lastDeleted={trade:JSON.parse(JSON.stringify(t)),index:trades.indexOf(t)};
   trades=trades.filter(t=>t.id!==id);
   save();renderJournal();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')){updateRiskDropdownLabels();try{renderDashboard();}catch(e){}}
   showUndoToast(label);
 }
 function showUndoToast(label){
@@ -2884,6 +2946,7 @@ function undoDelete(){
   trades.splice(idx,0,_lastDeleted.trade);
   _lastDeleted=null;
   save();renderJournal();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')){updateRiskDropdownLabels();try{renderDashboard();}catch(e){}}
   dismissUndoToast();
 }
 function toggleFav(id,btn){
@@ -2911,6 +2974,9 @@ function savePropSettings(){
     minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
   saveProp();renderProp();
+  updateRiskDropdownLabels();
+  calcAutoRR();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
 }
 function loadPropSettings(){
   if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
@@ -2923,13 +2989,19 @@ function loadPropSettings(){
   if(propSettings.minDays)document.getElementById('p-min-days').value=propSettings.minDays;
 }
 function renderProp(){
-  const tracker=document.getElementById('prop-tracker');
-  const empty=document.getElementById('prop-empty');
-  if(!propSettings.target){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
+  var tracker=document.getElementById('prop-tracker');
+  var empty=document.getElementById('prop-empty');
+  if(currentProfile==='all'){
+    if(tracker)tracker.style.display='none';
+    if(empty)empty.style.display='none';
+    return;
+  }
+  var hasTarget=propSettings&&(Number(propSettings.target)>0);
+  if(!hasTarget){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
   if(tracker)tracker.style.display='block';
   if(empty)empty.style.display='none';
   // ── Firm name & badge ──
-  document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop Firm';
+  var pfn=document.getElementById('prop-firm-name');if(pfn)pfn.textContent=propSettings.name||'Prop Firm';
   const phaseBadge=document.getElementById('prop-phase-badge');
   if(phaseBadge){
     const ph=currentProfile==='funded'?'FUNDED':currentProfile==='demo'?'DEMO':'EVAL';
@@ -2941,10 +3013,9 @@ function renderProp(){
   // Account ID line
   const accIdEl=document.getElementById('prop-account-id');
   if(accIdEl) accIdEl.textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
-  // Legacy compat
-  document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
+  var pal=document.getElementById('prop-account-lbl');if(pal)pal.textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
 
-  const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
+  var liveTrades=(trades||[]).filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
   const totalPnl=rp(liveTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const account=propSettings.account||0;
   const maxddAmt=propSettings.maxdd||0;
@@ -3057,38 +3128,41 @@ function renderProp(){
   const startMarker=document.getElementById('prop-start-marker');
   if(startMarker) startMarker.style.left=startPct+'%';
 
-  // ── Legacy hidden elements (keep JS compat) ──
-  const profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
-  document.getElementById('prop-profit-lbl').textContent=fmtPnl(totalPnl)+' / $'+(propSettings.target||0).toLocaleString();
-  document.getElementById('prop-profit-bar').style.width=profitPct+'%';
-  document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
-  const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
-  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2);
-  document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining';
-  const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
-  document.getElementById('prop-ddl-lbl').textContent=fmtPnl(todayPnl);
-  document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
+  // ── Legacy hidden elements (keep JS compat) — all optional so Prop tab never throws ──
+  var profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
+  var _pLbl=document.getElementById('prop-profit-lbl');
+  if(_pLbl)_pLbl.textContent=fmtPnl(totalPnl)+' / $'+(propSettings.target||0).toLocaleString();
+  var _pBar=document.getElementById('prop-profit-bar');
+  if(_pBar)_pBar.style.width=profitPct+'%';
+  var _pPct=document.getElementById('prop-profit-pct');
+  if(_pPct)_pPct.textContent=Math.round(profitPct)+'% of profit target';
+  var ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
+  var _ddl=document.getElementById('prop-dd-lbl');if(_ddl)_ddl.textContent='Buffer: $'+bufferRemaining.toFixed(2);
+  var _ddb=document.getElementById('prop-dd-bar');if(_ddb)_ddb.style.width=(100-ddPct)+'%';
+  var _ddp=document.getElementById('prop-dd-pct');if(_ddp)_ddp.textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining';
+  var ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
+  var _dll=document.getElementById('prop-ddl-lbl');if(_dll)_dll.textContent=fmtPnl(todayPnl);
+  var _dlb=document.getElementById('prop-ddl-bar');if(_dlb)_dlb.style.width=ddlPct+'%';
 
   // ── Bottom row: P&L | Today | DD Buffer | Daily left ──
-  const tpEl=document.getElementById('prop-total-pnl');
-  tpEl.textContent=fmtPnl(totalPnl);
-  tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';
-  const tdEl=document.getElementById('prop-today-pnl');
-  tdEl.textContent=fmtPnl(todayPnl);
-  tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';
-  // DD Buffer (repurpose prop-wins slot)
-  const ddBufEl=document.getElementById('prop-wins');
-  ddBufEl.textContent='$'+bufferRemaining.toFixed(0);
-  ddBufEl.style.color=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#10b981';
-  // Daily left (repurpose prop-losses slot)
-  const dailyLeft=propSettings.ddl?(propSettings.ddl-todayLoss):null;
-  const dlEl=document.getElementById('prop-losses');
-  if(dailyLeft!==null){
-    dlEl.textContent=(dailyLeft>=0?'$':'-$')+Math.abs(dailyLeft).toFixed(0);
-    dlEl.style.color=ddlPct>=100?'#ef4444':ddlPct>=80?'#f59e0b':'#10b981';
-  } else {
-    dlEl.textContent='—';dlEl.style.color='#6b7280';
+  var tpEl=document.getElementById('prop-total-pnl');
+  if(tpEl){tpEl.textContent=fmtPnl(totalPnl);tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';}
+  var tdEl=document.getElementById('prop-today-pnl');
+  if(tdEl){tdEl.textContent=fmtPnl(todayPnl);tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';}
+  var ddBufEl=document.getElementById('prop-wins');
+  if(ddBufEl){
+    ddBufEl.textContent='$'+bufferRemaining.toFixed(0);
+    ddBufEl.style.color=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#10b981';
+  }
+  var dailyLeft=propSettings.ddl?(propSettings.ddl-todayLoss):null;
+  var dlEl=document.getElementById('prop-losses');
+  if(dlEl){
+    if(dailyLeft!==null){
+      dlEl.textContent=(dailyLeft>=0?'$':'-$')+Math.abs(dailyLeft).toFixed(0);
+      dlEl.style.color=ddlPct>=100?'#ef4444':ddlPct>=80?'#f59e0b':'#10b981';
+    } else {
+      dlEl.textContent='—';dlEl.style.color='#6b7280';
+    }
   }
   // Warnings
   const warn=document.getElementById('prop-warn');
@@ -3177,6 +3251,29 @@ function renderDashboard(){
   if(greet)greet.textContent='Dashboard';
   const greetSub=document.getElementById('dash-greeting-sub');
   if(greetSub)greetSub.textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', fuze · NQ · NY Session · 14:30–16:00 UK';
+
+  // Firm-linked account balance (= starting Prop account ± logged P&amp;L for this profile)
+  const dmBalLbl=document.getElementById('dm-bal-lbl');
+  const dmBal=document.getElementById('dm-balance');
+  const dmBalSub=document.getElementById('dm-balance-sub');
+  const firmShort=(propSettings&&propSettings.name)?String(propSettings.name).trim():'Prop Firm';
+  if(dmBalLbl) dmBalLbl.textContent=(firmShort.length>28?firmShort.slice(0,26)+'…':firmShort)+' balance';
+  if(currentProfile==='all'){
+    if(dmBal){dmBal.textContent='—';dmBal.className='dash-metric-val';}
+    if(dmBalSub) dmBalSub.textContent='Select a profile tab';
+  } else if(!propSettings||!propSettings.account){
+    if(dmBal){dmBal.textContent='—';dmBal.className='dash-metric-val';}
+    if(dmBalSub) dmBalSub.textContent='Set starting account · Prop Firm';
+  } else {
+    const startAmt=rp(Number(propSettings.account)||0);
+    const eq=getProfileLiveEquity();
+    const pnlVsStart=rp(eq-startAmt);
+    if(dmBal){
+      dmBal.textContent='$'+Math.round(eq).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
+      dmBal.className='dash-metric-val '+(pnlVsStart>0?'positive':pnlVsStart<0?'negative':'');
+    }
+    if(dmBalSub) dmBalSub.textContent=(pnlVsStart>=0?'+':'-')+'$'+Math.abs(Math.round(pnlVsStart)).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})+' vs $'+Math.round(startAmt).toLocaleString('en',{maximumFractionDigits:0})+' start';
+  }
 
   // P&L
   const totalPnl=rp(dashTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
@@ -3301,21 +3398,24 @@ function renderDashMiniCal(){
   bodyEl.innerHTML=html;
 }
 function showTab(t){
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.sb-nav-item').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(el=>{if(el.id)el.classList.remove('active');});
-  document.querySelectorAll('.tab').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
-  document.querySelectorAll('.sb-nav-item').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
-  const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
-  if(t==='dashboard')renderDashboard();
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.sb-nav-item').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('#main-content > .page').forEach(function(el){if(el.classList)el.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(el){if(el.getAttribute('data-tab')===t)el.classList.add('active');});
+  document.querySelectorAll('.sb-nav-item').forEach(function(el){if(el.getAttribute('data-tab')===t)el.classList.add('active');});
+  var pg=document.getElementById('page-'+t);
+  if(pg)pg.classList.add('active');
+  if(t==='dashboard'){var _rd=(window.renderDashboard||renderDashboard);if(typeof _rd==='function')_rd();}
   if(t==='log'){setTimeout(prefillCalc,100);}
-  if(t==='journal')renderJournal();
-  if(t==='stats')renderStats();
-  if(t==='prop'){loadPropSettings();renderProp();}
-  if(t==='calendar')renderCalendar();
-  if(t==='missed')renderMissed();
-  if(t==='weekly')renderWeekly();
-  const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
+  if(t==='journal'&&typeof renderJournal==='function')renderJournal();
+  if(t==='stats'){var _rss=window.renderStats||renderStats;if(typeof _rss==='function')_rss();}
+  if(t==='prop'){if(typeof loadPropSettings==='function')loadPropSettings();if(typeof renderProp==='function')renderProp();}
+  if(t==='calendar'&&typeof renderCalendar==='function')renderCalendar();
+  if(t==='missed'&&typeof renderMissed==='function')renderMissed();
+  if(t==='weekly'&&typeof renderWeekly==='function')renderWeekly();
+  var mc=document.querySelector('#main-content');
+  if(mc)try{mc.scrollTop=0;}catch(_){}
+  var cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
@@ -3454,10 +3554,14 @@ async function saveTrade(){
   checkPB(trade);
   trades.unshift(trade);
   save();
+  updateRiskDropdownLabels();
+  calcAutoRR();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
   updateJournalStreak();
   try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}
   alert('Saved');
   clearForm();
+  prefillCalc();
 }
 
 function clearForm(){
@@ -3506,14 +3610,17 @@ function renderJournal(){
   const classBadges={'valid-good':'<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:2px 7px;border-radius:4px;font-size:12px;border:1px solid rgba(16,185,129,0.2);white-space:nowrap">✅ VALID</span>','valid-bad':'<span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:2px 7px;border-radius:4px;font-size:12px;border:1px solid rgba(245,158,11,0.2);white-space:nowrap">⚠️ BAD EXEC</span>','invalid':'<span style="background:rgba(239,68,68,0.1);color:#ef4444;padding:2px 7px;border-radius:4px;font-size:12px;border:1px solid rgba(239,68,68,0.2);white-space:nowrap">❌ INVALID</span>'};
   const biasCol={Bullish:'#10b981',Bearish:'#ef4444',Chop:'#f59e0b'};
   tbody.innerHTML=f.map(t=>{
-    const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#10b981">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#ef4444">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#f59e0b">$0</span>'):'—';
+    const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#10b981">'+fmtPnl(t.pnl)+'</span>':t.pnl<0?'<span style="color:#ef4444">'+fmtPnl(t.pnl)+'</span>':'<span style="color:#f59e0b">$0</span>'):'—';
     const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
     const hasDetail=ssLinks.length||t.narrative||t.improve;
     const isFav=t.favourite||false;
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:15px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
     const outAccent={win:'#3a6e3a',loss:'#6e2a2a',be:'#6e5a00',skip:'rgba(255,255,255,0.07)'};
-    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:14px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';
+    const profColors={challenge:'rgba(16,185,129,0.12)',funded:'rgba(245,158,11,0.12)',demo:'rgba(129,140,248,0.12)'};
+    const profTextColors={challenge:'#10b981',funded:'#f59e0b',demo:'#818cf8'};
+    const profPill=t._profile?'<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:'+profColors[t._profile]+';color:'+profTextColors[t._profile]+';border:1px solid '+profTextColors[t._profile]+'33;margin-left:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:600">'+t._profile+'</span>':'';
+    const mainRow='<tr style="border-left:3px solid '+(outAccent[t.outcome]||'rgba(255,255,255,0.07)')+'"><td style="white-space:nowrap">'+t.date+profPill+'</td><td>'+(t.instrument||'—')+'</td><td style="color:'+(biasCol[t.bias]||'#888')+'">'+(t.bias||'—')+'</td><td>'+(t.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(t.draw||'—')+'</td><td style="font-weight:500">'+(t.rrActual||'—')+'</td><td>'+pnlStr+'</td><td style="font-size:14px;color:#4b5563">'+(t.risk?t.risk+'%':'—')+'</td><td>'+(badges[t.outcome]||'')+'</td><td style="color:#10b981">'+(t.discRating?'★'.repeat(t.discRating):'—')+'</td><td style="display:flex;gap:2px;align-items:center">'+detailBtn+'<button onclick="del('+t.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';
     window._ssStore=window._ssStore||{};
     window._ssStore[t.id]=ssLinks;
     const _isCDN=u=>u&&(u.includes('cloudinary.com')||u.includes('res.cloud'));
@@ -3977,6 +4084,8 @@ function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMont
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 
 function renderCalendar(){
+  try{
+  var tradeList=trades||[];
   const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const titleEl=document.getElementById('cal-month-title');
   if(titleEl)titleEl.textContent=monthNames[calMonth]+' '+calYear;
@@ -3985,7 +4094,7 @@ function renderCalendar(){
   const today=new Date().toISOString().split('T')[0];
   // Build day map from trades
   const dayMap={};
-  trades.filter(t=>t.pnl!=null&&t.date).forEach(t=>{
+  tradeList.filter(t=>t.pnl!=null&&t.date).forEach(t=>{
     const d=t.date.slice(0,7)===(calYear+'-'+String(calMonth+1).padStart(2,'0'))?t.date:null;
     if(!d)return;
     if(!dayMap[d])dayMap[d]={pnl:0,trades:[],wins:0,losses:0,be:0};
@@ -3997,7 +4106,7 @@ function renderCalendar(){
   });
   // Update month stats
   const monthStr=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  const monthTrades=trades.filter(t=>t.date&&t.date.startsWith(monthStr));
+  const monthTrades=tradeList.filter(t=>t.date&&t.date.startsWith(monthStr));
   const monthPnl=rp(monthTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
   const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
@@ -4053,6 +4162,7 @@ function renderCalendar(){
     html+='</tr>';
   }
   tbody.innerHTML=html;
+  }catch(err){console.error('renderCalendar',err);}
 }
 
 function calDayClick(dateStr){
@@ -4500,9 +4610,12 @@ updateSessionTimer();
 // NQ point value = $20 per point (full NQ)
 // MNQ point value = $2 per point (micro)
 function calcRisk(){
-  const account=parseFloat(document.getElementById('calc-account').value)||0;
-  const stop=parseFloat(document.getElementById('calc-stop').value)||0;
+  const accEl=document.getElementById('calc-account');
+  const stopEl=document.getElementById('calc-stop');
   const out=document.getElementById('calc-output');
+  if(!accEl||!stopEl||!out)return;
+  const account=parseFloat(accEl.value)||0;
+  const stop=parseFloat(stopEl.value)||0;
   if(!account||!stop){out.innerHTML='<span style="color:#9ca3af">Enter account size and stop distance</span>';return;}
 
   const risk1pct=account*0.01;
@@ -4531,13 +4644,16 @@ function calcRisk(){
     +'<div style="font-size:14px;color:#4b5563;margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
 }
 
-// Pre-fill calc from prop settings if available
+// Pre-fill position-size widget + risk labels from live Prop equity for this profile
 function prefillCalc(){
+  updateRiskDropdownLabels();
   const accEl=document.getElementById('calc-account');
-  if(accEl&&propSettings&&propSettings.account&&!accEl.value){
-    accEl.value=propSettings.account;
-    calcRisk();
+  if(accEl&&currentProfile!=='all'){
+    const eq=getProfileLiveEquity();
+    if(eq||propSettings&&propSettings.account){ accEl.value=String(eq||rp(Number(propSettings.account)||0)); }
   }
+  if(typeof calcRisk==='function') calcRisk();
+  calcAutoRR();
 }
 
 
@@ -4992,7 +5108,11 @@ function renderMissed(){
   const empty=document.getElementById('missed-empty');
   if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(m=>'<tr><td style="white-space:nowrap">'+m.date+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">D83DDCAD '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>').join('');
+  tbody.innerHTML=missedTrades.map(m=>{
+    const mProfColors={challenge:'rgba(16,185,129,0.12)',funded:'rgba(245,158,11,0.12)',demo:'rgba(129,140,248,0.12)'};
+    const mProfTextColors={challenge:'#10b981',funded:'#f59e0b',demo:'#818cf8'};
+    const mPill=m._profile?'<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:'+mProfColors[m._profile]+';color:'+mProfTextColors[m._profile]+';border:1px solid '+mProfTextColors[m._profile]+'33;margin-left:4px;text-transform:uppercase;font-weight:600">'+m._profile+'</span>':'';
+    return'<tr><td style="white-space:nowrap">'+m.date+mPill+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';}).join('');
 }
 function delMissed(id){if(!confirm('Delete?'))return;missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();}
 
@@ -5017,78 +5137,97 @@ function weekNext(){currentWeekOffset++;renderWeekly();}
 function weekCurrent(){currentWeekOffset=0;renderWeekly();}
 
 function renderWeekly(){
-  const{mon,fri,key}=getWeekDates(currentWeekOffset);
-  const fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  document.getElementById('weekly-range-label').textContent=fmt(mon)+' – '+fmt(fri);
-  const monStr=mon.toISOString().split('T')[0];
-  const friStr=fri.toISOString().split('T')[0];
-  const weekTrades=trades.filter(t=>t.date>=monStr&&t.date<=friStr);
-  const active=weekTrades.filter(t=>t.outcome!=='skip');
-  const wins=active.filter(t=>t.outcome==='win');
-  document.getElementById('w-trades').textContent=active.length;
-  const wrEl=document.getElementById('w-wr');
+  var errEl=document.getElementById('weekly-render-err');
+  if(errEl){errEl.style.display='none';errEl.textContent='';}
+  var wl=document.getElementById('weekly-range-label');
+  var wTr=document.getElementById('w-trades');
+  var wrEl=document.getElementById('w-wr');
+  var wP=document.getElementById('w-pnl');
+  var wM=document.getElementById('w-mistake');
+  var wO=document.getElementById('w-outcomes');
+  if(!wl||!wTr||!wrEl||!wP||!wM||!wO){
+    if(errEl){errEl.style.display='block';errEl.textContent='Weekly tab markup is incomplete. Save this HTML file and hard-refresh (Ctrl+Shift+R).';}
+    return;
+  }
+  try{
+  var week=getWeekDates(currentWeekOffset);
+  var mon=week.mon,fri=week.fri,key=week.key;
+  var fmt=function(d){return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});};
+  wl.textContent=fmt(mon)+' – '+fmt(fri);
+  var monStr=mon.toISOString().split('T')[0];
+  var friStr=fri.toISOString().split('T')[0];
+  var weekTrades=(trades||[]).filter(function(t){return t.date>=monStr&&t.date<=friStr;});
+  var active=weekTrades.filter(function(t){return t.outcome!=='skip';});
+  var wins=active.filter(function(t){return t.outcome==='win';});
+  wTr.textContent=String(active.length);
   wrEl.textContent=active.length?Math.round(wins.length/active.length*100)+'%':'—';
   wrEl.style.color=active.length?(wins.length/active.length>=0.5?'#10b981':'#ef4444'):'';
-  const pnl=rp(weekTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
-  const pnlEl=document.getElementById('w-pnl');
-  pnlEl.textContent=fmtPnl(pnl);
-  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
-  const mm={};weekTrades.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
-  const topMistake=Object.entries(mm).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('w-mistake').textContent=topMistake?topMistake[0]+' ('+topMistake[1]+'×)':'None ✓';
-  document.getElementById('w-mistake').style.color=topMistake?'#ef4444':'#10b981';
-  const c={win:0,loss:0,be:0,skip:0};weekTrades.forEach(t=>{if(c[t.outcome]!==undefined)c[t.outcome]++;});
-  document.getElementById('w-outcomes').innerHTML='<span class="green-bg">'+c.win+' W</span> <span class="red-bg">'+c.loss+' L</span> <span class="amber-bg">'+c.be+' BE</span>';
-  const saved=weeklyNotes[key]||{};
-  document.getElementById('w-well').value=saved.well||'';
-  document.getElementById('w-improve').value=saved.improve||'';
-  document.getElementById('w-focus').value=saved.focus||'';
-
-  // Emotional pattern this week
-  const brkEl=document.getElementById('w-emotion-breakdown');
-  const cmpEl=document.getElementById('w-emotion-compare');
-  const emotMap={};
-  weekTrades.forEach(t=>{
-    if(t.emotion){emotMap[t.emotion]=(emotMap[t.emotion]||0)+1;}
-    if(t.emotionPost){const k=t.emotionPost+' (after)';emotMap[k]=(emotMap[k]||0)+1;}
+  var pnl=rp(weekTrades.reduce(function(s,t){return rp(s+(t.pnl||0));},0));
+  wP.textContent=fmtPnl(pnl);
+  wP.className=(wP.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
+  var mm={};
+  weekTrades.forEach(function(t){
+    (t.mistakes||[]).forEach(function(m){mm[m]=(mm[m]||0)+1;});
   });
-  const emotEntries=Object.entries(emotMap).sort((a,b)=>b[1]-a[1]);
+  var topMistake=Object.entries(mm).sort(function(a,b){return b[1]-a[1];})[0];
+  wM.textContent=topMistake?topMistake[0]+' ('+topMistake[1]+'×)':'None ✓';
+  wM.style.color=topMistake?'#ef4444':'#10b981';
+  var c={win:0,loss:0,be:0,skip:0};
+  weekTrades.forEach(function(t){if(c[t.outcome]!==undefined)c[t.outcome]++;});
+  wO.innerHTML='<span class="green-bg">'+c.win+' W</span> <span class="red-bg">'+c.loss+' L</span> <span class="amber-bg">'+c.be+' BE</span>';
+  var saved=weeklyNotes[key]||{};
+  var wellEl=document.getElementById('w-well');
+  var impEl=document.getElementById('w-improve');
+  var focEl=document.getElementById('w-focus');
+  if(wellEl)wellEl.value=saved.well||'';
+  if(impEl)impEl.value=saved.improve||'';
+  if(focEl)focEl.value=saved.focus||'';
+
+  var brkEl=document.getElementById('w-emotion-breakdown');
+  var cmpEl=document.getElementById('w-emotion-compare');
+  var emotMap={};
+  weekTrades.forEach(function(t){
+    if(t.emotion){emotMap[t.emotion]=(emotMap[t.emotion]||0)+1;}
+    if(t.emotionPost){var k=t.emotionPost+' (after)';emotMap[k]=(emotMap[k]||0)+1;}
+  });
+  var emotEntries=Object.entries(emotMap).sort(function(a,b){return b[1]-a[1];});
   if(!emotEntries.length){
     if(brkEl)brkEl.textContent='No emotional data logged this week.';
-  } else {
-    if(brkEl)brkEl.innerHTML=emotEntries.map(([e,c])=>{
-      const isNeg=e.includes('FOMO')||e.includes('Revenge')||e.includes('Overconfident')||e.includes('Frustrated')||e.includes('Shaken')||e.includes('Regret')||e.includes('Anxious');
-      const isPos=e.includes('Neutral')||e.includes('Satisfied')||e.includes('Patient')||e.includes('Calm');
-      const col=isPos?'#10b981':isNeg?'#ef4444':'#f59e0b';
+  } else if(brkEl){
+    brkEl.innerHTML=emotEntries.map(function(entry){
+      var e=entry[0],ct=entry[1];
+      var isNeg=e.indexOf('FOMO')>=0||e.indexOf('Revenge')>=0||e.indexOf('Overconfident')>=0||e.indexOf('Frustrated')>=0||e.indexOf('Shaken')>=0||e.indexOf('Regret')>=0||e.indexOf('Anxious')>=0;
+      var isPos=e.indexOf('Neutral')>=0||e.indexOf('Satisfied')>=0||e.indexOf('Patient')>=0||e.indexOf('Calm')>=0;
+      var col=isPos?'#10b981':isNeg?'#ef4444':'#f59e0b';
       return'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
         +'<span style="font-size:14px;color:'+col+'">'+e+'</span>'
-        +'<span class="badge">'+c+'x</span></div>';
+        +'<span class="badge">'+ct+'x</span></div>';
     }).join('');
   }
 
-  // vs last week
-  const{mon:lastMon,fri:lastFri,key:lastKey}=getWeekDates(currentWeekOffset-1);
-  const lastMonStr=lastMon.toISOString().split('T')[0];
-  const lastFriStr=lastFri.toISOString().split('T')[0];
-  const lastWeekTrades=trades.filter(t=>t.date>=lastMonStr&&t.date<=lastFriStr);
-  const lastEmotMap={};
-  lastWeekTrades.forEach(t=>{
+  var prevWeek=getWeekDates(currentWeekOffset-1);
+  var lastMon=prevWeek.mon,lastFri=prevWeek.fri;
+  var lastMonStr=lastMon.toISOString().split('T')[0];
+  var lastFriStr=lastFri.toISOString().split('T')[0];
+  var lastWeekTrades=(trades||[]).filter(function(t){return t.date>=lastMonStr&&t.date<=lastFriStr;});
+  var lastEmotMap={};
+  lastWeekTrades.forEach(function(t){
     if(t.emotion)lastEmotMap[t.emotion]=(lastEmotMap[t.emotion]||0)+1;
-    if(t.emotionPost){const k=t.emotionPost+' (after)';lastEmotMap[k]=(lastEmotMap[k]||0)+1;}
+    if(t.emotionPost){var k2=t.emotionPost+' (after)';lastEmotMap[k2]=(lastEmotMap[k2]||0)+1;}
   });
   if(!lastWeekTrades.length){
     if(cmpEl)cmpEl.textContent='No data from last week.';
-  } else {
-    const thisWeekTop=emotEntries[0];
-    const lastWeekTop=Object.entries(lastEmotMap).sort((a,b)=>b[1]-a[1])[0];
-    const thisWR=active.length?Math.round(wins.length/active.length*100):null;
-    const lastActive=lastWeekTrades.filter(t=>t.outcome!=='skip');
-    const lastWins=lastActive.filter(t=>t.outcome==='win');
-    const lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
-    const lastPnl=rp(lastWeekTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
-    const wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
-    const pnlDiff=pnl-lastPnl;
-    if(cmpEl)cmpEl.innerHTML=
+  } else if(cmpEl){
+    var thisWeekTop=emotEntries[0];
+    var lastWeekTop=Object.entries(lastEmotMap).sort(function(a,b){return b[1]-a[1];})[0];
+    var thisWR=active.length?Math.round(wins.length/active.length*100):null;
+    var lastActive=lastWeekTrades.filter(function(t){return t.outcome!=='skip';});
+    var lastWins=lastActive.filter(function(t){return t.outcome==='win';});
+    var lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
+    var lastPnl=rp(lastWeekTrades.reduce(function(s,t){return rp(s+(t.pnl||0));},0));
+    var wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
+    var pnlDiff=pnl-lastPnl;
+    cmpEl.innerHTML=
       '<div style="margin-bottom:8px"><span style="color:#9ca3af;font-size:14px">Dominant emotion: </span>'
       +'<span style="color:#e5e7eb">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
       +' <span style="color:#555;font-size:14px">vs last week: </span>'
@@ -5097,6 +5236,10 @@ function renderWeekly(){
       +'<span style="color:'+(wrDiff>=0?'#10b981':'#ef4444')+'">'+(wrDiff>=0?'+':'')+wrDiff+'% vs last week</span></div>':'')
       +'<div><span style="color:#9ca3af;font-size:14px">P&L: </span>'
       +'<span style="color:'+(pnlDiff>=0?'#10b981':'#ef4444')+'">'+(pnlDiff>=0?'+$':'-$')+Math.abs(pnlDiff).toFixed(2)+' vs last week</span></div>';
+  }
+  }catch(e){
+    console.error('renderWeekly',e);
+    if(errEl){errEl.style.display='block';errEl.textContent='Could not build weekly stats. Open the browser console (F12) for details.';}
   }
 }
 function saveWeeklyNotes(){
@@ -5151,12 +5294,35 @@ function renderTimeOfDay(trades){
 
 function applyProfileUI(){
   const isBack=currentProfile==='backtesting';
-  ['screenshots-section','emotion-field'].forEach(id=>{
-    const el=document.getElementById(id);
+  const isAll=currentProfile==='all';
+  /* journal_updated_3: only hides fields for backtest — v11 also hides for “All profiles” merged view */
+  ['screenshots-section','emotion-field'].forEach(function(id){
+    var el=document.getElementById(id);
     if(!el)return;
-    if(isBack)el.classList.add('profile-hide');
+    if(isBack||isAll)el.classList.add('profile-hide');
     else el.classList.remove('profile-hide');
   });
+  var logForm=document.getElementById('log-form');
+  if(logForm)logForm.style.display=isAll?'none':'';
+
+  var propAll=document.getElementById('prop-all-hint');
+  if(propAll)propAll.style.display=isAll?'block':'none';
+  var propSettings2=document.getElementById('prop-settings-section');
+  if(propSettings2)propSettings2.style.display=isAll?'none':'';
+
+  var missedForm=document.getElementById('missed-form-section');
+  if(missedForm)missedForm.style.display=isAll?'none':'';
+
+  var banner=document.getElementById('all-view-banner');
+  if(banner)banner.style.display=isAll?'block':'none';
+
+  if(isAll){
+    missedTrades=['challenge','funded','demo'].flatMap(function(prof){
+      return (allMissedTrades[prof]||[]).map(function(m){return Object.assign({},m,{_profile:prof});});
+    });
+  }
+  /* Tracker + empty-state visibility: owned by renderProp() only — avoids fighting v_3 behaviour */
+  try{if(typeof renderProp==='function')renderProp();}catch(ex){console.error(ex);}
 }
 
 function switchProfile(p, btn){
@@ -5166,10 +5332,22 @@ function switchProfile(p, btn){
   try{localStorage.setItem('ict_last_profile',p);}catch(e){}
   document.querySelectorAll('.profile-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  trades=allTrades[currentProfile]||[];
-  propSettings=allPropSettings[currentProfile]||{};
-  weeklyNotes=allWeeklyNotes[currentProfile]||{};
-  missedTrades=allMissedTrades[currentProfile]||[];
+  if(p==='all'){
+    // Merge all profiles; tag each trade with its source
+    const merged=[];
+    ['challenge','funded','demo'].forEach(prof=>{
+      (allTrades[prof]||[]).forEach(t=>merged.push(Object.assign({},t,{_profile:prof})));
+    });
+    trades=merged;
+    propSettings={};
+    weeklyNotes={};
+    missedTrades=[];
+  } else {
+    trades=allTrades[currentProfile]||[];
+    propSettings=allPropSettings[currentProfile]||{};
+    weeklyNotes=allWeeklyNotes[currentProfile]||{};
+    missedTrades=allMissedTrades[currentProfile]||[];
+  }
   // Destroy all chart instances so they redraw cleanly
   if(equityChartInstance){equityChartInstance.destroy();equityChartInstance=null;}
   if(dailyChartInstance){dailyChartInstance.destroy();dailyChartInstance=null;}
@@ -5300,8 +5478,9 @@ function randomizeTrade(){
   const outcomeWeights=[0.55,0.30,0.15];
   let r=Math.random(),cumW=0,rOutcome='win';
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
-  // Use prop firm account balance (or 50k fallback), risk % locked to profile
-  const account=(propSettings&&propSettings.account)?propSettings.account:50000;
+  // Equity = Prop starting account ± P&amp;L (same basis as RR + risk dropdown)
+  let eq=getProfileLiveEquity();
+  const account=eq>0?eq:((propSettings&&propSettings.account)?Number(propSettings.account):50000);
   const riskPct=currentProfile==='funded'?0.5:1;
   const riskAmt=account*(riskPct/100);
   // PnL-first approach: generate realistic random dollar amount, back-calc RR
@@ -5451,13 +5630,13 @@ function launchConfetti(){
 function calcAutoRR(){
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
-  const account=(propSettings&&propSettings.account)?propSettings.account:parseFloat(document.getElementById('p-account').value)||0;
+  let effectiveAccount=getProfileLiveEquity();
+  if(currentProfile!=='all'&&!effectiveAccount&&propSettings&&propSettings.account){effectiveAccount=rp(Number(propSettings.account));}
   const label=document.getElementById('f-rr-auto');
   const rrInput=document.getElementById('f-actual-rr');
   if(!label)return;
   if(isNaN(pnl)||isNaN(riskPct)){label.textContent='';return;}
-  // If no account set, fall back to showing R based on risk% of a standard 50k account
-  const effectiveAccount=account||50000;
+  if(!effectiveAccount){const pa=document.getElementById('p-account');const pv=pa&&parseFloat(pa.value);effectiveAccount=pv&&!isNaN(pv)?rp(pv):50000;}
   const riskAmt=effectiveAccount*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
@@ -5479,7 +5658,9 @@ function syncRRField(){
 function calcEditAutoRR(){
   const pnl=parseFloat(document.getElementById('e-pnl').value);
   const riskPct=parseFloat(document.getElementById('e-risk').value);
-  const account=parseFloat(document.getElementById('p-account').value)||0;
+  let account=getProfileLiveEquity();
+  if(!account&&propSettings&&propSettings.account)account=rp(Number(propSettings.account));
+  if(!account){const pa=document.getElementById('p-account');const pv=pa&&parseFloat(pa.value);account=pv&&!isNaN(pv)?rp(pv):50000;}
   const label=document.getElementById('e-rr-auto');
   const rrInput=document.getElementById('e-actual-rr');
   if(!label)return;
@@ -5495,6 +5676,17 @@ function calcEditAutoRR(){
     rrInput.dataset.autoFilled='1';
   }
 }
+
+/** Clear trades/prop/weekly/etc. in this browser then reload. Supabase data is separate — sign in again to re-pull. DevTools Console: resetFuzeLocalJournalData() */
+function resetFuzeLocalJournalData(){
+  if(!confirm('Clear all local journal data in this browser and reload?'))return;
+  ['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles','ict_presession','ict_nonneg','fuze_notebooks'].forEach(function(k){
+    try{localStorage.removeItem(k);}catch(e){}
+  });
+  ['challenge','funded','demo'].forEach(function(p){try{localStorage.removeItem('ict_draft_'+p);}catch(e){}});
+  location.reload();
+}
+window.resetFuzeLocalJournalData=resetFuzeLocalJournalData;
 
 // ── Init ──
 buildMistakes();
@@ -5924,6 +6116,7 @@ document.addEventListener('DOMContentLoaded',function(){
   loadSavedTheme();
   loadDarkLightPref();
   renderQOTD();
+  if(typeof updateRiskDropdownLabels==='function')updateRiskDropdownLabels();
 });
 </script>
 
@@ -5938,6 +6131,8 @@ let _revSlide = 0;
 const _revTotal = 4;
 let _revDowChart = null;
 let _revAiCache = {};
+/** Stored once: DevTools Console → localStorage.setItem('fuze_anthropic_key','YOUR_KEY'); */
+function getAnthropicApiKey(){ try{ return localStorage.getItem('fuze_anthropic_key')||''; }catch(e){ return ''; } }
 
 function revNav(dir){
   _revSlide = (_revSlide + dir + _revTotal) % _revTotal;
@@ -6215,13 +6410,26 @@ async function revRequestAI(slideIdx){
   if(!prompt) return;
 
   takeawayEl.style.display='block';
+
+  var apiKey=getAnthropicApiKey();
+  if(!apiKey){
+    takeawayEl.querySelector('.rev-takeaway-text').textContent=
+      'Save your Anthropic API key once: browser console → localStorage.setItem("fuze_anthropic_key","sk-ant-..."); then reopen this.';
+    takeawayEl.style.opacity='1';
+    return;
+  }
+
   takeawayEl.querySelector('.rev-takeaway-text').textContent='⏳ Generating AI insight...';
   takeawayEl.style.opacity='0.6';
 
   try{
     var resp = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01'
+      },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
@@ -6230,12 +6438,18 @@ async function revRequestAI(slideIdx){
       })
     });
     var data = await resp.json();
-    var text = (data.content&&data.content[0]&&data.content[0].text)||'Unable to generate insight.';
+    var text;
+    if(!resp.ok){
+      text=(data&&data.error&&data.error.message)?data.error.message:'Anthropic error ('+resp.status+').';
+    } else {
+      text=(data.content&&data.content[0]&&data.content[0].text)||'Unable to generate insight.';
+    }
     _revAiCache[slideIdx] = text;
     takeawayEl.querySelector('.rev-takeaway-text').textContent = text;
     takeawayEl.style.opacity='1';
   } catch(e){
-    takeawayEl.querySelector('.rev-takeaway-text').textContent='AI insight unavailable — check connection.';
+    takeawayEl.querySelector('.rev-takeaway-text').textContent=
+      'AI insight failed: '+(e&&e.message?e.message:'network error')+' — direct browser calls may be blocked (CORS).';
     takeawayEl.style.opacity='1';
   }
 }
@@ -7758,6 +7972,28 @@ body:not(.dark-mode) #popup-passed>div,body:not(.dark-mode) #popup-blown>div{bac
 /* ── Dark mode — wins over everything above ── */
 body.dark-mode{background:#0d0d0d!important;color:#f0f0f0!important;--text-primary:#e5e7eb}
 body.dark-mode #main-content{background:#0d0d0d!important}
+/* Do not blanket display:block — it kills #page-calendar's flex layout (journal_updated_3 works with flex) */
+#main-content > #page-calendar.page.active {
+  display: flex !important;
+  flex-direction: column !important;
+  height: calc(100vh - 48px) !important;
+  overflow: hidden !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+body.dark-mode #main-content > .page.active:not(#page-calendar),
+body:not(.dark-mode) #main-content > .page.active:not(#page-calendar) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+#main-content > #page-weekly.page.active,
+#main-content > #page-prop.page.active {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 40vh !important;
+}
 body.dark-mode h1,body.dark-mode h2,body.dark-mode h3{color:#f0f0f0!important}
 body.dark-mode .dash-page-header h2,body.dark-mode .page-header h2,body.dark-mode .page-header h1{color:#f0f0f0!important}
 body.dark-mode .card,body.dark-mode .dash-chart-card,body.dark-mode .dash-recent,body.dark-mode .dash-metric,body.dark-mode .metric-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important;color:#f0f0f0!important}
