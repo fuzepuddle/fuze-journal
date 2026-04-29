@@ -1274,6 +1274,54 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   }
 }
 
+/* ── Log trade · screenshots (dark file button + no grid overflow) ── */
+#screenshots-section{
+  min-width:0;
+  box-sizing:border-box;
+}
+#screenshots-section .grid-2{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px 12px;
+}
+#screenshots-section .grid-2 > div{
+  min-width:0;
+}
+#screenshots-section input[type=file]{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  display:block;
+  font-size:11px;
+  line-height:1.35;
+  color:#9ca3af;
+  padding:7px 8px;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;
+  background:#161616;
+  cursor:pointer;
+}
+#screenshots-section input[type=file]::file-selector-button,
+#screenshots-section input[type=file]::-webkit-file-upload-button{
+  -webkit-appearance:none;
+  appearance:none;
+  margin-right:8px;
+  padding:6px 11px;
+  border:none;
+  border-radius:6px;
+  background:#2a2a2a;
+  color:#e5e7eb;
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+}
+#screenshots-section input[type=file]:hover::file-selector-button,
+#screenshots-section input[type=file]:hover::-webkit-file-upload-button{
+  background:#383838;
+  color:#fff;
+}
+
 /* ── Glows ── */
 @keyframes glow-green{0%,100%{box-shadow:0 0 0px #1a4010}50%{box-shadow:0 0 20px rgba(16,185,129,0.2)}}
 @keyframes glow-red{0%,100%{box-shadow:0 0 0px #4a1a1a}50%{box-shadow:0 0 16px rgba(239,68,68,0.3)}}
@@ -1912,27 +1960,27 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="grid-2 gap" style="margin-bottom:8px">
       <div>
         <label>1M</label>
-        <input type="file" id="f-ss-1m" accept="image/*" style="font-size:14px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'1m')">
+        <input type="file" id="f-ss-1m" accept="image/*" onchange="handleSSFile(this,'1m')">
         <div id="f-ss-1m-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>5M</label>
-        <input type="file" id="f-ss-5m" accept="image/*" style="font-size:14px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'5m')">
+        <input type="file" id="f-ss-5m" accept="image/*" onchange="handleSSFile(this,'5m')">
         <div id="f-ss-5m-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>15M</label>
-        <input type="file" id="f-ss-15m" accept="image/*" style="font-size:14px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'15m')">
+        <input type="file" id="f-ss-15m" accept="image/*" onchange="handleSSFile(this,'15m')">
         <div id="f-ss-15m-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>1H</label>
-        <input type="file" id="f-ss-1h" accept="image/*" style="font-size:14px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'1h')">
+        <input type="file" id="f-ss-1h" accept="image/*" onchange="handleSSFile(this,'1h')">
         <div id="f-ss-1h-prev" style="margin-top:5px"></div>
       </div>
       <div>
         <label>4H</label>
-        <input type="file" id="f-ss-4h" accept="image/*" style="font-size:14px;padding:6px 8px;cursor:pointer" onchange="handleSSFile(this,'4h')">
+        <input type="file" id="f-ss-4h" accept="image/*" onchange="handleSSFile(this,'4h')">
         <div id="f-ss-4h-prev" style="margin-top:5px"></div>
       </div>
     </div>
@@ -6719,8 +6767,13 @@ document.addEventListener('click',function(e){
     grid-template-columns: 1fr !important;
   }
   #screenshots-section input[type=file] {
-    font-size: 14px !important;
-    padding: 10px 8px !important;
+    font-size: 11px !important;
+    padding: 8px !important;
+  }
+  #screenshots-section input[type=file]::file-selector-button,
+  #screenshots-section input[type=file]::-webkit-file-upload-button {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
   }
 
   /* ── 9. SAVE/CLEAR/RANDOMIZE ROW ── */
