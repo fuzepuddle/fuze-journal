@@ -2223,6 +2223,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 <!-- WEEKLY REVIEW -->
 <div class="page" id="page-weekly">
+  <div id="weekly-render-err" class="card" style="display:none;margin-bottom:14px;padding:12px 16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.45);color:#fecaca;font-size:14px;line-height:1.5"></div>
   <div class="page-header"><h2>Weekly Review</h2></div>
   <!-- QOTD on Weekly page -->
   <div class="card qotd-log-card" id="qotd-card-log" style="margin-bottom:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px">
@@ -2895,6 +2896,14 @@ async function loadAllData(){
     applyProfileUI();
     renderJournal&&renderJournal();
     renderDashboard&&renderDashboard();
+    /* Re-render active tab so Calendar / Weekly / Prop never stay stale or blank after cloud load */
+    var ap=document.querySelector('#main-content > .page.active');
+    if(ap){
+      var lid=String(ap.id||'').replace('page-','');
+      if(lid==='calendar'&&typeof renderCalendar==='function')renderCalendar();
+      else if(lid==='weekly'&&typeof renderWeekly==='function')renderWeekly();
+      else if(lid==='prop'){if(typeof loadPropSettings==='function')loadPropSettings();if(typeof renderProp==='function')renderProp();}
+    }
   }catch(e){console.error('Init error',e);}
 }
 function save(){
@@ -2983,11 +2992,12 @@ function renderProp(){
   if(currentProfile==='all')return;
   const tracker=document.getElementById('prop-tracker');
   const empty=document.getElementById('prop-empty');
-  if(!propSettings.target){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
+  var hasTarget=propSettings&&(Number(propSettings.target)>0);
+  if(!hasTarget){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
   if(tracker)tracker.style.display='block';
   if(empty)empty.style.display='none';
   // ── Firm name & badge ──
-  document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop Firm';
+  var pfn=document.getElementById('prop-firm-name');if(pfn)pfn.textContent=propSettings.name||'Prop Firm';
   const phaseBadge=document.getElementById('prop-phase-badge');
   if(phaseBadge){
     const ph=currentProfile==='funded'?'FUNDED':currentProfile==='demo'?'DEMO':'EVAL';
@@ -2999,10 +3009,9 @@ function renderProp(){
   // Account ID line
   const accIdEl=document.getElementById('prop-account-id');
   if(accIdEl) accIdEl.textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
-  // Legacy compat
-  document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
+  var pal=document.getElementById('prop-account-lbl');if(pal)pal.textContent=propSettings.account?'$'+Number(propSettings.account).toLocaleString()+' account':'';
 
-  const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
+  var liveTrades=(trades||[]).filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
   const totalPnl=rp(liveTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const account=propSettings.account||0;
   const maxddAmt=propSettings.maxdd||0;
@@ -3115,38 +3124,41 @@ function renderProp(){
   const startMarker=document.getElementById('prop-start-marker');
   if(startMarker) startMarker.style.left=startPct+'%';
 
-  // ── Legacy hidden elements (keep JS compat) ──
-  const profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
-  document.getElementById('prop-profit-lbl').textContent=fmtPnl(totalPnl)+' / $'+(propSettings.target||0).toLocaleString();
-  document.getElementById('prop-profit-bar').style.width=profitPct+'%';
-  document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
-  const ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
-  document.getElementById('prop-dd-lbl').textContent='Buffer: $'+bufferRemaining.toFixed(2);
-  document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-pct').textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining';
-  const ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
-  document.getElementById('prop-ddl-lbl').textContent=fmtPnl(todayPnl);
-  document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
+  // ── Legacy hidden elements (keep JS compat) — all optional so Prop tab never throws ──
+  var profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
+  var _pLbl=document.getElementById('prop-profit-lbl');
+  if(_pLbl)_pLbl.textContent=fmtPnl(totalPnl)+' / $'+(propSettings.target||0).toLocaleString();
+  var _pBar=document.getElementById('prop-profit-bar');
+  if(_pBar)_pBar.style.width=profitPct+'%';
+  var _pPct=document.getElementById('prop-profit-pct');
+  if(_pPct)_pPct.textContent=Math.round(profitPct)+'% of profit target';
+  var ddPct=maxddAmt?Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100)):0;
+  var _ddl=document.getElementById('prop-dd-lbl');if(_ddl)_ddl.textContent='Buffer: $'+bufferRemaining.toFixed(2);
+  var _ddb=document.getElementById('prop-dd-bar');if(_ddb)_ddb.style.width=(100-ddPct)+'%';
+  var _ddp=document.getElementById('prop-dd-pct');if(_ddp)_ddp.textContent='$'+bufferRemaining.toFixed(2)+' buffer remaining';
+  var ddlPct=propSettings.ddl?Math.min(100,todayLoss/propSettings.ddl*100):0;
+  var _dll=document.getElementById('prop-ddl-lbl');if(_dll)_dll.textContent=fmtPnl(todayPnl);
+  var _dlb=document.getElementById('prop-ddl-bar');if(_dlb)_dlb.style.width=ddlPct+'%';
 
   // ── Bottom row: P&L | Today | DD Buffer | Daily left ──
-  const tpEl=document.getElementById('prop-total-pnl');
-  tpEl.textContent=fmtPnl(totalPnl);
-  tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';
-  const tdEl=document.getElementById('prop-today-pnl');
-  tdEl.textContent=fmtPnl(todayPnl);
-  tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';
-  // DD Buffer (repurpose prop-wins slot)
-  const ddBufEl=document.getElementById('prop-wins');
-  ddBufEl.textContent='$'+bufferRemaining.toFixed(0);
-  ddBufEl.style.color=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#10b981';
-  // Daily left (repurpose prop-losses slot)
-  const dailyLeft=propSettings.ddl?(propSettings.ddl-todayLoss):null;
-  const dlEl=document.getElementById('prop-losses');
-  if(dailyLeft!==null){
-    dlEl.textContent=(dailyLeft>=0?'$':'-$')+Math.abs(dailyLeft).toFixed(0);
-    dlEl.style.color=ddlPct>=100?'#ef4444':ddlPct>=80?'#f59e0b':'#10b981';
-  } else {
-    dlEl.textContent='—';dlEl.style.color='#6b7280';
+  var tpEl=document.getElementById('prop-total-pnl');
+  if(tpEl){tpEl.textContent=fmtPnl(totalPnl);tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';}
+  var tdEl=document.getElementById('prop-today-pnl');
+  if(tdEl){tdEl.textContent=fmtPnl(todayPnl);tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';}
+  var ddBufEl=document.getElementById('prop-wins');
+  if(ddBufEl){
+    ddBufEl.textContent='$'+bufferRemaining.toFixed(0);
+    ddBufEl.style.color=bufferRemaining<maxddAmt*0.3?'#ef4444':bufferRemaining<maxddAmt*0.6?'#f59e0b':'#10b981';
+  }
+  var dailyLeft=propSettings.ddl?(propSettings.ddl-todayLoss):null;
+  var dlEl=document.getElementById('prop-losses');
+  if(dlEl){
+    if(dailyLeft!==null){
+      dlEl.textContent=(dailyLeft>=0?'$':'-$')+Math.abs(dailyLeft).toFixed(0);
+      dlEl.style.color=ddlPct>=100?'#ef4444':ddlPct>=80?'#f59e0b':'#10b981';
+    } else {
+      dlEl.textContent='—';dlEl.style.color='#6b7280';
+    }
   }
   // Warnings
   const warn=document.getElementById('prop-warn');
@@ -3382,21 +3394,36 @@ function renderDashMiniCal(){
   bodyEl.innerHTML=html;
 }
 function showTab(t){
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.sb-nav-item').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(el=>{if(el.id)el.classList.remove('active');});
-  document.querySelectorAll('.tab').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
-  document.querySelectorAll('.sb-nav-item').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
-  const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
-  if(t==='dashboard')renderDashboard();
-  if(t==='log'){setTimeout(prefillCalc,100);}
-  if(t==='journal')renderJournal();
-  if(t==='stats')renderStats();
-  if(t==='prop'){loadPropSettings();renderProp();}
-  if(t==='calendar')renderCalendar();
-  if(t==='missed')renderMissed();
-  if(t==='weekly')renderWeekly();
-  const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.sb-nav-item').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('#main-content > .page').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(el){if(el.getAttribute('data-tab')===t)el.classList.add('active');});
+  document.querySelectorAll('.sb-nav-item').forEach(function(el){if(el.getAttribute('data-tab')===t)el.classList.add('active');});
+  var pg=document.getElementById('page-'+t);
+  if(pg){
+    pg.classList.add('active');
+    pg.setAttribute('aria-hidden','false');
+  }
+  document.querySelectorAll('#main-content > .page').forEach(function(el){
+    if(pg&&el!==pg){el.setAttribute('aria-hidden','true');}
+  });
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      try{
+        if(t==='dashboard'&&typeof renderDashboard==='function')renderDashboard();
+        if(t==='log'){setTimeout(prefillCalc,100);}
+        if(t==='journal')renderJournal&&renderJournal();
+        if(t==='stats'){var _rs=window.renderStats||renderStats;if(typeof _rs==='function')_rs();}
+        if(t==='prop'){if(typeof loadPropSettings==='function')loadPropSettings();if(typeof renderProp==='function')renderProp();}
+        if(t==='calendar'&&typeof renderCalendar==='function')renderCalendar();
+        if(t==='missed'&&typeof renderMissed==='function')renderMissed();
+        if(t==='weekly'&&typeof renderWeekly==='function')renderWeekly();
+      }catch(e){console.error('showTab/'+t,e);}
+      var m=document.querySelector('#main-content');
+      if(m)try{m.scrollTop=0;}catch(err){}
+    });
+  });
+  var cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
@@ -4065,6 +4092,8 @@ function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMont
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
 
 function renderCalendar(){
+  try{
+  var tradeList=trades||[];
   const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const titleEl=document.getElementById('cal-month-title');
   if(titleEl)titleEl.textContent=monthNames[calMonth]+' '+calYear;
@@ -4073,7 +4102,7 @@ function renderCalendar(){
   const today=new Date().toISOString().split('T')[0];
   // Build day map from trades
   const dayMap={};
-  trades.filter(t=>t.pnl!=null&&t.date).forEach(t=>{
+  tradeList.filter(t=>t.pnl!=null&&t.date).forEach(t=>{
     const d=t.date.slice(0,7)===(calYear+'-'+String(calMonth+1).padStart(2,'0'))?t.date:null;
     if(!d)return;
     if(!dayMap[d])dayMap[d]={pnl:0,trades:[],wins:0,losses:0,be:0};
@@ -4085,7 +4114,7 @@ function renderCalendar(){
   });
   // Update month stats
   const monthStr=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  const monthTrades=trades.filter(t=>t.date&&t.date.startsWith(monthStr));
+  const monthTrades=tradeList.filter(t=>t.date&&t.date.startsWith(monthStr));
   const monthPnl=rp(monthTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
   const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
   const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
@@ -4141,6 +4170,7 @@ function renderCalendar(){
     html+='</tr>';
   }
   tbody.innerHTML=html;
+  }catch(err){console.error('renderCalendar',err);}
 }
 
 function calDayClick(dateStr){
@@ -5115,85 +5145,97 @@ function weekNext(){currentWeekOffset++;renderWeekly();}
 function weekCurrent(){currentWeekOffset=0;renderWeekly();}
 
 function renderWeekly(){
+  var errEl=document.getElementById('weekly-render-err');
+  if(errEl){errEl.style.display='none';errEl.textContent='';}
+  var wl=document.getElementById('weekly-range-label');
+  var wTr=document.getElementById('w-trades');
+  var wrEl=document.getElementById('w-wr');
+  var wP=document.getElementById('w-pnl');
+  var wM=document.getElementById('w-mistake');
+  var wO=document.getElementById('w-outcomes');
+  if(!wl||!wTr||!wrEl||!wP||!wM||!wO){
+    if(errEl){errEl.style.display='block';errEl.textContent='Weekly tab markup is incomplete. Save this HTML file and hard-refresh (Ctrl+Shift+R).';}
+    return;
+  }
   try{
-  const wl=document.getElementById('weekly-range-label');
-  const wTr=document.getElementById('w-trades');
-  const wrEl=document.getElementById('w-wr');
-  const wP=document.getElementById('w-pnl');
-  const wM=document.getElementById('w-mistake');
-  const wO=document.getElementById('w-outcomes');
-  if(!wl||!wTr||!wrEl||!wP||!wM||!wO)return;
-  const{mon,fri,key}=getWeekDates(currentWeekOffset);
-  const fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  var week=getWeekDates(currentWeekOffset);
+  var mon=week.mon,fri=week.fri,key=week.key;
+  var fmt=function(d){return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});};
   wl.textContent=fmt(mon)+' – '+fmt(fri);
-  const monStr=mon.toISOString().split('T')[0];
-  const friStr=fri.toISOString().split('T')[0];
-  const weekTrades=trades.filter(t=>t.date>=monStr&&t.date<=friStr);
-  const active=weekTrades.filter(t=>t.outcome!=='skip');
-  const wins=active.filter(t=>t.outcome==='win');
-  wTr.textContent=active.length;
+  var monStr=mon.toISOString().split('T')[0];
+  var friStr=fri.toISOString().split('T')[0];
+  var weekTrades=(trades||[]).filter(function(t){return t.date>=monStr&&t.date<=friStr;});
+  var active=weekTrades.filter(function(t){return t.outcome!=='skip';});
+  var wins=active.filter(function(t){return t.outcome==='win';});
+  wTr.textContent=String(active.length);
   wrEl.textContent=active.length?Math.round(wins.length/active.length*100)+'%':'—';
   wrEl.style.color=active.length?(wins.length/active.length>=0.5?'#10b981':'#ef4444'):'';
-  const pnl=rp(weekTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
-  const pnlEl=wP;
-  pnlEl.textContent=fmtPnl(pnl);
-  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
-  const mm={};weekTrades.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
-  const topMistake=Object.entries(mm).sort((a,b)=>b[1]-a[1])[0];
+  var pnl=rp(weekTrades.reduce(function(s,t){return rp(s+(t.pnl||0));},0));
+  wP.textContent=fmtPnl(pnl);
+  wP.className=(wP.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
+  var mm={};
+  weekTrades.forEach(function(t){
+    (t.mistakes||[]).forEach(function(m){mm[m]=(mm[m]||0)+1;});
+  });
+  var topMistake=Object.entries(mm).sort(function(a,b){return b[1]-a[1];})[0];
   wM.textContent=topMistake?topMistake[0]+' ('+topMistake[1]+'×)':'None ✓';
   wM.style.color=topMistake?'#ef4444':'#10b981';
-  const c={win:0,loss:0,be:0,skip:0};weekTrades.forEach(t=>{if(c[t.outcome]!==undefined)c[t.outcome]++;});
+  var c={win:0,loss:0,be:0,skip:0};
+  weekTrades.forEach(function(t){if(c[t.outcome]!==undefined)c[t.outcome]++;});
   wO.innerHTML='<span class="green-bg">'+c.win+' W</span> <span class="red-bg">'+c.loss+' L</span> <span class="amber-bg">'+c.be+' BE</span>';
-  const saved=weeklyNotes[key]||{};
-  document.getElementById('w-well').value=saved.well||'';
-  document.getElementById('w-improve').value=saved.improve||'';
-  document.getElementById('w-focus').value=saved.focus||'';
+  var saved=weeklyNotes[key]||{};
+  var wellEl=document.getElementById('w-well');
+  var impEl=document.getElementById('w-improve');
+  var focEl=document.getElementById('w-focus');
+  if(wellEl)wellEl.value=saved.well||'';
+  if(impEl)impEl.value=saved.improve||'';
+  if(focEl)focEl.value=saved.focus||'';
 
-  // Emotional pattern this week
-  const brkEl=document.getElementById('w-emotion-breakdown');
-  const cmpEl=document.getElementById('w-emotion-compare');
-  const emotMap={};
-  weekTrades.forEach(t=>{
+  var brkEl=document.getElementById('w-emotion-breakdown');
+  var cmpEl=document.getElementById('w-emotion-compare');
+  var emotMap={};
+  weekTrades.forEach(function(t){
     if(t.emotion){emotMap[t.emotion]=(emotMap[t.emotion]||0)+1;}
-    if(t.emotionPost){const k=t.emotionPost+' (after)';emotMap[k]=(emotMap[k]||0)+1;}
+    if(t.emotionPost){var k=t.emotionPost+' (after)';emotMap[k]=(emotMap[k]||0)+1;}
   });
-  const emotEntries=Object.entries(emotMap).sort((a,b)=>b[1]-a[1]);
+  var emotEntries=Object.entries(emotMap).sort(function(a,b){return b[1]-a[1];});
   if(!emotEntries.length){
     if(brkEl)brkEl.textContent='No emotional data logged this week.';
-  } else {
-    if(brkEl)brkEl.innerHTML=emotEntries.map(([e,c])=>{
-      const isNeg=e.includes('FOMO')||e.includes('Revenge')||e.includes('Overconfident')||e.includes('Frustrated')||e.includes('Shaken')||e.includes('Regret')||e.includes('Anxious');
-      const isPos=e.includes('Neutral')||e.includes('Satisfied')||e.includes('Patient')||e.includes('Calm');
-      const col=isPos?'#10b981':isNeg?'#ef4444':'#f59e0b';
+  } else if(brkEl){
+    brkEl.innerHTML=emotEntries.map(function(entry){
+      var e=entry[0],ct=entry[1];
+      var isNeg=e.indexOf('FOMO')>=0||e.indexOf('Revenge')>=0||e.indexOf('Overconfident')>=0||e.indexOf('Frustrated')>=0||e.indexOf('Shaken')>=0||e.indexOf('Regret')>=0||e.indexOf('Anxious')>=0;
+      var isPos=e.indexOf('Neutral')>=0||e.indexOf('Satisfied')>=0||e.indexOf('Patient')>=0||e.indexOf('Calm')>=0;
+      var col=isPos?'#10b981':isNeg?'#ef4444':'#f59e0b';
       return'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
         +'<span style="font-size:14px;color:'+col+'">'+e+'</span>'
-        +'<span class="badge">'+c+'x</span></div>';
+        +'<span class="badge">'+ct+'x</span></div>';
     }).join('');
   }
 
-  // vs last week
-  const{mon:lastMon,fri:lastFri,key:lastKey}=getWeekDates(currentWeekOffset-1);
-  const lastMonStr=lastMon.toISOString().split('T')[0];
-  const lastFriStr=lastFri.toISOString().split('T')[0];
-  const lastWeekTrades=trades.filter(t=>t.date>=lastMonStr&&t.date<=lastFriStr);
-  const lastEmotMap={};
-  lastWeekTrades.forEach(t=>{
+  var prevWeek=getWeekDates(currentWeekOffset-1);
+  var lastMon=prevWeek.mon,lastFri=prevWeek.fri;
+  var lastMonStr=lastMon.toISOString().split('T')[0];
+  var lastFriStr=lastFri.toISOString().split('T')[0];
+  var lastWeekTrades=(trades||[]).filter(function(t){return t.date>=lastMonStr&&t.date<=lastFriStr;});
+  var lastEmotMap={};
+  lastWeekTrades.forEach(function(t){
     if(t.emotion)lastEmotMap[t.emotion]=(lastEmotMap[t.emotion]||0)+1;
-    if(t.emotionPost){const k=t.emotionPost+' (after)';lastEmotMap[k]=(lastEmotMap[k]||0)+1;}
+    if(t.emotionPost){var k2=t.emotionPost+' (after)';lastEmotMap[k2]=(lastEmotMap[k2]||0)+1;}
   });
   if(!lastWeekTrades.length){
     if(cmpEl)cmpEl.textContent='No data from last week.';
-  } else {
-    const thisWeekTop=emotEntries[0];
-    const lastWeekTop=Object.entries(lastEmotMap).sort((a,b)=>b[1]-a[1])[0];
-    const thisWR=active.length?Math.round(wins.length/active.length*100):null;
-    const lastActive=lastWeekTrades.filter(t=>t.outcome!=='skip');
-    const lastWins=lastActive.filter(t=>t.outcome==='win');
-    const lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
-    const lastPnl=rp(lastWeekTrades.reduce((s,t)=>rp(s+(t.pnl||0)),0));
-    const wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
-    const pnlDiff=pnl-lastPnl;
-    if(cmpEl)cmpEl.innerHTML=
+  } else if(cmpEl){
+    var thisWeekTop=emotEntries[0];
+    var lastWeekTop=Object.entries(lastEmotMap).sort(function(a,b){return b[1]-a[1];})[0];
+    var thisWR=active.length?Math.round(wins.length/active.length*100):null;
+    var lastActive=lastWeekTrades.filter(function(t){return t.outcome!=='skip';});
+    var lastWins=lastActive.filter(function(t){return t.outcome==='win';});
+    var lastWR=lastActive.length?Math.round(lastWins.length/lastActive.length*100):null;
+    var lastPnl=rp(lastWeekTrades.reduce(function(s,t){return rp(s+(t.pnl||0));},0));
+    var wrDiff=thisWR!=null&&lastWR!=null?thisWR-lastWR:null;
+    var pnlDiff=pnl-lastPnl;
+    cmpEl.innerHTML=
       '<div style="margin-bottom:8px"><span style="color:#9ca3af;font-size:14px">Dominant emotion: </span>'
       +'<span style="color:#e5e7eb">'+(thisWeekTop?thisWeekTop[0]:'—')+'</span>'
       +' <span style="color:#555;font-size:14px">vs last week: </span>'
@@ -5203,7 +5245,10 @@ function renderWeekly(){
       +'<div><span style="color:#9ca3af;font-size:14px">P&L: </span>'
       +'<span style="color:'+(pnlDiff>=0?'#10b981':'#ef4444')+'">'+(pnlDiff>=0?'+$':'-$')+Math.abs(pnlDiff).toFixed(2)+' vs last week</span></div>';
   }
-  }catch(e){ /* prevent blank tab */ }
+  }catch(e){
+    console.error('renderWeekly',e);
+    if(errEl){errEl.style.display='block';errEl.textContent='Could not build weekly stats. Open the browser console (F12) for details.';}
+  }
 }
 function saveWeeklyNotes(){
   const{key}=getWeekDates(currentWeekOffset);
@@ -5258,33 +5303,41 @@ function renderTimeOfDay(trades){
 function applyProfileUI(){
   const isBack=currentProfile==='backtesting';
   const isAll=currentProfile==='all';
-  ['screenshots-section','emotion-field'].forEach(id=>{
-    const el=document.getElementById(id);
+  /* Prop tracker uses the same readiness rule as renderProp(): profit target must be set */
+  var propConfigured= !!(propSettings && Number(propSettings.target) > 0);
+  ['screenshots-section','emotion-field'].forEach(function(id){
+    var el=document.getElementById(id);
     if(!el)return;
     if(isBack||isAll)el.classList.add('profile-hide');
     else el.classList.remove('profile-hide');
   });
-  // Hide/show log form in All view
-  const logForm=document.getElementById('log-form');
+  var logForm=document.getElementById('log-form');
   if(logForm)logForm.style.display=isAll?'none':'';
-  // All-profiles banner on Prop tab (otherwise the sheet looks empty — settings sheet is hidden in All mode)
-  const propAll=document.getElementById('prop-all-hint');
+
+  var propAll=document.getElementById('prop-all-hint');
   if(propAll)propAll.style.display=isAll?'block':'none';
-  const propSettings2=document.getElementById('prop-settings-section');
+  var propSettings2=document.getElementById('prop-settings-section');
   if(propSettings2)propSettings2.style.display=isAll?'none':'';
-  const propTracker=document.getElementById('prop-tracker');
-  if(propTracker)propTracker.style.display=isAll?'none':(Object.keys(propSettings).length?'block':'none');
-  const propEmpty=document.getElementById('prop-empty');
-  if(propEmpty)propEmpty.style.display=isAll?'none':(Object.keys(propSettings).length?'none':'block');
-  // Hide/show missed trades log form in All view
-  const missedForm=document.getElementById('missed-form-section');
+
+  var propTracker=document.getElementById('prop-tracker');
+  if(propTracker)propTracker.style.display=isAll?'none':(propConfigured?'block':'none');
+
+  var propEmpty=document.getElementById('prop-empty');
+  if(propEmpty){
+    if(isAll)propEmpty.style.display='none';
+    else propEmpty.style.display=propConfigured?'none':'block';
+  }
+
+  var missedForm=document.getElementById('missed-form-section');
   if(missedForm)missedForm.style.display=isAll?'none':'';
-  // All-view banner
-  const banner=document.getElementById('all-view-banner');
+
+  var banner=document.getElementById('all-view-banner');
   if(banner)banner.style.display=isAll?'block':'none';
-  // In All mode, show combined missed trades (read only)
+
   if(isAll){
-    missedTrades=['challenge','funded','demo'].flatMap(prof=>(allMissedTrades[prof]||[]).map(m=>Object.assign({},m,{_profile:prof})));
+    missedTrades=['challenge','funded','demo'].flatMap(function(prof){
+      return (allMissedTrades[prof]||[]).map(function(m){return Object.assign({},m,{_profile:prof});});
+    });
   }
 }
 
@@ -7936,6 +7989,15 @@ body:not(.dark-mode) #popup-passed>div,body:not(.dark-mode) #popup-blown>div{bac
 body.dark-mode{background:#0d0d0d!important;color:#f0f0f0!important;--text-primary:#e5e7eb}
 body.dark-mode #main-content{background:#0d0d0d!important}
 body.dark-mode #main-content>.page.active,body:not(.dark-mode) #main-content>.page.active{display:block!important;visibility:visible!important;opacity:1!important}
+/* Calendar / Weekly / Prop — reinforce layout (fixes “blank tab” regressions across theme layers) */
+#main-content > #page-calendar,
+#main-content > #page-weekly,
+#main-content > #page-prop {
+  position: relative !important;
+  min-height: 45vh !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
 body.dark-mode h1,body.dark-mode h2,body.dark-mode h3{color:#f0f0f0!important}
 body.dark-mode .dash-page-header h2,body.dark-mode .page-header h2,body.dark-mode .page-header h1{color:#f0f0f0!important}
 body.dark-mode .card,body.dark-mode .dash-chart-card,body.dark-mode .dash-recent,body.dark-mode .dash-metric,body.dark-mode .metric-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important;color:#f0f0f0!important}
