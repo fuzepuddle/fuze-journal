@@ -800,7 +800,8 @@ h1,h2,h3,label,button,select,input,textarea{font-family:'Plus Jakarta Sans',sans
 /* ── Main content ── */
 #main-content{
   margin-left:220px;
-  flex:1;
+  flex:1 1 auto;
+  min-width:0;
   padding:24px 28px 32px;
   min-height:100vh;
   max-width:none;
@@ -2462,7 +2463,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<!-- Chart.js must NOT block parsing: a sync script here prevents the app from running if the CDN is slow/blocked (blank main panel on Vercel). -->
+<script async src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" onload="try{window._fuzeChartReady=true;var p=document.querySelector('.page.active');if(!p)return;var id=p.id;if(id==='page-dashboard'&&typeof renderDashboard==='function')renderDashboard();else if(id==='page-stats'&&typeof renderStats==='function')renderStats();}catch(_){}}"></script>
 <!--
 FUZE_JOURNAL_RLS_SQL — Run in Supabase → SQL Editor (after creating your account in the app):
 
