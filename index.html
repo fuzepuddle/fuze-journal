@@ -567,6 +567,7 @@ body.dark-mode .cal-grid td.has-trade{background:#141414!important}
 body.dark-mode .cal-grid td.cal-day-win{background:rgba(16,185,129,0.22)!important;border-color:rgba(16,185,129,0.5)!important}
 body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!important;border-color:rgba(239,68,68,0.5)!important}
 body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
+body.dark-mode .cal-grid td.cal-day-flat{background:rgba(255,255,255,0.06)!important;border-color:rgba(255,255,255,0.12)!important}
 body.dark-mode .cal-grid th{color:#6b7280!important}
 body.dark-mode .cal-nav button{background:#1a1a1a!important;color:#e5e7eb!important;border-color:rgba(255,255,255,0.07)!important}
 body.dark-mode .week-card{background:#141414!important;border-color:rgba(255,255,255,0.07)!important}
@@ -598,7 +599,7 @@ body.dark-mode .tab:hover:not(.active){color:#f0f0f0!important}
 body.dark-mode .cal-title{color:#f0f0f0!important}
 body.dark-mode .week-pnl.pnl-pos{color:#10b981!important}
 body.dark-mode .week-pnl.pnl-neg{color:#ef4444!important}
-body.dark-mode .week-pnl.pnl-zero{color:#f59e0b!important}
+body.dark-mode .week-pnl.pnl-zero{color:#e5e7eb!important}
 body.dark-mode .metric-val{color:#f0f0f0!important}
 body.dark-mode .auth-card{background:#141414!important;border-color:rgba(255,255,255,0.08)!important}
 body.dark-mode #auth-overlay{background:rgba(0,0,0,0.92)!important}
@@ -997,13 +998,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 .dash-metrics{
   display:grid;
-  grid-template-columns:repeat(7,1fr);
+  grid-template-columns:repeat(6,1fr);
   gap:10px;
   margin-bottom:18px;
 }
 @media(max-width:1400px){
   .dash-metrics{grid-template-columns:repeat(4,1fr)}
 }
+.dash-metric-val.metric-white,.metric-val.metric-white{color:#e5e7eb!important}
 .dash-metric{
   background:var(--bg-card);
   border:1px solid var(--border);
@@ -1146,6 +1148,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.25)}
 .dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.22)}
 .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.2)}
+.dash-cal-grid td.dcal-flat{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)}
 .dash-cal-grid td.dcal-today{border:1.5px solid var(--accent)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)}
 .dcal-day{font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:3px;line-height:1;text-align:center}
 .dcal-today .dcal-day{color:var(--accent);font-weight:700}
@@ -1153,6 +1156,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .dcal-win .dcal-pnl{color:#10b981}
 .dcal-loss .dcal-pnl{color:#ef4444}
 .dcal-be .dcal-pnl{color:#f59e0b}
+.dcal-flat .dcal-pnl{color:#e5e7eb!important}
 .dash-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
 .dash-cal-nav-title{font-size:14px;font-weight:700;color:#e5e7eb;letter-spacing:.06em;text-transform:uppercase;flex:1;text-align:center}
 .dash-cal-nav button{
@@ -1391,15 +1395,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <!-- Metric strip -->
   <div class="dash-metrics" id="dash-metrics-row">
-    <div class="dash-metric">
+    <div class="dash-metric" onclick="promptEditAccountBaseline()" style="cursor:pointer" title="Click to set starting balance (saved on this device)">
       <div class="dash-metric-label">Total balance</div>
       <div class="dash-metric-val" id="dm-equity-total">—</div>
-      <div class="dash-metric-sub" id="dm-equity-sub"><span style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="promptEditAccountBaseline()" title="Set once · saved in this browser">Set starting balance ($)</span> · Combined P&amp;L from all profiles</div>
-    </div>
-    <div class="dash-metric">
-      <div class="dash-metric-label">Combined net P&amp;L</div>
-      <div class="dash-metric-val" id="dm-combined-net">—</div>
-      <div class="dash-metric-sub" id="dm-combined-sub">Challenge + Funded + Demo</div>
     </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
@@ -2973,7 +2971,7 @@ function renderDashboard(){
   // P&L
   const totalPnl=dashTrades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
   const dm_pnl=document.getElementById('dm-pnl');
-  if(dm_pnl){dm_pnl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});dm_pnl.className='dash-metric-val '+(totalPnl>0?'positive':totalPnl<0?'negative':'');}
+  if(dm_pnl){dm_pnl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});dm_pnl.className='dash-metric-val '+(totalPnl>0?'positive':totalPnl<0?'negative':(totalPnl===0?'metric-white':''));}
   const dm_pnl_sub=document.getElementById('dm-pnl-sub');
   if(dm_pnl_sub)dm_pnl_sub.textContent=(currentProfile==='all'?'All profiles · ':'This profile · ')+total+' trade'+(total!==1?'s':'');
 
@@ -2983,37 +2981,37 @@ function renderDashboard(){
   const dm_wr_sub=document.getElementById('dm-wr-sub');if(dm_wr_sub)dm_wr_sub.textContent=wins.length+'W · '+losses.length+'L';
   const dashWrBig=document.getElementById('dash-wr-big');if(dashWrBig)dashWrBig.textContent=wr+'%';
 
-  // Combined-net + total equity (persisted baseline + summed P&amp;L from all profiles)
   var comboNet=computeCombinedClosedPnL();
   var startBal=getAccountStartBalance();
   var equityTotal=startBal+comboNet;
-  var dmComb=document.getElementById('dm-combined-net');
-  if(dmComb){
-    dmComb.textContent=(comboNet>=0?'+$':'-$')+Math.abs(comboNet).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
-    dmComb.className='dash-metric-val '+(comboNet>0?'positive':comboNet<0?'negative':'');
-  }
-  var dmCombSub=document.getElementById('dm-combined-sub');
-  if(dmCombSub)dmCombSub.textContent='Across Challenge + Funded + Demo';
   var dmEq=document.getElementById('dm-equity-total');
   if(dmEq){
-    dmEq.textContent='$'+equityTotal.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
-    dmEq.className='dash-metric-val '+(equityTotal>startBal?'positive':equityTotal<startBal?'negative':'');
-  }
-  var dmEqSub=document.getElementById('dm-equity-sub');
-  if(dmEqSub){
-    dmEqSub.innerHTML='Starts $<span>'+Math.round(startBal).toLocaleString('en',{maximumFractionDigits:0})+'</span> · Combined P&amp;L '+(comboNet>=0?'+':'−')+'$'+Math.abs(Math.round(comboNet)).toLocaleString('en',{maximumFractionDigits:0})+' · <span style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="promptEditAccountBaseline()" title="Change starting balance">Edit start</span>';
+    dmEq.textContent='$'+equityTotal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+    dmEq.className='dash-metric-val '+(equityTotal>startBal?'positive':equityTotal<startBal?'negative':(comboNet===0?'metric-white':''));
   }
 
   // Avg RR
   const rrs=dashTrades.filter(t=>t.rrActual&&t.outcome!=='be').map(t=>parseFloat(t.rrActual)).filter(n=>!isNaN(n));
   const avgRR=rrs.length?( rrs.reduce((a,b)=>a+b,0)/rrs.length).toFixed(2):'—';
-  const dm_rr=document.getElementById('dm-rr');if(dm_rr)dm_rr.textContent=avgRR!='—'?avgRR+'R':avgRR;
+  const dm_rr=document.getElementById('dm-rr');
+  if(dm_rr){
+    dm_rr.textContent=avgRR!='—'?avgRR+'R':avgRR;
+    dm_rr.className='dash-metric-val'+(avgRR!=='—'&&parseFloat(avgRR)===0?' metric-white':'');
+  }
 
   // Profit factor
   const grossWin=wins.reduce((s,t)=>s+Math.abs(parseFloat(t.pnl)||0),0);
   const grossLoss=losses.reduce((s,t)=>s+Math.abs(parseFloat(t.pnl)||0),0);
   const pf=grossLoss>0?(grossWin/grossLoss).toFixed(2):(grossWin>0?'∞':'—');
-  const dm_pf=document.getElementById('dm-pf');if(dm_pf){dm_pf.textContent=pf;dm_pf.className='dash-metric-val '+(parseFloat(pf)>=1?'positive':parseFloat(pf)<1&&pf!=='—'?'negative':'');}
+  const dm_pf=document.getElementById('dm-pf');
+  if(dm_pf){
+    dm_pf.textContent=pf;
+    var pfn=parseFloat(String(pf));
+    if(pf==='—')dm_pf.className='dash-metric-val';
+    else if(pf==='∞')dm_pf.className='dash-metric-val positive';
+    else if(pfn===0||pf==='0.00')dm_pf.className='dash-metric-val metric-white';
+    else dm_pf.className='dash-metric-val '+(pfn>=1?'positive':'negative');
+  }
 
   // Best streak
   let bestStreak=0,cur=0;
@@ -3051,7 +3049,7 @@ function renderDashboard(){
     const recent=[...dashTrades].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
     if(!recent.length){recentEl.innerHTML='<div class="dash-no-trades">No trades logged yet.</div>';}
     else{
-      const pnlColor=p=>parseFloat(p)>0?'var(--win)':parseFloat(p)<0?'var(--loss)':'var(--be)';
+      const pnlColor=p=>{var v=parseFloat(p);if(v>0)return'var(--win)';if(v<0)return'var(--loss)';return'#e5e7eb';};
       const dirColor=d=>d==='Long'?'var(--win)':d==='Short'?'var(--loss)':'var(--text-secondary)';
       recentEl.innerHTML=recent.map(t=>`<div class="dash-trade-row"><span class="dash-trade-date">${t.date||'—'}</span><span style="font-size:12px;color:${dirColor(t.direction)};font-weight:500">${t.direction||'—'}</span><span class="dash-trade-draw">${t.draw||'—'}</span><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:${pnlColor(t.pnl)};text-align:right">${t.pnl!=null?(parseFloat(t.pnl)>0?'+':'')+parseFloat(t.pnl).toFixed(0):'—'}</span></div>`).join('');
     }
@@ -3100,7 +3098,8 @@ function renderDashMiniCal(){
     if(isToday)cls+=' dcal-today';
     if(info){
       cls+=' dcal-has';
-      if(info.outcome==='win')cls+=' dcal-win';
+      if(Math.abs(info.pnl)<0.005)cls+=' dcal-flat';
+      else if(info.outcome==='win')cls+=' dcal-win';
       else if(info.outcome==='loss')cls+=' dcal-loss';
       else cls+=' dcal-be';
     }
@@ -3311,7 +3310,7 @@ function renderJournal(){
   const classBadges={'valid-good':'<span style="background:rgba(16,185,129,0.1);color:#10b981;padding:2px 7px;border-radius:4px;font-size:12px;border:1px solid rgba(16,185,129,0.2);white-space:nowrap">✅ VALID</span>','valid-bad':'<span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:2px 7px;border-radius:4px;font-size:12px;border:1px solid rgba(245,158,11,0.2);white-space:nowrap">⚠️ BAD EXEC</span>','invalid':'<span style="background:rgba(239,68,68,0.1);color:#ef4444;padding:2px 7px;border-radius:4px;font-size:12px;border:1px solid rgba(239,68,68,0.2);white-space:nowrap">❌ INVALID</span>'};
   const biasCol={Bullish:'#10b981',Bearish:'#ef4444',Chop:'#f59e0b'};
   tbody.innerHTML=f.map(t=>{
-    const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#10b981">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#ef4444">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#f59e0b">$0</span>'):'—';
+    const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#10b981">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#ef4444">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#e5e7eb">$0</span>'):'—';
     const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
     const hasDetail=ssLinks.length||t.narrative||t.improve;
     const isFav=t.favourite||false;
@@ -3563,7 +3562,7 @@ function renderStats(){
   const totalPnl=f.reduce((s,t)=>s+(t.pnl||0),0);
   const pnlEl=document.getElementById('s-pnl');
   pnlEl.textContent=(totalPnl>=0?'+$':'−$')+Math.abs(totalPnl).toLocaleString();
-  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(totalPnl>0?' positive':totalPnl<0?' negative':' be');
+  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be|metric-white)\b/g,'').trim()+(totalPnl>0?' positive':totalPnl<0?' negative':' metric-white');
   const outCanvas=document.getElementById('s-outcomes-chart');
   const outLegend=document.getElementById('s-outcomes-legend');
   if(window._outChart){window._outChart.destroy();window._outChart=null;}
@@ -3814,7 +3813,7 @@ function renderCalendar(){
   const monthWins=monthTrades.filter(t=>t.outcome==='win').length;
   const monthTotal=monthTrades.filter(t=>t.outcome!=='skip').length;
   const mPnlEl=document.getElementById('cal-m-pnl');
-  if(mPnlEl){mPnlEl.textContent=(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2);mPnlEl.className=(mPnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(monthPnl>0?' positive':monthPnl<0?' negative':' be');}
+  if(mPnlEl){mPnlEl.textContent=(monthPnl>=0?'+$':'-$')+Math.abs(monthPnl).toFixed(2);mPnlEl.className=(mPnlEl.className||'').replace(/\b(positive|negative|be|metric-white)\b/g,'').trim()+(monthPnl>0?' positive':monthPnl<0?' negative':' metric-white');}
   const mTradesEl=document.getElementById('cal-m-trades');if(mTradesEl)mTradesEl.textContent=monthTotal;
   const mWrEl=document.getElementById('cal-m-wr');if(mWrEl)mWrEl.textContent=monthTotal?Math.round(monthWins/monthTotal*100)+'%':'—';
   const mWlEl=document.getElementById('cal-m-wl');if(mWlEl)mWlEl.textContent=monthTrades.filter(t=>t.outcome==='win').length+' / '+monthTrades.filter(t=>t.outcome==='loss').length;
@@ -3836,18 +3835,19 @@ function renderCalendar(){
       let cls='';
       if(isToday)cls+=' today';
       if(isWeekend)cls+=' weekend';
-      if(d){cls+=' has-trade';if(d.pnl>0)cls+=' cal-day-win';else if(d.pnl<0)cls+=' cal-day-loss';else cls+=' cal-day-be';}
+      if(d){cls+=' has-trade';if(d.pnl>0)cls+=' cal-day-win';else if(d.pnl<0)cls+=' cal-day-loss';else if(d.pnl===0)cls+=' cal-day-flat';else cls+=' cal-day-be';}
       // Determine cell background based on day outcome
       let cellBg='';
       if(d&&!isToday){
         if(d.pnl>0)cellBg='background:rgba(16,185,129,0.18);';
         else if(d.pnl<0)cellBg='background:rgba(239,68,68,0.18);';
+        else if(d.pnl===0)cellBg='background:rgba(255,255,255,0.05);';
         else cellBg='background:rgba(245,158,11,0.15);';
       }
       let inner='<div style="display:flex;flex-direction:column;height:100%;justify-content:space-between">';
       inner+='<div style="font-size:14px;color:'+(isToday?'#10b981':'#555')+';font-weight:'+(isToday?'600':'400')+'">'+day+'</div>';
       if(d){
-        const pnlCol=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#f59e0b';
+        const pnlCol=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':(d.pnl===0?'#e5e7eb':'#f59e0b');
         inner+='<div style="font-size:22px;font-weight:700;color:'+pnlCol+';line-height:1;text-align:center">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>';
         inner+='<div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end">';
         if(d.wins)inner+='<span style="font-size:13px;font-weight:600;background:rgba(16,185,129,0.2);color:#10b981;border-radius:4px;padding:2px 7px">'+d.wins+'W</span>';
@@ -3884,7 +3884,7 @@ function calDayClick(dateStr){
   body.innerHTML=dayTrades.map(t=>{
     const oc=outCfg[t.outcome]||{label:t.outcome||'?',bg:'rgba(255,255,255,0.04)',border:'rgba(255,255,255,0.1)',color:'#9ca3af'};
     const pnlNum=parseFloat(t.pnl);
-    const pnlColor=pnlNum>0?'#10b981':pnlNum<0?'#ef4444':'#f59e0b';
+    const pnlColor=pnlNum>0?'#10b981':pnlNum<0?'#ef4444':(pnlNum===0?'#e5e7eb':'#f59e0b');
     const pnlStr=t.pnl!=null?(pnlNum>0?'+$'+pnlNum:pnlNum<0?'-$'+Math.abs(pnlNum):'$0'):'--';
     const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
     window._ssStore=window._ssStore||{};
@@ -4857,7 +4857,7 @@ function renderWeekly(){
   const pnl=weekTrades.reduce((s,t)=>s+(t.pnl||0),0);
   const pnlEl=document.getElementById('w-pnl');
   pnlEl.textContent=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2);
-  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' be');
+  pnlEl.className=(pnlEl.className||'').replace(/\b(positive|negative|be|metric-white)\b/g,'').trim()+(pnl>0?' positive':pnl<0?' negative':' metric-white');
   const mm={};weekTrades.forEach(t=>(t.mistakes||[]).forEach(m=>{mm[m]=(mm[m]||0)+1;}));
   const topMistake=Object.entries(mm).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('w-mistake').textContent=topMistake?topMistake[0]+' ('+topMistake[1]+'×)':'None ✓';
@@ -7444,6 +7444,7 @@ body:not(.dark-mode) .dash-metric-val,body:not(.dark-mode) .metric-val{color:#11
 body:not(.dark-mode) .metric-val.positive{color:#16a34a!important}
 body:not(.dark-mode) .metric-val.negative{color:#dc2626!important}
 body:not(.dark-mode) .metric-val.be{color:#d97706!important}
+body:not(.dark-mode) .metric-val.metric-white,body:not(.dark-mode) .dash-metric-val.metric-white{color:#64748b!important}
 body:not(.dark-mode) .dash-metric-val.positive{color:#16a34a!important}
 body:not(.dark-mode) .dash-metric-val.negative{color:#dc2626!important}
 body:not(.dark-mode) .dash-metric-sub,body:not(.dark-mode) .dash-trade-date,body:not(.dark-mode) .dash-trade-draw,body:not(.dark-mode) .dash-legend-left{color:#999!important}
@@ -7531,6 +7532,7 @@ body:not(.dark-mode) .cal-grid td.has-trade{background:#fff!important;cursor:poi
 body:not(.dark-mode) .cal-grid td.cal-day-win{background:rgba(16,185,129,0.12)!important;border-color:rgba(16,185,129,0.4)!important}
 body:not(.dark-mode) .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.12)!important;border-color:rgba(239,68,68,0.4)!important}
 body:not(.dark-mode) .cal-grid td.cal-day-be{background:rgba(245,158,11,0.1)!important;border-color:rgba(245,158,11,0.35)!important}
+body:not(.dark-mode) .cal-grid td.cal-day-flat{background:#f8fafc!important;border-color:#e2e8f0!important}
 body:not(.dark-mode) .cal-grid td.today{border:2px solid #111!important;background:#fafafa!important}
 body:not(.dark-mode) .cal-grid td:hover{background:#f9f9f9!important}
 body:not(.dark-mode) .cal-day{color:#111!important;font-weight:500!important}
@@ -7539,11 +7541,13 @@ body:not(.dark-mode) .dash-cal-grid td{background:#fafafa!important;border:1px s
 body:not(.dark-mode) .dash-cal-grid td.dcal-win{background:#f0fdf4!important;border-color:#bbf7d0!important}
 body:not(.dark-mode) .dash-cal-grid td.dcal-loss{background:#fef2f2!important;border-color:#fecaca!important}
 body:not(.dark-mode) .dash-cal-grid td.dcal-be{background:#fffbeb!important;border-color:#fde68a!important}
+body:not(.dark-mode) .dash-cal-grid td.dcal-flat{background:#f8fafc!important;border-color:#e2e8f0!important}
 body:not(.dark-mode) .dash-cal-grid td.dcal-today{border-color:#111!important;background:#f5f5f5!important}
 body:not(.dark-mode) .dcal-day{color:#999!important}
 body:not(.dark-mode) .dcal-win .dcal-pnl{color:#16a34a!important}
 body:not(.dark-mode) .dcal-loss .dcal-pnl{color:#dc2626!important}
 body:not(.dark-mode) .dcal-be .dcal-pnl{color:#d97706!important}
+body:not(.dark-mode) .dcal-flat .dcal-pnl{color:#64748b!important}
 body:not(.dark-mode) .dash-cal-nav-title{color:#111!important}
 body:not(.dark-mode) .dash-cal-nav button{background:#fff!important;border:1px solid #ddd!important;color:#555!important}
 body:not(.dark-mode) .dash-cal-nav button:hover{background:#f5f5f5!important}
@@ -7568,7 +7572,7 @@ body:not(.dark-mode) .week-card,body:not(.dark-mode) .month-total-card{backgroun
 body:not(.dark-mode) .week-lbl,body:not(.dark-mode) .week-trades{color:#999!important}
 body:not(.dark-mode) .week-pnl.pnl-pos{color:#16a34a!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 body:not(.dark-mode) .week-pnl.pnl-neg{color:#dc2626!important;font-family:'Plus Jakarta Sans',sans-serif!important}
-body:not(.dark-mode) .week-pnl.pnl-zero{color:#d97706!important;font-family:'Plus Jakarta Sans',sans-serif!important}
+body:not(.dark-mode) .week-pnl.pnl-zero{color:#64748b!important;font-family:'Plus Jakarta Sans',sans-serif!important}
 
 /* --- Mobile nav --- */
 body:not(.dark-mode) #mobile-nav{background:rgba(255,255,255,0.97)!important;border-top:1px solid #e0e0e0!important}
@@ -7598,6 +7602,7 @@ body.dark-mode .dash-metric-val,body.dark-mode .metric-val{color:#f0f0f0!importa
 body.dark-mode .dash-metric-val.positive,body.dark-mode .metric-val.positive{color:#10b981!important}
 body.dark-mode .dash-metric-val.negative,body.dark-mode .metric-val.negative{color:#ef4444!important}
 body.dark-mode .dash-metric-val.be,body.dark-mode .metric-val.be{color:#f59e0b!important}
+body.dark-mode .dash-metric-val.metric-white,body.dark-mode .metric-val.metric-white{color:#e5e7eb!important}
 body.dark-mode .section-label,body.dark-mode .dash-metric-label,body.dark-mode .dash-card-title,body.dark-mode .metric-lbl{color:#6b7280!important}
 body.dark-mode label{color:#9ca3af!important}
 body.dark-mode input[type=date],body.dark-mode input[type=number],body.dark-mode input[type=text],body.dark-mode input[type=time],body.dark-mode select,body.dark-mode textarea{background:#1a1a1a!important;color:#f0f0f0!important;border:1px solid rgba(255,255,255,0.1)!important}
@@ -7633,6 +7638,7 @@ body.dark-mode .cal-grid td.has-trade{background:#141414!important}
 body.dark-mode .cal-grid td.cal-day-win{background:rgba(16,185,129,0.22)!important;border-color:rgba(16,185,129,0.5)!important}
 body.dark-mode .cal-grid td.cal-day-loss{background:rgba(239,68,68,0.22)!important;border-color:rgba(239,68,68,0.5)!important}
 body.dark-mode .cal-grid td.cal-day-be{background:rgba(245,158,11,0.18)!important;border-color:rgba(245,158,11,0.45)!important}
+body.dark-mode .cal-grid td.cal-day-flat{background:rgba(255,255,255,0.06)!important;border-color:rgba(255,255,255,0.12)!important}
 body.dark-mode .cal-grid td.today{border:2px solid var(--accent,#10b981)!important;background:rgba(16,185,129,0.06)!important}
 body.dark-mode .cal-day{color:#e5e7eb!important}
 body.dark-mode .dash-cal-grid td{background:rgba(255,255,255,0.025)!important;border:1px solid rgba(255,255,255,0.05)!important;color:#6b7280!important;border-radius:8px!important}
@@ -7641,6 +7647,7 @@ body.dark-mode .dash-cal-grid th{color:#6b7280!important}
 body.dark-mode .dash-cal-grid td.dcal-win{background:rgba(16,185,129,0.12)!important;border-color:rgba(16,185,129,0.25)!important}
 body.dark-mode .dash-cal-grid td.dcal-loss{background:rgba(239,68,68,0.12)!important;border-color:rgba(239,68,68,0.22)!important}
 body.dark-mode .dash-cal-grid td.dcal-be{background:rgba(245,158,11,0.1)!important;border-color:rgba(245,158,11,0.2)!important}
+body.dark-mode .dash-cal-grid td.dcal-flat{background:rgba(255,255,255,0.04)!important;border-color:rgba(255,255,255,0.1)!important}
 body.dark-mode .dash-cal-grid td.dcal-today{border:1.5px solid var(--accent,#10b981)!important;box-shadow:0 0 0 1px rgba(16,185,129,0.12)!important}
 body.dark-mode .dcal-day{color:#6b7280!important}
 body.dark-mode .dcal-today .dcal-day{color:var(--accent,#10b981)!important}
@@ -7659,7 +7666,7 @@ body.dark-mode tr[id^="detail-"] td{background:#0f0f0f!important;border-bottom:1
 body.dark-mode .week-card,body.dark-mode .month-total-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important}
 body.dark-mode .week-pnl.pnl-pos{color:#10b981!important}
 body.dark-mode .week-pnl.pnl-neg{color:#ef4444!important}
-body.dark-mode .week-pnl.pnl-zero{color:#f59e0b!important}
+body.dark-mode .week-pnl.pnl-zero{color:#e5e7eb!important}
 body.dark-mode .week-lbl,body.dark-mode .week-trades{color:#6b7280!important}
 body.dark-mode .dash-legend-val{color:#f0f0f0!important}
 body.dark-mode .dash-legend-item{border-color:rgba(255,255,255,0.05)!important}
