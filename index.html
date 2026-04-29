@@ -352,10 +352,6 @@
     .metric-lbl{font-size:13px}
     .metric-card{padding:10px 12px}
 
-    /* Prop firm */
-    #page-prop .grid-2{grid-template-columns:1fr !important}
-    #page-prop .grid-4{grid-template-columns:1fr 1fr !important}
-
     /* Weekly/cal nav */
     .cal-nav button{padding:10px 14px;font-size:15px}
 
@@ -383,15 +379,6 @@
       margin:0 !important;
       border-radius:0 !important;
       min-height:100vh;
-    }
-
-    /* Popups — full width on mobile */
-    #popup-passed > div,
-    #popup-blown > div{
-      margin:16px;
-      padding:28px 24px;
-      max-width:100%;
-      border-radius:12px;
     }
 
     /* Section labels */
@@ -1247,7 +1234,28 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 @media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
 
 /* ── Log page ── */
-#page-log{max-width:720px}
+#page-log{
+  max-width:min(1120px,100%);
+  margin:0 auto;
+  padding:0 6px 40px;
+  box-sizing:border-box;
+}
+#log-form-col{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.log-page-head{margin-bottom:6px}
+.log-page-head h2{margin:0}
+.log-wide-pair{display:flex;flex-direction:column;gap:16px}
+@media(min-width:960px){
+  .log-wide-pair{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:16px 20px;
+    align-items:start;
+  }
+}
 
 /* ── Glows ── */
 @keyframes glow-green{0%,100%{box-shadow:0 0 0px #1a4010}50%{box-shadow:0 0 20px rgba(16,185,129,0.2)}}
@@ -1305,7 +1313,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   .dash-metrics{grid-template-columns:1fr 1fr}
   .dash-charts-row,.dash-bottom-row{grid-template-columns:1fr}
   .dash-metric-val{font-size:18px}
-  #page-log{max-width:100%}
+  #page-log{max-width:100%;padding:0 4px 32px}
 }
 </style>
 </head>
@@ -1356,7 +1364,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <button class="sb-nav-item" onclick="showTab('stats')" data-tab="stats"><span class="sb-nav-icon">↗</span> Stats</button>
     <button class="sb-nav-item" onclick="showTab('calendar')" data-tab="calendar"><span class="sb-nav-icon">▦</span> Calendar</button>
     <button class="sb-nav-item" onclick="showTab('weekly')" data-tab="weekly"><span class="sb-nav-icon">◎</span> Weekly Review</button>
-    <button class="sb-nav-item" onclick="showTab('prop')" data-tab="prop"><span class="sb-nav-icon">◈</span> Prop Firm</button>
   </div>
 
   <div class="sb-bottom">
@@ -1395,9 +1402,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <!-- Metric strip -->
   <div class="dash-metrics" id="dash-metrics-row">
-    <div class="dash-metric" onclick="promptEditAccountBaseline()" style="cursor:pointer" title="Click to set starting balance (saved on this device)">
+    <div class="dash-metric" onclick="promptEditAccountBaseline()" style="cursor:pointer" title="Click to set starting balance for this profile (saved on this device)">
       <div class="dash-metric-label">Total balance</div>
       <div class="dash-metric-val" id="dm-equity-total">—</div>
+      <div class="dash-metric-sub" id="dm-equity-sub">Starting + net P&amp;L</div>
     </div>
     <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
@@ -1570,7 +1578,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </div>
 <!-- LOG -->
 <div class="page" id="page-log">
-<div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:600;color:#e5e7eb;letter-spacing:-.01em">Log Trade</h2></div>
+<div class="log-page-head">
+  <h2 style="font-size:22px;font-weight:600;color:#e5e7eb;letter-spacing:-.02em">Log Trade</h2>
+</div>
 <div id="all-profiles-banner" class="card" style="display:none;margin-bottom:14px;padding:12px 16px;background:rgba(148,130,255,0.06);border:1px solid rgba(148,130,255,0.22);border-radius:10px;font-size:14px;line-height:1.55;color:#c4b5fd"><strong>All profiles</strong> · merged Challenge + Funded + Demo. Switch profile above to log a new trade (with screenshots).</div>
 <div id="log-form-col">
 
@@ -1667,7 +1677,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         </select>
       </div>
     </div>
-    <div style="max-width:260px">
+    <div style="max-width:100%">
       <label>RR achieved <span id="f-rr-auto" style="font-size:13px;margin-left:6px;font-weight:600"></span></label>
       <input type="text" id="f-actual-rr" placeholder="auto-fills from P&amp;L below" oninput="syncRRField()" style="font-family:'Plus Jakarta Sans',sans-serif">
       <div style="font-size:12px;color:#555;margin-top:4px">Enter P&amp;L + risk → R calculates automatically</div>
@@ -1737,7 +1747,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <input type="text" id="f-tags-extra" placeholder="news-day, NFP, revenge-block">
       </div>
     </div>
-    <div class="hint"><span style="font-weight:600;color:#e5e7eb">Realised R</span> saves automatically from P&amp;L ÷ (account × risk %) using your Prop Firm account size (or $50k if unset).</div>
+    <div class="hint"><span style="font-weight:600;color:#e5e7eb">Realised R</span> uses P&amp;L ÷ (account × risk %) with the account size stored for this profile (default $50k).</div>
   </div>
 
   <div class="card">
@@ -1839,6 +1849,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
+  <div class="log-wide-pair">
   <div id="screenshots-section" class="card">
     <div class="flex-between" style="margin-bottom:10px">
       <div class="section-label" style="margin-bottom:0">Screenshots</div>
@@ -1873,7 +1884,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" style="margin-bottom:0">
     <div class="section-label">Notes <span style="color:#9ca3af;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0">— visible in All trades dropdown</span></div>
 
     <div class="gap">
@@ -1924,6 +1935,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <label>What to improve?</label>
       <textarea id="f-improve" placeholder="Key takeaway from this session..." style="min-height:50px"></textarea>
     </div>
+  </div>
   </div>
 
   <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:1rem">
@@ -2292,104 +2304,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 </div>
 
-<!-- PROP FIRM -->
-<div class="page" id="page-prop">
-  <div class="page-header"><h2>Prop Firm Tracker</h2></div>
-  <div class="card gap">
-    <div class="flex-between" style="margin-bottom:12px">
-      <div class="section-label" style="margin-bottom:0">Prop firm settings</div>
-      <button class="btn btn-sm btn-primary" onclick="savePropSettings()">Save settings</button>
-    </div>
-    <div class="grid-2 gap">
-      <div><label>Firm name</label><input type="text" id="p-name" placeholder="e.g. Lucid Trading"></div>
-      <div><label>Account size ($)</label><input type="number" id="p-account" placeholder="e.g. 50000"></div>
-    </div>
-    <div class="grid-2 gap">
-      <div><label>Profit target ($)</label><input type="number" id="p-target" placeholder="e.g. 3000"></div>
-      <div><label>Max lifetime loss / drawdown ($)</label><input type="number" id="p-maxdd" placeholder="e.g. 2000"></div>
-    </div>
-    <div class="grid-2 gap">
-      <div><label>or max DD as % of account</label><input type="number" id="p-maxdd-pct" placeholder="e.g. 4" step="0.1" title="If set, overrides the $ field using account size"></div>
-      <div><label>Consistency rule — max % (best day ÷ total profit)</label><input type="number" id="p-consistency" placeholder="e.g. 50 (0 = off)" step="0.5" min="0" title="Prop evals: best single day ÷ total profit must stay at or below this %"></div>
-    </div>
-    <div class="grid-2 gap">
-      <div><label>Daily loss limit ($)</label><input type="number" id="p-ddl" placeholder="e.g. 1200"></div>
-      <div><label>or daily limit as % of account</label><input type="number" id="p-ddl-pct" placeholder="e.g. 2.4" step="0.1" title="If set, overrides the $ daily limit"></div>
-    </div>
-    <div class="grid-2 gap">
-      <div><label>Trailing / EOD drawdown</label>
-        <select id="p-ddtype">
-          <option value="trailing">Trailing (floor moves with high-water mark)</option>
-          <option value="eod">Static from start balance</option>
-        </select>
-      </div>
-      <div style="display:flex;align-items:flex-end;padding-bottom:8px;font-size:12px;color:#9ca3af;line-height:1.5">Trailing: MLL floor = high-water equity − max loss. Static: floor fixed at balance − max loss.</div>
-    </div>
-
-  </div>
-
-  <div class="card" id="prop-tracker" style="display:none">
-    <div class="flex-between" style="margin-bottom:14px">
-      <div class="section-label" style="margin-bottom:0" id="prop-firm-name">Prop firm tracker</div>
-      <span style="font-size:14px;color:#9ca3af" id="prop-account-lbl"></span>
-    </div>
-
-    <!-- Profit progress -->
-    <div class="gap">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Profit target</span>
-        <span style="font-size:14px;font-weight:500" id="prop-profit-lbl">$0 / $0</span>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-profit-bar" style="width:0%;background:#3a6e3a"></div></div>
-      <div class="hint" id="prop-profit-pct">0% complete</div>
-    </div>
-
-    <!-- Drawdown -->
-    <div class="gap">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Lifetime loss / MLL buffer</span>
-        <span style="font-size:14px;font-weight:500;text-align:right;max-width:62%" id="prop-dd-lbl">$0 / $0</span>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-dd-bar" style="width:0%;background:#3a6e3a"></div></div>
-      <div class="hint" id="prop-dd-pct">Room before trailing or static floor</div>
-    </div>
-
-    <!-- Daily loss -->
-    <div class="gap">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Today's P&amp;L vs daily limit</span>
-        <span style="font-size:14px;font-weight:500" id="prop-ddl-lbl">$0 / $0</span>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-ddl-bar" style="width:0%;background:#3a6e3a"></div></div>
-    </div>
-
-    <div class="gap" id="prop-consistency-wrap" style="display:none">
-      <div class="flex-between" style="margin-bottom:6px">
-        <span style="font-size:14px;color:#e5e7eb">Consistency (best day ÷ profit)</span>
-        <span style="font-size:14px;font-weight:500" id="prop-consistency-lbl">—</span>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="prop-consistency-bar" style="width:0%;background:#3a6e3a"></div></div>
-      <div class="hint" id="prop-consistency-hint">—</div>
-    </div>
-
-    <div id="prop-warn" class="warn-bar"></div>
-    <div id="prop-danger" class="danger-bar"></div>
-
-    <!-- Stats row -->
-    <div style="border-top:1px solid rgba(255,255,255,0.07);margin-top:16px;padding-top:14px">
-      <div class="grid-4">
-        <div class="metric-card"><div class="metric-lbl">Live P&amp;L</div><div class="metric-val" id="prop-total-pnl">$0</div></div>
-        <div class="metric-card"><div class="metric-lbl">Today's P&amp;L</div><div class="metric-val" id="prop-today-pnl">$0</div></div>
-        <div class="metric-card"><div class="metric-lbl">Live wins</div><div class="metric-val" id="prop-wins">0</div></div>
-        <div class="metric-card"><div class="metric-lbl">Live losses</div><div class="metric-val" id="prop-losses">0</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="prop-empty" style="text-align:center;padding:40px;color:#9ca3af;font-size:14px">Fill in your prop firm settings above and hit Save to start tracking.</div>
-</div>
-
-
 <!-- CALENDAR -->
 <div class="page" id="page-calendar">
   <div class="page-header"><h2>Calendar</h2></div>
@@ -2463,24 +2377,88 @@ Then: Authentication → Providers → Email → disable "Allow new users" after
 // ── State ──
 let currentProfile=(()=>{try{return localStorage.getItem('ict_last_profile')||'challenge';}catch(e){return 'challenge';}})();
 const PROFILES=['challenge','funded','demo'];
-/** Saved once in localStorage · combined with summed P&amp;L from all three profiles → Total balance */
+/** Per-profile starting balance (Total balance = this + that profile’s net P&amp;L). Legacy single key migrated once. */
 const FUZE_ACCOUNT_BASE_KEY='fuze_account_start_balance';
-function getAccountStartBalance(){ try{var x=parseFloat(localStorage.getItem(FUZE_ACCOUNT_BASE_KEY)||'0');return isFinite(x)?x:0;}catch(e){return 0;} }
-function setAccountStartBalance(n){
-  try{localStorage.setItem(FUZE_ACCOUNT_BASE_KEY,String(isFinite(Number(n))?Number(n):0));}catch(e){}
+const FUZE_ACCOUNT_BASE_PROFILES_KEY='fuze_account_start_balance_profiles';
+const FUZE_ACCOUNT_BASE_COMBINED_KEY='fuze_account_start_balance_combined';
+function migrateAccountBaselines(){
+  try{
+    if(localStorage.getItem(FUZE_ACCOUNT_BASE_PROFILES_KEY))return;
+    var leg=parseFloat(localStorage.getItem(FUZE_ACCOUNT_BASE_KEY)||'0');
+    var combinedBase=(isFinite(leg)&&leg>0)?leg:50000;
+    try{localStorage.setItem(FUZE_ACCOUNT_BASE_COMBINED_KEY,String(combinedBase));}catch(e2){}
+    var o={challenge:50000,funded:50000,demo:50000};
+    localStorage.setItem(FUZE_ACCOUNT_BASE_PROFILES_KEY,JSON.stringify(o));
+  }catch(e){}
+}
+function getCombinedStartBalance(){
+  migrateAccountBaselines();
+  try{
+    var c=parseFloat(localStorage.getItem(FUZE_ACCOUNT_BASE_COMBINED_KEY)||'');
+    if(isFinite(c)&&c>=0)return c;
+    var leg=parseFloat(localStorage.getItem(FUZE_ACCOUNT_BASE_KEY)||'');
+    if(isFinite(leg)&&leg>=0)return leg;
+  }catch(e){}
+  return 50000;
+}
+function setCombinedStartBalance(n){
+  migrateAccountBaselines();
+  try{localStorage.setItem(FUZE_ACCOUNT_BASE_COMBINED_KEY,String(isFinite(Number(n))?Number(n):50000));}catch(e){}
+  if(typeof renderDashboard==='function')renderDashboard();
+}
+function readProfileBaselines(){
+  migrateAccountBaselines();
+  try{
+    var m=JSON.parse(localStorage.getItem(FUZE_ACCOUNT_BASE_PROFILES_KEY)||'{}');
+    return m&&typeof m==='object'?m:{};
+  }catch(e){return{};}
+}
+function getProfileStartBalance(prof){
+  if(prof==='all')return getCombinedStartBalance();
+  var map=readProfileBaselines();
+  var x=parseFloat(map[prof]);
+  if(isFinite(x)&&x>=0)return x;
+  return 50000;
+}
+function setProfileStartBalance(prof,n){
+  migrateAccountBaselines();
+  var map=readProfileBaselines();
+  map[prof]=isFinite(Number(n))?Number(n):50000;
+  try{localStorage.setItem(FUZE_ACCOUNT_BASE_PROFILES_KEY,JSON.stringify(map));}catch(e){}
   if(typeof renderDashboard==='function')renderDashboard();
 }
 function promptEditAccountBaseline(){
-  var cur=getAccountStartBalance();
-  var inp=prompt('Starting account balance in dollars (e.g. 50000). This is saved once in this browser. Total balance = this + combined net P&L.', cur?String(cur):'50000');
+  migrateAccountBaselines();
+  if(currentProfile==='all'){
+    var inp=prompt('Starting balance for All profiles view (one notional account: this + combined net P&L from Challenge + Funded + Demo).',String(getCombinedStartBalance()));
+    if(inp===null)return;
+    var num=parseFloat(String(inp).replace(/[$,]/g,''));
+    if(!isFinite(num)||num<0){alert('Enter a valid dollar amount');return;}
+    setCombinedStartBalance(num);
+    return;
+  }
+  var curOne=getProfileStartBalance(currentProfile);
+  var inp=prompt('Starting balance for '+currentProfile+' (total on dashboard = this + net P&L for this profile only).',String(curOne));
   if(inp===null)return;
   var num=parseFloat(String(inp).replace(/[$,]/g,''));
   if(!isFinite(num)||num<0){alert('Enter a valid dollar amount');return;}
-  setAccountStartBalance(num);
+  setProfileStartBalance(currentProfile,num);
 }
 /** Sum Net P&amp;L across Challenge, Funded, Demo · same counting rules as dashboard (closed trades only) */
 function getAccountForRisk(){
-  return(propSettings&&propSettings.account)?propSettings.account:50000;
+  var s=(currentProfile!=='all'?allPropSettings[currentProfile]:null)||{};
+  if(s.account!=null&&isFinite(Number(s.account))&&Number(s.account)>0)return Number(s.account);
+  return 50000;
+}
+function getAccountForRiskEdit(){
+  if(currentProfile==='all'&&typeof editingId!=='undefined'&&editingId){
+    var t=typeof trades!=='undefined'&&trades?trades.find(function(tr){return tr.id===editingId;}):null;
+    if(t&&t._profile){
+      var s2=allPropSettings[t._profile]||{};
+      if(s2.account!=null&&isFinite(Number(s2.account))&&Number(s2.account)>0)return Number(s2.account);
+    }
+  }
+  return getAccountForRisk();
 }
 function computeRealisedR(pnl,riskPctStr){
   var pct=parseFloat(riskPctStr);
@@ -2959,177 +2937,6 @@ function toggleFav(id,btn){
   btn.textContent=t.favourite?'★':'☆';
   btn.style.color=t.favourite?'#f59e0b':'#999';
 }
-function saveProp(){
-  allPropSettings[currentProfile]=propSettings;
-  try{localStorage.setItem('ict_prop_profiles',JSON.stringify(allPropSettings));}catch(e){}
-  supaSet('ict_prop_profiles',allPropSettings);
-}
-function savePropSettings(){
-  const acc=parseFloat(document.getElementById('p-account').value)||0;
-  var mdp=parseFloat(document.getElementById('p-maxdd-pct').value);if(isNaN(mdp)||mdp<=0)mdp=0;
-  var dlp=parseFloat(document.getElementById('p-ddl-pct').value);if(isNaN(dlp)||dlp<=0)dlp=0;
-  var cns=parseFloat(document.getElementById('p-consistency').value);if(isNaN(cns)||cns<0)cns=0;
-  propSettings={
-    name:document.getElementById('p-name').value,
-    account:acc,
-    target:parseFloat(document.getElementById('p-target').value)||0,
-    maxdd:parseFloat(document.getElementById('p-maxdd').value)||0,
-    maxddPct:mdp,
-    ddl:parseFloat(document.getElementById('p-ddl').value)||0,
-    ddlPct:dlp,
-    consistencyPct:cns,
-    ddtype:document.getElementById('p-ddtype').value,
-  };
-  saveProp();renderProp();
-}
-function propBlownStorageKey(){
-  var acc=propSettings.account||0;
-  var eff=propSettings.maxddPct>0?acc*propSettings.maxddPct/100:(propSettings.maxdd||0);
-  return 'prop_blown_'+currentProfile+'_'+Math.round(eff);
-}
-function loadPropSettings(){
-  if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
-  if(propSettings.account)document.getElementById('p-account').value=propSettings.account;
-  if(propSettings.target)document.getElementById('p-target').value=propSettings.target;
-  if(propSettings.maxdd)document.getElementById('p-maxdd').value=propSettings.maxdd;
-  document.getElementById('p-maxdd-pct').value=propSettings.maxddPct>0?propSettings.maxddPct:'';
-  if(propSettings.ddl)document.getElementById('p-ddl').value=propSettings.ddl;
-  document.getElementById('p-ddl-pct').value=propSettings.ddlPct>0?propSettings.ddlPct:'';
-  document.getElementById('p-consistency').value=propSettings.consistencyPct>0?propSettings.consistencyPct:'';
-  if(propSettings.ddtype)document.getElementById('p-ddtype').value=propSettings.ddtype;
-}
-function renderProp(){
-  if(currentProfile==='all'){
-    var tr=document.getElementById('prop-tracker');if(tr)tr.style.display='none';
-    var emp=document.getElementById('prop-empty');if(emp){emp.style.display='block';emp.textContent='Prop targets are set per Challenge / Funded / Demo — switch profile above.';}
-    return;
-  }
-  var tracker=document.getElementById('prop-tracker');
-  var empty=document.getElementById('prop-empty');
-  if(emp)emp.textContent='Fill in prop settings above.';
-  if(!propSettings.target){if(tracker)tracker.style.display='none';if(empty)empty.style.display='block';return;}
-  if(tracker)tracker.style.display='block';
-  if(empty)empty.style.display='none';
-  document.getElementById('prop-firm-name').textContent=propSettings.name||'Prop firm tracker';
-  document.getElementById('prop-account-lbl').textContent=propSettings.account?'$'+propSettings.account.toLocaleString()+' account':'';
-  const liveTrades=trades.filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
-  const totalPnl=liveTrades.reduce((s,t)=>s+(t.pnl||0),0);
-  const account=propSettings.account||0;
-  var maxddAmt=propSettings.maxdd||0;
-  if(propSettings.maxddPct>0)maxddAmt=account*propSettings.maxddPct/100;
-  var ddlAmt=propSettings.ddl||0;
-  if(propSettings.ddlPct>0)ddlAmt=account*propSettings.ddlPct/100;
-  const sortedForHwm=[...liveTrades].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
-  var cum=account,hwm=account;
-  sortedForHwm.forEach(t=>{cum+=parseFloat(t.pnl)||0;if(cum>hwm)hwm=cum;});
-  const currentBalance=account+totalPnl;
-  const trailing=(propSettings.ddtype==='trailing');
-  const mllFloor=trailing?parseFloat((hwm-maxddAmt).toFixed(2)):parseFloat((account-maxddAmt).toFixed(2));
-  const bufferRemaining=parseFloat((currentBalance-mllFloor).toFixed(2));
-  const today=new Date().toISOString().split('T')[0];
-  const todayPnl=liveTrades.filter(t=>t.date===today).reduce((s,t)=>s+(t.pnl||0),0);
-  const todayLoss=todayPnl<0?Math.abs(todayPnl):0;
-  const liveWins=liveTrades.filter(t=>t.pnl>0).length;
-  const liveLosses=liveTrades.filter(t=>t.pnl<0).length;
-  // Profit bar
-  const profitPct=propSettings.target?Math.max(0,Math.min(100,totalPnl/propSettings.target*100)):0;
-  document.getElementById('prop-profit-lbl').textContent='$'+totalPnl.toLocaleString()+' / $'+propSettings.target.toLocaleString();
-  document.getElementById('prop-profit-bar').style.width=profitPct+'%';
-  document.getElementById('prop-profit-bar').style.background=totalPnl<0?'#6e2a2a':profitPct>80?'#5aae5a':'#3a6e3a';
-  document.getElementById('prop-profit-pct').textContent=Math.round(profitPct)+'% of profit target';
-  // Drawdown bar — portion of allowed $ cushion used below HWM/start
-  var ddPct=0;if(maxddAmt>0){ddPct=Math.min(100,Math.max(0,(maxddAmt-bufferRemaining)/maxddAmt*100));}
-  const ddHintExtra=trailing?' · HWM $'+hwm.toLocaleString(undefined,{maximumFractionDigits:0})+(propSettings.maxddPct>0?' · max loss '+propSettings.maxddPct+'%':' · max loss $'+maxddAmt.toLocaleString()):' · static from $'+account.toLocaleString()+(propSettings.maxddPct>0?' · max loss '+propSettings.maxddPct+'%':'');
-  document.getElementById('prop-dd-lbl').textContent='Buffer $'+bufferRemaining.toFixed(2)+' / $'+maxddAmt.toLocaleString(undefined,{maximumFractionDigits:2})+' · Floor $'+mllFloor.toLocaleString(undefined,{maximumFractionDigits:0})+ddHintExtra;
-  document.getElementById('prop-dd-bar').style.width=(100-ddPct)+'%';
-  document.getElementById('prop-dd-bar').style.background=bufferRemaining<=0?'#ef4444':(bufferRemaining<maxddAmt*0.2?'#f59e0b':'#3a6e3a');
-  document.getElementById('prop-dd-pct').textContent=(trailing?'Trailing':'Static')+' — $'+bufferRemaining.toFixed(2)+' room before MLL floor';
-  // DDL bar
-  const ddlPct=ddlAmt>0?Math.min(100,todayLoss/ddlAmt*100):0;
-  const ddlDollarLbl=propSettings.ddlPct>0?propSettings.ddlPct+'% (~$'+ddlAmt.toFixed(0)+')':'$'+ddlAmt.toLocaleString();
-  document.getElementById('prop-ddl-lbl').textContent=(todayPnl>=0?'+':'')+' $'+todayPnl.toLocaleString()+' / −'+ddlDollarLbl+' limit';
-  document.getElementById('prop-ddl-bar').style.width=ddlPct+'%';
-  document.getElementById('prop-ddl-bar').style.background=todayPnl<0?'#ef4444':'#3a6e3a';
-  // Consistency (best day ÷ total profit)
-  const cWrap=document.getElementById('prop-consistency-wrap');
-  const cMax=propSettings.consistencyPct||0;
-  var ratioPct=0,consPass=true;
-  if(cWrap){if(cMax>0)cWrap.style.display='block';else cWrap.style.display='none';}
-  if(cMax>0){
-    const byDay={};
-    liveTrades.forEach(t=>{const d=t.date?t.date.slice(0,10):'';if(!d)return;byDay[d]=(byDay[d]||0)+(parseFloat(t.pnl)||0);});
-    const dayList=Object.values(byDay);
-    const bestDay=dayList.length?Math.max.apply(null,dayList):0;
-    var consBar=0;
-    if(totalPnl>0){
-      ratioPct=(bestDay/totalPnl)*100;
-      consPass=ratioPct<=cMax+1e-9;
-      consBar=Math.min(100,(ratioPct/cMax)*100);
-    }
-    document.getElementById('prop-consistency-lbl').textContent=totalPnl>0?ratioPct.toFixed(1)+'% / max '+cMax+'%':'—';
-    document.getElementById('prop-consistency-bar').style.width=(totalPnl>0?consBar:0)+'%';
-    document.getElementById('prop-consistency-bar').style.background=totalPnl<=0?'#6b7280':(consPass?'#3a6e3a':'#ef4444');
-    var cHint=totalPnl<=0?'Log net profit to measure consistency (best day ÷ total profit).':
-      ('Best day $'+bestDay.toFixed(0)+' on a $'+totalPnl.toFixed(0)+' total — '+(consPass?'within rule':'over limit'));
-    document.getElementById('prop-consistency-hint').textContent=cHint;
-  }
-  // Metric cards
-  const tpEl=document.getElementById('prop-total-pnl');
-  tpEl.textContent=(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toLocaleString();
-  tpEl.style.color=totalPnl>=0?'#10b981':'#ef4444';
-  const tdEl=document.getElementById('prop-today-pnl');
-  tdEl.textContent=(todayPnl>=0?'+$':'-$')+Math.abs(todayPnl).toLocaleString();
-  tdEl.style.color=todayPnl>=0?'#10b981':'#ef4444';
-  document.getElementById('prop-wins').textContent=liveWins;
-  document.getElementById('prop-losses').textContent=liveLosses;
-  // Warnings
-  const warn=document.getElementById('prop-warn');
-  const danger=document.getElementById('prop-danger');
-  if(warn)warn.style.display='none';
-  if(danger)danger.style.display='none';
-  if(ddlPct>=100&&danger){danger.style.display='block';danger.textContent='⚠ Daily loss limit hit — stop trading for today.';}
-  if(bufferRemaining<=0&&danger){danger.style.display='block';danger.textContent='⛔ MLL floor hit — account blown.';}
-  var warnParts=[];
-  if(ddlPct<100&&ddlPct>=80)warnParts.push('Approaching daily loss limit ('+Math.round(ddlPct)+'% used).');
-  if(bufferRemaining>0&&bufferRemaining<maxddAmt*0.2&&ddlPct<100)warnParts.push('Less than 20% drawdown buffer before MLL floor.');
-  if(cMax>0&&totalPnl>0&&!consPass)warnParts.push('Consistency: best single day is '+ratioPct.toFixed(1)+'% of total profit (limit '+cMax+'%).');
-  if(warnParts.length&&warn&&(!danger||danger.style.display==='none')){warn.style.display='block';warn.textContent='⚠ '+warnParts.join(' · ');}
-  // Glow
-  if(tracker){
-    tracker.classList.remove('glow-green','glow-red');
-    if(totalPnl>=propSettings.target*0.8&&propSettings.target>0)tracker.classList.add('glow-green');
-    else if(bufferRemaining<maxddAmt*0.3&&maxddAmt>0||cMax>0&&totalPnl>0&&!consPass)tracker.classList.add('glow-red');
-  }
-  // Popups — only show once per profile per target amount
-  const passedKey='prop_passed_'+currentProfile+'_'+propSettings.target;
-  const blownKey=propBlownStorageKey();
-  const firmName=propSettings.name||'your eval';
-  if(totalPnl>=propSettings.target&&propSettings.target>0){
-    try{
-      if(!localStorage.getItem(passedKey)){
-        document.getElementById('popup-passed-name').textContent=firmName+' · +$'+totalPnl.toLocaleString();
-        const el=document.getElementById('popup-passed');if(el)el.style.display='flex';
-      }
-    }catch(e){}
-  }
-  if(bufferRemaining<=0&&maxddAmt>0){
-    try{
-      if(!localStorage.getItem(blownKey)){
-        document.getElementById('popup-blown-name').textContent=firmName+' · $'+totalPnl.toLocaleString();
-        const el=document.getElementById('popup-blown');if(el)el.style.display='flex';
-      }
-    }catch(e){}
-  }
-}
-function closePassedPopup(){
-  const el=document.getElementById('popup-passed');if(el)el.style.display='none';
-  try{localStorage.setItem('prop_passed_'+currentProfile+'_'+(propSettings.target||''),'1');}catch(e){}
-}
-function closeBlownPopup(){
-  const el=document.getElementById('popup-blown');if(el)el.style.display='none';
-  try{localStorage.setItem(propBlownStorageKey(),'1');}catch(e){}
-}
-
 // ── Build mistakes list ──
 function buildMistakes(){
   const el=document.getElementById('mistakes-list');
@@ -3186,13 +2993,26 @@ function renderDashboard(){
   const dm_wr_sub=document.getElementById('dm-wr-sub');if(dm_wr_sub)dm_wr_sub.textContent=wins.length+'W · '+losses.length+'L';
   const dashWrBig=document.getElementById('dash-wr-big');if(dashWrBig)dashWrBig.textContent=wr+'%';
 
-  var comboNet=computeCombinedClosedPnL();
-  var startBal=getAccountStartBalance();
-  var equityTotal=startBal+comboNet;
+  var startBal, equityTotal, netForEquity;
+  if(currentProfile==='all'){
+    startBal=getCombinedStartBalance();
+    netForEquity=computeCombinedClosedPnL();
+    equityTotal=startBal+netForEquity;
+  }else{
+    startBal=getProfileStartBalance(currentProfile);
+    netForEquity=totalPnl;
+    equityTotal=startBal+totalPnl;
+  }
   var dmEq=document.getElementById('dm-equity-total');
+  var dmEqSub=document.getElementById('dm-equity-sub');
+  if(dmEqSub){
+    dmEqSub.textContent=currentProfile==='all'
+      ?'All profiles · notional starting balance + combined P&L'
+      :'This profile · starting balance + net P&L (this account only)';
+  }
   if(dmEq){
     dmEq.textContent='$'+equityTotal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-    dmEq.className='dash-metric-val '+(equityTotal>startBal?'positive':equityTotal<startBal?'negative':(comboNet===0?'metric-white':''));
+    dmEq.className='dash-metric-val '+(equityTotal>startBal?'positive':equityTotal<startBal?'negative':(netForEquity===0?'metric-white':''));
   }
 
   // Avg RR
@@ -3329,7 +3149,6 @@ function showTab(t){
   if(t==='log'){setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
   if(t==='stats')renderStats();
-  if(t==='prop'){loadPropSettings();renderProp();}
   if(t==='calendar')renderCalendar();
   if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
@@ -5319,7 +5138,6 @@ function switchProfile(p, btn){
     else if(t==='dashboard')(window.renderDashboard||renderDashboard)();
     else if(t==='journal')renderJournal();
     else if(t==='stats')(window.renderStats||renderStats)();
-    else if(t==='prop'){loadPropSettings();renderProp();}
     else if(t==='calendar')renderCalendar();
     else if(t==='missed')renderMissed();
     else if(t==='weekly')renderWeekly();
@@ -5608,7 +5426,7 @@ function launchConfetti(){
 function calcAutoRR(){
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
-  const account=(propSettings&&propSettings.account)?propSettings.account:parseFloat(document.getElementById('p-account').value)||0;
+  const account=getAccountForRisk();
   const label=document.getElementById('f-rr-auto');
   const rrInput=document.getElementById('f-actual-rr');
   if(!label)return;
@@ -5636,11 +5454,11 @@ function syncRRField(){
 function calcEditAutoRR(){
   const pnl=parseFloat(document.getElementById('e-pnl').value);
   const riskPct=parseFloat(document.getElementById('e-risk').value);
-  const account=parseFloat(document.getElementById('p-account').value)||0;
+  const account=getAccountForRiskEdit()||50000;
   const label=document.getElementById('e-rr-auto');
   const rrInput=document.getElementById('e-actual-rr');
   if(!label)return;
-  if(isNaN(pnl)||isNaN(riskPct)||!account){label.textContent='';return;}
+  if(isNaN(pnl)||isNaN(riskPct)){label.textContent='';return;}
   const riskAmt=account*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
@@ -6559,28 +6377,6 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
   </div>
 </div>
 
-<!-- Prop firm passed popup -->
-<div id="popup-passed" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;flex-direction:column">
-  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
-    <div style="font-size:48px;margin-bottom:16px">🏆</div>
-    <div style="font-size:22px;font-weight:600;color:#10b981;margin-bottom:8px">Challenge passed!</div>
-    <div style="font-size:15px;color:#e5e7eb;margin-bottom:6px" id="popup-passed-name"></div>
-    <div style="font-size:14px;color:#4b5563;margin-bottom:28px;line-height:1.6">You hit the profit target. The discipline, the patience, the process — it all showed. Now go get that funded account.</div>
-    <button onclick="closePassedPopup()" style="padding:12px 32px;border:none;border-radius:8px;background:#10b981;color:#ffffff;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;letter-spacing:.03em">Let's go 🚀</button>
-  </div>
-</div>
-
-<!-- Prop firm blown popup -->
-<div id="popup-blown" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;flex-direction:column">
-  <div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:16px;padding:40px 48px;max-width:480px;text-align:center;position:relative">
-    <div style="font-size:48px;margin-bottom:16px">📉</div>
-    <div style="font-size:22px;font-weight:600;color:#ef4444;margin-bottom:8px">Account blown</div>
-    <div style="font-size:15px;color:#e5e7eb;margin-bottom:6px" id="popup-blown-name"></div>
-    <div style="font-size:14px;color:#4b5563;margin-bottom:28px;line-height:1.6">You hit the max drawdown limit. Go through your journal, find the patterns, fix the holes in the model. Every blown account is a lesson — make sure you learn it.</div>
-    <button onclick="closeBlownPopup()" style="padding:12px 32px;border:0.5px solid #6e2a2a;border-radius:8px;background:#ef4444;color:#ffffff;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;letter-spacing:.03em">Back to the drawing board</button>
-  </div>
-</div>
-
 <!-- Calendar day popup -->
 <div id="cal-day-popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
   <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:16px;max-width:580px;width:100%;padding:1.5rem">
@@ -6636,7 +6432,6 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
 
 <!-- More menu -->
 <div id="mobile-more-menu">
-  <div class="more-item" onclick="mobNav('prop')">      <span class="more-item-icon">📊</span>Prop firm</div>
   <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
 
@@ -6887,17 +6682,7 @@ document.addEventListener('click',function(e){
     display: grid !important;
   }
 
-  /* ── 13. PROP FIRM ── */
-  #page-prop div[style*="1fr 1fr"],
-  #page-prop .grid-2 {
-    grid-template-columns: 1fr !important;
-  }
-  #page-prop div[style*="repeat(4,1fr)"],
-  #page-prop .grid-4 {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* ── 14. WEEKLY REVIEW — grid ── */
+  /* ── 13. WEEKLY REVIEW — grid ── */
   #page-weekly div[style*="1fr 1fr"],
   #page-weekly .grid-4 {
     grid-template-columns: 1fr 1fr !important;
@@ -7070,16 +6855,7 @@ document.addEventListener('click',function(e){
     white-space: nowrap !important;
   }
 
-  /* ── 31. POPUPS — centered on mobile ── */
-  #popup-passed > div,
-  #popup-blown > div {
-    margin: 20px !important;
-    padding: 32px 24px !important;
-    max-width: calc(100% - 40px) !important;
-    border-radius: 14px !important;
-  }
-
-  /* ── 32. WEEKLY REVIEW SAVE BTN ── */
+  /* ── 31. WEEKLY REVIEW SAVE BTN ── */
   #page-weekly div[style*="justify-content:flex-end"] {
     display: flex !important;
   }
@@ -7930,8 +7706,6 @@ body.dark-mode ::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
 
 /* --- Auth & Popups --- */
 body:not(.dark-mode) #auth-overlay .auth-card{background:#141414!important;border:1px solid rgba(255,255,255,0.08)!important}
-body:not(.dark-mode) #popup-passed>div,body:not(.dark-mode) #popup-blown>div{background:#fff!important;border:1px solid #e0e0e0!important}
-
 /* ── Dark mode — wins over everything above ── */
 body.dark-mode{background:#0d0d0d!important;color:#f0f0f0!important;--text-primary:#e5e7eb}
 body.dark-mode #main-content{background:#0d0d0d!important}
@@ -8016,7 +7790,6 @@ body.dark-mode .mob-btn.active{color:var(--accent,#10b981)!important}
 body.dark-mode #mobile-more-menu{background:#141414!important;border-top:1px solid rgba(255,255,255,0.07)!important}
 body.dark-mode .more-item{color:#e5e7eb!important}
 body.dark-mode #auth-overlay .auth-card{background:#141414!important;border:1px solid rgba(255,255,255,0.08)!important}
-body.dark-mode #popup-passed>div,body.dark-mode #popup-blown>div{background:#141414!important;border:1px solid rgba(255,255,255,0.08)!important}
 /* New feature dark mode */
 body.dark-mode #fuze-score-card,body.dark-mode #consistency-card{background:#141414!important;border:1px solid rgba(255,255,255,0.07)!important}
 body.dark-mode #fuze-score-ring~*{stroke:rgba(255,255,255,0.06)!important}
