@@ -1002,7 +1002,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
 .dash-metrics{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(6,1fr);
   gap:10px;
   margin-bottom:18px;
 }
@@ -1394,6 +1394,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   <!-- Metric strip -->
   <div class="dash-metrics" id="dash-metrics-row">
     <div class="dash-metric">
+      <div class="dash-metric-label" id="dm-bal-lbl">Account balance</div>
+      <div class="dash-metric-val" id="dm-balance">—</div>
+      <div class="dash-metric-sub" id="dm-balance-sub">Set account in Prop Firm</div>
+    </div>
+    <div class="dash-metric">
       <div class="dash-metric-label">Net P&amp;L</div>
       <div class="dash-metric-val" id="dm-pnl">—</div>
       <div class="dash-metric-sub" id="dm-pnl-sub">All Trades</div>
@@ -1706,11 +1711,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>P&amp;L ($) <span style="color:#9ca3af;font-weight:400">— negative for a loss e.g. -120</span></label>
         <input type="number" id="f-pnl" placeholder="e.g. 250 or -120" step="1" oninput="calcAutoRR()">
       </div>
-      <div><label>Risk taken</label>
+      <div><label>Risk taken <span id="f-risk-bal-hint" style="font-size:12px;color:#6b7280;font-weight:400"></span></label>
         <select id="f-risk" onchange="calcAutoRR()">
           <option value="">—</option>
-          <option value="1">1% (Challenge)</option>
-          <option value="0.5">0.5% (Funded)</option>
+          <option value="1">1% — ($)</option>
+          <option value="0.5">0.5% — ($)</option>
         </select>
       </div>
     </div>
@@ -2506,6 +2511,24 @@ let weeklyNotes={};
 // ── PnL rounding helper (eliminates float drift) ──
 function rp(v){return Math.round((+v||0)*100)/100;}
 function fmtPnl(v){const r=Math.round(+v||0);return(r>=0?'+$':'-$')+Math.abs(r).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});}
+/** Starting prop account size + cumulative P&amp;L for the active profile (not used in All view). */
+function getProfileLiveEquity(){
+  if(currentProfile==='all')return 0;
+  const base=(propSettings&&propSettings.account)?Number(propSettings.account):0;
+  const liveTrades=(trades||[]).filter(t=>t.pnl!=null&&!isNaN(parseFloat(t.pnl)));
+  const totalPnl=rp(liveTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
+  return rp(base+totalPnl);
+}
+function updateRiskDropdownLabels(){
+  const sel=document.getElementById('f-risk');
+  if(!sel||sel.options.length<3)return;
+  var eq=getProfileLiveEquity();
+  var mk=function(p,a){var d=Math.round(eq*p/100);return p+'% — $'+d.toLocaleString('en',{maximumFractionDigits:0})+' ('+a+')';};
+  sel.options[1].textContent=(currentProfile==='all')?'1% — pick a profile':mk(1,'Challenge');
+  sel.options[2].textContent=(currentProfile==='all')?'0.5% — pick a profile':mk(0.5,'Funded');
+  var hh=document.getElementById('f-risk-bal-hint');
+  if(hh){hh.textContent=(currentProfile==='all'||!propSettings||!propSettings.account)?'':" · balance $" +Math.round(eq).toLocaleString('en');}
+}
 let propSettings={};let selectedMistakes=[];
 
 const MISTAKES=[
@@ -2872,6 +2895,7 @@ function del(id){
   _lastDeleted={trade:JSON.parse(JSON.stringify(t)),index:trades.indexOf(t)};
   trades=trades.filter(t=>t.id!==id);
   save();renderJournal();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')){updateRiskDropdownLabels();try{renderDashboard();}catch(e){}}
   showUndoToast(label);
 }
 function showUndoToast(label){
@@ -2896,6 +2920,7 @@ function undoDelete(){
   trades.splice(idx,0,_lastDeleted.trade);
   _lastDeleted=null;
   save();renderJournal();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')){updateRiskDropdownLabels();try{renderDashboard();}catch(e){}}
   dismissUndoToast();
 }
 function toggleFav(id,btn){
@@ -2923,6 +2948,9 @@ function savePropSettings(){
     minDays:parseInt(document.getElementById('p-min-days').value)||0,
   };
   saveProp();renderProp();
+  updateRiskDropdownLabels();
+  calcAutoRR();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
 }
 function loadPropSettings(){
   if(propSettings.name)document.getElementById('p-name').value=propSettings.name;
@@ -3190,6 +3218,29 @@ function renderDashboard(){
   if(greet)greet.textContent='Dashboard';
   const greetSub=document.getElementById('dash-greeting-sub');
   if(greetSub)greetSub.textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', fuze · NQ · NY Session · 14:30–16:00 UK';
+
+  // Firm-linked account balance (= starting Prop account ± logged P&amp;L for this profile)
+  const dmBalLbl=document.getElementById('dm-bal-lbl');
+  const dmBal=document.getElementById('dm-balance');
+  const dmBalSub=document.getElementById('dm-balance-sub');
+  const firmShort=(propSettings&&propSettings.name)?String(propSettings.name).trim():'Prop Firm';
+  if(dmBalLbl) dmBalLbl.textContent=(firmShort.length>28?firmShort.slice(0,26)+'…':firmShort)+' balance';
+  if(currentProfile==='all'){
+    if(dmBal){dmBal.textContent='—';dmBal.className='dash-metric-val';}
+    if(dmBalSub) dmBalSub.textContent='Select a profile tab';
+  } else if(!propSettings||!propSettings.account){
+    if(dmBal){dmBal.textContent='—';dmBal.className='dash-metric-val';}
+    if(dmBalSub) dmBalSub.textContent='Set starting account · Prop Firm';
+  } else {
+    const startAmt=rp(Number(propSettings.account)||0);
+    const eq=getProfileLiveEquity();
+    const pnlVsStart=rp(eq-startAmt);
+    if(dmBal){
+      dmBal.textContent='$'+Math.round(eq).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0});
+      dmBal.className='dash-metric-val '+(pnlVsStart>0?'positive':pnlVsStart<0?'negative':'');
+    }
+    if(dmBalSub) dmBalSub.textContent=(pnlVsStart>=0?'+':'-')+'$'+Math.abs(Math.round(pnlVsStart)).toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})+' vs $'+Math.round(startAmt).toLocaleString('en',{maximumFractionDigits:0})+' start';
+  }
 
   // P&L
   const totalPnl=rp(dashTrades.reduce((s,t)=>rp(s+(parseFloat(t.pnl)||0)),0));
@@ -3467,10 +3518,14 @@ async function saveTrade(){
   checkPB(trade);
   trades.unshift(trade);
   save();
+  updateRiskDropdownLabels();
+  calcAutoRR();
+  if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
   updateJournalStreak();
   try{localStorage.removeItem('ict_draft_'+currentProfile);}catch(e){}
   alert('Saved');
   clearForm();
+  prefillCalc();
 }
 
 function clearForm(){
@@ -4547,13 +4602,16 @@ function calcRisk(){
     +'<div style="font-size:14px;color:#4b5563;margin-top:5px">NQ=$20/pt · MNQ=$2/pt · Round to nearest whole contract</div>';
 }
 
-// Pre-fill calc from prop settings if available
+// Pre-fill position-size widget + risk labels from live Prop equity for this profile
 function prefillCalc(){
+  updateRiskDropdownLabels();
   const accEl=document.getElementById('calc-account');
-  if(accEl&&propSettings&&propSettings.account&&!accEl.value){
-    accEl.value=propSettings.account;
-    calcRisk();
+  if(accEl&&currentProfile!=='all'){
+    const eq=getProfileLiveEquity();
+    if(eq||propSettings&&propSettings.account){ accEl.value=String(eq||rp(Number(propSettings.account)||0)); }
   }
+  if(typeof calcRisk==='function') calcRisk();
+  calcAutoRR();
 }
 
 
@@ -5353,8 +5411,9 @@ function randomizeTrade(){
   const outcomeWeights=[0.55,0.30,0.15];
   let r=Math.random(),cumW=0,rOutcome='win';
   for(let i=0;i<outcomes.length;i++){cumW+=outcomeWeights[i];if(r<cumW){rOutcome=outcomes[i];break;}}
-  // Use prop firm account balance (or 50k fallback), risk % locked to profile
-  const account=(propSettings&&propSettings.account)?propSettings.account:50000;
+  // Equity = Prop starting account ± P&amp;L (same basis as RR + risk dropdown)
+  let eq=getProfileLiveEquity();
+  const account=eq>0?eq:((propSettings&&propSettings.account)?Number(propSettings.account):50000);
   const riskPct=currentProfile==='funded'?0.5:1;
   const riskAmt=account*(riskPct/100);
   // PnL-first approach: generate realistic random dollar amount, back-calc RR
@@ -5504,13 +5563,13 @@ function launchConfetti(){
 function calcAutoRR(){
   const pnl=parseFloat(document.getElementById('f-pnl').value);
   const riskPct=parseFloat(document.getElementById('f-risk').value);
-  const account=(propSettings&&propSettings.account)?propSettings.account:parseFloat(document.getElementById('p-account').value)||0;
+  let effectiveAccount=getProfileLiveEquity();
+  if(currentProfile!=='all'&&!effectiveAccount&&propSettings&&propSettings.account){effectiveAccount=rp(Number(propSettings.account));}
   const label=document.getElementById('f-rr-auto');
   const rrInput=document.getElementById('f-actual-rr');
   if(!label)return;
   if(isNaN(pnl)||isNaN(riskPct)){label.textContent='';return;}
-  // If no account set, fall back to showing R based on risk% of a standard 50k account
-  const effectiveAccount=account||50000;
+  if(!effectiveAccount){const pa=document.getElementById('p-account');const pv=pa&&parseFloat(pa.value);effectiveAccount=pv&&!isNaN(pv)?rp(pv):50000;}
   const riskAmt=effectiveAccount*(riskPct/100);
   if(!riskAmt){label.textContent='';return;}
   const r=pnl/riskAmt;
@@ -5532,7 +5591,9 @@ function syncRRField(){
 function calcEditAutoRR(){
   const pnl=parseFloat(document.getElementById('e-pnl').value);
   const riskPct=parseFloat(document.getElementById('e-risk').value);
-  const account=parseFloat(document.getElementById('p-account').value)||0;
+  let account=getProfileLiveEquity();
+  if(!account&&propSettings&&propSettings.account)account=rp(Number(propSettings.account));
+  if(!account){const pa=document.getElementById('p-account');const pv=pa&&parseFloat(pa.value);account=pv&&!isNaN(pv)?rp(pv):50000;}
   const label=document.getElementById('e-rr-auto');
   const rrInput=document.getElementById('e-actual-rr');
   if(!label)return;
@@ -5977,6 +6038,7 @@ document.addEventListener('DOMContentLoaded',function(){
   loadSavedTheme();
   loadDarkLightPref();
   renderQOTD();
+  if(typeof updateRiskDropdownLabels==='function')updateRiskDropdownLabels();
 });
 </script>
 
@@ -5991,6 +6053,8 @@ let _revSlide = 0;
 const _revTotal = 4;
 let _revDowChart = null;
 let _revAiCache = {};
+/** Stored once: DevTools Console → localStorage.setItem('fuze_anthropic_key','YOUR_KEY'); */
+function getAnthropicApiKey(){ try{ return localStorage.getItem('fuze_anthropic_key')||''; }catch(e){ return ''; } }
 
 function revNav(dir){
   _revSlide = (_revSlide + dir + _revTotal) % _revTotal;
@@ -6268,13 +6332,26 @@ async function revRequestAI(slideIdx){
   if(!prompt) return;
 
   takeawayEl.style.display='block';
+
+  var apiKey=getAnthropicApiKey();
+  if(!apiKey){
+    takeawayEl.querySelector('.rev-takeaway-text').textContent=
+      'Save your Anthropic API key once: browser console → localStorage.setItem("fuze_anthropic_key","sk-ant-..."); then reopen this.';
+    takeawayEl.style.opacity='1';
+    return;
+  }
+
   takeawayEl.querySelector('.rev-takeaway-text').textContent='⏳ Generating AI insight...';
   takeawayEl.style.opacity='0.6';
 
   try{
     var resp = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01'
+      },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
@@ -6283,12 +6360,18 @@ async function revRequestAI(slideIdx){
       })
     });
     var data = await resp.json();
-    var text = (data.content&&data.content[0]&&data.content[0].text)||'Unable to generate insight.';
+    var text;
+    if(!resp.ok){
+      text=(data&&data.error&&data.error.message)?data.error.message:'Anthropic error ('+resp.status+').';
+    } else {
+      text=(data.content&&data.content[0]&&data.content[0].text)||'Unable to generate insight.';
+    }
     _revAiCache[slideIdx] = text;
     takeawayEl.querySelector('.rev-takeaway-text').textContent = text;
     takeawayEl.style.opacity='1';
   } catch(e){
-    takeawayEl.querySelector('.rev-takeaway-text').textContent='AI insight unavailable — check connection.';
+    takeawayEl.querySelector('.rev-takeaway-text').textContent=
+      'AI insight failed: '+(e&&e.message?e.message:'network error')+' — direct browser calls may be blocked (CORS).';
     takeawayEl.style.opacity='1';
   }
 }
