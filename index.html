@@ -1826,10 +1826,69 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <div class="card gap">
-    <div class="section-label">Tags <span style="color:#9ca3af;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">— optional</span></div>
-    <div>
-      <label><span style="color:#9ca3af;font-size:12px;font-weight:400">Comma-separated</span></label>
-      <input type="text" id="f-tags-extra" placeholder="news-day, NFP, revenge-block" style="width:100%">
+    <div class="section-label">Setup quality</div>
+    <div class="grid-2 gap" style="margin-bottom:10px">
+      <div>
+        <label>Draw tier</label>
+        <select id="f-sq-draw-tier">
+          <option value="">—</option>
+          <option>S — perfect equal H/L</option>
+          <option>A — data wicks / TL liquidity</option>
+          <option>B — session H/L or relative EQ</option>
+          <option>C — unbalanced gap only</option>
+        </select>
+      </div>
+      <div>
+        <label>15M displacement</label>
+        <select id="f-sq-displacement">
+          <option value="">—</option>
+          <option>Strong — clear BOS toward draw</option>
+          <option>Moderate — readable push</option>
+          <option>Weak — marginal / overlapping</option>
+          <option>Chop — no clean displacement</option>
+        </select>
+      </div>
+      <div>
+        <label>5M gap quality</label>
+        <select id="f-sq-gap-quality">
+          <option value="">—</option>
+          <option>Clean singular FVG</option>
+          <option>Two adjacent combined</option>
+          <option>Overlapping / messy</option>
+          <option>Formed in chop</option>
+        </select>
+      </div>
+      <div>
+        <label>Pullback into gap</label>
+        <select id="f-sq-pullback">
+          <option value="">—</option>
+          <option>Slow / corrective</option>
+          <option>Moderate pace</option>
+          <option>Fast / aggressive</option>
+          <option>Spike then stall</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Session segment (UK)</label>
+        <select id="f-sq-session">
+          <option value="">—</option>
+          <option>2:30–3:00</option>
+          <option>3:00–3:30</option>
+          <option>3:30–4:00</option>
+          <option>After 4:00 (no new entry)</option>
+        </select>
+      </div>
+    </div>
+    <div class="gap" style="margin-top:4px">
+      <label>Post-trade verdict <span style="color:#9ca3af;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">— separate from win/loss</span></label>
+      <select id="f-post-verdict">
+        <option value="">—</option>
+        <option value="yes">Would take again (same info)</option>
+        <option value="no">Would skip next time</option>
+        <option value="unsure">Unsure / needs review</option>
+      </select>
+      <label style="margin-top:8px">Verdict note <span style="color:#9ca3af;font-size:12px;font-weight:400">optional</span></label>
+      <textarea id="f-post-verdict-note" placeholder="One line: what you’d change or confirm…" style="min-height:44px;font-family:inherit"></textarea>
     </div>
     <div class="hint"><span style="font-weight:600;color:#e5e7eb">Realised R</span> uses P&amp;L ÷ (account × risk %) with the saved account size (default $50k).</div>
   </div>
@@ -2587,24 +2646,36 @@ function optFloatField(id){
   if(e.value===''||e.value==null)return null;
   var n=parseFloat(e.value);return isFinite(n)?n:null;
 }
-function parseCommaTags(str){
-  var tags=[];
-  String(str||'').split(',').forEach(function(s){s=s.trim();if(s)tags.push(s);});
-  return tags;
+function readSetupQuality(prefix){
+  var p=prefix==='e'?'e':'f';
+  function g(suf){var el=document.getElementById(p+suf);return el?String(el.value||'').trim():'';}
+  return{
+    drawTier:g('-sq-draw-tier'),
+    displacement:g('-sq-displacement'),
+    gapQuality:g('-sq-gap-quality'),
+    pullback:g('-sq-pullback'),
+    sessionSegment:g('-sq-session')
+  };
 }
-function buildTagsFromLogForm(){var el=document.getElementById('f-tags-extra');return parseCommaTags(el?el.value:'');}
-function tagsIntoEditForm(tags){
-  var tex=document.getElementById('e-tags-extra');
-  if(tex)tex.value='';
-  var extra=[];
-  (tags||[]).forEach(function(t){
-    if(typeof t!=='string'||!t)return;
-    if(t.indexOf('playbook:')===0)return;
-    extra.push(t);
+function applySetupQuality(prefix,sq){
+  sq=sq||{};
+  var p=prefix==='e'?'e':'f';
+  [['-sq-draw-tier','drawTier'],['-sq-displacement','displacement'],['-sq-gap-quality','gapQuality'],['-sq-pullback','pullback'],['-sq-session','sessionSegment']].forEach(function(pr){
+    var el=document.getElementById(p+pr[0]);
+    if(el)el.value=sq[pr[1]]||'';
   });
-  if(tex)tex.value=extra.join(', ');
 }
-function buildTagsFromEditForm(){var el=document.getElementById('e-tags-extra');return parseCommaTags(el?el.value:'');}
+function formatSetupQualitySummary(sq){
+  sq=sq||{};
+  var parts=[sq.drawTier,sq.displacement,sq.gapQuality,sq.pullback,sq.sessionSegment].filter(function(x){return x;});
+  return parts.length?parts.join(' · '):'';
+}
+function verdictLabel(v){
+  if(v==='yes')return'Take again';
+  if(v==='no')return'Skip next time';
+  if(v==='unsure')return'Unsure';
+  return'—';
+}
 function computeCombinedClosedPnL(){
   var sum=0;
   PROFILES.forEach(function(prof){
@@ -3487,6 +3558,13 @@ async function saveTrade(){
   if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state (before entry)');
   if(document.getElementById('f-emotion-post')&&!document.getElementById('f-emotion-post').value) missing.push('Emotional state (after close)');
   if(document.getElementById('f-momentum')&&!document.getElementById('f-momentum').value) missing.push('Momentum at entry');
+  var sqF=readSetupQuality('f');
+  if(!sqF.drawTier)missing.push('Setup quality — draw tier');
+  if(!sqF.displacement)missing.push('Setup quality — 15M displacement');
+  if(!sqF.gapQuality)missing.push('Setup quality — 5M gap');
+  if(!sqF.pullback)missing.push('Setup quality — pullback');
+  if(!sqF.sessionSegment)missing.push('Setup quality — session segment');
+  if(!document.getElementById('f-post-verdict')||!document.getElementById('f-post-verdict').value)missing.push('Post-trade verdict');
   const files=window._pendingSSFiles||{};
   if(currentProfile!=='backtesting'){
     ['1m','5m','15m','1h','4h'].forEach(function(tf){
@@ -3517,7 +3595,6 @@ async function saveTrade(){
   const pnl = parseFloat(pnlRaw);
   const riskStr=document.getElementById('f-risk').value;
   const realisedR=computeRealisedR(pnl,riskStr);
-  const tags=buildTagsFromLogForm();
   const trade = {
     id:tradeId, date, mode,
     instrument:'NQ/MNQ',
@@ -3539,7 +3616,10 @@ async function saveTrade(){
     ss15m:ssUrls['15m']||'', ss1h:ssUrls['1h']||'', ss4h:ssUrls['4h']||'',
     risk,
     tradeClass,
-    tags,
+    setupQuality:sqF,
+    postVerdict:document.getElementById('f-post-verdict').value,
+    postVerdictNote:trimVal('f-post-verdict-note'),
+    tags:[],
     checksPassed:checklistPassed,
     checksTotal:checklistTotal
   };
@@ -3552,7 +3632,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-tags-extra','f-entry-price','f-exit-price','f-contracts'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-post-verdict-note','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-sq-session','f-post-verdict'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -3585,7 +3665,10 @@ function renderJournal(){
   if(fb)f=f.filter(t=>t.bias===fb);
   if(fs){
     const q=fs.toLowerCase();
-    f=f.filter(t=>(t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||(t.tags||[]).join(' ').toLowerCase().includes(q)||(t.date||'').includes(q));
+    f=f.filter(t=>{
+      var sqs=(formatSetupQualitySummary(t.setupQuality)+' '+(t.postVerdict||'')+' '+(t.postVerdictNote||'')+(Array.isArray(t.tags)?t.tags.join(' '):'')).toLowerCase();
+      return (t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||sqs.includes(q)||(t.date||'').includes(q);
+    });
   }
   f.sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id));
   const badge=document.getElementById('trade-count-badge');
@@ -3664,8 +3747,11 @@ function renderJournal(){
     if(t.exitPrice!=null&&t.exitPrice!=='')fillParts.push('Out '+t.exitPrice);
     if(t.contracts!=null&&t.contracts!=='')fillParts.push(t.contracts+(parseFloat(t.contracts)<=1?' ct':' cts'));
     var fillStr=fillParts.length?fillParts.join(' · '):'—';
-    var tagStr=t.tags&&t.tags.length?t.tags.join(', ').replace(/</g,''):'—';
-    if(tagStr.length>120)tagStr=tagStr.slice(0,118)+'…';
+    var sqLine=formatSetupQualitySummary(t.setupQuality);
+    if(!sqLine)sqLine=(Array.isArray(t.tags)&&t.tags.length)?t.tags.join(', ').replace(/</g,''):'—';
+    if(sqLine.length>140)sqLine=sqLine.slice(0,138)+'…';
+    var verStr=verdictLabel(t.postVerdict)+(t.postVerdictNote?(' — '+(t.postVerdictNote.length>48?t.postVerdictNote.slice(0,46)+'…':t.postVerdictNote)):'');
+    if(verStr==='—')verStr='—';
 
     const infoGrid='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;padding:10px 14px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)">'
       +pill('Time', timingStr)
@@ -3678,7 +3764,8 @@ function renderJournal(){
       +pill('Emotion (pre)', emotionPreStr, '#9ca3af')
       +pill('Emotion (post)', emotionPostStr, '#9ca3af')
       +pill('Broker', fillStr, '#9ca3af')
-      +pill('Tags', tagStr, '#a78bfa')
+      +pill('Setup quality', sqLine, '#a78bfa')
+      +pill('Post verdict', verStr, '#38bdf8')
       +pill('Similar trade', t.similar?(t.similar.length>28?t.similar.slice(0,26)+'…':t.similar):'—', '#818cf8')
       +'</div>';
 
@@ -3754,7 +3841,9 @@ function openEdit(id){
   const eFvg=document.getElementById('e-fvg-zone');if(eFvg)eFvg.value=t.fvgZone||'';
   const eEmP=document.getElementById('e-emotion-post');if(eEmP)eEmP.value=t.emotionPost||'';
   // plan type removed
-  tagsIntoEditForm(t.tags);
+  applySetupQuality('e',t.setupQuality);
+  var ev=document.getElementById('e-post-verdict');if(ev)ev.value=t.postVerdict||'';
+  var evn=document.getElementById('e-post-verdict-note');if(evn)evn.value=t.postVerdictNote||'';
   var eep=document.getElementById('e-entry-price'),exp=document.getElementById('e-exit-price'),ect=document.getElementById('e-contracts');
   if(eep)eep.value=t.entryPrice!=null&&t.entryPrice!==''?t.entryPrice:'';
   if(exp)exp.value=t.exitPrice!=null&&t.exitPrice!==''?t.exitPrice:'';
@@ -3811,6 +3900,13 @@ function saveEdit(){
       missing.push(id.replace('e-ss-','').toUpperCase()+' screenshot link');
     });
   }
+  var sqE=readSetupQuality('e');
+  if(!sqE.drawTier)missing.push('Setup quality — draw tier');
+  if(!sqE.displacement)missing.push('Setup quality — 15M displacement');
+  if(!sqE.gapQuality)missing.push('Setup quality — 5M gap');
+  if(!sqE.pullback)missing.push('Setup quality — pullback');
+  if(!sqE.sessionSegment)missing.push('Setup quality — session segment');
+  if(!(document.getElementById('e-post-verdict')||{}).value)missing.push('Post-trade verdict');
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   var ePnl=document.getElementById('e-pnl').value;
   var eRisk=document.getElementById('e-risk').value;
@@ -3842,7 +3938,9 @@ function saveEdit(){
     ss15m:document.getElementById('e-ss-15m').value,
     ss1h:document.getElementById('e-ss-1h').value,
     ss4h:document.getElementById('e-ss-4h').value,
-    tags:buildTagsFromEditForm(),
+    setupQuality:sqE,
+    postVerdict:(document.getElementById('e-post-verdict')||{}).value||'',
+    postVerdictNote:etrim('e-post-verdict-note'),
     narrative:etrim('e-narrative'),
     improve:etrim('e-improve'),
     momentum:(document.getElementById('e-momentum')||{}).value||'',
@@ -3850,6 +3948,7 @@ function saveEdit(){
     fvgZone:etrim('e-fvg-zone'),
     emotionPost:(document.getElementById('e-emotion-post')||{}).value||'',
     tradeClass:(document.getElementById('e-tradeClass')||{}).value||'',
+    tags:[],
   };
   if(currentProfile==='all'&&trades[idx]&&trades[idx]._profile){
     var src=trades[idx]._profile;
@@ -5336,7 +5435,9 @@ function saveDraft(){
     narrative:document.getElementById('f-narrative').value,
     improve:document.getElementById('f-improve').value,
     planType:'',
-    tagsExtra:document.getElementById('f-tags-extra')?document.getElementById('f-tags-extra').value:'',
+    setupQuality:readSetupQuality('f'),
+    postVerdict:document.getElementById('f-post-verdict')?document.getElementById('f-post-verdict').value:'',
+    postVerdictNote:document.getElementById('f-post-verdict-note')?document.getElementById('f-post-verdict-note').value:'',
     entryPrice:document.getElementById('f-entry-price')?document.getElementById('f-entry-price').value:'',
     exitPrice:document.getElementById('f-exit-price')?document.getElementById('f-exit-price').value:'',
     contracts:document.getElementById('f-contracts')?document.getElementById('f-contracts').value:'',
@@ -5361,7 +5462,9 @@ function loadDraft(){
     });
     document.getElementById('f-actual-rr').value=draft.rrActual||'';
     // plan type removed
-    var fTx=document.getElementById('f-tags-extra');if(fTx&&draft.tagsExtra)fTx.value=draft.tagsExtra;
+    if(draft.setupQuality)applySetupQuality('f',draft.setupQuality);
+    var fPv=document.getElementById('f-post-verdict');if(fPv&&draft.postVerdict)fPv.value=draft.postVerdict;
+    var fPn=document.getElementById('f-post-verdict-note');if(fPn&&draft.postVerdictNote!==undefined)fPn.value=draft.postVerdictNote;
     var fEp=document.getElementById('f-entry-price');if(fEp&&draft.entryPrice!==undefined)fEp.value=draft.entryPrice;
     var fXp=document.getElementById('f-exit-price');if(fXp&&draft.exitPrice!==undefined)fXp.value=draft.exitPrice;
     var fCt=document.getElementById('f-contracts');if(fCt&&draft.contracts!==undefined)fCt.value=draft.contracts;
@@ -5595,7 +5698,20 @@ function randomizeTrade(){
     :(rOutcome==='loss')?(mainMistake?'Focus next session: '+mainMistake+'.':'Journal the loss mechanics and one fix.')
     :(mainMistake?'BE — note '+mainMistake+'; manage BE/trail per model.':'BE — flat is fine when rules stayed intact.');
 
-  var ft=document.getElementById('f-tags-extra');if(ft)ft.value='';
+  var tiers=['S — perfect equal H/L','A — data wicks / TL liquidity','B — session H/L or relative EQ','C — unbalanced gap only'];
+  var displ=rOutcome==='win'&&picked!=='invalid'?_randPick(['Strong — clear BOS toward draw','Moderate — readable push']):(picked==='invalid'?_randPick(['Chop — no clean displacement','Weak — marginal / overlapping']):_randPick(['Moderate — readable push','Weak — marginal / overlapping','Chop — no clean displacement']));
+  var gapq=picked==='invalid'?_randPick(['Formed in chop','Overlapping / messy']):_randPick(['Clean singular FVG','Two adjacent combined','Overlapping / messy']);
+  var retr=rOutcome==='win'?_randPick(['Slow / corrective','Moderate pace']):_randPick(['Fast / aggressive','Spike then stall','Moderate pace']);
+  var seg=_randPick(['2:30–3:00','3:00–3:30','3:30–4:00']);
+  applySetupQuality('f',{drawTier:_randPick(tiers),displacement:displ,gapQuality:gapq,pullback:retr,sessionSegment:seg});
+  var pv=document.getElementById('f-post-verdict');
+  if(pv){
+    if(picked==='valid-good'&&rOutcome==='win')pv.value='yes';
+    else if(picked==='invalid'||(rOutcome==='loss'&&picked!=='valid-good'))pv.value=Math.random()<0.82?'no':'unsure';
+    else pv.value=_randPick(['yes','no','unsure']);
+  }
+  var pvn=document.getElementById('f-post-verdict-note');
+  if(pvn)pvn.value=(picked==='valid-good'&&rOutcome==='win')?'Aligned with model — repeat.':(pv&&pv.value==='no'?'Rule/process mismatch — review.':'');
   calcAutoRR();
 }
 
@@ -6488,8 +6604,18 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       </select>
     </div>
     <div style="margin-bottom:12px">
-      <label>Tags <span style="color:#9ca3af;font-size:12px;font-weight:400">optional · comma-separated</span></label>
-      <input type="text" id="e-tags-extra" style="width:100%" placeholder="news-day, focus-week">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#374151">Setup quality</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><label>Draw tier</label><select id="e-sq-draw-tier" style="width:100%"><option value="">—</option><option>S — perfect equal H/L</option><option>A — data wicks / TL liquidity</option><option>B — session H/L or relative EQ</option><option>C — unbalanced gap only</option></select></div>
+        <div><label>15M displacement</label><select id="e-sq-displacement" style="width:100%"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
+        <div><label>5M gap quality</label><select id="e-sq-gap-quality" style="width:100%"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
+        <div><label>Pullback into gap</label><select id="e-sq-pullback" style="width:100%"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
+        <div style="grid-column:1/-1"><label>Session segment (UK)</label><select id="e-sq-session" style="width:100%"><option value="">—</option><option>2:30–3:00</option><option>3:00–3:30</option><option>3:30–4:00</option><option>After 4:00 (no new entry)</option></select></div>
+      </div>
+      <label>Post-trade verdict</label>
+      <select id="e-post-verdict" style="width:100%;margin-bottom:8px"><option value="">—</option><option value="yes">Would take again (same info)</option><option value="no">Would skip next time</option><option value="unsure">Unsure / needs review</option></select>
+      <label>Verdict note <span style="color:#9ca3af;font-size:12px">optional</span></label>
+      <textarea id="e-post-verdict-note" style="width:100%;min-height:44px;font-family:inherit"></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Entry price</label><input type="number" id="e-entry-price" step="0.25"></div>
@@ -7495,8 +7621,10 @@ function renderSmartInsights(){
 function exportTradesToCSV(){
   if(!trades||trades.length===0){ alert('No trades to export.'); return; }
   function csvTxt(v){ return String(v==null?'':v).replace(/[\n\r]/g,' '); }
-const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Realised R','Risk','Tags','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
-  const rows=trades.map(t=>[
+const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','SQ session','Post verdict','Post verdict note','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
+  const rows=trades.map(t=>{
+    var sq=t.setupQuality||{};
+    return[
     t.date||'',
     t.entryTime||'',
     t.exitTime||'',
@@ -7507,19 +7635,23 @@ const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L
     t.rrActual||'',
     t.realisedR!==undefined&&t.realisedR!==null&&String(t.realisedR)!==''?t.realisedR:'',
     t.risk||'',
-    t.planType||'',
-    csvTxt(Array.isArray(t.tags)?t.tags.join('; '):(t.tags||'')),
+    csvTxt(sq.drawTier||''),
+    csvTxt(sq.displacement||''),
+    csvTxt(sq.gapQuality||''),
+    csvTxt(sq.pullback||''),
+    csvTxt(sq.sessionSegment||''),
+    csvTxt(t.postVerdict||''),
+    csvTxt(t.postVerdictNote||''),
     t.entryPrice!==undefined&&t.entryPrice!==null&&String(t.entryPrice)!==''?t.entryPrice:'',
     t.exitPrice!==undefined&&t.exitPrice!==null&&String(t.exitPrice)!==''?t.exitPrice:'',
     t.contracts!==undefined&&t.contracts!==null&&String(t.contracts)!==''?t.contracts:'',
-    t.discRating||'',
     csvTxt((t.emotion||'').replace(/,/g,';')),
     csvTxt((t.emotionPost||'').replace(/,/g,';')),
     t.tradeClass||'',
     csvTxt((Array.isArray(t.mistakes)?t.mistakes.join('; '):'').replace(/,/g,';')),
     csvTxt(t.narrative||''),
     csvTxt(t.improve||'')
-  ]);
+  ];});
   const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'});
   const url=URL.createObjectURL(blob);
