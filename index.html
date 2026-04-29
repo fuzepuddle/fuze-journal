@@ -534,7 +534,7 @@ body.dark-mode .log-table th{color:#6b7280!important}
 body.dark-mode .log-table tr:hover td{background:#1a1a1a!important}
 body.dark-mode label{color:#9ca3af!important}
 body.dark-mode .section-label{color:#6b7280!important}
-body.dark-mode input[type=date],body.dark-mode input[type=number],body.dark-mode input[type=text],body.dark-mode input[type=time],body.dark-mode select,body.dark-mode textarea{background:#1a1a1a!important;color:#f0f0f0!important;border-color:rgba(255,255,255,0.1)!important}
+body.dark-mode input[type=date],body.dark-mode input[type=number],body.dark-mode input[type=text],body.dark-mode input[type=search],body.dark-mode input[type=time],body.dark-mode select,body.dark-mode textarea{background:#1a1a1a!important;color:#f0f0f0!important;border-color:rgba(255,255,255,0.1)!important}
 body.dark-mode input:focus,body.dark-mode select:focus,body.dark-mode textarea:focus{border-color:#555!important}
 body.dark-mode select option{background:#1a1a1a!important;color:#f0f0f0!important}
 body.dark-mode .outcome-btn{background:#1a1a1a!important;border-color:rgba(255,255,255,0.08)!important;color:#555!important}
@@ -1233,6 +1233,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 .mistake-dot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);flex-shrink:0;transition:all .12s}
 .mistake-item.selected .mistake-dot{background:var(--be);border-color:var(--be)}
 .mistake-cat{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9ca3af;padding:7px 8px 2px;pointer-events:none}
+.mistake-search-input{width:100%;box-sizing:border-box;margin-bottom:8px;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card,#141414);color:var(--text-primary,#f0f0f0);font-family:'Plus Jakarta Sans',sans-serif}
+.mistake-search-input:focus{outline:none;border-color:rgba(16,185,129,0.4)}
+.mistake-search-input::placeholder{color:var(--text-muted,#6b7280)}
+#checklist-body .check-item strong{font-weight:600;color:#f3f4f6}
 
 /* ── Week/monthly cards ── */
 .week-card{background:#ffffff;border:1px solid var(--border);border-radius:7px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
@@ -1685,27 +1689,29 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
-      <div class="section-label" style="margin-bottom:0">Model checklist</div>
-      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span><span class="collapse-icon">▼</span></div>
+      <div class="section-label" style="margin-bottom:0">Model checklist · NASDAQ NY Continuation v2</div>
+      <div style="display:flex;align-items:center;gap:8px"><span id="check-count" style="font-size:14px;color:#9ca3af">0 / 13</span><span class="collapse-icon">▼</span></div>
     </div>
     <div id="checklist-body" class="collapsible-body">
-    <div class="check-group-title">Can I Trade?</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Within model window (2:30–4:00 PM UK) — hard close 4:30 PM</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>No major news pending</span></div>
-    <div class="check-group-title">Where Is Price Going? (1H)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>One clear untapped target — prev high/low, session high/low, or gap</span></div>
-    <div class="check-group-title">Bigger Picture (4H/1H)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Structure &amp; momentum point toward target — no chop, no small candles</span></div>
-    <div class="check-group-title">Strong Displacement? (15M) 🔥</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Strong push toward target breaking structure</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement visibly stronger than the pullback</span></div>
-    <div class="check-group-title">Clean Gap Left? (5M) 🎯</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement left a clean price gap toward target — not formed in chop</span></div>
-    <div class="check-group-title">Pullback Slow &amp; Weak? (5M)</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Price retraces slowly and calmly into the gap — not fast or aggressive</span></div>
-    <div class="check-group-title">Confirmation &amp; Entry (1M) 🚀</div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>1M mini trend (HH + HL) forms in gap, price reacts out of gap</span></div>
-    <div class="check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Last higher low marked — entered on 1M candle close only</span></div>
+    <div class="check-group-title">v2 · Session &amp; rules</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Trading within <strong>2:30–4:00 PM UK</strong>; plan respects hard close — <strong>no new risk after ~4:30 PM</strong></span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One trade / day</strong> for this model — this planned entry respects that slot</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Neutral headspace; skipping if <strong>red-folder news spike</strong> conflicts with the window</span></div>
+    <div class="check-group-title">v2 · Draw &amp; HTF</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One primary liquidity draw</strong> — S/A/B/C tier acknowledged; nearest vs full-target rule consciously applied vs momentum</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>4H</strong> not tightening chop — <strong>directional context</strong> favours continuation <em>toward</em> that draw</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>1H</strong> aligns with bullish/bearish delivery &amp; <strong>premium/discount</strong> read toward the tagged draw</span></div>
+    <div class="check-group-title">v2 · 15M displacement</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Clean displacement on <strong>15M toward the draw</strong> with identifiable <strong>BOS</strong> — not lone wick fakeout</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Displacement leg visibly <strong>stronger than prior corrective pullback</strong> ahead of entry</span></div>
+    <div class="check-group-title">v2 · 5M singular gap</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>One singular obvious 5M gap/FVG</strong> toward trade — overlapping messy ladder = skip</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span>Gap is <strong>quality</strong> (clear from tape, not scraped out of chop / low-quality fragmentation)</span></div>
+    <div class="check-group-title">v2 · Slow / weak pullback</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>Slow, weak corrective</strong> retrace <em>into</em> imbalance — not violent displacement back through gap edge</span></div>
+    <div class="check-group-title">v2 · IFVG · 1M entry</div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>IFVG entry playbook</strong>: slight violation geometry + confirmation on accepted <strong>IFVG / candle close</strong>; strong‑momentum carve‑out honoured if live</span></div>
+    <div class="check-item model-check-item" onclick="toggle(this)"><input type="checkbox" onchange="updateChecks()"><span><strong>Mental invalidation</strong>: prior 1M close back <strong>through IFVG</strong> = structural exit rule internalised before click</span></div>
     <div id="gate" class="gate">Complete checklist to see verdict</div>
     </div>
   </div>
@@ -1935,8 +1941,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
     <div>
       <label style="margin-bottom:6px">Mistakes <span id="mistake-count" style="color:#f59e0b;font-size:14px"></span></label>
+      <input type="search" id="mistake-search" class="mistake-search-input" placeholder="Search mistakes by keyword…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="filterMistakesList()">
       <div class="mistakes-list" id="mistakes-list"></div>
-      <div class="hint">Hold Ctrl / Cmd to select multiple</div>
+      <div class="hint">Tap a line to tag it for this trade · search filters categories and items</div>
     </div>
     </div>
   </div>
@@ -3236,21 +3243,33 @@ function toggleFav(id,btn){
   btn.textContent=t.favourite?'★':'☆';
   btn.style.color=t.favourite?'#f59e0b':'#999';
 }
-// ── Build mistakes list ──
-function buildMistakes(){
+function filterMistakesList(){
+  const inp=document.getElementById('mistake-search');
+  buildMistakes(inp?inp.value:'');
+}
+// ── Build mistakes list (optional search filters categories + items; preserves selections) ──
+function buildMistakes(filterQuery){
+  const q=(filterQuery!=null&&String(filterQuery)||'').trim().toLowerCase();
   const el=document.getElementById('mistakes-list');
+  if(!el)return;
   el.innerHTML='';
+  let printed=false;
   MISTAKES.forEach(group=>{
+    const items=q?group.items.filter(it=>it.toLowerCase().includes(q)||group.cat.toLowerCase().includes(q)):group.items;
+    if(!items.length)return;
+    printed=true;
     const cat=document.createElement('div');
     cat.className='mistake-cat';cat.textContent=group.cat;el.appendChild(cat);
-    group.items.forEach(item=>{
+    items.forEach(item=>{
       const div=document.createElement('div');
-      div.className='mistake-item';
+      const sel=selectedMistakes.indexOf(item)!==-1;
+      div.className='mistake-item'+(sel?' selected':'');
       div.innerHTML='<div class="mistake-dot"></div><span>'+item+'</span>';
       div.onclick=()=>toggleMistake(item,div);
       el.appendChild(div);
     });
   });
+  if(!printed){el.innerHTML='<div class="hint" style="padding:12px 8px;line-height:1.45">No mistakes match — try another keyword.</div>';}
 }
 function toggleMistake(item,el){
   const idx=selectedMistakes.indexOf(item);
@@ -3454,13 +3473,16 @@ function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=
 // ── Checklist ──
 function toggle(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateChecks();}}
 function updateChecks(){
-  const boxes=[...document.querySelectorAll('.check-item input[type=checkbox]')];
+  const boxes=[...document.querySelectorAll('#checklist-body .check-item input[type=checkbox]')];
   const passed=boxes.filter(b=>b.checked).length;
-  document.getElementById('check-count').textContent=passed+' / '+boxes.length;
+  const cc=document.getElementById('check-count');
+  if(cc)cc.textContent=passed+' / '+boxes.length;
   const gate=document.getElementById('gate');
-  if(passed===boxes.length){gate.className='gate pass';gate.textContent='All checks passed — valid setup';}
-  else if(passed===0){gate.className='gate';gate.textContent='Complete checklist to see verdict';}
-  else{gate.className='gate fail';gate.textContent=(boxes.length-passed)+' check(s) not met — model says skip';}
+  if(gate){
+    if(passed===boxes.length){gate.className='gate pass';gate.textContent='All checks passed — valid setup (v2)';}
+    else if(passed===0){gate.className='gate';gate.textContent='Complete checklist to see verdict';}
+    else{gate.className='gate fail';gate.textContent=(boxes.length-passed)+' check(s) not met — model says skip';}
+  }
 }
 
 function rateStar(n){discRating=n;document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
@@ -3580,8 +3602,8 @@ async function saveTrade(){
     risk,
     tradeClass,
     tags,
-    checksPassed:[...document.querySelectorAll('.check-item input[type=checkbox]')].filter(b=>b.checked).length,
-    checksTotal:document.querySelectorAll('.check-item input[type=checkbox]').length
+    checksPassed:[...document.querySelectorAll('#checklist-body .check-item input[type=checkbox]')].filter(b=>b.checked).length,
+    checksTotal:document.querySelectorAll('#checklist-body .check-item input[type=checkbox]').length
   };
   checkPB(trade);
   trades.unshift(trade);
@@ -3601,7 +3623,8 @@ function clearForm(){
     if(prev)prev.innerHTML='';
   });
   window._pendingSSFiles={};
-  document.querySelectorAll('.check-item input').forEach(b=>b.checked=false);
+  document.querySelectorAll('#checklist-body .check-item input').forEach(b=>b.checked=false);
+  const ms=document.getElementById('mistake-search');if(ms)ms.value='';
   discRating=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   tradeClass='';tradeInterference='';
@@ -4404,11 +4427,11 @@ function renderChecklistWR(f){
   const el=document.getElementById('s-checklist-wr');if(!el)return;
   const withChecks=f.filter(t=>t.checksTotal>0&&(t.outcome==='win'||t.outcome==='loss'||t.outcome==='be'));
   if(withChecks.length<3){el.innerHTML='<span style="font-size:13px;color:#6b7280">Need more trades to show this.</span>';return;}
-  // Bucket by pct complete: 100% / 80-99% / under 80%
+  // Bucket by checklist completion %
   const buckets=[
-    {label:'10 / 10 checks',min:1.0,max:1.0,trades:[]},
-    {label:'8–9 / 10 checks',min:0.75,max:0.99,trades:[]},
-    {label:'≤ 7 / 10 checks',min:0,max:0.74,trades:[]}
+    {label:'100% checklist',min:1.0,max:1.0,trades:[]},
+    {label:'About 75–99% checklist',min:0.75,max:0.99,trades:[]},
+    {label:'Below 75% checklist',min:0,max:0.74,trades:[]}
   ];
   withChecks.forEach(t=>{
     const pct=t.checksPassed/t.checksTotal;
@@ -5449,11 +5472,7 @@ function loadDraft(){
     if(draft.discRating){discRating=draft.discRating;document.querySelectorAll('#stars-disc .star').forEach((s,i)=>s.classList.toggle('lit',i<draft.discRating));}
     if(draft.selectedMistakes&&draft.selectedMistakes.length){
       selectedMistakes=draft.selectedMistakes;
-      buildMistakes();
-      document.querySelectorAll('.mistake-item').forEach(el=>{
-        const span=el.querySelector('span');
-        if(span&&selectedMistakes.includes(span.textContent))el.classList.add('selected');
-      });
+      buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'');
       document.getElementById('mistake-count').textContent='('+selectedMistakes.length+' selected)';
     }
     updateChecks();
@@ -5608,8 +5627,8 @@ function randomizeTrade(){
   selectedMistakes=randMistakes;
   document.querySelectorAll('.mistake-item').forEach(el=>{const label=el.querySelector('span');if(label&&randMistakes.includes(label.textContent)){el.classList.add('selected');}else{el.classList.remove('selected');}});
   document.getElementById('mistake-count').textContent=randMistakes.length?'('+randMistakes.length+' selected)':'';
-  document.querySelectorAll('.check-item input[type=checkbox]').forEach(b=>{b.checked=true;});
-  if(rOutcome==='loss'){const checkboxes=[...document.querySelectorAll('.check-item input[type=checkbox]')];const failIdx=Math.floor(Math.random()*(checkboxes.length-2))+2;checkboxes[failIdx].checked=false;}
+  document.querySelectorAll('#checklist-body .check-item input[type=checkbox]').forEach(b=>{b.checked=true;});
+  if(rOutcome==='loss'){const checkboxes=[...document.querySelectorAll('#checklist-body .check-item input[type=checkbox]')];if(checkboxes.length>2){const failIdx=Math.floor(Math.random()*(checkboxes.length-2))+2;checkboxes[failIdx].checked=false;}}
   updateChecks();
   // Show placeholder thumbnails without uploading
   window._pendingSSFiles={};
@@ -7040,8 +7059,9 @@ document.addEventListener('click',function(e){
     padding: 6px !important;
   }
 
-  /* ── 29. JOURNAL SEARCH BAR ── */
-  #journal-search {
+  /* ── 29. JOURNAL + MISTAKE SEARCH ── */
+  #journal-search,
+  #mistake-search {
     max-width: 100% !important;
     width: 100% !important;
   }
