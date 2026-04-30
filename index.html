@@ -1653,7 +1653,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <button onclick="openRevealsModal()" style="display:flex;align-items:center;gap:10px;padding:13px 28px;border-radius:14px;border:1px solid rgba(16,185,129,0.3);background:linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.04) 100%);color:var(--accent);cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;letter-spacing:.01em;transition:all .2s;width:100%;max-width:460px;justify-content:center" onmouseover="this.style.background='linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(16,185,129,0.08) 100%)';this.style.borderColor='rgba(16,185,129,0.5)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.04) 100%)';this.style.borderColor='rgba(16,185,129,0.3)'">
       <span style="font-size:18px">📊</span>
       <span>What Your Trade Data Reveals</span>
-      <span style="font-size:12px;color:#6b7280;font-weight:400;margin-left:4px">AI-powered</span>
     </button>
   </div>
 
@@ -2122,22 +2121,74 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <span>No-trade session</span>
       <span style="font-size:12px;color:#9ca3af;font-weight:400;text-transform:none;letter-spacing:0">Watched the window but took zero trades</span>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:6px;align-items:end">
+    <div style="display:grid;grid-template-columns:minmax(140px,220px) 1fr;gap:10px;margin-top:6px;align-items:end">
       <div><label style="font-size:12px;color:#9ca3af">Date</label><input type="date" id="dash-nt-date" style="width:100%;margin-top:4px"></div>
-      <div><label style="font-size:12px;color:#9ca3af">Why no trade?</label>
-        <select id="dash-nt-reason" style="width:100%;margin-top:4px;font-family:inherit">
-          <option value="">—</option>
-          <option>Major news — skipped</option>
-          <option>Not neutral headspace</option>
-          <option>No clear draw / C-tier alone</option>
-          <option>HTF chop / weak displacement</option>
-          <option>Outside 2:30–4:00 UK window</option>
-          <option>Setup past 4:00 PM entry rule</option>
-          <option>Walked away — perfect skip</option>
-          <option>Other (see note)</option>
-        </select>
-      </div>
-      <div style="grid-column:1/-1"><label style="font-size:12px;color:#9ca3af">Note</label><input type="text" id="dash-nt-note" placeholder="Optional context…" style="width:100%;margin-top:4px;font-family:inherit"></div>
+    </div>
+    <div style="margin-top:12px">
+      <label style="font-size:12px;color:#9ca3af;display:block;margin-bottom:6px">Why no trade? <span style="color:#6b7280;font-weight:400">— pick the closest specific reason</span></label>
+      <select id="dash-nt-reason" style="width:100%;margin-top:2px;font-family:inherit;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#0d0d0d;color:#e5e7eb;line-height:1.4">
+        <option value="">—</option>
+        <optgroup label="Session · can I trade?">
+          <option>Outside 2:30–4:00 PM UK window</option>
+          <option>Major news / red folder — skipped</option>
+          <option>Not neutral headspace / distracted</option>
+          <option>Already traded today — one trade max</option>
+          <option>Past 4:00 PM new entry — hard no-trade</option>
+          <option>Hard close 4:30 — no time to manage</option>
+        </optgroup>
+        <optgroup label="Draw · liquidity (1H target)">
+          <option>No single clear draw — skip</option>
+          <option>C-tier draw alone — invalid per rules</option>
+          <option>Multiple draws — could not pick one</option>
+          <option>Draw already tapped — no fresh liquidity</option>
+          <option>Target too far / doubtful relative to conditions</option>
+        </optgroup>
+        <optgroup label="4H bias / HTF">
+          <option>4H chop — ranging, no clear structure</option>
+          <option>4H not delivering toward stated draw</option>
+          <option>Delivering from opposite HTF gap — skip</option>
+          <option>1H/4H misaligned — conflicting story</option>
+        </optgroup>
+        <optgroup label="15M displacement">
+          <option>No clean 15M displacement toward draw</option>
+          <option>Weak displacement vs pullback — skip</option>
+          <option>Pullback stronger than displacement leg</option>
+          <option>No clean 15M BOS toward draw</option>
+          <option>Chop on 15M — no obvious expansion</option>
+        </optgroup>
+        <optgroup label="5M FVG / gap">
+          <option>No clean singular 5M FVG — skip</option>
+          <option>No obvious gap visible from far left</option>
+          <option>Multiple overlapping 5M gaps — messy</option>
+          <option>5M FVG formed in chop — skip</option>
+          <option>Gap not singular / not “obvious” enough</option>
+          <option>Gap partially filled — structure broken</option>
+        </optgroup>
+        <optgroup label="Pullback (5M into gap)">
+          <option>Fast / aggressive pullback — not slow &amp; weak</option>
+          <option>Retrace too deep — through / past FVG</option>
+          <option>Price chopped inside gap — no calm retrace</option>
+          <option>V-shape / violent retrace — scared off</option>
+        </optgroup>
+        <optgroup label="1M IFVG · confirmation">
+          <option>No 1M IFVG — never formed</option>
+          <option>No slight violation into gap before IFVG</option>
+          <option>1M closed back through IFVG — invalid</option>
+          <option>No clean 1M BOS / structure toward draw</option>
+          <option>IFVG entry candle too large — bad fill risk</option>
+          <option>Missed 1M confirmation — too late</option>
+        </optgroup>
+        <optgroup label="Psychology · discretion">
+          <option>Walked away — perfect discipline (no A+ setup)</option>
+          <option>Stopped myself from forcing — hard no-trade respected</option>
+          <option>Analysis paralysis / overthought</option>
+          <option>Not at screen — missed the window</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option>Other (detail in note)</option>
+        </optgroup>
+      </select>
+      <div style="margin-top:10px"><label style="font-size:12px;color:#9ca3af">Note</label><input type="text" id="dash-nt-note" placeholder="Extra context, price level, screenshots ref…" style="width:100%;margin-top:4px;font-family:inherit"></div>
     </div>
     <button type="button" class="btn btn-sm btn-primary" style="margin-top:12px" onclick="saveNoTradeSkipFromDashboard()">Save no-trade log</button>
     <div id="dash-nt-recent" style="margin-top:14px;font-size:13px;line-height:1.45;color:#cbd5e1"></div>
@@ -6483,13 +6534,11 @@ document.addEventListener('DOMContentLoaded',function(){
 /* ═══════════════════════════════════════════════════════════
    WHAT YOUR TRADE DATA REVEALS  —  fuze journal
    4 slides: Fuze Score · Consistency · Day of Week · Patterns
-   AI key takeaway per slide via Claude API
 ═══════════════════════════════════════════════════════════ */
 
 let _revSlide = 0;
 const _revTotal = 4;
 let _revDowChart = null;
-let _revAiCache = {};
 
 function revNav(dir){
   _revSlide = (_revSlide + dir + _revTotal) % _revTotal;
@@ -6569,7 +6618,6 @@ function revRenderFuzeSlide(){
       return '<div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px;color:#9ca3af">'+c.label+'</span><span style="font-size:12px;font-weight:600;color:#e5e7eb">'+c.score+'<span style="color:#6b7280">/'+c.max+'</span>'+(detail?' <span style="font-size:11px;color:#6b7280">('+detail+')</span>':'')+'</span></div><div style="height:4px;background:rgba(255,255,255,0.07);border-radius:2px"><div style="height:100%;width:'+Math.round(pct*100)+'%;background:'+barCol+';border-radius:2px;transition:width .8s ease"></div></div></div>';
     }).join('');
   }
-  revRequestAI(0);
 }
 
 /* ─── SLIDE 1 : Trading Consistency ─────────────────────── */
@@ -6647,8 +6695,6 @@ function revRenderConsistSlide(){
     card('Best Win Streak', bestW,'Consecutive winning trades.','<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.06);color:#9ca3af">INFO</span>') +
     card('Worst Loss Streak', bestL,'Consecutive losing trades.',
       badge(bestL,function(v){return v<=2;},function(v){return v<=4;}));
-
-  revRequestAI(1);
 }
 
 /* ─── SLIDE 2 : Day of Week ─────────────────────────────── */
@@ -6686,7 +6732,6 @@ function revRenderDowSlide(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '$'+ctx.raw.toFixed(0);}}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:11,family:'Plus Jakarta Sans'}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:10,family:'Plus Jakarta Sans'},callback:function(v){return '$'+v;}}}}}
     });
   }
-  revRequestAI(2);
 }
 
 /* ─── SLIDE 3 : Patterns ─────────────────────────────────── */
@@ -6741,102 +6786,9 @@ function revRenderPatternsSlide(){
       avgPerDay,
       'Max '+maxPerDay+' in one day · Model: 1 trade/day'+(maxPerDay>1?' — check for overtrading':''),
       maxPerDay>1?'#f59e0b':'#10b981');
-
-  revRequestAI(3);
-}
-
-/* ── AI Takeaway via Claude API ──────────────────────────── */
-async function revRequestAI(slideIdx){
-  var takeawayEl = document.getElementById('rev-slide'+slideIdx+'-takeaway');
-  if(!takeawayEl) return;
-
-  if(_revAiCache[slideIdx]){
-    takeawayEl.style.display='block';
-    takeawayEl.querySelector('.rev-takeaway-text').textContent = _revAiCache[slideIdx];
-    return;
-  }
-
-  var allT = trades.filter(function(t){return t.pnl!=null&&(t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');});
-  if(allT.length<3){
-    takeawayEl.style.display='block';
-    takeawayEl.querySelector('.rev-takeaway-text').textContent='Log at least 3 trades to generate an AI insight.';
-    return;
-  }
-
-  var prompt = buildRevealPrompt(slideIdx, allT);
-  if(!prompt) return;
-
-  takeawayEl.style.display='block';
-  takeawayEl.querySelector('.rev-takeaway-text').textContent='⏳ Generating AI insight...';
-  takeawayEl.style.opacity='0.6';
-
-  try{
-    var resp = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:'You are a concise trading coach analyzing a trader\'s journal data. The trader uses ICT concepts on NQ (NASDAQ) futures, trades intraday 2:30–4:00 PM UK window, 7 months into trading, on demo. Give ONE sharp specific key takeaway — 2-4 sentences max. Be direct and actionable, use the exact numbers. No generic advice. No preamble. Start straight with the insight.',
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    var data = await resp.json();
-    var text = (data.content&&data.content[0]&&data.content[0].text)||'Unable to generate insight.';
-    _revAiCache[slideIdx] = text;
-    takeawayEl.querySelector('.rev-takeaway-text').textContent = text;
-    takeawayEl.style.opacity='1';
-  } catch(e){
-    takeawayEl.querySelector('.rev-takeaway-text').textContent='AI insight unavailable — check connection.';
-    takeawayEl.style.opacity='1';
-  }
-}
-
-function buildRevealPrompt(slideIdx, allT){
-  var wins=allT.filter(function(t){return t.outcome==='win';});
-  var losses=allT.filter(function(t){return t.outcome==='loss';});
-  var total=allT.length;
-  var wr=Math.round(wins.length/total*100);
-  var grossWin=wins.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
-  var grossLoss=losses.reduce(function(s,t){return s+Math.abs(parseFloat(t.pnl)||0);},0);
-  var pf=grossLoss>0?(grossWin/grossLoss).toFixed(2):'N/A';
-  var avgWin=wins.length?(grossWin/wins.length).toFixed(0):0;
-  var avgLoss=losses.length?(grossLoss/losses.length).toFixed(0):0;
-  var totalPnl=allT.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0).toFixed(0);
-  var score=calcFuzeScore(allT);
-
-  if(slideIdx===0){
-    return 'Fuze Score analysis. '+total+' trades. Net P&L: $'+totalPnl+'. Win rate: '+wr+'%. Profit factor: '+pf+'. Avg win: $'+avgWin+', Avg loss: $'+avgLoss+'. Fuze Score: '+(score?score.total:'N/A')+'/100. Components: '+(score?score.components.map(function(c){return c.label+' '+c.score+'/'+c.max;}).join(', '):'N/A')+'. What is the single most important thing this trader should focus on to improve their score?';
-  }
-  if(slideIdx===1){
-    var wlRatio=avgLoss>0?(avgWin/avgLoss).toFixed(2):'N/A';
-    var peak2=0,dd2=0,run2=0;
-    allT.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(t){run2+=parseFloat(t.pnl)||0;if(run2>peak2)peak2=run2;if(peak2-run2>dd2)dd2=peak2-run2;});
-    return 'Trading consistency. '+total+' trades over '+Object.keys(allT.reduce(function(m,t){if(t.date)m[t.date]=1;return m;},{})).length+' days. Win rate: '+wr+'%. Profit factor: '+pf+'. Avg win/loss ratio: '+wlRatio+'. Max drawdown: $'+dd2.toFixed(0)+'. Net P&L: $'+totalPnl+'. What is the most actionable step to improve consistency?';
-  }
-  if(slideIdx===2){
-    var days2=['Monday','Tuesday','Wednesday','Thursday','Friday'];
-    var dowSummary=days2.map(function(day,idx){
-      var dayT=allT.filter(function(t){if(!t.date)return false;return new Date(t.date+'T12:00:00').getDay()===(idx+1);});
-      return day+': $'+dayT.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0).toFixed(0)+' ('+dayT.length+' trades)';
-    }).join(', ');
-    return 'Day of week performance. '+dowSummary+'. Total net P&L: $'+totalPnl+'. Which day pattern stands out most and what should this trader do?';
-  }
-  if(slideIdx===3){
-    var hourB={};
-    allT.forEach(function(t){if(!t.entryTime)return;var hr=t.entryTime.slice(0,2)+':00';if(!hourB[hr]){hourB[hr]={pnl:0,count:0};}hourB[hr].pnl+=parseFloat(t.pnl)||0;hourB[hr].count++;});
-    var hourSummary=Object.entries(hourB).sort(function(a,b){return b[1].pnl-a[1].pnl;}).map(function(e){return e[0]+': $'+e[1].pnl.toFixed(0)+' ('+e[1].count+' trades)';}).join(', ')||'No time data';
-    var discs3=allT.filter(function(t){return t.discRating;}).map(function(t){return t.discRating;});
-    var avgDisc3=discs3.length?(discs3.reduce(function(a,b){return a+b;},0)/discs3.length).toFixed(1):'N/A';
-    var dc={};allT.forEach(function(t){if(t.date)dc[t.date]=(dc[t.date]||0)+1;});
-    var maxPD=Object.values(dc).length?Math.max.apply(null,Object.values(dc)):0;
-    return 'Trading patterns. Entry time P&L: '+hourSummary+'. Avg discipline: '+avgDisc3+'/5. Max trades in one day: '+maxPD+' (model: 1/day). What is the most impactful pattern — good or bad — in this data?';
-  }
-  return null;
 }
 
 function startRevealsAnalysis(){
-  _revAiCache = {};
   var icon=document.getElementById('reveals-refresh-icon');
   var btn=document.getElementById('reveals-refresh-btn');
   if(icon) icon.style.animation='revSpin 1s linear infinite';
@@ -8446,7 +8398,7 @@ body.dark-mode #fuze-score-label{color:#6b7280!important}
         <div id="reveals-meta" style="font-size:12px;color:#6b7280;margin-top:2px"></div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <button id="reveals-refresh-btn" onclick="startRevealsAnalysis()" title="Re-run AI analysis" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9ca3af;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><span id="reveals-refresh-icon">&#x21BB;</span></button>
+        <button id="reveals-refresh-btn" onclick="startRevealsAnalysis()" title="Refresh slides" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9ca3af;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><span id="reveals-refresh-icon">&#x21BB;</span></button>
         <button onclick="closeRevealsModal()" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9ca3af;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">&#215;</button>
       </div>
     </div>
@@ -8473,10 +8425,6 @@ body.dark-mode #fuze-score-label{color:#6b7280!important}
             </div>
             <div id="rev-score-bars" style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:10px"></div>
           </div>
-          <div id="rev-slide0-takeaway" class="rev-takeaway" style="margin-top:18px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:14px;color:#d1d5db;line-height:1.65"></div>
-          </div>
         </div>
 
         <!-- SLIDE 1: Trading Consistency -->
@@ -8489,10 +8437,6 @@ body.dark-mode #fuze-score-label{color:#6b7280!important}
           </div>
           <div id="rev-consist-essential" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
           <div id="rev-consist-advanced" style="display:none;grid-template-columns:1fr 1fr;gap:10px"></div>
-          <div id="rev-slide1-takeaway" class="rev-takeaway" style="margin-top:16px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:14px;color:#d1d5db;line-height:1.65"></div>
-          </div>
         </div>
 
         <!-- SLIDE 2: Day of Week -->
@@ -8505,10 +8449,6 @@ body.dark-mode #fuze-score-label{color:#6b7280!important}
               <canvas id="rev-dow-chart" style="width:100%;height:165px"></canvas>
             </div>
           </div>
-          <div id="rev-slide2-takeaway" class="rev-takeaway" style="margin-top:16px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:14px;color:#d1d5db;line-height:1.65"></div>
-          </div>
         </div>
 
         <!-- SLIDE 3: Patterns -->
@@ -8516,10 +8456,6 @@ body.dark-mode #fuze-score-label{color:#6b7280!important}
           <div style="font-size:20px;font-weight:700;color:#e5e7eb;margin-bottom:4px">Patterns &amp; Habits</div>
           <div style="font-size:13px;color:#6b7280;margin-bottom:16px">What your behaviour data shows</div>
           <div id="rev-patterns-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-          <div id="rev-slide3-takeaway" class="rev-takeaway" style="margin-top:16px;padding:13px 15px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:none">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:7px">&#128273; Key Takeaway</div>
-            <div class="rev-takeaway-text" style="font-size:14px;color:#d1d5db;line-height:1.65"></div>
-          </div>
         </div>
 
       </div>
@@ -8539,7 +8475,6 @@ function openRevealsModal(){
   m.style.display='flex';
   document.body.style.overflow='hidden';
   _revSlide=0;
-  _revAiCache={};
   initReveals();
   revGoTo(0);
 }
