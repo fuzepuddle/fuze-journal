@@ -1452,7 +1452,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <button class="sb-nav-item active" onclick="showTab('dashboard')" data-tab="dashboard"><span class="sb-nav-icon">⊞</span> Dashboard</button>
     <button class="sb-nav-item" onclick="showTab('log')" data-tab="log"><span class="sb-nav-icon">＋</span> Log Trade</button>
     <button class="sb-nav-item" onclick="showTab('journal')" data-tab="journal"><span class="sb-nav-icon">≡</span> All Trades</button>
-    <button class="sb-nav-item" onclick="showTab('missed')" data-tab="missed"><span class="sb-nav-icon">○</span> Missed Trades</button>
   </div>
 
   <div class="sb-section">
@@ -1579,34 +1578,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <div class="dash-charts-row" style="margin-top:12px" id="dash-no-trade-card">
-    <div class="dash-chart-card" style="grid-column:1/-1">
-      <div class="dash-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <span>No-trade session</span>
-        <span style="font-size:11px;color:#9ca3af;font-weight:400">Watched the window but took zero trades</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px;align-items:end">
-        <div><label style="font-size:12px;color:#9ca3af">Date</label><input type="date" id="dash-nt-date" style="width:100%;margin-top:4px"></div>
-        <div><label style="font-size:12px;color:#9ca3af">Why no trade?</label>
-          <select id="dash-nt-reason" style="width:100%;margin-top:4px">
-            <option value="">—</option>
-            <option>Major news — skipped</option>
-            <option>Not neutral headspace</option>
-            <option>No clear draw / C-tier alone</option>
-            <option>HTF chop / weak displacement</option>
-            <option>Outside 2:30–4:00 UK window</option>
-            <option>Setup past 4:00 PM entry rule</option>
-            <option>Walked away — perfect skip</option>
-            <option>Other (see note)</option>
-          </select>
-        </div>
-        <div style="grid-column:1/-1"><label style="font-size:12px;color:#9ca3af">Note</label><input type="text" id="dash-nt-note" placeholder="Optional context…" style="width:100%;margin-top:4px"></div>
-      </div>
-      <button type="button" class="btn btn-sm btn-primary" style="margin-top:12px" onclick="saveNoTradeSkipFromDashboard()">Save no-trade log</button>
-      <div id="dash-nt-recent" style="margin-top:14px;font-size:13px;line-height:1.45"></div>
-    </div>
-  </div>
-
   <!-- Fuze Score + Monthly Consistency row -->
   <div class="dash-charts-row" style="margin-top:12px">
     <!-- Fuze Score -->
@@ -1691,9 +1662,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <div class="page" id="page-log">
 <div class="log-page-head">
   <h2 style="font-size:22px;font-weight:600;color:#e5e7eb;letter-spacing:-.02em">Log Trade</h2>
+  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center">
+    <button type="button" class="btn btn-sm btn-primary" id="log-subtab-trade" onclick="setLogSubTab('trade')" aria-selected="true">Trade</button>
+    <button type="button" class="btn btn-sm" id="log-subtab-notrade" onclick="setLogSubTab('notrade')" aria-selected="false" style="border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#e5e7eb">No-trade session</button>
+  </div>
 </div>
 <div id="all-profiles-banner" class="card" style="display:none;margin-bottom:14px;padding:12px 16px;background:rgba(148,130,255,0.06);border:1px solid rgba(148,130,255,0.22);border-radius:10px;font-size:14px;line-height:1.55;color:#c4b5fd">Merged Challenge + Funded + Demo into one ledger. Pick an account above to log trades (with screenshots).</div>
 <div id="log-form-col">
+
+<div id="log-pane-trade">
 
   <!-- SESSION TIMER -->
   <div class="card" id="session-timer-card" style="padding:12px 16px;margin-bottom:12px;transition:border-color .5s,background .5s">
@@ -2136,6 +2113,37 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <button class="btn" onclick="randomizeTrade()">Randomize</button>
     <button class="btn btn-primary" onclick="saveTrade()">Save →</button>
   </div>
+
+</div>
+
+<div id="log-pane-notrade" style="display:none">
+  <div class="card gap" id="log-no-trade-card">
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span>No-trade session</span>
+      <span style="font-size:12px;color:#9ca3af;font-weight:400;text-transform:none;letter-spacing:0">Watched the window but took zero trades</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:6px;align-items:end">
+      <div><label style="font-size:12px;color:#9ca3af">Date</label><input type="date" id="dash-nt-date" style="width:100%;margin-top:4px"></div>
+      <div><label style="font-size:12px;color:#9ca3af">Why no trade?</label>
+        <select id="dash-nt-reason" style="width:100%;margin-top:4px;font-family:inherit">
+          <option value="">—</option>
+          <option>Major news — skipped</option>
+          <option>Not neutral headspace</option>
+          <option>No clear draw / C-tier alone</option>
+          <option>HTF chop / weak displacement</option>
+          <option>Outside 2:30–4:00 UK window</option>
+          <option>Setup past 4:00 PM entry rule</option>
+          <option>Walked away — perfect skip</option>
+          <option>Other (see note)</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label style="font-size:12px;color:#9ca3af">Note</label><input type="text" id="dash-nt-note" placeholder="Optional context…" style="width:100%;margin-top:4px;font-family:inherit"></div>
+    </div>
+    <button type="button" class="btn btn-sm btn-primary" style="margin-top:12px" onclick="saveNoTradeSkipFromDashboard()">Save no-trade log</button>
+    <div id="dash-nt-recent" style="margin-top:14px;font-size:13px;line-height:1.45;color:#cbd5e1"></div>
+  </div>
+</div>
+
 </div>
 </div>
 
@@ -2371,154 +2379,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 
   <!-- Hidden metric-card id for pnl card compat -->
   <div id="s-pnl-card" style="display:none"></div>
-</div>
-
-<!-- MISSED TRADES -->
-<div class="page" id="page-missed">
-  <div class="page-header"><h2>Missed Trades</h2></div>
-  <div class="flex-between" style="margin-bottom:14px">
-    <div class="section-label" style="margin-bottom:0">Missed trades</div>
-    <button class="btn btn-primary" onclick="saveMissed()">Log missed setup →</button>
-  </div>
-  <div class="card gap">
-    <div class="section-label">Log a missed setup</div>
-    <div class="grid-3 gap">
-      <div><label>Date</label><input type="date" id="m-date"></div>
-      <div><label>Direction</label><select id="m-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><optgroup label="Daily / calendar"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Previous month high</option><option>Previous month low</option><option>Quarterly high (ICT)</option><option>Quarterly low (ICT)</option></optgroup><optgroup label="ON / gaps"><option>ON High</option><option>ON Low</option><option>NWOG</option><option>NDOG</option><option>RTH opening gap</option><option>ETH opening gap</option><option>Previous day FVG edge (bull)</option><option>Previous day FVG edge (bear)</option></optgroup><optgroup label="Session"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>NY PM session high</option><option>NY PM session low</option><option>Midnight Open</option><option>London midnight</option></optgroup><optgroup label="Equal / relative"><option>EQH</option><option>EQL</option><option>Relative equal highs</option><option>Relative equal lows</option><option>S tier draw</option><option>A tier draw</option><option>B tier draw</option><option>C tier draw (invalid alone)</option></optgroup><optgroup label="Pools / structure"><option>Buyside liquidity</option><option>Sellside liquidity</option><option>Internal range liquidity</option><option>Inducement</option><option>Dealing range high</option><option>Dealing range low</option><option>HTF order block</option><option>Breaker block</option><option>Mitigation block</option><option>HTF swing high</option><option>HTF swing low</option><option>HTF Swing Point</option></optgroup><optgroup label="Premium / discount"><option>Discount array</option><option>Premium array</option><option>OTE zone</option></optgroup></select></div>
-    </div>
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07)">
-      <div class="section-label" style="margin-bottom:8px">Setup quality on the chart <span style="color:#6b7280;font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">optional — same fields as a taken trade</span></div>
-      <div class="grid-2 gap">
-        <div><label>Draw tier</label><select id="m-sq-draw-tier"><option value="">—</option><option>S — perfect equal H/L</option><option>A — data wicks / TL liquidity</option><option>B — session H/L or relative EQ</option><option>C — unbalanced gap only</option></select></div>
-        <div><label>15M displacement</label><select id="m-sq-displacement"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
-        <div><label>5M gap quality</label><select id="m-sq-gap-quality"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
-        <div><label>Pullback into gap</label><select id="m-sq-pullback"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
-        <div style="grid-column:1/-1"><label>Session segment (UK)</label><select id="m-sq-session"><option value="">—</option><option>2:30–3:00</option><option>3:00–3:30</option><option>3:30–4:00</option><option>After 4:00 (no new entry)</option></select></div>
-      </div>
-    </div>
-    <div class="grid-2 gap">
-      <div><label>Why skipped?</label><select id="m-reason">
-        <option value="">—</option>
-        <optgroup label="Draw / Target">
-          <option>No clear single draw</option>
-          <option>Multiple competing draws — couldn't decide</option>
-          <option>Draw already tapped earlier in session</option>
-          <option>Target felt too far — doubted the move</option>
-          <option>Opposing HTF level in the way</option>
-        </optgroup>
-        <optgroup label="HTF Context">
-          <option>HTF chop — no clear structure</option>
-          <option>4H and 1H misaligned</option>
-          <option>Small candles on higher timeframe</option>
-          <option>Traded against HTF trend — hesitated</option>
-          <option>Wasn't sure of overall bias</option>
-        </optgroup>
-        <optgroup label="Displacement">
-          <option>No displacement visible on 15M</option>
-          <option>Displacement looked weak</option>
-          <option>Displacement weaker than retrace — unsure</option>
-          <option>No 5M FVG left behind</option>
-          <option>5M FVG formed in chop — ignored</option>
-          <option>FVG too large / messy</option>
-          <option>Gap already partially filled</option>
-        </optgroup>
-        <optgroup label="Retrace">
-          <option>Retrace was violent — scared me off</option>
-          <option>Retrace too deep — went through FVG</option>
-          <option>Price consolidated inside gap — no clean tap</option>
-          <option>Missed the retrace — wasn't watching</option>
-          <option>Retrace happened too fast</option>
-        </optgroup>
-        <optgroup label="1M Confirmation">
-          <option>No 1M candle close — still waiting</option>
-          <option>No 1M mini trend (no HH + HL)</option>
-          <option>No clear higher low to mark</option>
-          <option>BOS candle was going away from draw</option>
-          <option>BOS was a wick not a close</option>
-          <option>1M structure broke before confirmation</option>
-          <option>Confirmation candle was too large — bad fill</option>
-          <option>Missed the 1M entry — came back too late</option>
-        </optgroup>
-        <optgroup label="Session / Timing">
-          <option>After 16:00 UK cutoff</option>
-          <option>News event pending</option>
-          <option>Setup appeared outside session window</option>
-          <option>Didn't have enough time left in session</option>
-        </optgroup>
-        <optgroup label="Psychology">
-          <option>Emotional state not neutral</option>
-          <option>Still shaken from previous loss</option>
-          <option>Hesitated — doubted myself</option>
-          <option>Overthought it — analysis paralysis</option>
-          <option>Got distracted — missed the window</option>
-          <option>Didn't trust the setup even though it was valid</option>
-          <option>Fear of another loss</option>
-          <option>Just missed it — wasn't at the screen</option>
-        </optgroup>
-        <optgroup label="Framework">
-          <option>Missed unqualified setup — perfect execution</option>
-          <option>Stopped at BE on slow trade — perfect execution</option>
-          <option>Target reached then chop — closed immediately (done for day)</option>
-        </optgroup>
-        <optgroup label="Can I trade?">
-          <option>Outside session window (2:30–4:00 PM UK)</option>
-          <option>Major news — no neutral headspace</option>
-          <option>Not neutral — skipped</option>
-        </optgroup>
-        <optgroup label="Draw tier">
-          <option>No clear single draw — skip</option>
-          <option>C tier alone — skip</option>
-          <option>Competing draws — could not pick one</option>
-          <option>Draw not untapped / already taken</option>
-        </optgroup>
-        <optgroup label="4H bias">
-          <option>4H ranging / small candles — skip</option>
-          <option>Delivering from opposite HTF gap — skip</option>
-          <option>Structure not toward draw — skip</option>
-        </optgroup>
-        <optgroup label="15M displacement">
-          <option>Weak displacement vs pullback — skip</option>
-          <option>No clear BOS on displacement — skip</option>
-        </optgroup>
-        <optgroup label="5M gap">
-          <option>Multiple messy gaps — skip</option>
-          <option>Gap formed in chop — skip</option>
-          <option>Not singular obvious FVG — skip</option>
-        </optgroup>
-        <optgroup label="Pullback">
-          <option>Fast / aggressive pullback — skip</option>
-          <option>Pullback not slow &amp; weak — skip</option>
-        </optgroup>
-        <optgroup label="IFVG 1M">
-          <option>No IFVG / no slight violation into gap</option>
-          <option>Waited for retest but never got clean reaction</option>
-          <option>1M closed back through IFVG — invalid</option>
-        </optgroup>
-        <optgroup label="Target / BE / exit">
-          <option>Slow momentum + aimed for full target (rule break)</option>
-          <option>Did not move to BE at first internal swing</option>
-          <option>Price stalled at BE zone — took BE per 60% rule</option>
-          <option>After 4:00 PM — trailed per 5M rule / hard close 4:30</option>
-          <option>Past 4:00 PM entry — hard no-trade</option>
-        </optgroup>
-        <optgroup label="Hard no-trade">
-          <option>Forcing a setup — hard no-trade</option>
-          <option>HTF chop + attempted continuation — skip</option>
-        </optgroup>
-      </select></div>
-
-    </div>
-    <div><label>Notes</label><textarea id="m-notes" placeholder="What did you see? What stopped you?" style="min-height:50px"></textarea></div>
-    <div style="margin-top:10px"><label>Exact thought that stopped you <span style="color:#9ca3af;font-size:14px;font-weight:400">— be specific</span></label><textarea id="m-hesitation" placeholder="e.g. I told myself maybe we get a bigger pullback. By the time the real entry came I'd already mentally checked out..." style="min-height:60px"></textarea></div>
-  </div>
-  <div class="log-wrap" style="margin-top:4px">
-    <table class="log-table">
-      <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>SQ</th><th>Reason skipped</th><th>Est.</th><th>Notes</th><th></th></tr></thead>
-      <tbody id="missed-body"></tbody>
-    </table>
-  </div>
-  <div id="missed-empty" class="no-trades" style="display:none">No missed trades logged yet.</div>
 </div>
 
 <!-- WEEKLY REVIEW -->
@@ -3238,10 +3098,8 @@ async function onAuthSuccess(){
   if(sob) sob.style.display='block';
   if(typeof applyJournalTagline==='function')applyJournalTagline();
   const fDateEl=document.getElementById('f-date');
-  const mDateEl=document.getElementById('m-date');
   const today=new Date().toISOString().split('T')[0];
   if(fDateEl) fDateEl.value=today;
-  if(mDateEl) mDateEl.value=today;
   await loadAllData();
   loadDraft();
 }
@@ -3533,7 +3391,7 @@ function renderDashboard(){
     }
   }
   renderDashMiniCal();
-  renderDashNoTradePanel();
+  renderLogNoTradePanel();
 }
 
 // ── Dashboard mini calendar ──
@@ -3592,6 +3450,21 @@ function renderDashMiniCal(){
   if(cell>0)html+='</tr>';
   bodyEl.innerHTML=html;
 }
+function setLogSubTab(which){
+  var trade=document.getElementById('log-pane-trade');
+  var nt=document.getElementById('log-pane-notrade');
+  var bTrade=document.getElementById('log-subtab-trade');
+  var bNt=document.getElementById('log-subtab-notrade');
+  if(!trade||!nt)return;
+  var isTrade=which==='trade';
+  trade.style.display=isTrade?'':'none';
+  nt.style.display=isTrade?'none':'';
+  var muted='border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#e5e7eb';
+  if(bTrade){bTrade.classList.toggle('btn-primary',isTrade);bTrade.style.cssText=isTrade?'':muted;bTrade.setAttribute('aria-selected',isTrade?'true':'false');}
+  if(bNt){bNt.classList.toggle('btn-primary',!isTrade);bNt.style.cssText=!isTrade?'':muted;bNt.setAttribute('aria-selected',!isTrade?'true':'false');}
+  if(!isTrade)renderLogNoTradePanel();
+}
+
 function showTab(t){
   document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.sb-nav-item').forEach(el=>el.classList.remove('active'));
@@ -3600,11 +3473,10 @@ function showTab(t){
   document.querySelectorAll('.sb-nav-item').forEach(el=>{if(el.getAttribute('data-tab')===t)el.classList.add('active');});
   const pg=document.getElementById('page-'+t);if(pg)pg.classList.add('active');
   if(t==='dashboard')renderDashboard();
-  if(t==='log'){setTimeout(prefillCalc,100);}
+  if(t==='log'){setLogSubTab('trade');setTimeout(prefillCalc,100);}
   if(t==='journal')renderJournal();
   if(t==='stats')renderStats();
   if(t==='calendar')renderCalendar();
-  if(t==='missed')renderMissed();
   if(t==='weekly')renderWeekly();
   const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
@@ -5307,46 +5179,8 @@ function loadPresession(){
   renderPresession();
 }
 
-// ── Missed trades ──
+// Missed-trades screen removed — legacy rows still sync in `ict_missed_profiles` for backups & merged profile.
 let missedTrades=[];
-
-function saveMissedStore(){
-  allMissedTrades[currentProfile]=missedTrades;
-  try{localStorage.setItem('ict_missed_profiles',JSON.stringify(allMissedTrades));}catch(e){}
-  supaSet('ict_missed_profiles',allMissedTrades);
-}
-
-function saveMissed(){
-  if(currentProfile==='all'){alert('Switch to Challenge, Funded, or Demo to log a missed trade.');return;}
-  const date=document.getElementById('m-date').value;
-  if(!date){alert('Add a date');return;}
-  const m={id:Date.now(),date,direction:document.getElementById('m-direction').value,draw:document.getElementById('m-draw').value,reason:document.getElementById('m-reason').value,notes:document.getElementById('m-notes').value,hesitation:document.getElementById('m-hesitation').value,setupQuality:readSetupQuality('m')};
-  missedTrades.unshift(m);saveMissedStore();
-  ['m-date','m-direction','m-draw','m-reason','m-notes','m-hesitation','m-sq-draw-tier','m-sq-displacement','m-sq-gap-quality','m-sq-pullback','m-sq-session'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
-  renderMissed();
-}
-function renderMissed(){
-  const tbody=document.getElementById('missed-body');
-  const empty=document.getElementById('missed-empty');
-  if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(function(m){var lbl=m.date+(m._profile?' <span style="font-size:11px;color:#818cf8">['+String(m._profile)+']</span>':'');var sqM=formatSetupQualitySummary(m.setupQuality)||'—';if(sqM.length>56)sqM=sqM.slice(0,54)+'…';return'<tr><td style="white-space:nowrap">'+lbl+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:12px;color:#9ca3af;max-width:140px;line-height:1.35">'+sqM+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';}).join('');
-}
-function delMissed(id){
-  if(!confirm('Delete?'))return;
-  if(currentProfile==='all'){
-    var m=missedTrades.find(function(x){return x.id===id;});
-    if(!m||!m._profile)return;
-    var src=m._profile;
-    allMissedTrades[src]=(allMissedTrades[src]||[]).filter(function(x){return x.id!==id;});
-    missedTrades=missedTrades.filter(function(x){return x.id!==id;});
-    try{localStorage.setItem('ict_missed_profiles',JSON.stringify(allMissedTrades));}catch(e){}
-    supaSet('ict_missed_profiles',allMissedTrades);
-    renderMissed();
-    return;
-  }
-  missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();
-}
 
 function saveNoTradeSkipsStore(){
   try{localStorage.setItem('fuze_no_trade_skips',JSON.stringify(allNoTradeSkips));}catch(e){}
@@ -5365,11 +5199,11 @@ function saveNoTradeSkipFromDashboard(){
   allNoTradeSkips[currentProfile][date]={reason:rEl.value,note:nEl?String(nEl.value||'').trim():'',savedAt:new Date().toISOString()};
   saveNoTradeSkipsStore();
   if(nEl)nEl.value='';
-  renderDashNoTradePanel();
+  renderLogNoTradePanel();
   alert('No-trade session saved for '+date+' ✓');
 }
-function renderDashNoTradePanel(){
-  var wrap=document.getElementById('dash-no-trade-card');
+function renderLogNoTradePanel(){
+  var wrap=document.getElementById('log-no-trade-card');
   if(!wrap)return;
   if(currentProfile==='all'||currentProfile==='backtesting'){wrap.style.display='none';return;}
   wrap.style.display='block';
@@ -5793,10 +5627,10 @@ function applyProfileUI(){
   if(logCol)logCol.style.display=isAll?'none':'block';
   var allBanner=document.getElementById('all-profiles-banner');
   if(allBanner)allBanner.style.display=isAll?'block':'none';
-  var missedTop=document.querySelector('#page-missed > .flex-between');
-  var missedCard=document.querySelector('#page-missed > .card.gap');
-  if(missedTop)missedTop.style.display=isAll?'none':'';
-  if(missedCard)missedCard.style.display=isAll?'none':'';
+  var ntsub=document.getElementById('log-subtab-notrade');
+  if(ntsub)ntsub.style.display=isBack?'none':'';
+  if(isBack&&typeof setLogSubTab==='function')setLogSubTab('trade');
+  renderLogNoTradePanel();
 }
 
 function switchProfile(p, btn){
@@ -5824,12 +5658,11 @@ function switchProfile(p, btn){
   if(!t){const activeTab=document.querySelector('.tab.active');if(activeTab)t=activeTab.getAttribute('data-tab');}
   if(!t){const activePg=document.querySelector('.page.active');if(activePg)t=activePg.id.replace('page-','');}
   if(t){
-    if(t==='log'){setTimeout(prefillCalc,100);}
+    if(t==='log'){setLogSubTab('trade');setTimeout(prefillCalc,100);}
     else if(t==='dashboard')(window.renderDashboard||renderDashboard)();
     else if(t==='journal')renderJournal();
     else if(t==='stats')(window.renderStats||renderStats)();
     else if(t==='calendar')renderCalendar();
-    else if(t==='missed')renderMissed();
     else if(t==='weekly')renderWeekly();
     else if(t==='presession'){if(typeof loadPresession==='function')loadPresession();}
     else if(t==='notebook'){if(typeof loadNotebookForDate==='function')loadNotebookForDate();}
@@ -6275,9 +6108,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
     try{
       const today=new Date().toISOString().split('T')[0];
       const fDateEl=document.getElementById('f-date');
-      const mDateEl=document.getElementById('m-date');
       if(fDateEl) fDateEl.value=today;
-      if(mDateEl) mDateEl.value=today;
       applyLoadedData();
       applyProfileUI();
       renderJournal&&renderJournal();
@@ -6307,9 +6138,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
         authHideOverlay();
         const today=new Date().toISOString().split('T')[0];
         const fDateEl=document.getElementById('f-date');
-        const mDateEl=document.getElementById('m-date');
         if(fDateEl) fDateEl.value=today;
-        if(mDateEl) mDateEl.value=today;
         const sob=document.getElementById('sb-signout-btn');
         if(sob) sob.style.display='block';
         await loadAllData();
@@ -7187,7 +7016,6 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
 
 <!-- More menu -->
 <div id="mobile-more-menu">
-  <div class="more-item" onclick="mobNav('missed')">    <span class="more-item-icon">👁</span>Missed trades</div>
   <div class="more-item" onclick="mobNav('weekly')">    <span class="more-item-icon">📋</span>Weekly review</div>
 
 </div>
@@ -7242,8 +7070,9 @@ document.addEventListener('click',function(e){
 @media (max-width: 768px) {
 
   /* ── 1. SESSION TIMER — stack vertically ── */
-  #page-log > #log-form-col > div:first-child {
-    grid-template-columns: 1fr !important;
+  #log-pane-trade {
+    display: flex !important;
+    flex-direction: column !important;
   }
   #session-timer-card {
     order: 2; /* risk calc first on mobile */
@@ -7454,10 +7283,7 @@ document.addEventListener('click',function(e){
     display: grid !important;
   }
 
-  /* ── 16. MISSED TRADES — full table scroll ── */
-  #page-missed .log-wrap {
-    -webkit-overflow-scrolling: touch !important;
-  }
+  /* ── 16. Trade journal table ── */
   .log-table {
     min-width: 540px !important;
   }
