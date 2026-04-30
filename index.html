@@ -2215,6 +2215,30 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
+  <!-- Setup quality + verdict (sliceable, actionable) -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px">
+    <div class="card">
+      <div class="section-label">P&amp;L by draw tier</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Where your edge shows up in $ — log setup quality on each trade.</div>
+      <div id="s-sq-tier" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">15M displacement (logged)</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Win % and $ when displacement was strong vs weak.</div>
+      <div id="s-sq-displacement" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">5M gap + pullback</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Clean gaps vs messy — same trade log fields.</div>
+      <div id="s-sq-gap-pull" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Post verdict vs outcome</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Did “take again” trades actually pay? Calibrate honesty.</div>
+      <div id="s-post-verdict" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+  </div>
+
   <!-- Row 6: Draw success + Best day/bias + Top mistakes -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
@@ -3554,7 +3578,6 @@ async function saveTrade(){
   if(!trimVal('f-narrative')) missing.push('Narrative');
   if(!trimVal('f-improve')) missing.push('Lessons learned / takeaway');
   if(document.getElementById('f-fvg-zone')&&!trimVal('f-fvg-zone')) missing.push('FVG entry zone');
-  if(checklistTotal>0&&checklistPassed!==checklistTotal) missing.push('Model checklist — tick every item');
   if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state (before entry)');
   if(document.getElementById('f-emotion-post')&&!document.getElementById('f-emotion-post').value) missing.push('Emotional state (after close)');
   if(document.getElementById('f-momentum')&&!document.getElementById('f-momentum').value) missing.push('Momentum at entry');
@@ -4034,6 +4057,10 @@ function renderStats(){
   renderMomentumStats(f);
   renderLongShort(f);
   renderFvgZoneStats(f);
+  renderSqTierStats(f);
+  renderSqDisplacementStats(f);
+  renderSqGapPullbackStats(f);
+  renderPostVerdictStats(f);
   renderChecklistWR(f);
   renderHoldDuration(f);
   renderClassStats(f);
@@ -4093,8 +4120,9 @@ function renderMomentumStats(f){
   if(!withM.length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log momentum on trades to see this</span>';return;}
   const map={};
   withM.forEach(t=>{
-    if(!map[t.momentum])map[t.momentum]={win:0,loss:0,be:0,total:0};
+    if(!map[t.momentum])map[t.momentum]={win:0,loss:0,be:0,total:0,pnl:0};
     map[t.momentum].total++;
+    map[t.momentum].pnl+=(t.pnl!=null?t.pnl:0);
     if(t.outcome==='win')map[t.momentum].win++;
     else if(t.outcome==='loss')map[t.momentum].loss++;
     else map[t.momentum].be++;
@@ -4103,10 +4131,12 @@ function renderMomentumStats(f){
   const col=m=>m.includes('Aggressive')?'#10b981':m.includes('Slowing')||m.includes('Stalled')||m.includes('Grinding')?'#ef4444':'#f59e0b';
   el.innerHTML=sorted.map(([m,d])=>{
     const wr=d.win+d.loss>0?Math.round(d.win/(d.win+d.loss)*100)+'%':'—';
-    return'<div style="margin-bottom:8px">'
-      +'<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
-      +'<span style="font-size:14px;color:'+col(m)+'">'+m+'</span>'
-      +'<span style="font-size:14px;color:#9ca3af">'+d.total+' trades · '+wr+' WR</span>'
+    const avg=d.total?d.pnl/d.total:0;
+    const pcol=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    return'<div style="margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:3px">'
+      +'<span style="font-size:14px;color:'+col(m)+';max-width:55%">'+m+'</span>'
+      +'<span style="font-size:13px;color:#9ca3af;text-align:right;line-height:1.4">'+d.total+' tr · '+wr+' WR<br><span style="color:'+pcol+'">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+'</span></span>'
       +'</div></div>';
   }).join('');
 }
@@ -4157,20 +4187,24 @@ function renderDrawStats(f){
   const el=document.getElementById('s-draws');if(!el)return;
   const draws={};
   f.filter(t=>t.draw&&t.outcome).forEach(t=>{
-    if(!draws[t.draw])draws[t.draw]={win:0,total:0};
+    if(!draws[t.draw])draws[t.draw]={win:0,loss:0,total:0,pnl:0};
     draws[t.draw].total++;
+    draws[t.draw].pnl+=(t.pnl!=null?t.pnl:0);
     if(t.outcome==='win')draws[t.draw].win++;
+    else if(t.outcome==='loss')draws[t.draw].loss++;
   });
   const sorted=Object.entries(draws).sort((a,b)=>b[1].total-a[1].total);
   if(!sorted.length){el.textContent='No data';return;}
   el.innerHTML=sorted.slice(0,6).map(([draw,d])=>{
-    const wr=Math.round(d.win/d.total*100);
+    const wl=d.win+d.loss;
+    const wr=wl?Math.round(d.win/wl*100):Math.round(d.win/d.total*100);
     const col=wr>=60?'#10b981':wr>=40?'#f59e0b':'#ef4444';
-    return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
-      +'<span style="font-size:14px;color:var(--text-primary,#e5e7eb)">'+draw+'</span>'
-      +'<div style="display:flex;align-items:center;gap:8px">'
-      +'<span style="font-size:14px;color:#9ca3af">'+d.total+' trades</span>'
-      +'<span style="font-size:14px;font-weight:500;color:'+col+'">'+wr+'%</span>'
+    const pnlCol=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    return'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:10px">'
+      +'<span style="font-size:14px;color:var(--text-primary,#e5e7eb);flex:1;min-width:0">'+draw+'</span>'
+      +'<div style="text-align:right;flex-shrink:0">'
+      +'<div><span style="font-size:13px;color:#9ca3af">'+d.total+' tr</span> <span style="font-size:14px;font-weight:500;color:'+col+'">'+wr+'%</span></div>'
+      +'<div style="font-size:12px;color:'+pnlCol+';margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div>'
       +'</div></div>';
   }).join('');
 }
@@ -4408,10 +4442,11 @@ function renderFvgZoneStats(f){
   const zones=['Top of gap','Middle of gap','Bottom of gap'];
   const zoneColors={'Top of gap':'#10b981','Middle of gap':'#f59e0b','Bottom of gap':'#ef4444'};
   const data={};
-  zones.forEach(z=>{data[z]={win:0,loss:0,be:0,total:0};});
+  zones.forEach(z=>{data[z]={win:0,loss:0,be:0,total:0,pnl:0};});
   withZone.forEach(t=>{
     const z=t.fvgZone;if(!data[z])return;
     data[z].total++;
+    if(t.pnl!=null)data[z].pnl+=t.pnl;
     if(t.outcome==='win')data[z].win++;
     else if(t.outcome==='loss')data[z].loss++;
     else if(t.outcome==='be')data[z].be++;
@@ -4420,9 +4455,12 @@ function renderFvgZoneStats(f){
     const d=data[z];
     const wr=d.win+d.loss>0?Math.round(d.win/(d.win+d.loss)*100)+'%':'—';
     const col=zoneColors[z];
-    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">'
+    const pnl=d.pnl||0;
+    const pnlCol=pnl>0?'#10b981':pnl<0?'#ef4444':'#6b7280';
+    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:10px">'
       +'<div><div style="font-size:13px;color:'+col+';font-weight:500;margin-bottom:2px">'+z+'</div>'
-      +'<div style="font-size:12px;color:#6b7280">'+d.total+' trade'+(d.total!==1?'s':'')+' · '+d.win+'W '+d.loss+'L'+(d.be?' '+d.be+'BE':'')+'</div></div>'
+      +'<div style="font-size:12px;color:#6b7280">'+d.total+' trade'+(d.total!==1?'s':'')+' · '+d.win+'W '+d.loss+'L'+(d.be?' '+d.be+'BE':'')+'</div>'
+      +'<div style="font-size:12px;color:'+pnlCol+';margin-top:4px">Σ '+(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(0)+'</div></div>'
       +'<div style="font-size:16px;font-weight:700;color:'+col+'">'+wr+'</div>'
       +'</div>';
   });
@@ -5329,18 +5367,127 @@ function renderTimeOfDay(trades){
   const el=document.getElementById('s-timeofday');
   const withTime=trades.filter(t=>t.entryTime&&t.pnl!=null);
   if(!withTime.length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log entry time on trades to see this</span>';return;}
-  const slots={'14:30–15:00':{pnl:0,n:0},'15:00–15:30':{pnl:0,n:0},'15:30–16:00':{pnl:0,n:0}};
+  const slots={'14:30–15:00':{pnl:0,n:0,w:0,wl:0},'15:00–15:30':{pnl:0,n:0,w:0,wl:0},'15:30–16:00':{pnl:0,n:0,w:0,wl:0}};
   withTime.forEach(t=>{
     const[h,m]=t.entryTime.split(':').map(Number);
     const mins=h*60+m;
-    if(mins>=870&&mins<900)slots['14:30–15:00'].pnl+=t.pnl,slots['14:30–15:00'].n++;
-    else if(mins>=900&&mins<930)slots['15:00–15:30'].pnl+=t.pnl,slots['15:00–15:30'].n++;
-    else if(mins>=930&&mins<960)slots['15:30–16:00'].pnl+=t.pnl,slots['15:30–16:00'].n++;
+    var slot=null;
+    if(mins>=870&&mins<900)slot='14:30–15:00';
+    else if(mins>=900&&mins<930)slot='15:00–15:30';
+    else if(mins>=930&&mins<960)slot='15:30–16:00';
+    if(!slot)return;
+    slots[slot].pnl+=t.pnl;slots[slot].n++;
+    if(t.outcome==='win'||t.outcome==='loss'){slots[slot].wl++;if(t.outcome==='win')slots[slot].w++;}
   });
   el.innerHTML=Object.entries(slots).map(([k,v])=>{
     const avg=v.n?v.pnl/v.n:0;
     const col=avg>0?'#10b981':avg<0?'#ef4444':'#888';
-    return'<div class="flex-between" style="margin-bottom:8px"><span style="color:var(--text-primary,#e5e7eb);font-size:14px">'+k+'</span><span style="font-size:14px;color:'+col+'">'+(v.n?v.n+' trades · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0):'No data')+'</span></div>';
+    const wr=v.wl?Math.round(v.w/v.wl*100)+'% WR':'— WR';
+    const pnlStr=v.n?v.n+' trades · '+wr+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+' · Σ '+(v.pnl>=0?'+$':'-$')+Math.abs(v.pnl).toFixed(0):'No data';
+    return'<div class="flex-between" style="margin-bottom:10px;align-items:flex-start;gap:10px"><span style="color:var(--text-primary,#e5e7eb);font-size:14px;flex-shrink:0">'+k+'</span><span style="font-size:13px;color:'+col+';text-align:right;line-height:1.45">'+pnlStr+'</span></div>';
+  }).join('');
+}
+
+function _sqShortTierLabel(full){
+  if(!full)return'';
+  var m=String(full).match(/^([SABC])/);
+  return m?m[1]+' tier':full.slice(0,18)+(full.length>18?'…':'');
+}
+function renderSqTierStats(f){
+  var el=document.getElementById('s-sq-tier');if(!el)return;
+  var m={};
+  f.forEach(function(t){
+    var sq=t.setupQuality||{};
+    var k=sq.drawTier;
+    if(!k||t.pnl==null)return;
+    if(!m[k])m[k]={n:0,w:0,l:0,be:0,pnl:0};
+    var o=m[k];o.n++;o.pnl+=t.pnl||0;
+    if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;else if(t.outcome==='be')o.be++;
+  });
+  if(!Object.keys(m).length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log draw tier on trades to slice P&amp;L by model rule.</span>';return;}
+  var order=['S — perfect equal H/L','A — data wicks / TL liquidity','B — session H/L or relative EQ','C — unbalanced gap only'];
+  var keys=order.filter(function(k){return m[k];}).concat(Object.keys(m).filter(function(k){return order.indexOf(k)<0;}));
+  el.innerHTML=keys.map(function(k){
+    var d=m[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
+    var avg=d.n?d.pnl/d.n:0;
+    var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:8px">'
+      +'<div><div style="font-size:13px;font-weight:600;color:var(--text-primary,#e5e7eb)">'+_sqShortTierLabel(k)+'</div>'
+      +'<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.35">'+k.replace(/^([SABC]) — /,'$1 · ')+'</div></div>'
+      +'<div style="text-align:right;font-size:13px;color:'+col+'"><div>'+d.n+' tr · '+wr+'</div><div style="margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+'</div></div></div>';
+  }).join('');
+}
+
+function renderSqDisplacementStats(f){
+  var el=document.getElementById('s-sq-displacement');if(!el)return;
+  var m={};
+  f.forEach(function(t){
+    var sq=t.setupQuality||{};var k=sq.displacement;
+    if(!k||t.pnl==null)return;
+    if(!m[k])m[k]={n:0,w:0,l:0,be:0,pnl:0};
+    var o=m[k];o.n++;o.pnl+=t.pnl||0;
+    if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;else if(t.outcome==='be')o.be++;
+  });
+  if(!Object.keys(m).length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log 15M displacement to see which impulse quality pays.</span>';return;}
+  var order=['Strong — clear BOS toward draw','Moderate — readable push','Weak — marginal / overlapping','Chop — no clean displacement'];
+  var keys=order.filter(function(k){return m[k];}).concat(Object.keys(m).filter(function(k){return order.indexOf(k)<0;}));
+  el.innerHTML=keys.map(function(k){
+    var d=m[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
+    var avg=d.n?d.pnl/d.n:0;var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    var shortK=k.replace(/^Strong/,'Strong').replace(/^Moderate/,'Mod').replace(/^Weak.*/,'Weak').replace(/^Chop.*/,'Chop');
+    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:8px">'
+      +'<div><div style="font-size:13px;font-weight:600;color:var(--text-primary,#e5e7eb)">'+shortK.split(' —')[0]+'</div>'
+      +'<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.35">'+(k.indexOf('—')>=0?k.split('—')[1].trim():k)+'</div></div>'
+      +'<div style="text-align:right;font-size:13px;color:'+col+'"><div>'+d.n+' tr · '+wr+'</div><div style="margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+'</div></div></div>';
+  }).join('');
+}
+
+function renderSqGapPullbackStats(f){
+  var el=document.getElementById('s-sq-gap-pull');if(!el)return;
+  function agg(field){
+    var m={};
+    f.forEach(function(t){
+      var sq=t.setupQuality||{};var k=sq[field];
+      if(!k||t.pnl==null)return;
+      if(!m[k])m[k]={n:0,w:0,l:0,pnl:0};
+      var o=m[k];o.n++;o.pnl+=t.pnl||0;
+      if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;
+    });
+    return m;
+  }
+  var gapM=agg('gapQuality');var pullM=agg('pullback');
+  function block(title,m,order){
+    if(!Object.keys(m).length)return'';
+    var keys=order.filter(function(k){return m[k];}).concat(Object.keys(m).filter(function(k){return order.indexOf(k)<0;}));
+    return'<div style="margin-bottom:12px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-bottom:6px">'+title+'</div>'
+      +keys.map(function(k){
+        var d=m[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
+        var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+        return'<div class="flex-between" style="margin-bottom:6px;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,0.2)"><span style="font-size:12px;color:var(--text-primary,#e5e7eb);max-width:58%">'+k+'</span><span style="font-size:12px;color:'+col+';text-align:right">'+d.n+' tr · '+wr+'<br>Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</span></div>';
+      }).join('')+'</div>';
+  }
+  var gOrder=['Clean singular FVG','Two adjacent combined','Overlapping / messy','Formed in chop'];
+  var pOrder=['Slow / corrective','Moderate pace','Fast / aggressive','Spike then stall'];
+  var html=block('Gap quality',gapM,gOrder)+block('Pullback',pullM,pOrder);
+  el.innerHTML=html||'<span style="color:#9ca3af;font-size:14px">Log gap quality and pullback to see where chop costs you.</span>';
+}
+
+function renderPostVerdictStats(f){
+  var el=document.getElementById('s-post-verdict');if(!el)return;
+  var m={yes:{label:'Would take again',n:0,w:0,l:0,be:0,pnl:0},no:{label:'Would skip',n:0,w:0,l:0,be:0,pnl:0},unsure:{label:'Unsure',n:0,w:0,l:0,be:0,pnl:0}};
+  f.forEach(function(t){
+    var k=t.postVerdict;if(!k||m[k]===undefined||t.pnl==null)return;
+    var o=m[k];o.n++;o.pnl+=t.pnl||0;
+    if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;else if(t.outcome==='be')o.be++;
+  });
+  var keys=['yes','no','unsure'].filter(function(k){return m[k].n>0;});
+  if(!keys.length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log post-trade verdict to compare honesty vs results.</span>';return;}
+  el.innerHTML=keys.map(function(k){
+    var d=m[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
+    var avg=d.n?d.pnl/d.n:0;var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:8px">'
+      +'<div style="font-size:13px;font-weight:600;color:var(--text-primary,#e5e7eb)">'+d.label+'</div>'
+      +'<div style="text-align:right;font-size:13px;color:'+col+'"><div>'+d.n+' tr · '+wr+(d.be?' · '+d.be+' BE':'')+'</div><div style="margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+'</div></div></div>';
   }).join('');
 }
 
@@ -7493,8 +7640,11 @@ function renderConsistencyTracker(){
       tradeDays++;
       const hasInvalid=dayTrades.some(t=>t.tradeClass==='invalid');
       const allValid=dayTrades.every(t=>t.tradeClass==='valid-good'||t.tradeClass==='valid-bad');
-      const allHighDisc=dayTrades.every(t=>t.discRating&&t.discRating>=4);
-      if(!hasInvalid&&allValid&&allHighDisc){
+      const fullSetupLogged=dayTrades.every(t=>{
+        const sq=t.setupQuality||{};
+        return !!(sq.drawTier&&sq.displacement&&sq.gapQuality&&sq.pullback&&sq.sessionSegment&&t.postVerdict);
+      });
+      if(!hasInvalid&&allValid&&fullSetupLogged){
         bg='#16a34a'; border='none'; fullModelDays++; title='Full model followed';
       } else if(hasInvalid){
         bg='#ef4444'; border='none'; title='Invalid setup taken';
@@ -7560,23 +7710,55 @@ function renderSmartInsights(){
     }
   }
 
-  // Discipline correlation
-  const discTrades=t.filter(x=>x.discRating&&x.discRating>0);
-  if(discTrades.length>=5){
-    const highDisc=discTrades.filter(x=>x.discRating>=4);
-    const lowDisc=discTrades.filter(x=>x.discRating<=2);
-    if(highDisc.length>=3&&lowDisc.length>=2){
-      const hdWR=highDisc.filter(x=>x.outcome==='win').length/highDisc.length;
-      const ldWR=lowDisc.filter(x=>x.outcome==='win').length/lowDisc.length;
-      if(hdWR-ldWR>0.2){
-        insights.push({icon:'⭐',color:'#f59e0b',text:`High discipline trades (4–5★) win at <strong>${Math.round(hdWR*100)}%</strong> vs <strong>${Math.round(ldWR*100)}%</strong> for low discipline. Your process is your edge.`});
-      }
+  function _wlWR(arr){
+    const wl=arr.filter(x=>x.outcome==='win'||x.outcome==='loss');
+    if(wl.length<3)return null;
+    return wl.filter(x=>x.outcome==='win').length/wl.length;
+  }
+  function _sumPnl(arr){return arr.reduce((s,x)=>s+(x.pnl!=null?x.pnl:0),0);}
+
+  // Draw tier S/A vs C (model rule you already log)
+  const tierSA=t.filter(x=>{var d=(x.setupQuality||{}).drawTier||'';return(d.indexOf('S —')===0||d.indexOf('A —')===0)&&x.pnl!=null;});
+  const tierC=t.filter(x=>{var d=(x.setupQuality||{}).drawTier||'';return d.indexOf('C —')===0&&x.pnl!=null;});
+  if(tierSA.length>=5&&tierC.length>=3){
+    const wrS=_wlWR(tierSA),wrC=_wlWR(tierC);
+    if(wrS!==null&&wrC!==null&&(wrS-wrC>0.12||_sumPnl(tierC)<0&&_sumPnl(tierSA)>_sumPnl(tierC))){
+      insights.push({icon:'📐',color:'#16a34a',text:`S/A draw tiers: <strong>${Math.round(wrS*100)}% WR</strong> (${tierSA.length} trades, ${_sumPnl(tierSA)>=0?'+$':'-$'}${Math.abs(_sumPnl(tierSA)).toFixed(0)} total). C-only context: <strong>${Math.round(wrC*100)}%</strong> (${tierC.length} trades). If C-tier keeps dragging $, default to skip unless stacked with S/A.`});
     }
   }
 
-  // Emotion correlation
-  const neutralTrades=t.filter(x=>x.emotion==='Neutral ✓'||x.emotion==='Patient / waiting');
-  const negEmoTrades=t.filter(x=>x.emotion==='FOMO / chasing'||x.emotion==='Revenge trading'||x.emotion==='Overconfident');
+  // Post verdict: “take again” vs “skip” (calibration)
+  const pvYes=t.filter(x=>x.postVerdict==='yes'&&x.pnl!=null);
+  const pvNo=t.filter(x=>x.postVerdict==='no'&&x.pnl!=null);
+  if(pvYes.length>=5&&pvNo.length>=3){
+    const wrY=_wlWR(pvYes),wrN=_wlWR(pvNo);
+    const avgY=pvYes.length?_sumPnl(pvYes)/pvYes.length:0,avgN=pvNo.length?_sumPnl(pvNo)/pvNo.length:0;
+    if(wrY!==null&&wrN!==null&&(wrN>wrY+0.1||avgN>avgY+5)){
+      insights.push({icon:'⚖️',color:'#f59e0b',text:`Trades you later marked <strong>“would skip”</strong> actually win <strong>${Math.round(wrN*100)}%</strong> (avg ${avgN>=0?'+$':'-$'}${Math.abs(avgN).toFixed(0)}) vs <strong>${Math.round(wrY*100)}%</strong> on “take again” (avg ${avgY>=0?'+$':'-$'}${Math.abs(avgY).toFixed(0)}). Your post-label may be too harsh — or you’re skipping your better process.`});
+    } else if(wrY!==null&&wrN!==null&&wrY-wrN>0.12&&avgY>avgN){
+      insights.push({icon:'✅',color:'#10b981',text:`“Would take again” trades: <strong>${Math.round(wrY*100)}% WR</strong> and better avg $ than “skip”. Your gut after the trade lines up with results — trust that filter.`});
+    }
+  }
+  const lossesTakeAgain=t.filter(x=>x.outcome==='loss'&&x.postVerdict==='yes');
+  if(lossesTakeAgain.length>=3){
+    insights.push({icon:'🔎',color:'#8b5cf6',text:`<strong>${lossesTakeAgain.length} losses</strong> are still tagged “would take again”. That’s fine if variance — but if $ keeps leaking, add one concrete invalidator (e.g. C-tier alone, weak displacement) before the next session.`});
+  }
+
+  // Displacement: clean impulse vs chop
+  const dispClean=t.filter(x=>{var d=(x.setupQuality||{}).displacement||'';return(d.indexOf('Strong')===0||d.indexOf('Moderate')===0)&&x.pnl!=null;});
+  const dispMessy=t.filter(x=>{var d=(x.setupQuality||{}).displacement||'';return(d.indexOf('Weak')===0||d.indexOf('Chop')===0)&&x.pnl!=null;});
+  if(dispClean.length>=5&&dispMessy.length>=4){
+    const wrCl=_wlWR(dispClean),wrMe=_wlWR(dispMessy);
+    if(wrCl!==null&&wrMe!==null&&wrCl-wrMe>0.12){
+      insights.push({icon:'⚡',color:'#06b6d4',text:`Strong/Moderate 15M displacement: <strong>${Math.round(wrCl*100)}% WR</strong> vs <strong>${Math.round(wrMe*100)}%</strong> on weak/chop. Easiest upgrade: pass when displacement is marginal.`});
+    }
+  }
+
+  // Emotion correlation (matches current log options, not exact string equality)
+  function _emoCalm(s){return s&&(/✓/.test(s)||/Patient|Neutral|Calm|focused|flow/i.test(s))&&!/FOMO|Revenge|Overconfident|Impatient|Chasing/i.test(s);}
+  function _emoHot(s){return s&&/FOMO|Revenge|Overconfident|Impatient|Chasing/i.test(s);}
+  const neutralTrades=t.filter(x=>_emoCalm(x.emotion));
+  const negEmoTrades=t.filter(x=>_emoHot(x.emotion));
   if(neutralTrades.length>=3&&negEmoTrades.length>=2){
     const nWR=neutralTrades.filter(x=>x.outcome==='win').length/neutralTrades.length;
     const eWR=negEmoTrades.filter(x=>x.outcome==='win').length/negEmoTrades.length;

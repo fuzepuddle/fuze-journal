@@ -1,0 +1,13 @@
+---
+description: After implementing any user-requested change in this repo, commit and push to GitHub in the same turn.
+alwaysApply: true
+---
+
+# Ship changes to GitHub
+
+When you finish edits the user asked for in **this repository** (`fuze-journal`):
+
+1. Ensure `index.html` (and any other touched files) reflect the requested work.
+2. Run `git status` from the repo root, then `git add` for changed paths, `git commit` with a short imperative message describing what changed and why, then `git push` to the tracked default branch (usually `origin/main`).
+3. If `git push` fails (auth, network, non-repo workspace), report the exact error and what the user must do; do not claim the push succeeded.
+4. Do not skip push for “small” edits — the user expects GitHub to stay in sync whenever they request a change.
