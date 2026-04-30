@@ -1579,6 +1579,34 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
+  <div class="dash-charts-row" style="margin-top:12px" id="dash-no-trade-card">
+    <div class="dash-chart-card" style="grid-column:1/-1">
+      <div class="dash-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <span>No-trade session</span>
+        <span style="font-size:11px;color:#9ca3af;font-weight:400">Watched the window but took zero trades</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px;align-items:end">
+        <div><label style="font-size:12px;color:#9ca3af">Date</label><input type="date" id="dash-nt-date" style="width:100%;margin-top:4px"></div>
+        <div><label style="font-size:12px;color:#9ca3af">Why no trade?</label>
+          <select id="dash-nt-reason" style="width:100%;margin-top:4px">
+            <option value="">—</option>
+            <option>Major news — skipped</option>
+            <option>Not neutral headspace</option>
+            <option>No clear draw / C-tier alone</option>
+            <option>HTF chop / weak displacement</option>
+            <option>Outside 2:30–4:00 UK window</option>
+            <option>Setup past 4:00 PM entry rule</option>
+            <option>Walked away — perfect skip</option>
+            <option>Other (see note)</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1"><label style="font-size:12px;color:#9ca3af">Note</label><input type="text" id="dash-nt-note" placeholder="Optional context…" style="width:100%;margin-top:4px"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary" style="margin-top:12px" onclick="saveNoTradeSkipFromDashboard()">Save no-trade log</button>
+      <div id="dash-nt-recent" style="margin-top:14px;font-size:13px;line-height:1.45"></div>
+    </div>
+  </div>
+
   <!-- Fuze Score + Monthly Consistency row -->
   <div class="dash-charts-row" style="margin-top:12px">
     <!-- Fuze Score -->
@@ -1814,6 +1842,22 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <input type="text" id="f-actual-rr" placeholder="auto-fills from P&amp;L + risk" oninput="syncRRField()" style="font-family:'Plus Jakarta Sans',sans-serif">
       </div>
     </div>
+    <div class="grid-2" style="margin-top:10px">
+      <div>
+        <label>Planned RR <span style="color:#6b7280;font-weight:400;font-size:11px">before entry — e.g. 2 or +1.5R</span></label>
+        <input type="text" id="f-rr-planned" placeholder="e.g. 2R" style="font-family:'Plus Jakarta Sans',sans-serif">
+      </div>
+      <div>
+        <label>Target type</label>
+        <select id="f-target-type">
+          <option value="">—</option>
+          <option>Full draw / major liquidity</option>
+          <option>Nearest minor liquidity — partial plan</option>
+          <option>Fixed RR — scale at internal</option>
+          <option>Other / discretionary</option>
+        </select>
+      </div>
+    </div>
     <div style="margin-top:14px">
       <label style="margin-bottom:6px">Trade classification</label>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px" id="trade-class-row">
@@ -1878,6 +1922,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <option>After 4:00 (no new entry)</option>
         </select>
       </div>
+      <div style="grid-column:1/-1">
+        <label>Rules version <span style="color:#6b7280;font-weight:400;font-size:11px">tag trades when your written rules change</span></label>
+        <input type="text" id="f-rules-version" list="fuze-rules-version-list" placeholder="e.g. v1, v2 Mar 2026" style="width:100%">
+        <datalist id="fuze-rules-version-list">
+          <option value="v1 — baseline"></option>
+          <option value="v2 — rule update"></option>
+          <option value="v3"></option>
+        </datalist>
+      </div>
     </div>
     <div class="gap" style="margin-top:4px">
       <label>Post-trade verdict <span style="color:#9ca3af;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">— separate from win/loss</span></label>
@@ -1900,6 +1953,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
     <div id="execution-body" class="collapsible-body">
     <!-- Discipline stars removed -->
+    <div class="gap">
+      <label>Plan before entry <span style="color:#6b7280;font-weight:400;font-size:11px">one line — what you expected before clicking</span></label>
+      <textarea id="f-pre-intent" placeholder="e.g. A-tier draw, strong displacement, aiming for NY lunch highs…" style="min-height:44px;font-family:inherit"></textarea>
+    </div>
     <div class="gap" id="emotion-field">
       <label>Emotional state <span style="color:#555;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0">— before entry</span></label>
       <select id="f-emotion">
@@ -1981,6 +2038,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>Exit price</label><input type="number" id="f-exit-price" step="0.25" placeholder="—"></div>
       <div><label>Contracts</label><input type="number" id="f-contracts" step="1" min="0" placeholder="MNQ/NQ"></div>
       <div><label>&nbsp;</label><span class="hint" style="margin:0;display:block;padding-top:4px">Futures pts; nets in journal row</span></div>
+    </div>
+    <div style="margin-top:10px">
+      <label>Fill / slippage notes <span style="color:#6b7280;font-weight:400;font-size:11px">optional</span></label>
+      <textarea id="f-fill-notes" placeholder="Bad fill, partial, slipped stop, latency…" style="min-height:40px;font-family:inherit"></textarea>
     </div>
   </div>
 
@@ -2086,7 +2147,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div class="section-label" style="margin-bottom:0">Trade log</div>
       <span id="trade-count-badge" style="background:#1e1e1e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2px 10px;font-size:14px;color:#4b5563"></span>
     </div>
-    <button class="btn btn-sm" onclick="exportTradesToCSV()" title="Download all trades as a spreadsheet">⬇ Export CSV</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-sm" onclick="exportTradesToCSV()" title="Download all trades as a spreadsheet">⬇ Export CSV</button>
+      <button class="btn btn-sm" onclick="exportFuzeJsonBackup()" title="Full backup: trades, missed, notebooks, skips, settings">⬇ JSON backup</button>
+    </div>
   </div>
   <div style="margin-bottom:10px">
     <input type="text" id="journal-search" placeholder="Search notes, draws, mistakes..." oninput="renderJournal()" style="font-size:14px;padding:7px 12px;max-width:340px">
@@ -2278,6 +2342,19 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:12px">
+    <div class="card">
+      <div class="section-label" style="margin-bottom:10px">Planned vs actual RR</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:10px">Where you overshoot or leave R on the table (needs planned RR logged)</div>
+      <div id="s-planned-actual" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="margin-bottom:10px">Target type × momentum</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:10px">P&amp;L and win rate by target plan and impulse quality</div>
+      <div id="s-target-momentum" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+  </div>
+
   <!-- Checklist score vs win rate + Hold duration -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
     <div class="card">
@@ -2309,6 +2386,16 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div><label>Date</label><input type="date" id="m-date"></div>
       <div><label>Direction</label><select id="m-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
       <div><label>HTF draw</label><select id="m-draw"><option value="">—</option><optgroup label="Daily / calendar"><option>PDH</option><option>PDL</option><option>CDH</option><option>CDL</option><option>PWH</option><option>PWL</option><option>PMH</option><option>PML</option><option>Previous month high</option><option>Previous month low</option><option>Quarterly high (ICT)</option><option>Quarterly low (ICT)</option></optgroup><optgroup label="ON / gaps"><option>ON High</option><option>ON Low</option><option>NWOG</option><option>NDOG</option><option>RTH opening gap</option><option>ETH opening gap</option><option>Previous day FVG edge (bull)</option><option>Previous day FVG edge (bear)</option></optgroup><optgroup label="Session"><option>Asia High</option><option>Asia Low</option><option>London High</option><option>London Low</option><option>NY High</option><option>NY Low</option><option>NY PM session high</option><option>NY PM session low</option><option>Midnight Open</option><option>London midnight</option></optgroup><optgroup label="Equal / relative"><option>EQH</option><option>EQL</option><option>Relative equal highs</option><option>Relative equal lows</option><option>S tier draw</option><option>A tier draw</option><option>B tier draw</option><option>C tier draw (invalid alone)</option></optgroup><optgroup label="Pools / structure"><option>Buyside liquidity</option><option>Sellside liquidity</option><option>Internal range liquidity</option><option>Inducement</option><option>Dealing range high</option><option>Dealing range low</option><option>HTF order block</option><option>Breaker block</option><option>Mitigation block</option><option>HTF swing high</option><option>HTF swing low</option><option>HTF Swing Point</option></optgroup><optgroup label="Premium / discount"><option>Discount array</option><option>Premium array</option><option>OTE zone</option></optgroup></select></div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07)">
+      <div class="section-label" style="margin-bottom:8px">Setup quality on the chart <span style="color:#6b7280;font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">optional — same fields as a taken trade</span></div>
+      <div class="grid-2 gap">
+        <div><label>Draw tier</label><select id="m-sq-draw-tier"><option value="">—</option><option>S — perfect equal H/L</option><option>A — data wicks / TL liquidity</option><option>B — session H/L or relative EQ</option><option>C — unbalanced gap only</option></select></div>
+        <div><label>15M displacement</label><select id="m-sq-displacement"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
+        <div><label>5M gap quality</label><select id="m-sq-gap-quality"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
+        <div><label>Pullback into gap</label><select id="m-sq-pullback"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
+        <div style="grid-column:1/-1"><label>Session segment (UK)</label><select id="m-sq-session"><option value="">—</option><option>2:30–3:00</option><option>3:00–3:30</option><option>3:30–4:00</option><option>After 4:00 (no new entry)</option></select></div>
+      </div>
     </div>
     <div class="grid-2 gap">
       <div><label>Why skipped?</label><select id="m-reason">
@@ -2427,7 +2514,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
   <div class="log-wrap" style="margin-top:4px">
     <table class="log-table">
-      <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>Reason skipped</th><th>Est.</th><th>Notes</th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Dir</th><th>Draw</th><th>SQ</th><th>Reason skipped</th><th>Est.</th><th>Notes</th><th></th></tr></thead>
       <tbody id="missed-body"></tbody>
     </table>
   </div>
@@ -2472,6 +2559,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <div id="w-outcomes" style="font-size:14px;color:#4b5563">—</div>
       </div>
     </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="section-label" style="margin-bottom:8px">Auto-summary</div>
+    <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Built from this week’s closed trades. Use it as a starting point for your notes.</div>
+    <div id="w-auto-summary" style="font-size:14px;color:#e5e7eb;line-height:1.55">—</div>
   </div>
   <div class="card">
     <div class="section-label">Your notes for this week</div>
@@ -2671,7 +2763,7 @@ function optFloatField(id){
   var n=parseFloat(e.value);return isFinite(n)?n:null;
 }
 function readSetupQuality(prefix){
-  var p=prefix==='e'?'e':'f';
+  var p=prefix==='e'?'e':prefix==='m'?'m':'f';
   function g(suf){var el=document.getElementById(p+suf);return el?String(el.value||'').trim():'';}
   return{
     drawTier:g('-sq-draw-tier'),
@@ -2683,11 +2775,33 @@ function readSetupQuality(prefix){
 }
 function applySetupQuality(prefix,sq){
   sq=sq||{};
-  var p=prefix==='e'?'e':'f';
+  var p=prefix==='e'?'e':prefix==='m'?'m':'f';
   [['-sq-draw-tier','drawTier'],['-sq-displacement','displacement'],['-sq-gap-quality','gapQuality'],['-sq-pullback','pullback'],['-sq-session','sessionSegment']].forEach(function(pr){
     var el=document.getElementById(p+pr[0]);
     if(el)el.value=sq[pr[1]]||'';
   });
+}
+/** First signed number in a string like "+1.5R", "2R", "-0.5" */
+function parseRRNumeric(s){
+  if(s==null||s==='')return null;
+  var m=String(s).match(/-?\d+\.?\d*/);
+  if(!m)return null;
+  var n=parseFloat(m[0]);
+  return isFinite(n)?n:null;
+}
+function getResolvedRulesVersion(){
+  var el=document.getElementById('f-rules-version');
+  if(!el)return'';
+  return String(el.value||'').trim();
+}
+function rememberRulesVersion(v){
+  if(!v)return;
+  try{localStorage.setItem('fuze_last_rules_version',v);}catch(e){}
+}
+function applyDefaultRulesVersionToForm(){
+  var el=document.getElementById('f-rules-version');
+  if(!el||el.value)return;
+  try{var s=localStorage.getItem('fuze_last_rules_version');if(s)el.value=s;}catch(e){}
 }
 function formatSetupQualitySummary(sq){
   sq=sq||{};
@@ -2727,6 +2841,8 @@ let allPropSettings={challenge:{},funded:{},demo:{}};
 let allWeeklyNotes={challenge:{},funded:{},demo:{}};
 let allMonthlyReviews={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
+/** Dates you sat session but took no trade: profile → { 'YYYY-MM-DD': { reason, note } } */
+let allNoTradeSkips={challenge:{},funded:{},demo:{}};
 let trades=[];let mode=currentProfile==='demo'?'demo':'live';let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];
@@ -3220,6 +3336,8 @@ async function loadAllData(){
     if(nb_d&&typeof nb_d==='object')allNotebooks=nb_d;
     const mr_d=await supaGet('fuze_monthly_reviews').catch(()=>null);
     if(mr_d&&typeof mr_d==='object')allMonthlyReviews=mr_d;
+    const nt_d=await supaGet('fuze_no_trade_skips').catch(()=>null);
+    if(nt_d&&typeof nt_d==='object')allNoTradeSkips=nt_d;
   }catch(e){console.error('Load error',e);}
   try{
     applyLoadedData();
@@ -3415,6 +3533,7 @@ function renderDashboard(){
     }
   }
   renderDashMiniCal();
+  renderDashNoTradePanel();
 }
 
 // ── Dashboard mini calendar ──
@@ -3559,8 +3678,8 @@ async function saveTrade(){
   const bias=document.getElementById('f-bias').value;
   const direction=document.getElementById('f-direction').value;
   const draw=document.getElementById('f-draw').value;
-  const rrPlan='';
   const rrActual=document.getElementById('f-actual-rr').value;
+  const rrPlannedStr=trimVal('f-rr-planned');
   const pnlRaw=document.getElementById('f-pnl').value;
   const risk=document.getElementById('f-risk').value;
   const missing=[];
@@ -3627,7 +3746,11 @@ async function saveTrade(){
     realisedR:realisedR!=null?realisedR:undefined,
     entryPrice:optFloatField('f-entry-price'),exitPrice:optFloatField('f-exit-price'),
     contracts:optFloatField('f-contracts'),
-    bias, direction, draw, rrActual, pnl, outcome,
+    bias, direction, draw, rrPlanned:rrPlannedStr||undefined, rrActual, pnl, outcome,
+    targetType:(document.getElementById('f-target-type')||{}).value||undefined,
+    preIntent:trimVal('f-pre-intent')||undefined,
+    fillNotes:trimVal('f-fill-notes')||undefined,
+    rulesVersion:getResolvedRulesVersion()||undefined,
     emotion:document.getElementById('f-emotion')?document.getElementById('f-emotion').value:'',
     emotionPost:document.getElementById('f-emotion-post')?document.getElementById('f-emotion-post').value:'',
     mistakes:[...selectedMistakes],
@@ -3646,6 +3769,7 @@ async function saveTrade(){
     checksPassed:checklistPassed,
     checksTotal:checklistTotal
   };
+  if(trade.rulesVersion)rememberRulesVersion(trade.rulesVersion);
   checkPB(trade);
   trades.unshift(trade);
   save();
@@ -3655,7 +3779,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-post-verdict-note','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-sq-session','f-post-verdict'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-rr-planned','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-post-verdict-note','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-sq-session','f-post-verdict','f-target-type','f-pre-intent','f-fill-notes','f-rules-version'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -3690,7 +3814,8 @@ function renderJournal(){
     const q=fs.toLowerCase();
     f=f.filter(t=>{
       var sqs=(formatSetupQualitySummary(t.setupQuality)+' '+(t.postVerdict||'')+' '+(t.postVerdictNote||'')+(Array.isArray(t.tags)?t.tags.join(' '):'')).toLowerCase();
-      return (t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||sqs.includes(q)||(t.date||'').includes(q);
+      var extra=((t.rrPlanned||'')+' '+(t.targetType||'')+' '+(t.rulesVersion||'')+' '+(t.preIntent||'')+' '+(t.fillNotes||'')).toLowerCase();
+      return (t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||sqs.includes(q)||(t.date||'').includes(q)||extra.includes(q);
     });
   }
   f.sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id));
@@ -3706,7 +3831,7 @@ function renderJournal(){
   tbody.innerHTML=f.map(t=>{
     const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#10b981">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#ef4444">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#e5e7eb">$0</span>'):'—';
     const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
-    const hasDetail=ssLinks.length||t.narrative||t.improve;
+    const hasDetail=ssLinks.length||t.narrative||t.improve||t.preIntent||t.fillNotes||t.rulesVersion||t.targetType||t.rrPlanned;
     const isFav=t.favourite||false;
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:15px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
@@ -3787,6 +3912,11 @@ function renderJournal(){
       +pill('Emotion (pre)', emotionPreStr, '#9ca3af')
       +pill('Emotion (post)', emotionPostStr, '#9ca3af')
       +pill('Broker', fillStr, '#9ca3af')
+      +pill('Planned RR', t.rrPlanned?(t.rrPlanned.length>24?t.rrPlanned.slice(0,22)+'…':t.rrPlanned):'—', '#34d399')
+      +pill('Target type', t.targetType?(t.targetType.length>36?t.targetType.slice(0,34)+'…':t.targetType):'—', '#2dd4bf')
+      +pill('Rules version', t.rulesVersion?(t.rulesVersion.length>28?t.rulesVersion.slice(0,26)+'…':t.rulesVersion):'—', '#94a3b8')
+      +pill('Plan before entry', t.preIntent?(function(s){s=String(s).replace(/\n/g,' ');return s.length>120?s.slice(0,118)+'…':s;})(t.preIntent):'—', '#cbd5e1')
+      +pill('Fill / slippage', t.fillNotes?(function(s){s=String(s).replace(/\n/g,' ');return s.length>120?s.slice(0,118)+'…':s;})(t.fillNotes):'—', '#fbbf24')
       +pill('Setup quality', sqLine, '#a78bfa')
       +pill('Post verdict', verStr, '#38bdf8')
       +pill('Similar trade', t.similar?(t.similar.length>28?t.similar.slice(0,26)+'…':t.similar):'—', '#818cf8')
@@ -3845,6 +3975,11 @@ function openEdit(id){
   document.getElementById('e-direction').value=t.direction||'';
   document.getElementById('e-draw').value=t.draw||'';
   document.getElementById('e-actual-rr').value=t.rrActual||'';
+  var erp=document.getElementById('e-rr-planned');if(erp)erp.value=t.rrPlanned||'';
+  var ett=document.getElementById('e-target-type');if(ett)ett.value=t.targetType||'';
+  var epi=document.getElementById('e-pre-intent');if(epi)epi.value=t.preIntent||'';
+  var efn=document.getElementById('e-fill-notes');if(efn)efn.value=t.fillNotes||'';
+  var erv=document.getElementById('e-rules-version');if(erv)erv.value=t.rulesVersion||'';
   document.getElementById('e-outcome').value=t.outcome||'';
   document.getElementById('e-pnl').value=t.pnl!=null?t.pnl:'';
   document.getElementById('e-risk').value=t.risk||'';
@@ -3941,8 +4076,12 @@ function saveEdit(){
     bias:document.getElementById('e-bias').value,
     direction:document.getElementById('e-direction').value,
     draw:document.getElementById('e-draw').value,
-    rrPlan:'',
+    rrPlanned:etrim('e-rr-planned')||undefined,
     rrActual:document.getElementById('e-actual-rr').value,
+    targetType:(document.getElementById('e-target-type')||{}).value||undefined,
+    preIntent:etrim('e-pre-intent')||undefined,
+    fillNotes:etrim('e-fill-notes')||undefined,
+    rulesVersion:((document.getElementById('e-rules-version')||{}).value||'').trim()||undefined,
     outcome:document.getElementById('e-outcome').value,
     pnl:ePnl!==''?parseFloat(ePnl):null,
     // planType removed
@@ -4061,6 +4200,8 @@ function renderStats(){
   renderSqDisplacementStats(f);
   renderSqGapPullbackStats(f);
   renderPostVerdictStats(f);
+  renderPlannedVsActualStats(f);
+  renderTargetTypeMomentumStats(f);
   renderChecklistWR(f);
   renderHoldDuration(f);
   renderClassStats(f);
@@ -4778,6 +4919,7 @@ function prefillCalc(){
     accEl.value=propSettings.account;
     calcRisk();
   }
+  applyDefaultRulesVersionToForm();
 }
 
 
@@ -5178,9 +5320,9 @@ function saveMissed(){
   if(currentProfile==='all'){alert('Switch to Challenge, Funded, or Demo to log a missed trade.');return;}
   const date=document.getElementById('m-date').value;
   if(!date){alert('Add a date');return;}
-  const m={id:Date.now(),date,direction:document.getElementById('m-direction').value,draw:document.getElementById('m-draw').value,reason:document.getElementById('m-reason').value,notes:document.getElementById('m-notes').value,hesitation:document.getElementById('m-hesitation').value};
+  const m={id:Date.now(),date,direction:document.getElementById('m-direction').value,draw:document.getElementById('m-draw').value,reason:document.getElementById('m-reason').value,notes:document.getElementById('m-notes').value,hesitation:document.getElementById('m-hesitation').value,setupQuality:readSetupQuality('m')};
   missedTrades.unshift(m);saveMissedStore();
-  ['m-date','m-direction','m-draw','m-reason','m-notes','m-hesitation'].forEach(id=>document.getElementById(id).value='');
+  ['m-date','m-direction','m-draw','m-reason','m-notes','m-hesitation','m-sq-draw-tier','m-sq-displacement','m-sq-gap-quality','m-sq-pullback','m-sq-session'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
   renderMissed();
 }
 function renderMissed(){
@@ -5188,7 +5330,7 @@ function renderMissed(){
   const empty=document.getElementById('missed-empty');
   if(!missedTrades.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=missedTrades.map(function(m){var lbl=m.date+(m._profile?' <span style="font-size:11px;color:#818cf8">['+String(m._profile)+']</span>':'');return'<tr><td style="white-space:nowrap">'+lbl+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';}).join('');
+  tbody.innerHTML=missedTrades.map(function(m){var lbl=m.date+(m._profile?' <span style="font-size:11px;color:#818cf8">['+String(m._profile)+']</span>':'');var sqM=formatSetupQualitySummary(m.setupQuality)||'—';if(sqM.length>56)sqM=sqM.slice(0,54)+'…';return'<tr><td style="white-space:nowrap">'+lbl+'</td><td>'+(m.direction||'—')+'</td><td style="font-size:14px;color:#4b5563">'+(m.draw||'—')+'</td><td style="font-size:12px;color:#9ca3af;max-width:140px;line-height:1.35">'+sqM+'</td><td style="font-size:14px;color:#4b5563">'+(m.reason||'—')+'</td><td><span class="'+(m.est==='Would have won'?'green-bg':m.est==='Would have lost'?'red-bg':'badge')+'">'+(m.est||'—')+'</span></td><td style="font-size:14px;color:#4b5563;max-width:200px">'+(m.notes||'')+(m.hesitation?'<div style="margin-top:4px;color:#f59e0b;font-size:13px;line-height:1.5">💭 '+m.hesitation+'</div>':'')+((!m.notes&&!m.hesitation)?'—':'')+'</td><td><button onclick="delMissed('+m.id+')" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:15px;padding:2px 6px">×</button></td></tr>';}).join('');
 }
 function delMissed(id){
   if(!confirm('Delete?'))return;
@@ -5204,6 +5346,71 @@ function delMissed(id){
     return;
   }
   missedTrades=missedTrades.filter(m=>m.id!==id);saveMissedStore();renderMissed();
+}
+
+function saveNoTradeSkipsStore(){
+  try{localStorage.setItem('fuze_no_trade_skips',JSON.stringify(allNoTradeSkips));}catch(e){}
+  supaSet('fuze_no_trade_skips',allNoTradeSkips);
+}
+function saveNoTradeSkipFromDashboard(){
+  if(currentProfile==='all'||currentProfile==='backtesting'){alert('Switch to Challenge, Funded, or Demo to log a no-trade session.');return;}
+  var dEl=document.getElementById('dash-nt-date');
+  var rEl=document.getElementById('dash-nt-reason');
+  var nEl=document.getElementById('dash-nt-note');
+  if(!dEl||!rEl)return;
+  var date=dEl.value;
+  if(!date){alert('Pick the session date.');return;}
+  if(!rEl.value){alert('Pick a reason (or Other + note).');return;}
+  if(!allNoTradeSkips[currentProfile])allNoTradeSkips[currentProfile]={};
+  allNoTradeSkips[currentProfile][date]={reason:rEl.value,note:nEl?String(nEl.value||'').trim():'',savedAt:new Date().toISOString()};
+  saveNoTradeSkipsStore();
+  if(nEl)nEl.value='';
+  renderDashNoTradePanel();
+  alert('No-trade session saved for '+date+' ✓');
+}
+function renderDashNoTradePanel(){
+  var wrap=document.getElementById('dash-no-trade-card');
+  if(!wrap)return;
+  if(currentProfile==='all'||currentProfile==='backtesting'){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  var dEl=document.getElementById('dash-nt-date');
+  if(dEl&&!dEl.value)dEl.value=new Date().toISOString().split('T')[0];
+  var list=document.getElementById('dash-nt-recent');
+  if(!list)return;
+  var m=allNoTradeSkips[currentProfile]||{};
+  var keys=Object.keys(m).sort(function(a,b){return b.localeCompare(a);}).slice(0,8);
+  if(!keys.length){list.innerHTML='<span style="color:#6b7280">No sessions logged yet — use when you watch the window but take zero trades.</span>';return;}
+  list.innerHTML=keys.map(function(k){
+    var e=m[k]||{};
+    return'<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="color:#e5e7eb;white-space:nowrap">'+k+'</span><span style="color:#9ca3af;text-align:right;font-size:12px">'+(e.reason||'—')+(e.note?'<br><span style="color:#6b7280">'+String(e.note).replace(/</g,'')+'</span>':'')+'</span></div>';
+  }).join('');
+}
+
+function exportFuzeJsonBackup(){
+  var payload={
+    exportedAt:new Date().toISOString(),
+    app:'fuze-journal',
+    profiles:PROFILES,
+    ict_profiles:allTrades,
+    ict_prop_profiles:allPropSettings,
+    ict_weekly_profiles:allWeeklyNotes,
+    ict_missed_profiles:allMissedTrades,
+    fuze_no_trade_skips:allNoTradeSkips,
+    fuze_notebooks:typeof allNotebooks!=='undefined'?allNotebooks:{},
+    fuze_monthly_reviews:typeof allMonthlyReviews!=='undefined'?allMonthlyReviews:{},
+    ict_presession:typeof presessionData!=='undefined'?presessionData:{},
+    ict_nonneg:typeof psNonNeg!=='undefined'?psNonNeg:{},
+    tagline:typeof getJournalTagline==='function'?getJournalTagline():''
+  };
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='fuze_journal_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // ── Weekly review ──
@@ -5307,6 +5514,37 @@ function renderWeekly(){
       +'<span style="color:'+(wrDiff>=0?'#10b981':'#ef4444')+'">'+(wrDiff>=0?'+':'')+wrDiff+'% vs last week</span></div>':'')
       +'<div><span style="color:#9ca3af;font-size:14px">P&L: </span>'
       +'<span style="color:'+(pnlDiff>=0?'#10b981':'#ef4444')+'">'+(pnlDiff>=0?'+$':'-$')+Math.abs(pnlDiff).toFixed(2)+' vs last week</span></div>';
+  }
+
+  var sumEl=document.getElementById('w-auto-summary');
+  if(sumEl){
+    var parts=[];
+    if(!active.length){
+      parts.push('No closed trades in this week window for the current profile.');
+    }else{
+      parts.push('You logged <strong>'+active.length+'</strong> closed trade'+(active.length!==1?'s':'')+': <strong>'+c.win+'W</strong> / <strong>'+c.loss+'L</strong>'+(c.be?' / '+c.be+' BE':'')+'.');
+      parts.push('Net P&amp;L: <strong>'+(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2)+'</strong> · win rate <strong>'+(active.length?Math.round(wins.length/active.length*100):0)+'%</strong>.');
+      var topD={};
+      weekTrades.forEach(function(t){
+        var d=(t.setupQuality||{}).drawTier;
+        if(!d)return;
+        topD[d]=(topD[d]||0)+1;
+      });
+      var topE=Object.entries(topD).sort(function(a,b){return b[1]-a[1];})[0];
+      if(topE)parts.push('Most common draw tier: <strong>'+String(topE[0]).split(' —')[0]+'</strong> ('+topE[1]+'×).');
+      var rrSum=0,rrN=0;
+      weekTrades.forEach(function(t){
+        if(t.outcome!=='win'&&t.outcome!=='loss')return;
+        var a=parseRRNumeric(t.rrActual);
+        if(a==null)return;
+        rrSum+=a;rrN++;
+      });
+      if(rrN)parts.push('Avg realized R (W+L only): <strong>'+(rrSum/rrN).toFixed(2)+'R</strong>.');
+      var nt=(allNoTradeSkips[currentProfile]||{});
+      var ntKeys=Object.keys(nt).filter(function(d){return d>=monStr&&d<=friStr;});
+      if(ntKeys.length)parts.push('No-trade / skip sessions logged: <strong>'+ntKeys.length+'</strong> day(s) — review whether those were disciplined skips or avoidance.');
+    }
+    sumEl.innerHTML='<p style="margin:0 0 8px 0;line-height:1.5">'+parts.join('</p><p style="margin:0 0 8px 0;line-height:1.5">')+'</p>';
   }
 }
 function saveWeeklyNotes(){
@@ -5491,7 +5729,53 @@ function renderPostVerdictStats(f){
   }).join('');
 }
 
+function renderPlannedVsActualStats(f){
+  var el=document.getElementById('s-planned-actual');if(!el)return;
+  var rows=f.filter(function(t){return t.rrActual&&t.pnl!=null&&(t.outcome==='win'||t.outcome==='loss');});
+  var withPlan=rows.filter(function(t){return t.rrPlanned&&String(t.rrPlanned).trim();});
+  if(withPlan.length<3){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log <strong>Planned RR</strong> on at least a few trades to see undershoot vs overshoot.</span>';return;}
+  var over=0,under=0,on=0,bad=0;
+  var sumDiff=0;
+  withPlan.forEach(function(t){
+    var p=parseRRNumeric(t.rrPlanned);
+    var a=parseRRNumeric(t.rrActual);
+    if(p==null||a==null){bad++;return;}
+    var d=a-p;
+    sumDiff+=d;
+    if(Math.abs(d)<0.15)on++;
+    else if(d>0)over++;
+    else under++;
+  });
+  var n=withPlan.length-bad;
+  var avgDiff=n?sumDiff/n:0;
+  el.innerHTML='<div style="margin-bottom:10px;font-size:13px;color:#e5e7eb">Across <strong>'+n+'</strong> closed trades with a plan: '
+    +'<span style="color:#10b981">'+over+'</span> overshot plan, '
+    +'<span style="color:#f59e0b">'+on+'</span> ≈ on plan, '
+    +'<span style="color:#ef4444">'+under+'</span> left R vs plan.</div>'
+    +'<div style="font-size:13px;color:#9ca3af">Avg (actual − planned R): <strong style="color:'+(avgDiff>=0?'#10b981':'#ef4444')+'">'+(avgDiff>=0?'+':'')+avgDiff.toFixed(2)+'R</strong> — positive means you often take more than planned; negative means you systematically under-deliver vs intent.</div>';
+}
 
+function renderTargetTypeMomentumStats(f){
+  var el=document.getElementById('s-target-momentum');if(!el)return;
+  var map={};
+  f.forEach(function(t){
+    if(!t.targetType||!t.momentum||t.pnl==null)return;
+    var k=t.targetType+' <span style="color:#6b7280">·</span> '+(t.momentum.length>42?t.momentum.slice(0,40)+'…':t.momentum);
+    if(!map[k])map[k]={n:0,w:0,l:0,pnl:0};
+    var o=map[k];o.n++;o.pnl+=t.pnl||0;
+    if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;
+  });
+  var keys=Object.keys(map);
+  if(!keys.length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log <strong>Target type</strong> and <strong>Momentum</strong> to see which combinations pay.</span>';return;}
+  keys.sort(function(a,b){return map[b].pnl-map[a].pnl;});
+  el.innerHTML=keys.slice(0,8).map(function(k){
+    var d=map[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
+    var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:8px">'
+      +'<div style="font-size:12px;color:var(--text-primary,#e5e7eb);line-height:1.4">'+k+'</div>'
+      +'<div style="text-align:right;font-size:12px;color:'+col+'"><div>'+d.n+' tr · '+wr+'</div><div style="margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</div></div></div>';
+  }).join('');
+}
 
 // showTab handles all tabs directly
 
@@ -5574,8 +5858,12 @@ function saveDraft(){
     direction:document.getElementById('f-direction').value,
     draw:document.getElementById('f-draw').value,
     fvgZone:document.getElementById('f-fvg-zone')?document.getElementById('f-fvg-zone').value:'',
-    rrPlan:'',
+    rrPlanned:(document.getElementById('f-rr-planned')||{}).value||'',
     rrActual:document.getElementById('f-actual-rr').value,
+    targetType:(document.getElementById('f-target-type')||{}).value||'',
+    preIntent:(document.getElementById('f-pre-intent')||{}).value||'',
+    fillNotes:(document.getElementById('f-fill-notes')||{}).value||'',
+    rulesVersion:(document.getElementById('f-rules-version')||{}).value||'',
     pnl:document.getElementById('f-pnl').value,
     risk:document.getElementById('f-risk').value,
     emotion:document.getElementById('f-emotion').value,
@@ -5608,7 +5896,11 @@ function loadDraft(){
       if(el&&draft[k])el.value=draft[k];
     });
     document.getElementById('f-actual-rr').value=draft.rrActual||'';
-    // plan type removed
+    var frp=document.getElementById('f-rr-planned');if(frp&&draft.rrPlanned!==undefined)frp.value=draft.rrPlanned||'';
+    var ftt=document.getElementById('f-target-type');if(ftt&&draft.targetType!==undefined)ftt.value=draft.targetType||'';
+    var fpi=document.getElementById('f-pre-intent');if(fpi&&draft.preIntent!==undefined)fpi.value=draft.preIntent||'';
+    var ffn=document.getElementById('f-fill-notes');if(ffn&&draft.fillNotes!==undefined)ffn.value=draft.fillNotes||'';
+    var frv=document.getElementById('f-rules-version');if(frv&&draft.rulesVersion!==undefined)frv.value=draft.rulesVersion||'';
     if(draft.setupQuality)applySetupQuality('f',draft.setupQuality);
     var fPv=document.getElementById('f-post-verdict');if(fPv&&draft.postVerdict)fPv.value=draft.postVerdict;
     var fPn=document.getElementById('f-post-verdict-note');if(fPn&&draft.postVerdictNote!==undefined)fPn.value=draft.postVerdictNote;
@@ -5859,6 +6151,21 @@ function randomizeTrade(){
   }
   var pvn=document.getElementById('f-post-verdict-note');
   if(pvn)pvn.value=(picked==='valid-good'&&rOutcome==='win')?'Aligned with model — repeat.':(pv&&pv.value==='no'?'Rule/process mismatch — review.':'');
+  var ttypes=['Full draw / major liquidity','Nearest minor liquidity — partial plan','Fixed RR — scale at internal','Other / discretionary'];
+  var ttel=document.getElementById('f-target-type');
+  if(ttel)ttel.value=_randPick(ttypes);
+  var plannedOpts=rOutcome==='win'?['1:1','1:2','2','2.5']:rOutcome==='loss'?['1:1','1.5']:['1:1'];
+  var frp=document.getElementById('f-rr-planned');
+  if(frp)frp.value=_randPick(plannedOpts);
+  var frv=document.getElementById('f-rules-version');
+  if(frv){
+    if(!String(frv.value||'').trim()){try{var lsRv=localStorage.getItem('fuze_last_rules_version');if(lsRv)frv.value=lsRv;}catch(e){}}
+    if(!String(frv.value||'').trim())frv.value=_randPick(['v1 — baseline','v2 — rule update']);
+  }
+  var fpi=document.getElementById('f-pre-intent');
+  if(fpi)fpi.value='Plan: '+bias.toLowerCase()+' bias, '+draw+' as draw, '+fz.toLowerCase()+' zone; session rules respected.';
+  var ffn=document.getElementById('f-fill-notes');
+  if(ffn)ffn.value=Math.random()<0.82?'':_randPick(['Slipped 1 tick on entry','Partial — scaled at internal','Latency on bracket','Clean fills']);
   calcAutoRR();
 }
 
@@ -5963,7 +6270,8 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       if(_ps){const d=JSON.parse(_ps);if(d&&typeof d==='object')presessionData=d;}
       if(_nn){const d=JSON.parse(_nn);if(d&&typeof d==='object')psNonNeg=d;}
     }catch(e){}
-    try{const _nb=localStorage.getItem('fuze_notebooks');if(_nb){const d=JSON.parse(_nb);if(d&&typeof d==='object')allNotebooks=d;}}catch(e){}
+      try{const _nb=localStorage.getItem('fuze_notebooks');if(_nb){const d=JSON.parse(_nb);if(d&&typeof d==='object')allNotebooks=d;}}catch(e){}
+      try{const _nt=localStorage.getItem('fuze_no_trade_skips');if(_nt){const d=JSON.parse(_nt);if(d&&typeof d==='object')allNoTradeSkips=d;}}catch(e){}
     try{
       const today=new Date().toISOString().split('T')[0];
       const fDateEl=document.getElementById('f-date');
@@ -6758,6 +7066,7 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
         <div><label>5M gap quality</label><select id="e-sq-gap-quality" style="width:100%"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
         <div><label>Pullback into gap</label><select id="e-sq-pullback" style="width:100%"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
         <div style="grid-column:1/-1"><label>Session segment (UK)</label><select id="e-sq-session" style="width:100%"><option value="">—</option><option>2:30–3:00</option><option>3:00–3:30</option><option>3:30–4:00</option><option>After 4:00 (no new entry)</option></select></div>
+        <div style="grid-column:1/-1"><label>Rules version</label><input type="text" id="e-rules-version" list="fuze-rules-version-list" placeholder="e.g. v1" style="width:100%"></div>
       </div>
       <label>Post-trade verdict</label>
       <select id="e-post-verdict" style="width:100%;margin-bottom:8px"><option value="">—</option><option value="yes">Would take again (same info)</option><option value="no">Would skip next time</option><option value="unsure">Unsure / needs review</option></select>
@@ -6777,9 +7086,17 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label>Planned RR</label><input type="text" id="e-rr-planned" placeholder="e.g. 2R" style="font-family:'Plus Jakarta Sans',sans-serif"></div>
+      <div><label>Target type</label><select id="e-target-type" style="width:100%"><option value="">—</option><option>Full draw / major liquidity</option><option>Nearest minor liquidity — partial plan</option><option>Fixed RR — scale at internal</option><option>Other / discretionary</option></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Entry time (UK)</label><input type="time" id="e-entry-time" min="14:30" max="16:00"></div>
       <div><label>Exit time (UK)</label><input type="time" id="e-exit-time" min="14:30" max="16:30"></div>
       <div><label>Emotional state</label><select id="e-emotion"><option value="">—</option><option>Neutral ✓</option><option>Patient / waiting</option><option>FOMO / chasing</option><option>Revenge trading</option><option>Overconfident</option><option>Anxious / hesitant</option><option>Distracted</option><option>Tired / low energy</option></select></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label>Plan before entry</label>
+      <textarea id="e-pre-intent" style="width:100%;min-height:44px;font-family:inherit"></textarea>
     </div>
     <!-- discipline removed -->
 
@@ -6803,6 +7120,10 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive expansion — strong displacement</option><option>Strong but starting to slow</option><option>Moderate — steady push</option><option>Slowing — losing volume</option><option>Grinding — small candles, slow grind</option><option>Choppy — back and forth</option><option>Stalled — no directional momentum</option><option>V-shape recovery off FVG</option><option>Slow corrective retrace — textbook</option><option>Violent retrace — entered anyway</option><option>Price consolidating inside FVG</option></select></div>
       <div><label>FVG entry zone</label><select id="e-fvg-zone" style="width:100%"><option value="">—</option><option>Top of gap</option><option>Middle of gap</option><option>Bottom of gap</option></select></div>
       <div><label>Emotion after close</label><select id="e-emotion-post" style="width:100%"><option value="">—</option><option>Satisfied ✓</option><option>Calm / indifferent</option><option>Frustrated</option><option>Relieved</option><option>Overconfident / euphoric</option><option>Revenge urge</option><option>Regret (closed too early)</option><option>Regret (held too long)</option><option>Shaken / doubting model</option></select></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label>Fill / slippage notes</label>
+      <textarea id="e-fill-notes" style="width:100%;min-height:40px;font-family:inherit"></textarea>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button onclick="closeEdit()" style="padding:9px 18px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:14px;background:#f9fafb;color:#ffffff;font-family:inherit">Cancel</button>
@@ -7803,7 +8124,7 @@ function renderSmartInsights(){
 function exportTradesToCSV(){
   if(!trades||trades.length===0){ alert('No trades to export.'); return; }
   function csvTxt(v){ return String(v==null?'':v).replace(/[\n\r]/g,' '); }
-const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','SQ session','Post verdict','Post verdict note','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
+const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Planned RR','Target type','Rules version','Plan before entry','Fill notes','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','SQ session','Post verdict','Post verdict note','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
   const rows=trades.map(t=>{
     var sq=t.setupQuality||{};
     return[
@@ -7815,6 +8136,11 @@ const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L
     t.outcome||'',
     t.pnl||'',
     t.rrActual||'',
+    csvTxt(t.rrPlanned||''),
+    csvTxt(t.targetType||''),
+    csvTxt(t.rulesVersion||''),
+    csvTxt(t.preIntent||''),
+    csvTxt(t.fillNotes||''),
     t.realisedR!==undefined&&t.realisedR!==null&&String(t.realisedR)!==''?t.realisedR:'',
     t.risk||'',
     csvTxt(sq.drawTier||''),
