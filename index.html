@@ -592,8 +592,7 @@ body.dark-mode #auth-overlay{background:rgba(0,0,0,0.92)!important}
 body.dark-mode .auth-card p{color:#9ca3af!important}
 body.dark-mode select option{background:#1a1a1a!important;color:#f0f0f0!important}
 
-/* ── Reset / Base ── */
-*{box-sizing:border-box;margin:0;padding:0}
+/* ── Reset / Base (asterisk reset is in the first style block) ── */
 body{
   font-family:'Plus Jakarta Sans',system-ui,sans-serif;
   background:var(--bg);
@@ -986,7 +985,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 }
 
 .log-table tr:hover td{background:rgba(0,0,0,0.02)}
-.no-trades{text-align:center;padding:40px;color:#9ca3af;font-size:14px}
 
 /* ── DASHBOARD ── */
 .dash-page-header{
@@ -6800,9 +6798,6 @@ function startRevealsAnalysis(){
     revRenderSlide(_revSlide);
   }, 400);
 }
-
-/* ── Hook into existing dashboard render ─────────────────── */
-// initReveals is called by the existing _origRenderDashboard / _origShowTab hooks below
 </script>
 
 <style>
@@ -7618,7 +7613,7 @@ function calcFuzeScore(tArr){
 
   // Neutral/patient emotion %
   const withEmo=completed.filter(t=>t.emotion);
-  const neutralPct=withEmo.length>0?withEmo.filter(t=>t.emotion==='Neutral ✓'||t.emotion==='Patient / waiting').length/withEmo.length:0;
+  const neutralPct=withEmo.length>0?withEmo.filter(function(t){var em=t.emotion||'';return em==='Neutral ✓'||em.indexOf('Patient / waiting')===0;}).length/withEmo.length:0;
   const emoScore=withEmo.length>0?Math.min(neutralPct,1)*15:0;
 
   const total=Math.round(wrScore+discScore+classScore+rrScore+emoScore);
@@ -8063,8 +8058,8 @@ function loadNotebookStorage(){
   }catch(e){}
 }
 
-/* ── PATCH: hook into showTab so score/insights update ─ */
-const _origShowTab=typeof showTab==='function'?showTab:null;
+/* ── PATCH: hook into showTab so score/insights update (read window.* so wrappers e.g. mobile scroll stay chained) ─ */
+const _origShowTab=typeof window.showTab==='function'?window.showTab:null;
 if(_origShowTab){
   window.showTab=function(t){
     _origShowTab(t);
@@ -8074,7 +8069,7 @@ if(_origShowTab){
 }
 
 /* ── PATCH: hook into renderDashboard so score updates ── */
-const _origRenderDashboard=typeof renderDashboard==='function'?renderDashboard:null;
+const _origRenderDashboard=typeof window.renderDashboard==='function'?window.renderDashboard:null;
 if(_origRenderDashboard){
   window.renderDashboard=function(){
     _origRenderDashboard();
@@ -8087,7 +8082,7 @@ if(_origRenderDashboard){
 }
 
 /* ── PATCH: hook into renderStats ── */
-const _origRenderStats=typeof renderStats==='function'?renderStats:null;
+const _origRenderStats=typeof window.renderStats==='function'?window.renderStats:null;
 if(_origRenderStats){
   window.renderStats=function(){
     _origRenderStats();
@@ -8113,8 +8108,7 @@ document.addEventListener('DOMContentLoaded',function(){
    LIGHT THEME OVERRIDES (scoped to light mode only)
    ═══════════════════════════════════════════════ */
 
-/* --- Base (always) --- */
-*{box-sizing:border-box}
+/* --- Base (light theme block; box-sizing already set globally) --- */
 html,body{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;padding:0!important;margin:0!important;max-width:none!important;border-top:none!important;box-shadow:none!important;min-height:100vh}
 body{display:flex!important}
 
