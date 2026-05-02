@@ -1734,11 +1734,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <option value="">—</option><option>Long</option><option>Short</option>
         </select>
       </div>
-      <div><label>Draw targeted <span style="color:#6b7280;font-weight:400;font-size:11px">— your own text; past values appear as suggestions</span></label>
+      <div><label>Draw targeted</label>
         <input type="text" id="f-draw" list="fuze-saved-draws-list" placeholder="e.g. Asia H, PDH" autocomplete="off" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.07);background:#f9fafb;color:#ffffff;font-family:inherit;font-size:14px">
         <datalist id="fuze-saved-draws-list"></datalist>
       </div>
-      <div><label>5min FVG entry zone <span style="color:#6b7280;font-weight:400;font-size:11px">— where in the gap did price tap</span></label>
+      <div><label>5min FVG entry zone</label>
         <select id="f-fvg-zone">
           <option value="">—</option>
           <option>Top of gap</option>
@@ -1866,10 +1866,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
     <div id="execution-body" class="collapsible-body">
     <!-- Discipline stars removed -->
-    <div class="gap">
-      <label>Plan before entry <span style="color:#6b7280;font-weight:400;font-size:11px">one line — what you expected before clicking</span></label>
-      <textarea id="f-pre-intent" placeholder="e.g. A-tier draw, strong displacement, aiming for NY lunch highs…" style="min-height:44px;font-family:inherit"></textarea>
-    </div>
     <div class="gap" id="emotion-field">
       <label>Emotional state <span style="color:#555;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0">— before entry</span></label>
       <select id="f-emotion">
@@ -1937,23 +1933,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
     <div>
       <label style="margin-bottom:6px">Mistakes <span id="mistake-count" style="color:#f59e0b;font-size:14px"></span></label>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:flex-end">
-        <div style="flex:1;min-width:160px">
-          <label style="font-size:11px;color:#9ca3af;text-transform:none;letter-spacing:0">Add to your library</label>
-          <input type="text" id="custom-mistake-input" placeholder="Describe the mistake…" autocomplete="off" class="mistake-search-input" style="margin-bottom:0">
-        </div>
-        <div style="min-width:200px">
-          <label style="font-size:11px;color:#9ca3af;text-transform:none;letter-spacing:0">Category</label>
-          <select id="custom-mistake-cat" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.07);background:#f9fafb;color:#ffffff;font-family:inherit;font-size:14px">
-            <option>Stop / trade management</option>
-            <option>Psychology</option>
-          </select>
-        </div>
-        <button type="button" class="btn btn-sm" onclick="addCustomMistakeFromForm()">Save mistake</button>
-      </div>
-      <input type="search" id="mistake-search" class="mistake-search-input" placeholder="Search your saved mistakes…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="filterMistakesList()">
+      <input type="search" id="mistake-search" class="mistake-search-input" placeholder="Search mistakes by keyword…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="filterMistakesList()">
       <div class="mistakes-list" id="mistakes-list"></div>
-      <div class="hint">Save mistakes above, then tap a line to tag this trade · builds your reusable list</div>
+      <div class="hint">Tap a line to tag it for this trade · search filters categories and items</div>
     </div>
     </div>
   </div>
@@ -2735,8 +2717,6 @@ function applyJournalTagline(){
 }
 
 const FUZE_SAVED_DRAWS_KEY='fuze_saved_draws_v1';
-const FUZE_CUSTOM_MISTAKES_KEY='fuze_custom_mistakes_v1';
-const MISTAKE_CATEGORY_OPTIONS=['Stop / trade management','Psychology'];
 
 function loadSavedDrawsArr(){
   try{var j=localStorage.getItem(FUZE_SAVED_DRAWS_KEY);if(j){var arr=JSON.parse(j);if(Array.isArray(arr))return arr.map(function(x){return String(x||'').trim();}).filter(Boolean).slice(0,80);}}catch(e){}
@@ -2760,47 +2740,199 @@ function refreshDrawDatalist(){
   loadSavedDrawsArr().forEach(function(d){var o=document.createElement('option');o.value=d;dl.appendChild(o);});
 }
 
-function getCustomMistakesFlat(){
-  try{var j=localStorage.getItem(FUZE_CUSTOM_MISTAKES_KEY);if(j){var a=JSON.parse(j);if(Array.isArray(a))return a.filter(function(x){return x&&typeof x.text==='string'&&String(x.text).trim();});}}catch(e){}
-  return [];
-}
-function setCustomMistakesFlat(arr){
-  try{localStorage.setItem(FUZE_CUSTOM_MISTAKES_KEY,JSON.stringify(arr));}catch(e){}
-}
-function getCustomMistakesLibrary(){
-  var flat=getCustomMistakesFlat();
-  var byCat={};
-  MISTAKE_CATEGORY_OPTIONS.forEach(function(c){byCat[c]=[];});
-  flat.forEach(function(m){
-    var c=MISTAKE_CATEGORY_OPTIONS.indexOf(m.cat)>=0?m.cat:MISTAKE_CATEGORY_OPTIONS[0];
-    var tx=String(m.text).trim();
-    if(!tx)return;
-    if(byCat[c].indexOf(tx)<0)byCat[c].push(tx);
-  });
-  return MISTAKE_CATEGORY_OPTIONS.map(function(cat){return {cat:cat,items:byCat[cat]};}).filter(function(g){return g.items.length;});
-}
-function addCustomMistakeEntry(text,cat){
-  text=String(text||'').trim();
-  cat=MISTAKE_CATEGORY_OPTIONS.indexOf(cat)>=0?cat:MISTAKE_CATEGORY_OPTIONS[0];
-  if(!text)return false;
-  var flat=getCustomMistakesFlat();
-  var low=text.toLowerCase();
-  if(flat.some(function(m){return String(m.text).trim().toLowerCase()===low&&m.cat===cat;}))return false;
-  flat.push({id:'cm'+Date.now()+Math.random().toString(36).slice(2,9),cat:cat,text:text});
-  setCustomMistakesFlat(flat);
-  return true;
-}
-function addCustomMistakeFromForm(){
-  var inp=document.getElementById('custom-mistake-input');
-  var sel=document.getElementById('custom-mistake-cat');
-  if(!inp||!sel)return;
-  var text=String(inp.value||'').trim();
-  if(!text){alert('Enter a mistake description first.');return;}
-  if(addCustomMistakeEntry(text,sel.value)){
-    inp.value='';
-    buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'');
-  }else{alert('That mistake is already saved in this category.');}
-}
+const MISTAKES=[
+  {cat:'Session / Timing',items:[
+    'Outside NY window (before 14:30 UK)',
+    'Entered after 16:00 UK hard cutoff',
+    'Didn\'t close at 16:30 hard close',
+    'Took second trade in same session',
+    'Entered during news event / red folder',
+    'Traded during low liquidity open',
+    'Held through hard close time',
+    'Entered too close to session end — no time for trade to play',
+    'Traded during lunch hours — dead zone',
+    'Forced a trade because session was almost over'
+  ]},
+  {cat:'Draw / Target',items:[
+    'No clear single draw — multiple targets',
+    'Draw already taken / tapped earlier',
+    'Price moving away from draw, not toward it',
+    'Targeted too far draw — skipped nearer one',
+    'Draw was stacked — targeted the last one',
+    'Draw on wrong timeframe',
+    'Target was inside a major opposing HTF level',
+    'Draw was too close — not enough RR potential',
+    'Draw was a weak swing — not a clean level',
+    'Didn\'t account for opposing draw in the way'
+  ]},
+  {cat:'HTF Context',items:[
+    'HTF structure misread — was actually bearish',
+    'Traded into chop / ranging 4H or 1H market',
+    '4H and 1H misaligned — no confluence',
+    'Traded against higher timeframe trend',
+    'Ignored obvious opposing HTF level nearby',
+    'Small candles on 4H/1H — no momentum',
+    'HTF was in consolidation between equal highs/lows',
+    'Previous session high/low was too close — blocked path',
+    'HTF gap already filled — draw was gone',
+    'Entered during a HTF distribution / accumulation phase'
+  ]},
+  {cat:'Displacement',items:[
+    'No displacement at all — entered on chop',
+    'Displacement weaker than the retrace',
+    'No clear BOS on displacement candle',
+    'Displacement was a single candle wick — not a real move',
+    'Displacement happened but no 5M FVG was left behind',
+    '5M FVG formed in chop, not from clean displacement',
+    'FVG was too large — low quality imbalance',
+    'Displacement was on wrong timeframe (1M not 15M)',
+    'Multiple overlapping FVGs — messy area',
+    'Gap was partially filled before entry — invalidated',
+    'Displacement was against HTF trend',
+    'Retrace already came before I noticed the gap'
+  ]},
+  {cat:'Retrace',items:[
+    'Violent / aggressive retrace — should have skipped',
+    'Retrace stronger than displacement',
+    'Entered too early — didn\'t wait for retrace into gap',
+    'Retrace went through entire 5M FVG',
+    'Price consolidated inside FVG instead of tapping and reacting',
+    'Chased price after FVG was missed',
+    'Entered on a spike candle, not a clean retrace',
+    'Retrace was deep — over 75% of displacement',
+    'Multiple retrace attempts before entry — structure weakened',
+    'Gap was hit and closed — no longer valid'
+  ]},
+  {cat:'1M Confirmation',items:[
+    'No 1M candle close confirmation — entered on open',
+    'Entered on a wick, not a candle body close',
+    'No 1M mini trend (no HH + HL structure)',
+    'BOS candle was driving away from draw',
+    'BOS was a wick, not a close',
+    '1M BOS candle was too large — terrible entry price',
+    'Entered on momentum, not on structure break',
+    'Mistook a liquidity grab for confirmation',
+    'No higher low to reference — structure unclear',
+    'Confirmation happened but I entered late — chased it',
+    '1M structure broke below last HL before entry',
+    'Multiple 1M BOS attempts — first was a fake'
+  ]},
+  {cat:'Stop / Trade Management',items:[
+    'Stop was unprotected — no structure behind it',
+    'Stop too tight — wicked out then moved',
+    'Didn\'t move to break even after 1:1',
+    'Moved stop further away mid-trade',
+    'Moved BE back to entry after being ahead',
+    'Closed early — target not reached',
+    'Removed stop entirely',
+    'Didn\'t trail stop after BE was set',
+    'Took partial profit then let runner go to full loss',
+    'Scaled out too early — missed the full move',
+    'Manually closed on drawdown out of fear',
+    'Moved TP closer because price was slow',
+    'Widened risk without adjusting size'
+  ]},
+  {cat:'Psychology',items:[
+    'Forced the setup — no valid entry',
+    'FOMO — chased price after missing entry',
+    'Traded on emotion / revenge after a loss',
+    'Deviated from model rules mid-trade',
+    'Felt pressure to trade — no real setup',
+    'Convinced myself the setup was valid when it wasn\'t',
+    'Overconfident after a winning streak',
+    'Second-guessed valid entry and waited too long',
+    'Anxious during trade — micromanaged it',
+    'Let a winner turn to a loser by ignoring BE rule',
+    'Traded to prove a point to myself',
+    'Logged in outside session hours and took a trade',
+    'Made a decision too fast — didn\'t follow process',
+    'Kept watching after entry and scared myself out',
+    'Got attached to a bias and ignored contradicting signs'
+  ]},
+  {cat:'Can I trade?',items:[
+    'Outside 2:30–4:00 PM UK window',
+    'Major news pending — skipped',
+    'Headspace not neutral — skipped',
+    'Second trade same day — rule break'
+  ]},
+  {cat:'Draw / liquidity tier',items:[
+    'No clear untapped target — skip',
+    'C tier alone (unbalanced gap only) — skip',
+    'S tier — perfect equal H/L not respected',
+    'A tier — data wicks / TL liquidity mishandled',
+    'B tier — session H/L or gap without S/A confluence',
+    'Multiple competing draws — no single obvious target',
+    'Draw already tapped earlier',
+    'Opposing liquidity pool blocked path'
+  ]},
+  {cat:'4H bias',items:[
+    '4H ranging / small candles — chop',
+    'Structure not pointing toward draw',
+    'Delivering away from opposite HTF gap — skip',
+    'Premium/discount read wrong for direction'
+  ]},
+  {cat:'15M displacement',items:[
+    'Displacement weaker than pullback',
+    'No clear BOS on displacement',
+    '15M push not toward draw',
+    'Single wick fakeout — not real displacement'
+  ]},
+  {cat:'5M singular gap',items:[
+    'Multiple messy FVGs — not singular obvious gap',
+    'FVG formed in chop',
+    'Gap not visible from far left — quality fail',
+    'Two adjacent gaps not read as one combined',
+    'Gap partially filled before entry'
+  ]},
+  {cat:'Slow weak pullback',items:[
+    'Fast / aggressive pullback — should skip',
+    'Consolidation inside gap instead of calm retrace',
+    'Deep retrace through entire gap',
+    'Chased after missing slow pullback'
+  ]},
+  {cat:'IFVG 1M entry',items:[
+    'No slight violation into gap before IFVG',
+    'Entered before IFVG candle close',
+    'Strong momentum entry rule violated (should be IFVG close)',
+    'Slow momentum — did not wait for IFVG retest',
+    'Stop not at swing extreme / wrong sizing',
+    'Mental stop: 1M closed back through IFVG — did not exit',
+    'Hard stop not at swing high/low'
+  ]},
+  {cat:'Target selection',items:[
+    'Slow momentum but aimed for full level',
+    'B/C tier draw but targeted major liquidity',
+    'Strong + S/A but took minor instead of full (wrong side of rule)',
+    'Did not take nearest minor on slow momentum'
+  ]},
+  {cat:'BE rule',items:[
+    'Did not move SL to BE at first internal swing',
+    'Price stalled at BE zone — did not accept BE',
+    'Held for more after stall (60% fail warning ignored)',
+    'Moved BE back against rule'
+  ]},
+  {cat:'Exit / time',items:[
+    'Before 4PM mismanagement — no trail plan',
+    'After 4PM did not trail to 5M candle lows/highs',
+    'Past 4PM new entry — hard no-trade breach',
+    'Held past 4:30 PM hard close',
+    'Target hit then chop — did not close immediately'
+  ]},
+  {cat:'Hard no-trade list',items:[
+    'Forced setup',
+    'HTF chop + continuation attempt',
+    'Weak displacement entry',
+    'Messy gaps entry',
+    'Not neutral state',
+    'Slow momentum + full target plan'
+  ]},
+  {cat:'Framework',items:[
+    'Missed unqualified setup — correct (journal as win)',
+    'Stopped at BE on slow trade — correct process',
+    'Draw → displacement → gap → IFVG sequence broken',
+    'Did not respect: one trade / day'
+  ]}
+];
 
 const SUPA_URL='https://ksjwlisoggcahzhzngfq.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzandsaXNvZ2djYWh6aHpuZ2ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NDIwMDksImV4cCI6MjA4OTIxODAwOX0.I0b-qCneLRHYv__XCVGW3IVPsGL9EfvimiaOIEHdHVA';
@@ -3117,7 +3249,7 @@ function buildMistakes(filterQuery){
   if(!el)return;
   el.innerHTML='';
   let printed=false;
-  getCustomMistakesLibrary().forEach(group=>{
+  MISTAKES.forEach(group=>{
     const items=q?group.items.filter(it=>it.toLowerCase().includes(q)||group.cat.toLowerCase().includes(q)):group.items;
     if(!items.length)return;
     printed=true;
@@ -3135,7 +3267,7 @@ function buildMistakes(filterQuery){
       el.appendChild(div);
     });
   });
-  if(!printed){el.innerHTML='<div class="hint" style="padding:12px 8px;line-height:1.45">'+(q?'No mistakes match — try another keyword.':'No saved mistakes yet. Add one above (pick category, then Save mistake) — they appear here for every trade.')+'</div>';}
+  if(!printed){el.innerHTML='<div class="hint" style="padding:12px 8px;line-height:1.45">No mistakes match — try another keyword.</div>';}
 }
 function toggleMistake(item,el){
   const idx=selectedMistakes.indexOf(item);
@@ -3483,7 +3615,6 @@ async function saveTrade(){
     contracts:optFloatField('f-contracts'),
     bias, direction, draw, rrPlanned:rrPlannedStr||undefined, rrActual, pnl, outcome,
     targetType:(document.getElementById('f-target-type')||{}).value||undefined,
-    preIntent:trimVal('f-pre-intent')||undefined,
     fillNotes:trimVal('f-fill-notes')||undefined,
     emotion:document.getElementById('f-emotion')?document.getElementById('f-emotion').value:'',
     emotionPost:document.getElementById('f-emotion-post')?document.getElementById('f-emotion-post').value:'',
@@ -3513,8 +3644,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-rr-planned','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-post-verdict-note','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-post-verdict','f-target-type','f-pre-intent','f-fill-notes','custom-mistake-input'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  var cmc=document.getElementById('custom-mistake-cat');if(cmc)cmc.selectedIndex=0;
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-rr-planned','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-post-verdict-note','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-post-verdict','f-target-type','f-fill-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -3549,7 +3679,7 @@ function renderJournal(){
     const q=fs.toLowerCase();
     f=f.filter(t=>{
       var sqs=(formatSetupQualitySummary(t.setupQuality)+' '+(t.postVerdict||'')+' '+(t.postVerdictNote||'')+(Array.isArray(t.tags)?t.tags.join(' '):'')).toLowerCase();
-      var extra=((t.rrPlanned||'')+' '+(t.targetType||'')+' '+(t.preIntent||'')+' '+(t.fillNotes||'')).toLowerCase();
+      var extra=((t.rrPlanned||'')+' '+(t.targetType||'')+' '+(t.fillNotes||'')).toLowerCase();
       return (t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||sqs.includes(q)||(t.date||'').includes(q)||extra.includes(q);
     });
   }
@@ -3566,7 +3696,7 @@ function renderJournal(){
   tbody.innerHTML=f.map(t=>{
     const pnlStr=t.pnl!=null?(t.pnl>0?'<span style="color:#10b981">+$'+t.pnl+'</span>':t.pnl<0?'<span style="color:#ef4444">-$'+Math.abs(t.pnl)+'</span>':'<span style="color:#e5e7eb">$0</span>'):'—';
     const ssLinks=[['1M',t.ss1m],['5M',t.ss5m],['15M',t.ss15m],['1H',t.ss1h],['4H',t.ss4h]].filter(s=>s[1]);
-    const hasDetail=ssLinks.length||t.narrative||t.improve||t.preIntent||t.fillNotes||t.targetType||t.rrPlanned;
+    const hasDetail=ssLinks.length||t.narrative||t.improve||t.fillNotes||t.targetType||t.rrPlanned;
     const isFav=t.favourite||false;
     const favBtn='<button onclick="toggleFav('+t.id+',this)" style="border:none;background:none;cursor:pointer;font-size:15px;padding:2px 4px" title="Favourite">'+(isFav?'★':'☆')+'</button>';
     const detailBtn=favBtn+'<button onclick="toggleDetail('+t.id+',this)" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:14px;padding:2px 4px;transition:transform .2s" data-open="0">▶</button>';
@@ -3649,7 +3779,6 @@ function renderJournal(){
       +pill('Broker', fillStr, '#9ca3af')
       +pill('Planned RR', t.rrPlanned?(t.rrPlanned.length>24?t.rrPlanned.slice(0,22)+'…':t.rrPlanned):'—', '#34d399')
       +pill('Target type', t.targetType?(t.targetType.length>36?t.targetType.slice(0,34)+'…':t.targetType):'—', '#2dd4bf')
-      +pill('Plan before entry', t.preIntent?(function(s){s=String(s).replace(/\n/g,' ');return s.length>120?s.slice(0,118)+'…':s;})(t.preIntent):'—', '#cbd5e1')
       +pill('Fill / slippage', t.fillNotes?(function(s){s=String(s).replace(/\n/g,' ');return s.length>120?s.slice(0,118)+'…':s;})(t.fillNotes):'—', '#fbbf24')
       +pill('Setup quality', sqLine, '#a78bfa')
       +pill('Post verdict', verStr, '#38bdf8')
@@ -3711,7 +3840,6 @@ function openEdit(id){
   document.getElementById('e-actual-rr').value=t.rrActual||'';
   var erp=document.getElementById('e-rr-planned');if(erp)erp.value=t.rrPlanned||'';
   var ett=document.getElementById('e-target-type');if(ett)ett.value=t.targetType||'';
-  var epi=document.getElementById('e-pre-intent');if(epi)epi.value=t.preIntent||'';
   var efn=document.getElementById('e-fill-notes');if(efn)efn.value=t.fillNotes||'';
   document.getElementById('e-outcome').value=t.outcome||'';
   document.getElementById('e-pnl').value=t.pnl!=null?t.pnl:'';
@@ -3811,7 +3939,6 @@ function saveEdit(){
     rrPlanned:etrim('e-rr-planned')||undefined,
     rrActual:document.getElementById('e-actual-rr').value,
     targetType:(document.getElementById('e-target-type')||{}).value||undefined,
-    preIntent:etrim('e-pre-intent')||undefined,
     fillNotes:etrim('e-fill-notes')||undefined,
     outcome:document.getElementById('e-outcome').value,
     pnl:ePnl!==''?parseFloat(ePnl):null,
@@ -5554,7 +5681,6 @@ function saveDraft(){
     rrPlanned:(document.getElementById('f-rr-planned')||{}).value||'',
     rrActual:document.getElementById('f-actual-rr').value,
     targetType:(document.getElementById('f-target-type')||{}).value||'',
-    preIntent:(document.getElementById('f-pre-intent')||{}).value||'',
     fillNotes:(document.getElementById('f-fill-notes')||{}).value||'',
     pnl:document.getElementById('f-pnl').value,
     risk:document.getElementById('f-risk').value,
@@ -5590,7 +5716,6 @@ function loadDraft(){
     document.getElementById('f-actual-rr').value=draft.rrActual||'';
     var frp=document.getElementById('f-rr-planned');if(frp&&draft.rrPlanned!==undefined)frp.value=draft.rrPlanned||'';
     var ftt=document.getElementById('f-target-type');if(ftt&&draft.targetType!==undefined)ftt.value=draft.targetType||'';
-    var fpi=document.getElementById('f-pre-intent');if(fpi&&draft.preIntent!==undefined)fpi.value=draft.preIntent||'';
     var ffn=document.getElementById('f-fill-notes');if(ffn&&draft.fillNotes!==undefined)ffn.value=draft.fillNotes||'';
     if(draft.setupQuality)applySetupQuality('f',draft.setupQuality);
     var fPv=document.getElementById('f-post-verdict');if(fPv&&draft.postVerdict)fPv.value=draft.postVerdict;
@@ -5643,19 +5768,32 @@ document.addEventListener('keydown',function(e){
 // ── Confetti on new PB ──
 function _randPick(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function _randShuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function _uniqPush(arr,it){if(arr.indexOf(it)<0)arr.push(it);}
 function correlateMistakesForRandomize(out,pickedCls){
-  var lib=getCustomMistakesLibrary();
-  var all=[];
-  lib.forEach(function(g){g.items.forEach(function(it){all.push(it);});});
-  if(!all.length)return[];
-  if(out==='win'&&pickedCls==='valid-good')return[];
-  var want=out==='loss'&&pickedCls==='invalid'?3:(out==='loss'?2:1);
+  var poolInvLoss=['Forced the setup — no valid entry','No clear single draw — multiple targets','Traded into chop / ranging 4H or 1H market','Multiple messy FVGs — not singular obvious gap','FVG formed in chop','Entered after 16:00 UK hard cutoff'];
+  var poolExecLoss=['Violent / aggressive retrace — should have skipped','No 1M candle close confirmation — entered on open','Retrace stronger than displacement','Entered too early — didn\'t wait for retrace into gap','BOS candle was driving away from draw'];
+  var poolGoodLoss=['Stop too tight — wicked out then moved','Moved stop further away mid-trade','Let a winner turn to a loser by ignoring BE rule'];
+  var poolWinBadExec=['Confirmation happened but I entered late — chased it','Chased after missing slow pullback'];
+  var poolBE=['Didn\'t move to break even after 1:1','Closed early — target not reached'];
   var outArr=[];
-  for(var i=0;i<want&&i<6;i++){
-    var pick=_randPick(all);
-    if(outArr.indexOf(pick)<0)outArr.push(pick);
+  if(out==='win'&&pickedCls==='valid-good')return[];
+  if(out==='win'&&pickedCls==='valid-bad')return[_randPick(poolWinBadExec)];
+  if(out==='win'&&pickedCls==='invalid'){_uniqPush(outArr,_randPick(['Convinced myself the setup was valid when it wasn\'t','Felt pressure to trade — no real setup']));return outArr;}
+  if(out==='loss'&&pickedCls==='invalid'){var n=2+Math.floor(Math.random()*2);poolInvLoss=_randShuffle(poolInvLoss.slice());for(var i=0;i<n&&i<poolInvLoss.length;i++)_uniqPush(outArr,poolInvLoss[i]);return outArr;}
+  if(out==='loss'&&pickedCls==='valid-bad'){var a=_randPick(poolExecLoss);var b=_randPick(poolExecLoss.filter(function(x){return x!==a;}));return b?[a,b]:[a];}
+  if(out==='loss'&&pickedCls==='valid-good'){
+    var pg1=_randPick(poolGoodLoss);
+    if(Math.random()<0.38){
+      var rem=poolGoodLoss.filter(function(x){return x!==pg1;});
+      if(rem.length)_uniqPush(outArr,_randPick(rem));
+    }
+    outArr.unshift(pg1);
+    return outArr;
   }
-  return outArr;
+  if(out==='be'&&pickedCls==='invalid')return[_randPick(poolInvLoss),'Didn\'t move to break even after 1:1'].filter(function(x,i,self){return self.indexOf(x)===i;}).slice(0,2);
+  if(out==='be'&&pickedCls==='valid-bad')return[_randPick(['Didn\'t move to break even after 1:1','Entered on a spike candle, not a clean retrace'])];
+  if(out==='be'&&pickedCls==='valid-good')return Math.random()<0.55?[]:[_randPick(poolBE)];
+  return[];
 }
 function applyRandomChecklistForClass(pickedCls){
   var boxes=[...document.querySelectorAll('#checklist-body .check-item input[type=checkbox]')];
@@ -5832,8 +5970,6 @@ function randomizeTrade(){
   var plannedOpts=rOutcome==='win'?['1:1','1:2','2','2.5']:rOutcome==='loss'?['1:1','1.5']:['1:1'];
   var frp=document.getElementById('f-rr-planned');
   if(frp)frp.value=_randPick(plannedOpts);
-  var fpi=document.getElementById('f-pre-intent');
-  if(fpi)fpi.value='Plan: '+bias.toLowerCase()+' bias, '+draw+' as draw, '+fz.toLowerCase()+' zone; session rules respected.';
   var ffn=document.getElementById('f-fill-notes');
   if(ffn)ffn.value=Math.random()<0.82?'':_randPick(['Slipped 1 tick on entry','Partial — scaled at internal','Latency on bracket','Clean fills']);
   calcAutoRR();
@@ -6656,10 +6792,6 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       <div><label>Entry time (UK)</label><input type="time" id="e-entry-time" min="14:30" max="16:00"></div>
       <div><label>Exit time (UK)</label><input type="time" id="e-exit-time" min="14:30" max="16:30"></div>
       <div><label>Emotional state</label><select id="e-emotion"><option value="">—</option><option>Neutral ✓</option><option>Patient / waiting</option><option>FOMO / chasing</option><option>Revenge trading</option><option>Overconfident</option><option>Anxious / hesitant</option><option>Distracted</option><option>Tired / low energy</option></select></div>
-    </div>
-    <div style="margin-bottom:12px">
-      <label>Plan before entry</label>
-      <textarea id="e-pre-intent" style="width:100%;min-height:44px;font-family:inherit"></textarea>
     </div>
     <!-- discipline removed -->
 
@@ -7684,7 +7816,7 @@ function renderSmartInsights(){
 function exportTradesToCSV(){
   if(!trades||trades.length===0){ alert('No trades to export.'); return; }
   function csvTxt(v){ return String(v==null?'':v).replace(/[\n\r]/g,' '); }
-const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Planned RR','Target type','Plan before entry','Fill notes','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','Post verdict','Post verdict note','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
+const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Planned RR','Target type','Fill notes','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','Post verdict','Post verdict note','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
   const rows=trades.map(t=>{
     var sq=t.setupQuality||{};
     return[
@@ -7698,7 +7830,6 @@ const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L
     t.rrActual||'',
     csvTxt(t.rrPlanned||''),
     csvTxt(t.targetType||''),
-    csvTxt(t.preIntent||''),
     csvTxt(t.fillNotes||''),
     t.realisedR!==undefined&&t.realisedR!==null&&String(t.realisedR)!==''?t.realisedR:'',
     t.risk||'',
