@@ -3544,8 +3544,13 @@ async function saveTrade(){
   if(!tradeClass) missing.push('Trade classification');
   if(pnlRaw==='') missing.push('P&L');
   if(!risk) missing.push('Risk');
-  if(!trimVal('f-narrative')) missing.push('Narrative');
-  if(!trimVal('f-improve')) missing.push('Lessons learned / takeaway');
+  if(!trimVal('f-rr-planned'))missing.push('Planned RR');
+  if(!(document.getElementById('f-target-type')||{}).value)missing.push('Target type');
+  if(!trimVal('f-fill-notes'))missing.push('Fill / slippage notes');
+  if(!trimVal('f-entry-price'))missing.push('Entry price');
+  if(!trimVal('f-exit-price'))missing.push('Exit price');
+  if(!trimVal('f-contracts'))missing.push('Contracts');
+  else{var ctN=parseFloat(trimVal('f-contracts'));if(!isFinite(ctN)||ctN<0)missing.push('Contracts (valid number ≥ 0)');}
   if(document.getElementById('f-fvg-zone')&&!trimVal('f-fvg-zone')) missing.push('5min FVG entry zone');
   if(document.getElementById('f-emotion')&&!document.getElementById('f-emotion').value) missing.push('Emotional state (before entry)');
   if(document.getElementById('f-emotion-post')&&!document.getElementById('f-emotion-post').value) missing.push('Emotional state (after close)');
@@ -3555,7 +3560,9 @@ async function saveTrade(){
   if(!sqF.displacement)missing.push('Setup quality — 15M displacement');
   if(!sqF.gapQuality)missing.push('Setup quality — 5M gap');
   if(!sqF.pullback)missing.push('Setup quality — pullback');
+  if(!sqF.ifvgQuality)missing.push('IFVG quality (1M)');
   if(!document.getElementById('f-post-verdict')||!document.getElementById('f-post-verdict').value)missing.push('Post-trade verdict');
+  if(checklistTotal>0&&checklistPassed!==checklistTotal)missing.push('Model checklist — tick all '+checklistTotal+' items (only mistakes, “What happened?”, and “What to improve?” are optional)');
   const files=window._pendingSSFiles||{};
   if(currentProfile!=='backtesting'){
     ['1m','5m','15m','1h','4h'].forEach(function(tf){
@@ -3905,8 +3912,13 @@ function saveEdit(){
   if(document.getElementById('e-emotion')&&!document.getElementById('e-emotion').value) missing.push('Emotional state');
   if(document.getElementById('e-emotion-post')&&!document.getElementById('e-emotion-post').value) missing.push('Emotional state (after close)');
   if(document.getElementById('e-momentum')&&!document.getElementById('e-momentum').value) missing.push('Momentum at entry');
-  if(!etrim('e-narrative')) missing.push('Narrative');
-  if(!etrim('e-improve')) missing.push('Lessons learned / takeaway');
+  if(!etrim('e-rr-planned'))missing.push('Planned RR');
+  if(!(document.getElementById('e-target-type')||{}).value)missing.push('Target type');
+  if(!etrim('e-fill-notes'))missing.push('Fill / slippage notes');
+  if(!etrim('e-entry-price'))missing.push('Entry price');
+  if(!etrim('e-exit-price'))missing.push('Exit price');
+  if(!etrim('e-contracts'))missing.push('Contracts');
+  else{var ectN=parseFloat(etrim('e-contracts'));if(!isFinite(ectN)||ectN<0)missing.push('Contracts (valid number ≥ 0)');}
   if(document.getElementById('e-fvg-zone')&&!etrim('e-fvg-zone')) missing.push('5min FVG entry zone');
   if(currentProfile!=='backtesting'){
     ['e-ss-1m','e-ss-5m','e-ss-15m','e-ss-1h','e-ss-4h'].forEach(function(id){
@@ -3919,13 +3931,16 @@ function saveEdit(){
   if(!sqE.displacement)missing.push('Setup quality — 15M displacement');
   if(!sqE.gapQuality)missing.push('Setup quality — 5M gap');
   if(!sqE.pullback)missing.push('Setup quality — pullback');
+  if(!sqE.ifvgQuality)missing.push('IFVG quality (1M)');
   if(!(document.getElementById('e-post-verdict')||{}).value)missing.push('Post-trade verdict');
+  var eChecklistBoxes=document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]');
+  var eCheckPassed=[...eChecklistBoxes].filter(function(b){return b.checked;}).length;
+  var eCheckTotal=eChecklistBoxes.length;
+  if(eCheckTotal>0&&eCheckPassed!==eCheckTotal)missing.push('Model checklist — tick all '+eCheckTotal+' items');
   if(missing.length){alert('Missing required fields:\n\n• '+missing.join('\n• '));return;}
   var ePnl=document.getElementById('e-pnl').value;
   var eRisk=document.getElementById('e-risk').value;
   var eReal=computeRealisedR(ePnl!==''?parseFloat(ePnl):null,eRisk);
-  var eChecklistBoxes=document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]');
-  var eCheckPassed=[...eChecklistBoxes].filter(function(b){return b.checked;}).length;
   var updated={
     ...trades[idx],
     date:document.getElementById('e-date').value,
@@ -3967,7 +3982,7 @@ function saveEdit(){
     tags:[],
     mistakes:[...editingSelectedMistakes],
     checksPassed:eCheckPassed,
-    checksTotal:eChecklistBoxes.length
+    checksTotal:eCheckTotal
   };
   if(currentProfile==='all'&&trades[idx]&&trades[idx]._profile){
     var src=trades[idx]._profile;
@@ -5764,7 +5779,6 @@ document.addEventListener('keydown',function(e){
 
 // ── Confetti on new PB ──
 function _randPick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function _randShuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function correlateMistakesForRandomize(out,pickedCls){
   var all=[];
   getMistakesGroupedForUI().forEach(function(g){g.items.forEach(function(it){all.push(it);});});
@@ -5777,19 +5791,6 @@ function correlateMistakesForRandomize(out,pickedCls){
     if(outArr.indexOf(pick)<0)outArr.push(pick);
   }
   return outArr;
-}
-function applyRandomChecklistForClass(pickedCls){
-  var boxes=[...document.querySelectorAll('#checklist-body .check-item input[type=checkbox]')];
-  var n=boxes.length;
-  if(!n)return;
-  boxes.forEach(function(b){b.checked=true;});
-  if(pickedCls==='valid-good')return;
-  if(pickedCls==='valid-bad'&&n){boxes[Math.floor(Math.random()*n)].checked=false;return;}
-  if(pickedCls==='invalid'){
-    var fail=Math.min(Math.max(2,Math.ceil(n*0.35)),Math.max(1,n-1));
-    var ix=_randShuffle([...Array(n).keys()]).slice(0,fail);
-    ix.forEach(function(i){boxes[i].checked=false;});
-  }
 }
 function correlateTradeClass(out){
   var u=Math.random();
@@ -5911,7 +5912,7 @@ function randomizeTrade(){
   document.querySelectorAll('#mistakes-list .mistake-item').forEach(function(el){var lbl=el.querySelector('span');if(lbl&&randMistakes.indexOf(lbl.textContent)>=0)el.classList.add('selected');else el.classList.remove('selected');});
   document.getElementById('mistake-count').textContent=randMistakes.length?'('+randMistakes.length+' selected)':'';
 
-  applyRandomChecklistForClass(picked);
+  checklistCheckAll();
   updateChecks();
 
   window._pendingSSFiles={};
@@ -5954,7 +5955,19 @@ function randomizeTrade(){
   var frp=document.getElementById('f-rr-planned');
   if(frp)frp.value=_randPick(plannedOpts);
   var ffn=document.getElementById('f-fill-notes');
-  if(ffn)ffn.value=Math.random()<0.82?'':_randPick(['Slipped 1 tick on entry','Partial — scaled at internal','Latency on bracket','Clean fills']);
+  if(ffn)ffn.value=_randPick(['Clean fills','Slipped 1 tick on entry','Partial — scaled at internal','Latency on bracket','One tick through stop then target','Iceberg / reload on entry']);
+  (function randomizeBrokerPrices(){
+    var ep=document.getElementById('f-entry-price'),xp=document.getElementById('f-exit-price'),ct=document.getElementById('f-contracts');
+    if(!ep||!xp||!ct)return;
+    var base=18500+Math.floor(Math.random()*900);
+    var tick=0.25;
+    var ent=base+tick*Math.floor(Math.random()*8);
+    var delta=(direction==='Long'?(rOutcome==='win'?1:-1):(rOutcome==='win'?-1:1))*(8+Math.floor(Math.random()*40))*tick;
+    var ex=ent+delta;
+    ep.value=String(ent);
+    xp.value=String(Math.round(ex*100)/100);
+    ct.value=String(1+Math.floor(Math.random()*5));
+  })();
   calcAutoRR();
 }
 
