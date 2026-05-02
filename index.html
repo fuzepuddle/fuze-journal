@@ -1844,6 +1844,20 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <option>Spike then stall</option>
         </select>
       </div>
+      <div style="grid-column:1/-1">
+        <label>IFVG quality (1M) <span style="color:#9ca3af;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">— how price respected the inversion</span></label>
+        <select id="f-sq-ifvg-quality">
+          <option value="">—</option>
+          <option>Clean close through — NQ &amp; MNQ aligned</option>
+          <option>Barely closed through / weak body</option>
+          <option>MNQ confirmed — NQ did not (or lagged)</option>
+          <option>NQ confirmed — MNQ only wick / no follow-through</option>
+          <option>Touch / wick only — no candle close through</option>
+          <option>IFVG in chop — poor context</option>
+          <option>Violated then reclaimed — messy</option>
+          <option>Other — describe in notes</option>
+        </select>
+      </div>
     </div>
     <div class="gap" style="margin-top:4px">
       <label>Post-trade verdict <span style="color:#9ca3af;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0">— separate from win/loss</span></label>
@@ -1853,8 +1867,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <option value="no">Would skip next time</option>
         <option value="unsure">Unsure / needs review</option>
       </select>
-      <label style="margin-top:8px">Verdict note <span style="color:#9ca3af;font-size:12px;font-weight:400">optional</span></label>
-      <textarea id="f-post-verdict-note" placeholder="One line: what you’d change or confirm…" style="min-height:44px;font-family:inherit"></textarea>
     </div>
     <div class="hint"><span style="font-weight:600;color:#e5e7eb">Realised R</span> uses P&amp;L ÷ (account × risk %) with the saved account size (default $50k).</div>
   </div>
@@ -2625,13 +2637,14 @@ function readSetupQuality(prefix){
     drawTier:g('-sq-draw-tier'),
     displacement:g('-sq-displacement'),
     gapQuality:g('-sq-gap-quality'),
-    pullback:g('-sq-pullback')
+    pullback:g('-sq-pullback'),
+    ifvgQuality:g('-sq-ifvg-quality')
   };
 }
 function applySetupQuality(prefix,sq){
   sq=sq||{};
   var p=prefix==='e'?'e':prefix==='m'?'m':'f';
-  [['-sq-draw-tier','drawTier'],['-sq-displacement','displacement'],['-sq-gap-quality','gapQuality'],['-sq-pullback','pullback']].forEach(function(pr){
+  [['-sq-draw-tier','drawTier'],['-sq-displacement','displacement'],['-sq-gap-quality','gapQuality'],['-sq-pullback','pullback'],['-sq-ifvg-quality','ifvgQuality']].forEach(function(pr){
     var el=document.getElementById(p+pr[0]);
     if(el)el.value=sq[pr[1]]||'';
   });
@@ -2646,7 +2659,7 @@ function parseRRNumeric(s){
 }
 function formatSetupQualitySummary(sq){
   sq=sq||{};
-  var parts=[sq.drawTier,sq.displacement,sq.gapQuality,sq.pullback].filter(function(x){return x;});
+  var parts=[sq.drawTier,sq.displacement,sq.gapQuality,sq.pullback,sq.ifvgQuality].filter(function(x){return x;});
   return parts.length?parts.join(' · '):'';
 }
 function verdictLabel(v){
@@ -3085,7 +3098,6 @@ async function loadAllData(){
     applyProfileUI();
     renderJournal&&renderJournal();
     renderDashboard&&renderDashboard();
-    setTimeout(function(){try{scrollToDashboardTop();}catch(x){}},0);
   }catch(e){console.error('Init error',e);}
 }
 function save(){
@@ -3368,10 +3380,9 @@ function showTab(t){
   const cdp=document.getElementById('cal-day-popup');if(cdp)cdp.style.display='none';
 }
 
-/** Full refresh / back-forward: land on dashboard with scroll at top (browser often restores scroll). */
-function scrollToDashboardTop(){
+/** Scroll main window + app shells to top — does not change tab (safe after async data load). */
+function resetScrollPositionsToTop(){
   try{
-    if(typeof showTab==='function')showTab('dashboard');
     window.scrollTo(0,0);
     document.documentElement.scrollTop=0;
     document.body.scrollTop=0;
@@ -3381,12 +3392,24 @@ function scrollToDashboardTop(){
     if(sb)sb.scrollTop=0;
   }catch(e){}
 }
+/** Full page navigation/refresh: open dashboard and scroll to top (once per pageshow). */
+function goToDashboardWithScrollTop(){
+  try{
+    if(typeof showTab==='function')showTab('dashboard');
+    resetScrollPositionsToTop();
+  }catch(e){}
+}
+var _fuzeInitialDashboardShown=false;
 window.addEventListener('pageshow',function(ev){
   if(ev.persisted)return;
-  setTimeout(function(){try{scrollToDashboardTop();}catch(x){}},0);
+  setTimeout(function(){
+    if(_fuzeInitialDashboardShown)return;
+    _fuzeInitialDashboardShown=true;
+    try{goToDashboardWithScrollTop();}catch(x){}
+  },0);
 });
 window.addEventListener('load',function(){
-  setTimeout(function(){try{scrollToDashboardTop();}catch(x){}},50);
+  setTimeout(function(){try{resetScrollPositionsToTop();}catch(x){}},50);
 });
 
 function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
@@ -3541,7 +3564,6 @@ async function saveTrade(){
     tradeClass,
     setupQuality:sqF,
     postVerdict:document.getElementById('f-post-verdict').value,
-    postVerdictNote:trimVal('f-post-verdict-note'),
     tags:[],
     checksPassed:checklistPassed,
     checksTotal:checklistTotal
@@ -3556,7 +3578,7 @@ async function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-rr-planned','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-post-verdict-note','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-post-verdict','f-target-type','f-fill-notes','custom-mistake-text','custom-mistake-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-date','f-entry-time','f-exit-time','f-bias','f-direction','f-draw','f-fvg-zone','f-actual-rr','f-rr-planned','f-narrative','f-improve','f-pnl','f-risk','f-momentum','f-emotion','f-emotion-post','f-entry-price','f-exit-price','f-contracts','f-sq-draw-tier','f-sq-displacement','f-sq-gap-quality','f-sq-pullback','f-sq-ifvg-quality','f-post-verdict','f-target-type','f-fill-notes','custom-mistake-text','custom-mistake-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['1m','5m','15m','1h','4h'].forEach(tf=>{
     const inp=document.getElementById('f-ss-'+tf);
     if(inp){try{inp.value='';}catch(e){}}
@@ -3590,7 +3612,7 @@ function renderJournal(){
   if(fs){
     const q=fs.toLowerCase();
     f=f.filter(t=>{
-      var sqs=(formatSetupQualitySummary(t.setupQuality)+' '+(t.postVerdict||'')+' '+(t.postVerdictNote||'')+(Array.isArray(t.tags)?t.tags.join(' '):'')).toLowerCase();
+      var sqs=(formatSetupQualitySummary(t.setupQuality)+' '+(t.postVerdict||'')+(Array.isArray(t.tags)?t.tags.join(' '):'')).toLowerCase();
       var extra=((t.rrPlanned||'')+' '+(t.targetType||'')+' '+(t.fillNotes||'')).toLowerCase();
       return (t.narrative||'').toLowerCase().includes(q)||(t.improve||'').toLowerCase().includes(q)||(t.draw||'').toLowerCase().includes(q)||(t.mistakes||[]).join(' ').toLowerCase().includes(q)||sqs.includes(q)||(t.date||'').includes(q)||extra.includes(q);
     });
@@ -3675,8 +3697,7 @@ function renderJournal(){
     var sqLine=formatSetupQualitySummary(t.setupQuality);
     if(!sqLine)sqLine=(Array.isArray(t.tags)&&t.tags.length)?t.tags.join(', ').replace(/</g,''):'—';
     if(sqLine.length>140)sqLine=sqLine.slice(0,138)+'…';
-    var verStr=verdictLabel(t.postVerdict)+(t.postVerdictNote?(' — '+(t.postVerdictNote.length>48?t.postVerdictNote.slice(0,46)+'…':t.postVerdictNote)):'');
-    if(verStr==='—')verStr='—';
+    var verStr=verdictLabel(t.postVerdict);
 
     const infoGrid='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;padding:10px 14px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)">'
       +pill('Time', timingStr)
@@ -3774,7 +3795,6 @@ function openEdit(id){
   // plan type removed
   applySetupQuality('e',t.setupQuality);
   var ev=document.getElementById('e-post-verdict');if(ev)ev.value=t.postVerdict||'';
-  var evn=document.getElementById('e-post-verdict-note');if(evn)evn.value=t.postVerdictNote||'';
   var eep=document.getElementById('e-entry-price'),exp=document.getElementById('e-exit-price'),ect=document.getElementById('e-contracts');
   if(eep)eep.value=t.entryPrice!=null&&t.entryPrice!==''?t.entryPrice:'';
   if(exp)exp.value=t.exitPrice!=null&&t.exitPrice!==''?t.exitPrice:'';
@@ -3872,7 +3892,6 @@ function saveEdit(){
     ss4h:document.getElementById('e-ss-4h').value,
     setupQuality:sqE,
     postVerdict:(document.getElementById('e-post-verdict')||{}).value||'',
-    postVerdictNote:etrim('e-post-verdict-note'),
     narrative:etrim('e-narrative'),
     improve:etrim('e-improve'),
     momentum:(document.getElementById('e-momentum')||{}).value||'',
@@ -5602,7 +5621,6 @@ function saveDraft(){
     planType:'',
     setupQuality:readSetupQuality('f'),
     postVerdict:document.getElementById('f-post-verdict')?document.getElementById('f-post-verdict').value:'',
-    postVerdictNote:document.getElementById('f-post-verdict-note')?document.getElementById('f-post-verdict-note').value:'',
     entryPrice:document.getElementById('f-entry-price')?document.getElementById('f-entry-price').value:'',
     exitPrice:document.getElementById('f-exit-price')?document.getElementById('f-exit-price').value:'',
     contracts:document.getElementById('f-contracts')?document.getElementById('f-contracts').value:'',
@@ -5631,7 +5649,6 @@ function loadDraft(){
     var ffn=document.getElementById('f-fill-notes');if(ffn&&draft.fillNotes!==undefined)ffn.value=draft.fillNotes||'';
     if(draft.setupQuality)applySetupQuality('f',draft.setupQuality);
     var fPv=document.getElementById('f-post-verdict');if(fPv&&draft.postVerdict)fPv.value=draft.postVerdict;
-    var fPn=document.getElementById('f-post-verdict-note');if(fPn&&draft.postVerdictNote!==undefined)fPn.value=draft.postVerdictNote;
     var fEp=document.getElementById('f-entry-price');if(fEp&&draft.entryPrice!==undefined)fEp.value=draft.entryPrice;
     var fXp=document.getElementById('f-exit-price');if(fXp&&draft.exitPrice!==undefined)fXp.value=draft.exitPrice;
     var fCt=document.getElementById('f-contracts');if(fCt&&draft.contracts!==undefined)fCt.value=draft.contracts;
@@ -5853,15 +5870,15 @@ function randomizeTrade(){
   var displ=rOutcome==='win'&&picked!=='invalid'?_randPick(['Strong — clear BOS toward draw','Moderate — readable push']):(picked==='invalid'?_randPick(['Chop — no clean displacement','Weak — marginal / overlapping']):_randPick(['Moderate — readable push','Weak — marginal / overlapping','Chop — no clean displacement']));
   var gapq=picked==='invalid'?_randPick(['Formed in chop','Overlapping / messy']):_randPick(['Clean singular FVG','Two adjacent combined','Overlapping / messy']);
   var retr=rOutcome==='win'?_randPick(['Slow / corrective','Moderate pace']):_randPick(['Fast / aggressive','Spike then stall','Moderate pace']);
-  applySetupQuality('f',{drawTier:_randPick(tiers),displacement:displ,gapQuality:gapq,pullback:retr});
+  var ifvgOpts=['Clean close through — NQ & MNQ aligned','Barely closed through / weak body','MNQ confirmed — NQ did not (or lagged)','Touch / wick only — no candle close through','Other — describe in notes'];
+  var ifvgQ=picked==='valid-good'&&rOutcome==='win'?_randPick(['Clean close through — NQ & MNQ aligned','Barely closed through / weak body']):(picked==='invalid'?_randPick(['IFVG in chop — poor context','Violated then reclaimed — messy']):_randPick(ifvgOpts));
+  applySetupQuality('f',{drawTier:_randPick(tiers),displacement:displ,gapQuality:gapq,pullback:retr,ifvgQuality:ifvgQ});
   var pv=document.getElementById('f-post-verdict');
   if(pv){
     if(picked==='valid-good'&&rOutcome==='win')pv.value='yes';
     else if(picked==='invalid'||(rOutcome==='loss'&&picked!=='valid-good'))pv.value=Math.random()<0.82?'no':'unsure';
     else pv.value=_randPick(['yes','no','unsure']);
   }
-  var pvn=document.getElementById('f-post-verdict-note');
-  if(pvn)pvn.value=(picked==='valid-good'&&rOutcome==='win')?'Aligned with model — repeat.':(pv&&pv.value==='no'?'Rule/process mismatch — review.':'');
   var ttypes=['Full draw / major liquidity','Nearest minor liquidity — partial plan','Fixed RR — scale at internal','Other / discretionary'];
   var ttel=document.getElementById('f-target-type');
   if(ttel)ttel.value=_randPick(ttypes);
@@ -5988,7 +6005,6 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       renderJournal&&renderJournal();
       renderDashboard&&renderDashboard();
       if(typeof applyJournalTagline==='function')applyJournalTagline();
-      setTimeout(function(){try{scrollToDashboardTop();}catch(x){}},0);
     }catch(e){}
     loadDraft&&loadDraft();
   }
@@ -6667,11 +6683,10 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
         <div><label>15M displacement</label><select id="e-sq-displacement" style="width:100%"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
         <div><label>5M gap quality</label><select id="e-sq-gap-quality" style="width:100%"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
         <div><label>Pullback into gap</label><select id="e-sq-pullback" style="width:100%"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
+        <div style="grid-column:1/-1"><label>IFVG quality (1M)</label><select id="e-sq-ifvg-quality" style="width:100%"><option value="">—</option><option>Clean close through — NQ &amp; MNQ aligned</option><option>Barely closed through / weak body</option><option>MNQ confirmed — NQ did not (or lagged)</option><option>NQ confirmed — MNQ only wick / no follow-through</option><option>Touch / wick only — no candle close through</option><option>IFVG in chop — poor context</option><option>Violated then reclaimed — messy</option><option>Other — describe in notes</option></select></div>
       </div>
       <label>Post-trade verdict</label>
       <select id="e-post-verdict" style="width:100%;margin-bottom:8px"><option value="">—</option><option value="yes">Would take again (same info)</option><option value="no">Would skip next time</option><option value="unsure">Unsure / needs review</option></select>
-      <label>Verdict note <span style="color:#9ca3af;font-size:12px">optional</span></label>
-      <textarea id="e-post-verdict-note" style="width:100%;min-height:44px;font-family:inherit"></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div><label>Entry price</label><input type="number" id="e-entry-price" step="0.25"></div>
@@ -7717,7 +7732,7 @@ function renderSmartInsights(){
 function exportTradesToCSV(){
   if(!trades||trades.length===0){ alert('No trades to export.'); return; }
   function csvTxt(v){ return String(v==null?'':v).replace(/[\n\r]/g,' '); }
-const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Planned RR','Target type','Fill notes','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','Post verdict','Post verdict note','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
+const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L ($)','RR','Planned RR','Target type','Fill notes','Realised R','Risk %','SQ draw tier','SQ displacement','SQ gap','SQ pullback','IFVG quality (1M)','Post verdict','Entry price','Exit price','Contracts','Emotion (Pre)','Emotion (Post)','Trade Class','Mistakes','Notes','Improve'];
   const rows=trades.map(t=>{
     var sq=t.setupQuality||{};
     return[
@@ -7738,8 +7753,8 @@ const headers=['Date','Entry Time','Exit Time','Direction','Draw','Outcome','P&L
     csvTxt(sq.displacement||''),
     csvTxt(sq.gapQuality||''),
     csvTxt(sq.pullback||''),
+    csvTxt(sq.ifvgQuality||''),
     csvTxt(t.postVerdict||''),
-    csvTxt(t.postVerdictNote||''),
     t.entryPrice!==undefined&&t.entryPrice!==null&&String(t.entryPrice)!==''?t.entryPrice:'',
     t.exitPrice!==undefined&&t.exitPrice!==null&&String(t.exitPrice)!==''?t.exitPrice:'',
     t.contracts!==undefined&&t.contracts!==null&&String(t.contracts)!==''?t.contracts:'',
