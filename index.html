@@ -1955,7 +1955,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
           <input type="text" id="custom-mistake-cat" class="mistake-search-input" list="fuze-mistake-cat-list" placeholder="Pick or type a category" autocomplete="off" style="margin-bottom:0">
           <datalist id="fuze-mistake-cat-list"></datalist>
         </div>
-        <button type="button" class="btn btn-sm" onclick="addCustomMistakeFromForm()">Save to list</button>
+        <button type="button" class="btn btn-sm" onclick="addCustomMistakeFromForm('f')">Save to list</button>
       </div>
       <input type="search" id="mistake-search" class="mistake-search-input" placeholder="Search your saved mistakes…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="filterMistakesList()">
       <div class="mistakes-list" id="mistakes-list"></div>
@@ -2699,7 +2699,7 @@ let allMissedTrades={challenge:[],funded:[],demo:[]};
 let allNoTradeSkips={challenge:{},funded:{},demo:{}};
 let trades=[];let mode=currentProfile==='demo'?'demo':'live';let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
-let propSettings={};let selectedMistakes=[];
+let propSettings={};let selectedMistakes=[];var editingSelectedMistakes=[];
 let mrMonthOffset=0;
 
 const FUZE_JOURNAL_TAGLINE_KEY='fuze_journal_tagline';
@@ -2817,9 +2817,11 @@ function refreshMistakeCategoryDatalist(){
     if(c&&!seen[c]){seen[c]=1;var o=document.createElement('option');o.value=c;dl.appendChild(o);}
   });
 }
-function addCustomMistakeFromForm(){
-  var txtEl=document.getElementById('custom-mistake-text');
-  var catEl=document.getElementById('custom-mistake-cat');
+function addCustomMistakeFromForm(prefix){
+  prefix=prefix||'f';
+  var isE=prefix==='e';
+  var txtEl=document.getElementById(isE?'e-custom-mistake-text':'custom-mistake-text');
+  var catEl=document.getElementById(isE?'e-custom-mistake-cat':'custom-mistake-cat');
   if(!txtEl||!catEl)return;
   var text=String(txtEl.value||'').trim();
   var cat=String(catEl.value||'').trim()||'Other';
@@ -2834,7 +2836,8 @@ function addCustomMistakeFromForm(){
   saveCustomMistakesFlat(flat);
   txtEl.value='';
   refreshMistakeCategoryDatalist();
-  buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'');
+  if(isE)buildMistakes(document.getElementById('e-mistake-search')?document.getElementById('e-mistake-search').value:'','edit');
+  else buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'','log');
 }
 
 const SUPA_URL='https://ksjwlisoggcahzhzngfq.supabase.co';
@@ -3143,13 +3146,21 @@ function toggleFav(id,btn){
 }
 function filterMistakesList(){
   const inp=document.getElementById('mistake-search');
-  buildMistakes(inp?inp.value:'');
+  buildMistakes(inp?inp.value:'','log');
+}
+function filterEditMistakesList(){
+  const inp=document.getElementById('e-mistake-search');
+  buildMistakes(inp?inp.value:'','edit');
 }
 // ── Build mistakes list (optional search filters categories + items; preserves selections) ──
-function buildMistakes(filterQuery){
+function buildMistakes(filterQuery,mode){
+  mode=mode||'log';
+  const isEdit=mode==='edit';
   const q=(filterQuery!=null&&String(filterQuery)||'').trim().toLowerCase();
-  const el=document.getElementById('mistakes-list');
+  const el=document.getElementById(isEdit?'e-mistakes-list':'mistakes-list');
   if(!el)return;
+  const arr=isEdit?editingSelectedMistakes:selectedMistakes;
+  const cntId=isEdit?'e-mistake-count':'mistake-count';
   el.innerHTML='';
   let printed=false;
   getMistakesGroupedForUI().forEach(group=>{
@@ -3160,24 +3171,27 @@ function buildMistakes(filterQuery){
     cat.className='mistake-cat';cat.textContent=group.cat;el.appendChild(cat);
     items.forEach(item=>{
       const div=document.createElement('div');
-      const sel=selectedMistakes.indexOf(item)!==-1;
+      const sel=arr.indexOf(item)!==-1;
       div.className='mistake-item'+(sel?' selected':'');
       div.innerHTML='<div class="mistake-dot"></div>';
       const sp=document.createElement('span');
       sp.textContent=item;
       div.appendChild(sp);
-      div.onclick=()=>toggleMistake(item,div);
+      div.onclick=function(){toggleMistake(item,div,mode);};
       el.appendChild(div);
     });
   });
   if(!printed){el.innerHTML='<div class="hint" style="padding:12px 8px;line-height:1.45">'+(q?'No matches — try another keyword.':'No saved mistakes yet. Add one above (category = any model step, or type your own), then tap lines for this trade.')+'</div>';}
 }
-function toggleMistake(item,el){
-  const idx=selectedMistakes.indexOf(item);
-  if(idx===-1){selectedMistakes.push(item);el.classList.add('selected');}
-  else{selectedMistakes.splice(idx,1);el.classList.remove('selected');}
-  const cnt=document.getElementById('mistake-count');
-  cnt.textContent=selectedMistakes.length?'('+selectedMistakes.length+' selected)':'';
+function toggleMistake(item,el,mode){
+  mode=mode||'log';
+  const isEdit=mode==='edit';
+  const arr=isEdit?editingSelectedMistakes:selectedMistakes;
+  const idx=arr.indexOf(item);
+  if(idx===-1){arr.push(item);el.classList.add('selected');}
+  else{arr.splice(idx,1);el.classList.remove('selected');}
+  const cnt=document.getElementById(isEdit?'e-mistake-count':'mistake-count');
+  if(cnt)cnt.textContent=arr.length?'('+arr.length+' selected)':'';
 }
 
 // ── Tabs ──
@@ -3416,6 +3430,10 @@ function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=
 
 // ── Checklist ──
 function toggle(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateChecks();}}
+function checklistCheckAll(){
+  document.querySelectorAll('#checklist-body .check-item input[type=checkbox]').forEach(function(b){b.checked=true;});
+  updateChecks();
+}
 function updateChecks(){
   const boxes=[...document.querySelectorAll('#checklist-body .check-item input[type=checkbox]')];
   const passed=boxes.filter(b=>b.checked).length;
@@ -3427,6 +3445,35 @@ function updateChecks(){
     else if(passed===0){gate.className='gate';gate.textContent='Complete checklist to see verdict';}
     else{gate.className='gate fail';gate.textContent=(boxes.length-passed)+' check(s) not met — model says skip';}
   }
+}
+function toggleEditChecklistRow(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateEditChecks();}}
+function checklistCheckAllEdit(){
+  document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]').forEach(function(b){b.checked=true;});
+  updateEditChecks();
+}
+function updateEditChecks(){
+  const boxes=[...document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]')];
+  if(!boxes.length)return;
+  const passed=boxes.filter(b=>b.checked).length;
+  const cc=document.getElementById('e-check-count');
+  if(cc)cc.textContent=passed+' / '+boxes.length;
+  const gate=document.getElementById('e-gate');
+  if(gate){
+    if(passed===boxes.length){gate.className='gate pass';gate.textContent='All checks passed — valid setup';}
+    else if(passed===0){gate.className='gate';gate.textContent='Complete checklist to see verdict';}
+    else{gate.className='gate fail';gate.textContent=(boxes.length-passed)+' check(s) not met — model says skip';}
+  }
+}
+function ensureEditSelectsSynced(){
+  function copyOpts(dstId,srcId){
+    var dst=document.getElementById(dstId),src=document.getElementById(srcId);
+    if(!dst||!src||dst.dataset.optsSynced==='1')return;
+    dst.innerHTML=src.innerHTML;
+    dst.dataset.optsSynced='1';
+  }
+  copyOpts('e-emotion','f-emotion');
+  copyOpts('e-emotion-post','f-emotion-post');
+  copyOpts('e-momentum','f-momentum');
 }
 
 function enforcePnlSign(inputEl, out){
@@ -3592,7 +3639,7 @@ function clearForm(){
   document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
   tradeClass='';tradeInterference='';
   selectedMistakes=[];
-  buildMistakes();
+  buildMistakes('','log');
   document.getElementById('mistake-count').textContent='';
   outcome='';updateChecks();
 }
@@ -3766,6 +3813,7 @@ function openEdit(id){
   const t=trades.find(tr=>tr.id===id);
   if(!t)return;
   editingId=id;
+  ensureEditSelectsSynced();
   document.getElementById('e-date').value=t.date||'';
   document.getElementById('e-bias').value=t.bias||'';
   document.getElementById('e-direction').value=t.direction||'';
@@ -3802,6 +3850,20 @@ function openEdit(id){
   // discipline removed
   const esSec=document.getElementById('e-ss-section');
   if(esSec)esSec.style.display=currentProfile==='backtesting'?'none':'grid';
+  (function applyEditChecklistFromTrade(){
+    var eBox=document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]');
+    if(!eBox.length)return;
+    eBox.forEach(function(b){b.checked=false;});
+    var tp=Number(t.checksTotal)||0,pp=Number(t.checksPassed)||0;
+    if(tp>0&&pp>=tp)eBox.forEach(function(b){b.checked=true;});
+    else{for(var i=0;i<eBox.length&&i<pp;i++)eBox[i].checked=true;}
+    updateEditChecks();
+  })();
+  editingSelectedMistakes=Array.isArray(t.mistakes)?t.mistakes.slice():[];
+  var ems=document.getElementById('e-mistake-search');if(ems)ems.value='';
+  var ect=document.getElementById('e-custom-mistake-text');if(ect)ect.value='';
+  var ecc=document.getElementById('e-custom-mistake-cat');if(ecc)ecc.value='';
+  buildMistakes(ems?ems.value:'','edit');
   document.getElementById('edit-modal').style.display='block';
   document.body.style.overflow='hidden';
   if(typeof calcEditAutoRR==='function')calcEditAutoRR();
@@ -3811,6 +3873,7 @@ function closeEdit(){
   document.getElementById('edit-modal').style.display='none';
   document.body.style.overflow='';
   editingId=null;
+  editingSelectedMistakes=[];
 }
 
 function enforceEditPnlSign(){
@@ -3861,6 +3924,8 @@ function saveEdit(){
   var ePnl=document.getElementById('e-pnl').value;
   var eRisk=document.getElementById('e-risk').value;
   var eReal=computeRealisedR(ePnl!==''?parseFloat(ePnl):null,eRisk);
+  var eChecklistBoxes=document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]');
+  var eCheckPassed=[...eChecklistBoxes].filter(function(b){return b.checked;}).length;
   var updated={
     ...trades[idx],
     date:document.getElementById('e-date').value,
@@ -3900,6 +3965,9 @@ function saveEdit(){
     emotionPost:(document.getElementById('e-emotion-post')||{}).value||'',
     tradeClass:(document.getElementById('e-tradeClass')||{}).value||'',
     tags:[],
+    mistakes:[...editingSelectedMistakes],
+    checksPassed:eCheckPassed,
+    checksTotal:eChecklistBoxes.length
   };
   if(currentProfile==='all'&&trades[idx]&&trades[idx]._profile){
     var src=trades[idx]._profile;
@@ -5662,7 +5730,7 @@ function loadDraft(){
     // discipline removed
     if(draft.selectedMistakes&&draft.selectedMistakes.length){
       selectedMistakes=draft.selectedMistakes;
-      buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'');
+      buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'','log');
       document.getElementById('mistake-count').textContent='('+selectedMistakes.length+' selected)';
     }
     updateChecks();
@@ -5839,8 +5907,8 @@ function randomizeTrade(){
   // Mistakes ↔ outcome + classification (explicit user rules)
   var randMistakes=correlateMistakesForRandomize(rOutcome,picked);
   selectedMistakes=randMistakes.slice();
-  try{buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'');}catch(e){}
-  document.querySelectorAll('.mistake-item').forEach(function(el){var lbl=el.querySelector('span');if(lbl&&randMistakes.indexOf(lbl.textContent)>=0)el.classList.add('selected');else el.classList.remove('selected');});
+  try{buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'','log');}catch(e){}
+  document.querySelectorAll('#mistakes-list .mistake-item').forEach(function(el){var lbl=el.querySelector('span');if(lbl&&randMistakes.indexOf(lbl.textContent)>=0)el.classList.add('selected');else el.classList.remove('selected');});
   document.getElementById('mistake-count').textContent=randMistakes.length?'('+randMistakes.length+' selected)':'';
 
   applyRandomChecklistForClass(picked);
@@ -5967,7 +6035,7 @@ function calcEditAutoRR(){
 try{if('scrollRestoration'in history)history.scrollRestoration='manual';}catch(e){}
 refreshDrawDatalist();
 refreshMistakeCategoryDatalist();
-buildMistakes();
+buildMistakes('','log');
 // Activate the correct profile button based on restored profile
 document.querySelectorAll('.profile-btn').forEach(btn=>{
   const id=btn.id.replace('pbtn-','');
@@ -6650,98 +6718,163 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
 </style>
 
 <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:999;overflow-y:auto">
-  <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;max-width:700px;margin:40px auto;padding:1.5rem">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
-      <div style="font-size:16px;font-weight:500">Edit trade</div>
-      <button onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:20px;padding:0 4px">×</button>
+  <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;max-width:860px;margin:28px auto;padding:1.35rem 1.5rem 1.5rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-size:17px;font-weight:600;color:#111827">Edit trade <span style="font-size:13px;font-weight:400;color:#6b7280">— same fields as Log trade</span></div>
+      <button type="button" onclick="closeEdit()" style="border:none;background:none;cursor:pointer;color:#4b5563;font-size:22px;padding:0 4px;line-height:1">×</button>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Date</label><input type="date" id="e-date"></div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Session</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
+      <div><label>Date</label><input type="date" id="e-date" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
+      <div><label>Entry time (UK)</label><input type="time" id="e-entry-time" min="14:30" max="16:00" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
+      <div><label>Exit time (UK)</label><input type="time" id="e-exit-time" min="14:30" max="16:30" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Bias</label><select id="e-bias"><option value="">—</option><option>Bullish</option><option>Bearish</option><option>Chop</option></select></div>
-      <div><label>Direction</label><select id="e-direction"><option value="">—</option><option>Long</option><option>Short</option></select></div>
-      <div><label>Draw targeted</label><input type="text" id="e-draw" list="fuze-saved-draws-list" placeholder="Your draw text" autocomplete="off" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:14px"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Risk</label><select id="e-risk" onchange="calcEditAutoRR()"><option value="">—</option><option value="1">1% (Challenge)</option><option value="0.5">0.5% (Funded)</option></select></div>
-      <div><label>Outcome</label><select id="e-outcome" onchange="enforceEditPnlSign();calcEditAutoRR()"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
-    </div>
-    <div style="margin-bottom:12px">
-      <label style="margin-bottom:6px">Trade classification</label>
-      <select id="e-tradeClass" style="width:100%">
-        <option value="">—</option>
-        <option value="valid-good">✅ Valid setup — good execution</option>
-        <option value="valid-bad">⚠️ Valid setup — bad execution</option>
-        <option value="invalid">❌ Invalid setup — shouldn't have taken</option>
-      </select>
-    </div>
-    <div style="margin-bottom:12px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#374151">Setup quality</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div><label>Draw tier</label><select id="e-sq-draw-tier" style="width:100%"><option value="">—</option><option>S — perfect equal H/L</option><option>A — data wicks / TL liquidity</option><option>B — session H/L or relative EQ</option><option>C — unbalanced gap only</option></select></div>
-        <div><label>15M displacement</label><select id="e-sq-displacement" style="width:100%"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
-        <div><label>5M gap quality</label><select id="e-sq-gap-quality" style="width:100%"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
-        <div><label>Pullback into gap</label><select id="e-sq-pullback" style="width:100%"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
-        <div style="grid-column:1/-1"><label>IFVG quality (1M)</label><select id="e-sq-ifvg-quality" style="width:100%"><option value="">—</option><option>Clean close through — NQ &amp; MNQ aligned</option><option>Barely closed through / weak body</option><option>MNQ confirmed — NQ did not (or lagged)</option><option>NQ confirmed — MNQ only wick / no follow-through</option><option>Touch / wick only — no candle close through</option><option>IFVG in chop — poor context</option><option>Violated then reclaimed — messy</option><option>Other — describe in notes</option></select></div>
+
+    <div style="border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:12px 14px;margin-bottom:14px;background:#fafafa">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#374151">Model checklist · NASDAQ NY Continuation</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button type="button" class="btn btn-sm" onclick="checklistCheckAllEdit()" style="font-size:12px;padding:4px 10px">Check all</button>
+          <span id="e-check-count" style="font-size:13px;color:#6b7280">0 / 10</span>
+        </div>
       </div>
-      <label>Post-trade verdict</label>
-      <select id="e-post-verdict" style="width:100%;margin-bottom:8px"><option value="">—</option><option value="yes">Would take again (same info)</option><option value="no">Would skip next time</option><option value="unsure">Unsure / needs review</option></select>
+      <div id="e-checklist-body" style="max-height:220px;overflow-y:auto;padding-right:4px">
+        <div class="check-group-title">⏱️ Session</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>Within <strong>2:30–4:00 PM UK</strong> window</span></div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>Hard close respected — <strong>no new entries after 4:00</strong>, manage-out by <strong>4:30</strong></span></div>
+        <div class="check-group-title">🧠 Rules</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span><strong>One trade/day</strong> (no revenge / no second attempt)</span></div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>No red-folder news chaos (or you’re intentionally waiting it out)</span></div>
+        <div class="check-group-title">🎯 Target</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>One clear draw (untapped) — you can say it in one sentence</span></div>
+        <div class="check-group-title">🔥 15M displacement</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>15M displacement <strong>toward the draw</strong> with a clean BOS (not a wick)</span></div>
+        <div class="check-group-title">🧩 5M gap</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>One clean 5M gap/FVG (not messy ladder / chop-made)</span></div>
+        <div class="check-group-title">🐢 Pullback</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>Pullback is slow/weak into the gap (not violent)</span></div>
+        <div class="check-group-title">✅ Entry</div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>IFVG / 1M confirmation is clean — entry on the close (no guessing)</span></div>
+        <div class="check-item model-check-item" onclick="toggleEditChecklistRow(this)"><input type="checkbox" onchange="updateEditChecks()"><span>If 1M closes back through IFVG → you’ll exit (rule agreed before clicking)</span></div>
+        <div id="e-gate" class="gate" style="margin-top:8px">Complete checklist to see verdict</div>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Entry price</label><input type="number" id="e-entry-price" step="0.25"></div>
-      <div><label>Exit price</label><input type="number" id="e-exit-price" step="0.25"></div>
-      <div><label>Contracts</label><input type="number" id="e-contracts" step="1" min="0"></div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Trade setup</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px">
+      <div><label>Bias</label><select id="e-bias" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Bullish</option><option>Bearish</option><option>Chop</option></select></div>
+      <div><label>Direction</label><select id="e-direction" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Long</option><option>Short</option></select></div>
+      <div style="grid-column:span 2"><label>Draw targeted</label><input type="text" id="e-draw" list="fuze-saved-draws-list" placeholder="e.g. Asia H, PDH" autocomplete="off" style="width:100%;margin-top:4px;padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:14px"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div><label>5min FVG entry zone</label><select id="e-fvg-zone" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Top of gap</option><option>Middle of gap</option><option>Bottom of gap</option></select></div>
+      <div><label>Risk taken</label><select id="e-risk" onchange="calcEditAutoRR()" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option value="1">1% (Challenge)</option><option value="0.5">0.5% (Funded)</option></select></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Outcome</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label>Outcome</label><select id="e-outcome" onchange="enforceEditPnlSign();calcEditAutoRR()" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">BE</option></select></div>
+      <div><label>P&amp;L ($)</label><input type="number" id="e-pnl" step="1" oninput="enforceEditPnlSign();calcEditAutoRR()" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>P&L ($)</label><input type="number" id="e-pnl" step="1" oninput="enforceEditPnlSign();calcEditAutoRR()"></div>
       <div>
-        <label>RR achieved <span id="e-rr-auto" style="color:var(--accent);font-size:13px;margin-left:6px"></span></label>
-        <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="font-family:'Plus Jakarta Sans',sans-serif" oninput="this.dataset.autoFilled='0'">
+        <label>RR achieved <span id="e-rr-auto" style="color:var(--accent);font-size:12px;margin-left:4px"></span></label>
+        <input type="text" id="e-actual-rr" placeholder="e.g. 0.44R or 1.73R" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:'Plus Jakarta Sans',sans-serif" oninput="this.dataset.autoFilled='0'">
       </div>
+      <div><label>Planned RR</label><input type="text" id="e-rr-planned" placeholder="e.g. 2R" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:'Plus Jakarta Sans',sans-serif"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Planned RR</label><input type="text" id="e-rr-planned" placeholder="e.g. 2R" style="font-family:'Plus Jakarta Sans',sans-serif"></div>
-      <div><label>Target type</label><select id="e-target-type" style="width:100%"><option value="">—</option><option>Full draw / major liquidity</option><option>Nearest minor liquidity — partial plan</option><option>Fixed RR — scale at internal</option><option>Other / discretionary</option></select></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>Entry time (UK)</label><input type="time" id="e-entry-time" min="14:30" max="16:00"></div>
-      <div><label>Exit time (UK)</label><input type="time" id="e-exit-time" min="14:30" max="16:30"></div>
-      <div><label>Emotional state</label><select id="e-emotion"><option value="">—</option><option>Neutral ✓</option><option>Patient / waiting</option><option>FOMO / chasing</option><option>Revenge trading</option><option>Overconfident</option><option>Anxious / hesitant</option><option>Distracted</option><option>Tired / low energy</option></select></div>
-    </div>
-    <!-- discipline removed -->
-
-        <div id="e-ss-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div><label>1M screenshot</label><input type="text" id="e-ss-1m" placeholder="TradingView link"></div>
-      <div><label>5M screenshot</label><input type="text" id="e-ss-5m" placeholder="TradingView link"></div>
-      <div><label>15M screenshot</label><input type="text" id="e-ss-15m" placeholder="TradingView link"></div>
-      <div><label>1H screenshot</label><input type="text" id="e-ss-1h" placeholder="TradingView link"></div>
-      <div><label>4H screenshot</label><input type="text" id="e-ss-4h" placeholder="TradingView link"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div><label>Target type</label><select id="e-target-type" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Full draw / major liquidity</option><option>Nearest minor liquidity — partial plan</option><option>Fixed RR — scale at internal</option><option>Other / discretionary</option></select></div>
+      <div><label>Trade classification</label><select id="e-tradeClass" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option value="valid-good">✅ Valid setup — good execution</option><option value="valid-bad">⚠️ Valid setup — bad execution</option><option value="invalid">❌ Invalid setup — shouldn't have taken</option></select></div>
     </div>
 
-    <div style="margin-bottom:12px">
-      <label>What happened?</label>
-      <textarea id="e-narrative" style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:14px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Setup quality</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label>Draw tier</label><select id="e-sq-draw-tier" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>S — perfect equal H/L</option><option>A — data wicks / TL liquidity</option><option>B — session H/L or relative EQ</option><option>C — unbalanced gap only</option></select></div>
+      <div><label>15M displacement</label><select id="e-sq-displacement" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
+      <div><label>5M gap quality</label><select id="e-sq-gap-quality" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
+      <div><label>Pullback into gap</label><select id="e-sq-pullback" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
+      <div style="grid-column:1/-1"><label>IFVG quality (1M)</label><select id="e-sq-ifvg-quality" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Clean close through — NQ &amp; MNQ aligned</option><option>Barely closed through / weak body</option><option>MNQ confirmed — NQ did not (or lagged)</option><option>NQ confirmed — MNQ only wick / no follow-through</option><option>Touch / wick only — no candle close through</option><option>IFVG in chop — poor context</option><option>Violated then reclaimed — messy</option><option>Other — describe in notes</option></select></div>
     </div>
-    <div style="margin-bottom:12px">
-      <label>What to improve?</label>
-      <textarea id="e-improve" style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;background:#f9fafb;color:#ffffff;font-family:inherit;font-size:14px;outline:none;resize:vertical;min-height:60px;line-height:1.5;margin-top:4px"></textarea>
+    <div style="margin-bottom:14px">
+      <label>Post-trade verdict <span style="color:#6b7280;font-size:12px;font-weight:400">— separate from win/loss</span></label>
+      <select id="e-post-verdict" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option value="yes">Would take again (same info)</option><option value="no">Would skip next time</option><option value="unsure">Unsure / needs review</option></select>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div><label>Momentum at entry</label><select id="e-momentum" style="width:100%"><option value="">—</option><option>Aggressive expansion — strong displacement</option><option>Strong but starting to slow</option><option>Moderate — steady push</option><option>Slowing — losing volume</option><option>Grinding — small candles, slow grind</option><option>Choppy — back and forth</option><option>Stalled — no directional momentum</option><option>V-shape recovery off FVG</option><option>Slow corrective retrace — textbook</option><option>Violent retrace — entered anyway</option><option>Price consolidating inside FVG</option></select></div>
-      <div><label>5min FVG entry zone</label><select id="e-fvg-zone" style="width:100%"><option value="">—</option><option>Top of gap</option><option>Middle of gap</option><option>Bottom of gap</option></select></div>
-      <div><label>Emotion after close</label><select id="e-emotion-post" style="width:100%"><option value="">—</option><option>Satisfied ✓</option><option>Calm / indifferent</option><option>Frustrated</option><option>Relieved</option><option>Overconfident / euphoric</option><option>Revenge urge</option><option>Regret (closed too early)</option><option>Regret (held too long)</option><option>Shaken / doubting model</option></select></div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Broker detail</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px">
+      <div><label>Entry price</label><input type="number" id="e-entry-price" step="0.25" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
+      <div><label>Exit price</label><input type="number" id="e-exit-price" step="0.25" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
+      <div><label>Contracts</label><input type="number" id="e-contracts" step="1" min="0" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"></div>
     </div>
-    <div style="margin-bottom:12px">
+    <div style="margin-bottom:14px">
       <label>Fill / slippage notes</label>
-      <textarea id="e-fill-notes" style="width:100%;min-height:40px;font-family:inherit"></textarea>
+      <textarea id="e-fill-notes" placeholder="Bad fill, partial, slipped stop, latency…" style="width:100%;margin-top:4px;min-height:44px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;resize:vertical"></textarea>
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button onclick="closeEdit()" style="padding:9px 18px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:14px;background:#f9fafb;color:#ffffff;font-family:inherit">Cancel</button>
-      <button onclick="saveEdit()" style="padding:9px 18px;border:0.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:14px;background:#e0e0e0;color:#0a0f0a;font-family:inherit;font-weight:500">Save changes</button>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Execution</div>
+    <div style="margin-bottom:10px">
+      <label>Emotional state — before entry</label>
+      <select id="e-emotion" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option></select>
+    </div>
+    <div style="margin-bottom:12px">
+      <label>Emotional state — after close</label>
+      <select id="e-emotion-post" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option></select>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="margin-bottom:6px;display:block">Mistakes <span id="e-mistake-count" style="color:#d97706;font-size:13px"></span></label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:flex-end">
+        <div style="flex:1;min-width:160px">
+          <label style="font-size:11px;color:#6b7280">What went wrong?</label>
+          <input type="text" id="e-custom-mistake-text" placeholder="Describe the mistake…" autocomplete="off" style="width:100%;margin-top:2px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px">
+        </div>
+        <div style="flex:1;min-width:180px">
+          <label style="font-size:11px;color:#6b7280">Category</label>
+          <input type="text" id="e-custom-mistake-cat" list="fuze-mistake-cat-list" placeholder="Pick or type" autocomplete="off" style="width:100%;margin-top:2px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px">
+        </div>
+        <button type="button" class="btn btn-sm" onclick="addCustomMistakeFromForm('e')" style="margin-bottom:2px">Save to list</button>
+      </div>
+      <input type="search" id="e-mistake-search" placeholder="Search saved mistakes…" autocomplete="off" oninput="filterEditMistakesList()" style="width:100%;margin-bottom:8px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px">
+      <div class="mistakes-list" id="e-mistakes-list" style="max-height:200px;overflow-y:auto;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px;background:#fafafa"></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Screenshots <span style="font-weight:400;text-transform:none;color:#9ca3af">— URL or Cloudinary link</span></div>
+    <div id="e-ss-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div><label>1M</label><input type="text" id="e-ss-1m" placeholder="Link" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px"></div>
+      <div><label>5M</label><input type="text" id="e-ss-5m" placeholder="Link" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px"></div>
+      <div><label>15M</label><input type="text" id="e-ss-15m" placeholder="Link" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px"></div>
+      <div><label>1H</label><input type="text" id="e-ss-1h" placeholder="Link" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px"></div>
+      <div style="grid-column:1/-1"><label>4H</label><input type="text" id="e-ss-4h" placeholder="Link" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;font-size:13px"></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Notes</div>
+    <div style="margin-bottom:10px">
+      <label>Momentum / price speed at entry</label>
+      <select id="e-momentum" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option></select>
+    </div>
+    <div style="margin-bottom:10px">
+      <label>What happened?</label>
+      <textarea id="e-narrative" placeholder="Brief description of the setup / price action…" style="width:100%;margin-top:4px;min-height:72px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;resize:vertical;line-height:1.5"></textarea>
+    </div>
+    <div style="margin-bottom:18px">
+      <label>What to improve?</label>
+      <textarea id="e-improve" placeholder="Key takeaway…" style="width:100%;margin-top:4px;min-height:72px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit;resize:vertical;line-height:1.5"></textarea>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:4px;border-top:1px solid rgba(0,0,0,0.08)">
+      <button type="button" onclick="closeEdit()" style="padding:10px 18px;border:1px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;font-size:14px;background:#fff;color:#374151;font-family:inherit">Cancel</button>
+      <button type="button" onclick="saveEdit()" style="padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;background:#111827;color:#fff;font-family:inherit;font-weight:600">Save changes</button>
     </div>
   </div>
 </div>
+<style id="fuze-edit-modal-scoped">
+#edit-modal #e-checklist-body .check-item{color:#374151!important;}
+#edit-modal #e-checklist-body .check-item strong{color:#111827!important;font-weight:600;}
+#edit-modal #e-gate.gate{background:#f3f4f6!important;border:1px solid rgba(0,0,0,0.1)!important;color:#6b7280!important;}
+#edit-modal #e-gate.gate.pass{background:#ecfdf5!important;color:#059669!important;border-color:#86efac!important;}
+#edit-modal #e-gate.gate.fail{background:#fef2f2!important;color:#dc2626!important;border-color:#fca5a5!important;}
+</style>
 
 <!-- Calendar day popup -->
 <div id="cal-day-popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9998;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
