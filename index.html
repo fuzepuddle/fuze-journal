@@ -1413,11 +1413,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 </head>
 <body class="dark-mode journal-entrance">
 
-<div id="auth-overlay" class="auth-show" aria-live="polite">
+<div id="auth-overlay" aria-live="polite">
   <div class="auth-card">
     <div class="section-label" style="margin-bottom:14px">Sign in</div>
     <p style="font-size:14px;color:#888;margin-bottom:14px;line-height:1.5">Your cloud backup is tied to your account. Without signing in, data is only on this device (localStorage).</p>
-    <div id="auth-checking" style="font-size:15px;color:#4b5563;margin-bottom:8px">Checking session…</div>
+    <div id="auth-checking" style="font-size:15px;color:#4b5563;margin-bottom:8px;display:none">Checking session…</div>
     <div id="auth-form-wrap" style="display:none">
       <label>Email</label>
       <input type="email" id="auth-email" autocomplete="username" placeholder="you@email.com">
@@ -5906,6 +5906,9 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
 });
 (function journalAuthBoot(){
   loadSbSession();
+  const ov=document.getElementById('auth-overlay');
+  const checking=document.getElementById('auth-checking');
+  const formWrap=document.getElementById('auth-form-wrap');
 
   // ── INSTANT LOAD: render from localStorage cache before any network call ──
   const hasCachedData = !!localStorage.getItem('ict_profiles');
@@ -5937,45 +5940,67 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       renderDashboard&&renderDashboard();
       if(typeof applyJournalTagline==='function')applyJournalTagline();
     }catch(e){}
-    loadDraft&&loadDraft();
+    try{loadDraft&&loadDraft();}catch(e){}
+    if(checking) checking.style.display='none';
+    authHideOverlay();
   }
 
   // Only block with overlay if no local data exists (first ever open)
-  const ov=document.getElementById('auth-overlay');
-  const checking=document.getElementById('auth-checking');
-  const formWrap=document.getElementById('auth-form-wrap');
   if(!hasCachedData){
     if(ov) ov.classList.add('auth-show');
     if(checking) checking.style.display='block';
     if(formWrap) formWrap.style.display='none';
   }
 
-  // Auth verify + cloud sync runs silently in background
-  (async function(){
-    if(sbAccessToken){
-      let ok=await sbVerifyAccessToken();
-      if(!ok) ok=await sbRefreshAccessToken();
-      if(sbAccessToken&&ok){
-        if(checking) checking.style.display='none';
-        authHideOverlay();
-        const today=new Date().toISOString().split('T')[0];
-        const fDateEl=document.getElementById('f-date');
-        if(fDateEl) fDateEl.value=today;
-        const sob=document.getElementById('sb-signout-btn');
-        if(sob) sob.style.display='block';
-        await loadAllData();
-        if(!hasCachedData) loadDraft&&loadDraft();
-        return;
-      }
-      clearSbSession();
-    }
+  const authSafetyMs=12000;
+  const authSafetyTimer=setTimeout(function(){
     if(checking) checking.style.display='none';
     if(!hasCachedData){
       if(formWrap) formWrap.style.display='block';
       if(ov) ov.classList.add('auth-show');
-    } else {
-      // Has local data but no valid token — just close the overlay and let them use local data
+    }else{
       authHideOverlay();
+    }
+  },authSafetyMs);
+
+  // Auth verify + cloud sync (cached users: already using the app; sync updates data when online)
+  (async function(){
+    try{
+      if(sbAccessToken){
+        let ok=await sbVerifyAccessToken();
+        if(!ok) ok=await sbRefreshAccessToken();
+        if(sbAccessToken&&ok){
+          if(checking) checking.style.display='none';
+          authHideOverlay();
+          const today=new Date().toISOString().split('T')[0];
+          const fDateEl=document.getElementById('f-date');
+          if(fDateEl) fDateEl.value=today;
+          const sob=document.getElementById('sb-signout-btn');
+          if(sob) sob.style.display='block';
+          await loadAllData();
+          if(!hasCachedData) try{loadDraft&&loadDraft();}catch(e){}
+          return;
+        }
+        clearSbSession();
+      }
+      if(checking) checking.style.display='none';
+      if(!hasCachedData){
+        if(formWrap) formWrap.style.display='block';
+        if(ov) ov.classList.add('auth-show');
+      }else{
+        authHideOverlay();
+      }
+    }catch(err){
+      console.error('Auth boot',err);
+      if(checking) checking.style.display='none';
+      if(!hasCachedData){
+        if(formWrap) formWrap.style.display='block';
+        if(ov) ov.classList.add('auth-show');
+      }else{
+        authHideOverlay();
+      }
+    }finally{
+      clearTimeout(authSafetyTimer);
     }
   })();
 })();
