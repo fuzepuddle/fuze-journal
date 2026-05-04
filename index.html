@@ -2640,6 +2640,14 @@ let allMonthlyReviews={challenge:{},funded:{},demo:{}};
 let allMissedTrades={challenge:[],funded:[],demo:[]};
 /** Dates you sat session but took no trade: profile → { 'YYYY-MM-DD': { reason, note } } */
 let allNoTradeSkips={challenge:{},funded:{},demo:{}};
+/** Guard: JSON `null` has typeof "object"; corrupt keys must not break the shell. */
+function normalizeIctProfiles(raw){
+  var def={challenge:[],funded:[],demo:[]};
+  if(raw==null||typeof raw!=='object'||Array.isArray(raw))return def;
+  var o={challenge:[],funded:[],demo:[]};
+  PROFILES.forEach(function(p){o[p]=Array.isArray(raw[p])?raw[p].slice():[];});
+  return o;
+}
 let trades=[];let mode=currentProfile==='demo'?'demo':'live';let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];var editingSelectedMistakes=[];
@@ -2901,13 +2909,7 @@ function journalRevealShell(){
   try{
     const b=document.body;
     if(!b||b.classList.contains('journal-entrance-ready'))return;
-    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      b.classList.add('journal-entrance-ready');
-      return;
-    }
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){b.classList.add('journal-entrance-ready');});
-    });
+    b.classList.add('journal-entrance-ready');
   }catch(e){}
 }
 
@@ -3010,6 +3012,9 @@ function authSignOut(){
 }
 
 function applyLoadedData(){
+  if(!allTrades||typeof allTrades!=='object'||Array.isArray(allTrades)){
+    allTrades={challenge:[],funded:[],demo:[]};
+  }
   if(currentProfile==='all')rebuildMergedProfileView();
   else{
     trades=allTrades[currentProfile]||[];
@@ -3024,7 +3029,7 @@ async function loadAllData(){
     const keys=['ict_profiles','ict_prop_profiles','ict_weekly_profiles','ict_missed_profiles'];
     const results=await Promise.all(keys.map(k=>supaGet(k)));
     const [trades_d,prop_d,weekly_d,missed_d]=results;
-    if(trades_d&&typeof trades_d==='object')allTrades=trades_d;
+    if(trades_d!=null)allTrades=normalizeIctProfiles(trades_d);
     if(prop_d&&typeof prop_d==='object')allPropSettings=prop_d;
     if(weekly_d&&typeof weekly_d==='object')allWeeklyNotes=weekly_d;
     if(missed_d&&typeof missed_d==='object')allMissedTrades=missed_d;
@@ -5920,7 +5925,7 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
       const _pm=localStorage.getItem('ict_missed_profiles');
       const _ps=localStorage.getItem('ict_presession');
       const _nn=localStorage.getItem('ict_nonneg');
-      if(_p){const d=JSON.parse(_p);if(d&&typeof d==='object')allTrades=d;}
+      if(_p){try{allTrades=normalizeIctProfiles(JSON.parse(_p));}catch(eParse){allTrades={challenge:[],funded:[],demo:[]};}}
       if(_pp){const d=JSON.parse(_pp);if(d&&typeof d==='object')allPropSettings=d;}
       if(_pw){const d=JSON.parse(_pw);if(d&&typeof d==='object')allWeeklyNotes=d;}
       try{const _mr=localStorage.getItem('fuze_monthly_profiles');if(_mr){const d=JSON.parse(_mr);if(d&&typeof d==='object')allMonthlyReviews=d;}}catch(e){}
@@ -5945,11 +5950,11 @@ document.querySelectorAll('.profile-btn').forEach(btn=>{
     authHideOverlay();
   }
 
-  // Only block with overlay if no local data exists (first ever open)
+  // First open: show sign-in form immediately (session verify runs in parallel; no "stuck" checking state)
   if(!hasCachedData){
     if(ov) ov.classList.add('auth-show');
-    if(checking) checking.style.display='block';
-    if(formWrap) formWrap.style.display='none';
+    if(checking) checking.style.display='none';
+    if(formWrap) formWrap.style.display='block';
   }
 
   const authSafetyMs=12000;
