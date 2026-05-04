@@ -1546,7 +1546,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div style="display:grid;grid-template-columns:85px 50px 1fr 65px;padding:0 0 7px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:4px">
         <span style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Date</span>
         <span style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Dir</span>
-        <span style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Target</span>
+        <span style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Draw</span>
         <span style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">P&amp;L</span>
       </div>
       <div id="dash-recent-trades"><div class="dash-no-trades">No trades logged yet.</div></div>
@@ -3564,7 +3564,7 @@ async function saveTrade(){
     emotionPost:document.getElementById('f-emotion-post')?document.getElementById('f-emotion-post').value:'',
     mistakes:[...selectedMistakes],
     fvgZone:document.getElementById('f-fvg-zone')?String(document.getElementById('f-fvg-zone').value||'').trim():'',
-    momentum:document.getElementById('f-momentum').value,
+    momentum:(document.getElementById('f-momentum')||{}).value||'',
     narrative:trimVal('f-narrative'),
     improve:trimVal('f-improve'),
     ss1m:ssUrls['1m']||'', ss5m:ssUrls['5m']||'',
@@ -3601,7 +3601,7 @@ function clearForm(){
   tradeClass='';tradeInterference='';
   selectedMistakes=[];
   buildMistakes('','log');
-  document.getElementById('mistake-count').textContent='';
+  var _mc=document.getElementById('mistake-count');if(_mc)_mc.textContent='';
   outcome='';updateChecks();
 }
 
@@ -3910,7 +3910,7 @@ function saveEdit(){
     mistakes:[...editingSelectedMistakes],
     checksPassed:eCheckPassed,
     checksTotal:eCheckTotal
-  };
+  });
   if(currentProfile==='all'&&trades[idx]&&trades[idx]._profile){
     var src=trades[idx]._profile;
     var ix=(allTrades[src]||[]).findIndex(function(x){return x.id===editingId;});
@@ -4680,9 +4680,12 @@ updateSessionTimer();
 // NQ point value = $20 per point (full NQ)
 // MNQ point value = $2 per point (micro)
 function calcRisk(){
-  const account=parseFloat(document.getElementById('calc-account').value)||0;
-  const stop=parseFloat(document.getElementById('calc-stop').value)||0;
+  const accEl=document.getElementById('calc-account');
+  const stopEl=document.getElementById('calc-stop');
   const out=document.getElementById('calc-output');
+  if(!accEl||!stopEl||!out)return;
+  const account=parseFloat(accEl.value)||0;
+  const stop=parseFloat(stopEl.value)||0;
   if(!account||!stop){out.innerHTML='<span style="color:#9ca3af">Enter account size and stop distance</span>';return;}
 
   const risk1pct=account*0.01;
@@ -5016,7 +5019,7 @@ function renderQOTD(){
   const day=Math.floor(Date.now()/86400000);
   const q=QUOTES[day%QUOTES.length];
   el.textContent='\u201C'+q.q+'\u201D';
-  auth.textContent=q.a!=='Unknown'?'\u2014 '+q.a:'';
+  if(auth)auth.textContent=q.a!=='Unknown'?'\u2014 '+q.a:'';
 }
 
 // ── Pre-session review ──
@@ -5526,7 +5529,8 @@ function switchProfile(p, btn){
   mode = p === 'demo' ? 'demo' : 'live';
   try{localStorage.setItem('ict_last_profile',p);}catch(e){}
   document.querySelectorAll('.profile-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  var profBtn=btn||document.getElementById('pbtn-'+p);
+  if(profBtn)profBtn.classList.add('active');
   if(p==='all')rebuildMergedProfileView();
   else{
     trades=allTrades[currentProfile]||[];
@@ -5621,7 +5625,7 @@ function loadDraft(){
     if(draft.selectedMistakes&&draft.selectedMistakes.length){
       selectedMistakes=draft.selectedMistakes;
       buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'','log');
-      document.getElementById('mistake-count').textContent='('+selectedMistakes.length+' selected)';
+      var _mc2=document.getElementById('mistake-count');if(_mc2)_mc2.textContent='('+selectedMistakes.length+' selected)';
     }
     updateChecks();
   }catch(e){}
@@ -5783,7 +5787,7 @@ function randomizeTrade(){
   selectedMistakes=randMistakes.slice();
   try{buildMistakes(document.getElementById('mistake-search')?document.getElementById('mistake-search').value:'','log');}catch(e){}
   document.querySelectorAll('#mistakes-list .mistake-item').forEach(function(el){var lbl=el.querySelector('span');if(lbl&&randMistakes.indexOf(lbl.textContent)>=0)el.classList.add('selected');else el.classList.remove('selected');});
-  document.getElementById('mistake-count').textContent=randMistakes.length?'('+randMistakes.length+' selected)':'';
+  var _mcR=document.getElementById('mistake-count');if(_mcR)_mcR.textContent=randMistakes.length?'('+randMistakes.length+' selected)':'';
 
   checklistCheckAll();
   updateChecks();
@@ -6077,13 +6081,19 @@ function hexToHsv(hex){
   return {h,s:max?d/max:0,v:max};
 }
 function hexToRgb(hex){
-  hex=hex.replace('#','');
-  return [parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)];
+  try{
+    if(hex==null||hex==='')return[16,185,129];
+    var s=String(hex).replace('#','').trim();
+    if(s.length===3)s=s.split('').map(function(c){return c+c;}).join('');
+    if(!/^[0-9a-fA-F]{6}$/.test(s))return[16,185,129];
+    return[parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16)];
+  }catch(e){return[16,185,129];}
 }
-function darken(hex,f){return '#'+hexToRgb(hex).map(x=>Math.round(x*f).toString(16).padStart(2,'0')).join('');}
+function darken(hex,f){return '#'+hexToRgb(hex).map(function(x){return Math.round(x*f).toString(16).padStart(2,'0');}).join('');}
 
 // ── Apply accent + per-section colours via CSS vars only ──
 function applyAllColors(save=true){
+  try{
   const rs = document.documentElement.style;
   const a = tpColors.accent;
   const [ar,ag,ab] = hexToRgb(a);
@@ -6129,6 +6139,18 @@ function applyAllColors(save=true){
 
   // Update cur dots in panel
   updateCurDots();
+  }catch(e){
+    console.warn('applyAllColors',e);
+    tpColors=Object.assign({},TP_DEFAULTS);
+    try{localStorage.removeItem('ict_theme2');}catch(e2){}
+    try{
+      const rs2=document.documentElement.style;
+      const a2=TP_DEFAULTS.accent;
+      const rgb=hexToRgb(a2);
+      rs2.setProperty('--accent',a2);
+      rs2.setProperty('--accent-rgb',rgb[0]+','+rgb[1]+','+rgb[2]);
+    }catch(e3){}
+  }
 }
 
 function updateCurDots(){
