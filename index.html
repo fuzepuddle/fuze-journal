@@ -1693,7 +1693,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     <div class="collapsible-header" onclick="toggleCollapse('checklist-body')">
       <div class="section-label" style="margin-bottom:0">Model checklist · NASDAQ NY Continuation</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <button type="button" class="btn btn-sm" onclick="event.stopPropagation();checklistCheckAll()" title="Tick every checklist box">Check all</button>
+        <button type="button" class="btn btn-sm" onclick="event.stopPropagation();checklistCheckAll()" title="Tick all boxes, or clear all when already complete">Check all</button>
         <span id="check-count" style="font-size:14px;color:#9ca3af">0 / 10</span>
         <span class="collapse-icon">▼</span>
       </div>
@@ -1808,10 +1808,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <label>Draw tier</label>
         <select id="f-sq-draw-tier">
           <option value="">—</option>
-          <option>S — perfect equal H/L</option>
-          <option>A — data wicks / TL liquidity</option>
-          <option>B — session H/L or relative EQ</option>
-          <option>C — unbalanced gap only</option>
+          <option>S</option>
+          <option>A</option>
+          <option>B</option>
         </select>
       </div>
       <div>
@@ -3431,7 +3430,11 @@ function setMode(m,btn){mode=m;document.querySelectorAll('.mode-btn').forEach(b=
 // ── Checklist ──
 function toggle(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateChecks();}}
 function checklistCheckAll(){
-  document.querySelectorAll('#checklist-body .check-item input[type=checkbox]').forEach(function(b){b.checked=true;});
+  var boxes=document.querySelectorAll('#checklist-body .check-item input[type=checkbox]');
+  var arr=[...boxes];
+  if(!arr.length)return;
+  var allOn=arr.every(function(b){return b.checked;});
+  arr.forEach(function(b){b.checked=!allOn;});
   updateChecks();
 }
 function updateChecks(){
@@ -3448,7 +3451,11 @@ function updateChecks(){
 }
 function toggleEditChecklistRow(item){const cb=item.querySelector('input');if(cb){cb.checked=!cb.checked;updateEditChecks();}}
 function checklistCheckAllEdit(){
-  document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]').forEach(function(b){b.checked=true;});
+  var boxes=document.querySelectorAll('#e-checklist-body .check-item input[type=checkbox]');
+  var arr=[...boxes];
+  if(!arr.length)return;
+  var allOn=arr.every(function(b){return b.checked;});
+  arr.forEach(function(b){b.checked=!allOn;});
   updateEditChecks();
 }
 function updateEditChecks(){
@@ -5463,8 +5470,10 @@ function renderTimeOfDay(trades){
 
 function _sqShortTierLabel(full){
   if(!full)return'';
-  var m=String(full).match(/^([SABC])/);
-  return m?m[1]+' tier':full.slice(0,18)+(full.length>18?'…':'');
+  var s=String(full).trim();
+  if(s.length<=2)return s==='—'?'—':s;
+  var m=s.match(/^([SABC])/);
+  return m?m[1]+' tier':s.slice(0,18)+(s.length>18?'…':'');
 }
 function renderSqTierStats(f){
   var el=document.getElementById('s-sq-tier');if(!el)return;
@@ -5478,15 +5487,16 @@ function renderSqTierStats(f){
     if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;else if(t.outcome==='be')o.be++;
   });
   if(!Object.keys(m).length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log draw tier on trades to slice P&amp;L by model rule.</span>';return;}
-  var order=['S — perfect equal H/L','A — data wicks / TL liquidity','B — session H/L or relative EQ','C — unbalanced gap only'];
+  var order=['S','A','B','S — perfect equal H/L','A — data wicks / TL liquidity','B — session H/L or relative EQ','C — unbalanced gap only'];
   var keys=order.filter(function(k){return m[k];}).concat(Object.keys(m).filter(function(k){return order.indexOf(k)<0;}));
   el.innerHTML=keys.map(function(k){
     var d=m[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
     var avg=d.n?d.pnl/d.n:0;
     var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    var sub=k.length<=2?'Draw tier':String(k).replace(/^([SABC]) — /,'$1 · ');
     return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:8px">'
       +'<div><div style="font-size:13px;font-weight:600;color:var(--text-primary,#e5e7eb)">'+_sqShortTierLabel(k)+'</div>'
-      +'<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.35">'+k.replace(/^([SABC]) — /,'$1 · ')+'</div></div>'
+      +'<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.35">'+sub+'</div></div>'
       +'<div style="text-align:right;font-size:13px;color:'+col+'"><div>'+d.n+' tr · '+wr+'</div><div style="margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+'</div></div></div>';
   }).join('');
 }
@@ -5795,17 +5805,17 @@ function correlateMistakesForRandomize(out,pickedCls){
 function correlateTradeClass(out){
   var u=Math.random();
   if(out==='win'){
-    if(u<0.86)return'valid-good';
-    if(u<0.98)return'valid-bad';
+    if(u<0.88)return'valid-good';
+    if(u<0.97)return'valid-bad';
     return'invalid';
   }
   if(out==='loss'){
-    if(u<0.42)return'invalid';
-    if(u<0.88)return'valid-bad';
-    return'valid-good';
+    if(u<0.36)return'valid-good';
+    if(u<0.78)return'valid-bad';
+    return'invalid';
   }
-  if(u<0.38)return'valid-bad';
-  if(u<0.78)return'valid-good';
+  if(u<0.58)return'valid-good';
+  if(u<0.86)return'valid-bad';
   return'invalid';
 }
 function randomizeTrade(){
@@ -5815,11 +5825,9 @@ function randomizeTrade(){
     :['Asia L','London L','PDL','EQL','NY PM low','Sellside pool'];
   var draw=_randPick(drawPool);
   var bias=direction==='Long'?'Bullish':'Bearish';
-  // Outcome
-  var outcomes=['win','loss','be'];
-  var outcomeWeights=[0.55,0.30,0.15];
-  var rOutcome='win';var rr=Math.random(),cw=0;
-  for(var oi=0;oi<outcomes.length;oi++){cw+=outcomeWeights[oi];if(rr<cw){rOutcome=outcomes[oi];break;}}
+  // Outcome: 49% win · 49% loss · 1% BE (99 buckets; uniform on 0..98)
+  var ob=Math.floor(Math.random()*99);
+  var rOutcome=ob<49?'win':(ob<98?'loss':'be');
   // Class ↔ outcome correlation
   var picked=correlateTradeClass(rOutcome);
   tradeClass=picked;
@@ -5884,7 +5892,7 @@ function randomizeTrade(){
   var postMixed=_randPick(['Neutral about the outcome','Glad I followed rules even though it lost','Unsure if execution was right']);
   if(rOutcome==='win')document.getElementById('f-emotion-post').value=(picked==='valid-good'?postWin:Math.random()<0.72?postWin:_randPick(['Felt I got lucky — not a clean win','Annoyed didn\'t size up']));
   else if(rOutcome==='loss')document.getElementById('f-emotion-post').value=postLoss;
-  else document.getElementById('f-emotion-post').value=postMixed;
+  else document.getElementById('f-emotion-post').value=_randPick(['Neutral about the outcome','Calm / indifferent ✓','Relieved — stuck to the plan ✓','Glad I followed rules even though it lost','Unsure if execution was right']);
 
   // Momentum — exact strings from #f-momentum optgroups
   var msWinStrong=['Aggressive expansion — large bodied candles, clear BOS','Strong push — displacement visible on 15M and 5M','Strong but starting to slow near entry','Moderate — steady directional push'];
@@ -5896,7 +5904,7 @@ function randomizeTrade(){
   if(momEl){
     if(rOutcome==='win')momEl.value=_randPick(msWinStrong.concat(msWinRet));
     else if(rOutcome==='loss')momEl.value=picked==='invalid'?_randPick(msLossInvMom):_randPick(msLossExec);
-    else momEl.value=_randPick(['Moderate — steady directional push','Slow corrective retrace — textbook pullback ✓','Grinding — small candles, slow grind']);
+    else momEl.value=_randPick(['Slow corrective retrace — textbook pullback ✓','Moderate — steady directional push','Tight consolidation inside FVG — coiling','Price slowing — losing candle size and speed']);
   }
 
   var fvgZones=['Top of gap','Middle of gap','Bottom of gap'];
@@ -5922,10 +5930,18 @@ function randomizeTrade(){
     if(prev)prev.innerHTML='<div style="width:120px;height:75px;background:#161b27;border:1px solid rgba(255,255,255,0.07);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin-top:4px"><span style="font-size:18px">📷</span><span style="font-size:12px;color:#555">'+tf.toUpperCase()+' placeholder</span></div>';
   });
 
-  var narratives=[
-    'Price swept '+draw+', displaced '+direction.toLowerCase()+' on 15M. Clean 5M FVG left behind. Slow pullback into '+fz.toLowerCase()+'; 1M BOS aligned toward '+draw+'. Class: '+picked.replace('-',' / ')+'.',
-    'NY continuation context: '+bias+' tilt, '+draw+' as draw-on-liquidity. Displacement readable on 15M; entry followed the slow retrace rule. Outcome '+rOutcome+' — journaling process + takeaway below.',
-    'Session held '+draw+' as the obvious target ('+picked+'). FVG quality checked on 5M; momentum at entry: see dropdown. Review notes for what to improve next time.'
+  var narratives=rOutcome==='win'?[
+    'WIN: '+bias+' '+direction+' toward '+draw+'. 15M displacement + 5M FVG; slow pullback into '+fz.toLowerCase()+'. Class '+picked.replace('-',' / ')+' matches +R result.',
+    'WIN logged: swept '+draw+', continuation held; entry on IFVG close. RR and P&L align with a clean take.',
+    'WIN — session did the work: obvious draw, singular gap, measured retrace. Outcome matches the checklist + screenshots.'
+  ]:rOutcome==='loss'?[
+    'LOSS: '+bias+' '+direction+' vs '+draw+'. Setup class '+picked.replace('-',' / ')+' with -1R (or worse) matches the red result — review displacement vs pullback.',
+    'LOSS logged: target or invalidator hit; narrative matches negative P&amp;L and RR.',
+    'LOSS — price failed the continuation after entry; emotions and SQ fields reflect a losing outcome.'
+  ]:[
+    'BE: flat after '+draw+' play; scratch / trail per model. P&amp;L ~0 matches break-even outcome.',
+    'BE — no meaningful follow-through; fees/slippage minimal. Outcome tagged BE with flat R.',
+    'BE logged: rules kept; result flat vs risk — fields align with scratch.'
   ];
   document.getElementById('f-narrative').value=_randPick(narratives);
 
@@ -5933,35 +5949,59 @@ function randomizeTrade(){
   document.getElementById('f-improve').value=(rOutcome==='win'&&picked==='valid-good')?'Solid execution chain — screenshot + stats back it up; repeat this process.'
     :(rOutcome==='win')?'Good result; tighten one execution detail ('+(picked==='invalid'?'classified invalid — revisit rule fit':'valid-bad')+').'
     :(rOutcome==='loss')?(mainMistake?'Focus next session: '+mainMistake+'.':'Journal the loss mechanics and one fix.')
-    :(mainMistake?'BE — note '+mainMistake+'; manage BE/trail per model.':'BE — flat is fine when rules stayed intact.');
+    :'BE — manage trail/BE per model next time; keep process identical when outcome is flat.';
 
-  var tiers=['S — perfect equal H/L','A — data wicks / TL liquidity','B — session H/L or relative EQ','C — unbalanced gap only'];
-  var displ=rOutcome==='win'&&picked!=='invalid'?_randPick(['Strong — clear BOS toward draw','Moderate — readable push']):(picked==='invalid'?_randPick(['Chop — no clean displacement','Weak — marginal / overlapping']):_randPick(['Moderate — readable push','Weak — marginal / overlapping','Chop — no clean displacement']));
-  var gapq=picked==='invalid'?_randPick(['Formed in chop','Overlapping / messy']):_randPick(['Clean singular FVG','Two adjacent combined','Overlapping / messy']);
-  var retr=rOutcome==='win'?_randPick(['Slow / corrective','Moderate pace']):_randPick(['Fast / aggressive','Spike then stall','Moderate pace']);
+  var tierPick;
+  if(rOutcome==='win'){
+    tierPick=picked==='invalid'?_randPick(['B','A']):(picked==='valid-good'?_randPick(['S','S','A','B']):_randPick(['A','B','S']));
+  }else if(rOutcome==='loss'){
+    tierPick=picked==='invalid'?_randPick(['B','B','A']):_randPick(['B','A','A','S']);
+  }else{
+    tierPick=_randPick(['S','A','B']);
+  }
+  var displ=rOutcome==='win'&&picked==='valid-good'?_randPick(['Strong — clear BOS toward draw','Moderate — readable push']):rOutcome==='win'?_randPick(['Moderate — readable push','Strong — clear BOS toward draw']):(rOutcome==='loss'&&picked==='invalid'?_randPick(['Chop — no clean displacement','Weak — marginal / overlapping']):(rOutcome==='loss'?_randPick(['Weak — marginal / overlapping','Moderate — readable push','Chop — no clean displacement']):_randPick(['Moderate — readable push','Weak — marginal / overlapping'])));
+  var gapq=rOutcome==='win'&&picked!=='invalid'?_randPick(['Clean singular FVG','Two adjacent combined']):(rOutcome==='loss'&&picked==='invalid'?_randPick(['Formed in chop','Overlapping / messy']):_randPick(['Clean singular FVG','Two adjacent combined','Overlapping / messy']));
+  var retr=rOutcome==='win'?_randPick(['Slow / corrective','Moderate pace']):(rOutcome==='loss'?_randPick(['Fast / aggressive','Spike then stall','Moderate pace']):_randPick(['Slow / corrective','Moderate pace']));
   var ifvgOpts=['Clean close through — NQ & MNQ aligned','Barely closed through / weak body','MNQ confirmed — NQ did not (or lagged)','Touch / wick only — no candle close through','Other — describe in notes'];
-  var ifvgQ=picked==='valid-good'&&rOutcome==='win'?_randPick(['Clean close through — NQ & MNQ aligned','Barely closed through / weak body']):(picked==='invalid'?_randPick(['IFVG in chop — poor context','Violated then reclaimed — messy']):_randPick(ifvgOpts));
-  applySetupQuality('f',{drawTier:_randPick(tiers),displacement:displ,gapQuality:gapq,pullback:retr,ifvgQuality:ifvgQ});
+  var ifvgQ=rOutcome==='win'&&picked==='valid-good'?_randPick(['Clean close through — NQ & MNQ aligned','Barely closed through / weak body']):(rOutcome==='loss'&&picked==='invalid'?_randPick(['IFVG in chop — poor context','Violated then reclaimed — messy']):(rOutcome==='be'?_randPick(['Barely closed through / weak body','Touch / wick only — no candle close through','Clean close through — NQ & MNQ aligned']):_randPick(ifvgOpts)));
+  applySetupQuality('f',{drawTier:tierPick,displacement:displ,gapQuality:gapq,pullback:retr,ifvgQuality:ifvgQ});
   var pv=document.getElementById('f-post-verdict');
   if(pv){
-    if(picked==='valid-good'&&rOutcome==='win')pv.value='yes';
-    else if(picked==='invalid'||(rOutcome==='loss'&&picked!=='valid-good'))pv.value=Math.random()<0.82?'no':'unsure';
-    else pv.value=_randPick(['yes','no','unsure']);
+    if(rOutcome==='win'){
+      if(picked==='valid-good')pv.value=Math.random()<0.92?'yes':'unsure';
+      else if(picked==='valid-bad')pv.value=Math.random()<0.62?'yes':'unsure';
+      else pv.value=Math.random()<0.45?'unsure':'no';
+    }else if(rOutcome==='loss'){
+      pv.value=(picked==='invalid'||Math.random()<0.78)?'no':'unsure';
+    }else{
+      pv.value=Math.random()<0.55?'unsure':(Math.random()<0.5?'yes':'no');
+    }
   }
   var ttypes=['Full draw / major liquidity','Nearest minor liquidity — partial plan','Fixed RR — scale at internal','Other / discretionary'];
   var ttel=document.getElementById('f-target-type');
-  if(ttel)ttel.value=_randPick(ttypes);
-  var plannedOpts=rOutcome==='win'?['1:1','1:2','2','2.5']:rOutcome==='loss'?['1:1','1.5']:['1:1'];
+  if(ttel)ttel.value=rOutcome==='be'?_randPick(['Nearest minor liquidity — partial plan','Fixed RR — scale at internal','Other / discretionary']):_randPick(ttypes);
+  var plannedOpts=rOutcome==='win'?['1:1','1:2','2','2.5']:rOutcome==='loss'?['1:1','1.5']:['1:1','BE / scratch'];
   var frp=document.getElementById('f-rr-planned');
   if(frp)frp.value=_randPick(plannedOpts);
   var ffn=document.getElementById('f-fill-notes');
-  if(ffn)ffn.value=_randPick(['Clean fills','Slipped 1 tick on entry','Partial — scaled at internal','Latency on bracket','One tick through stop then target','Iceberg / reload on entry']);
+  if(ffn){
+    if(rOutcome==='be')ffn.value=_randPick(['Minimal slip — BE scratch','Clean fills — flat to BE','Reduced size then scratched at BE']);
+    else if(rOutcome==='win')ffn.value=_randPick(['Clean fills','Slipped 1 tick on entry','Partial — scaled at internal','Latency on bracket']);
+    else ffn.value=_randPick(['Slipped 1 tick on entry','Latency on bracket','One tick through stop then target','Iceberg / reload on entry']);
+  }
   (function randomizeBrokerPrices(){
     var ep=document.getElementById('f-entry-price'),xp=document.getElementById('f-exit-price'),ct=document.getElementById('f-contracts');
     if(!ep||!xp||!ct)return;
-    var base=18500+Math.floor(Math.random()*900);
     var tick=0.25;
+    var base=18500+Math.floor(Math.random()*900);
     var ent=base+tick*Math.floor(Math.random()*8);
+    if(rOutcome==='be'){
+      var slip=tick*(1+Math.floor(Math.random()*4));
+      ep.value=String(ent);
+      xp.value=String(Math.round((ent+(Math.random()>0.5?slip:-slip))*100)/100);
+      ct.value=String(1+Math.floor(Math.random()*3));
+      return;
+    }
     var delta=(direction==='Long'?(rOutcome==='win'?1:-1):(rOutcome==='win'?-1:1))*(8+Math.floor(Math.random()*40))*tick;
     var ex=ent+delta;
     ep.value=String(ent);
@@ -6748,7 +6788,7 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
         <div style="font-size:13px;font-weight:600;color:#374151">Model checklist · NASDAQ NY Continuation</div>
         <div style="display:flex;align-items:center;gap:10px">
-          <button type="button" class="btn btn-sm" onclick="checklistCheckAllEdit()" style="font-size:12px;padding:4px 10px">Check all</button>
+          <button type="button" class="btn btn-sm" onclick="checklistCheckAllEdit()" style="font-size:12px;padding:4px 10px" title="Tick all boxes, or clear all when already complete">Check all</button>
           <span id="e-check-count" style="font-size:13px;color:#6b7280">0 / 10</span>
         </div>
       </div>
@@ -6804,7 +6844,7 @@ body.dark-mode #reveals-section .rev-slide { background: rgba(255,255,255,0.01) 
 
     <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin:14px 0 8px">Setup quality</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <div><label>Draw tier</label><select id="e-sq-draw-tier" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>S — perfect equal H/L</option><option>A — data wicks / TL liquidity</option><option>B — session H/L or relative EQ</option><option>C — unbalanced gap only</option></select></div>
+      <div><label>Draw tier</label><select id="e-sq-draw-tier" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>S</option><option>A</option><option>B</option></select></div>
       <div><label>15M displacement</label><select id="e-sq-displacement" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Strong — clear BOS toward draw</option><option>Moderate — readable push</option><option>Weak — marginal / overlapping</option><option>Chop — no clean displacement</option></select></div>
       <div><label>5M gap quality</label><select id="e-sq-gap-quality" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Clean singular FVG</option><option>Two adjacent combined</option><option>Overlapping / messy</option><option>Formed in chop</option></select></div>
       <div><label>Pullback into gap</label><select id="e-sq-pullback" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);font-family:inherit"><option value="">—</option><option>Slow / corrective</option><option>Moderate pace</option><option>Fast / aggressive</option><option>Spike then stall</option></select></div>
@@ -7792,13 +7832,16 @@ function renderSmartInsights(){
   }
   function _sumPnl(arr){return arr.reduce((s,x)=>s+(x.pnl!=null?x.pnl:0),0);}
 
-  // Draw tier S/A vs C (model rule you already log)
-  const tierSA=t.filter(x=>{var d=(x.setupQuality||{}).drawTier||'';return(d.indexOf('S —')===0||d.indexOf('A —')===0)&&x.pnl!=null;});
-  const tierC=t.filter(x=>{var d=(x.setupQuality||{}).drawTier||'';return d.indexOf('C —')===0&&x.pnl!=null;});
-  if(tierSA.length>=5&&tierC.length>=3){
-    const wrS=_wlWR(tierSA),wrC=_wlWR(tierC);
-    if(wrS!==null&&wrC!==null&&(wrS-wrC>0.12||_sumPnl(tierC)<0&&_sumPnl(tierSA)>_sumPnl(tierC))){
-      insights.push({icon:'📐',color:'#16a34a',text:`S/A draw tiers: <strong>${Math.round(wrS*100)}% WR</strong> (${tierSA.length} trades, ${_sumPnl(tierSA)>=0?'+$':'-$'}${Math.abs(_sumPnl(tierSA)).toFixed(0)} total). C-only context: <strong>${Math.round(wrC*100)}%</strong> (${tierC.length} trades). If C-tier keeps dragging $, default to skip unless stacked with S/A.`});
+  function _drawTierLetter(x){
+    var d=String((x.setupQuality||{}).drawTier||'').trim();
+    return d.charAt(0);
+  }
+  const tierSA=t.filter(x=>{var L=_drawTierLetter(x);return(L==='S'||L==='A')&&x.pnl!=null;});
+  const tierBlow=t.filter(x=>{var L=_drawTierLetter(x);return(L==='B'||L==='C')&&x.pnl!=null;});
+  if(tierSA.length>=5&&tierBlow.length>=3){
+    const wrS=_wlWR(tierSA),wrB=_wlWR(tierBlow);
+    if(wrS!==null&&wrB!==null&&(wrS-wrB>0.12||_sumPnl(tierBlow)<0&&_sumPnl(tierSA)>_sumPnl(tierBlow))){
+      insights.push({icon:'📐',color:'#16a34a',text:`S/A draw tiers: <strong>${Math.round(wrS*100)}% WR</strong> (${tierSA.length} trades, ${_sumPnl(tierSA)>=0?'+$':'-$'}${Math.abs(_sumPnl(tierSA)).toFixed(0)} total). B/C context: <strong>${Math.round(wrB*100)}%</strong> (${tierBlow.length} trades). If lower tier keeps dragging $, default to skip unless stacked with S/A.`});
     }
   }
 
