@@ -1614,32 +1614,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <!-- Monthly review ritual (fixed prompts) -->
-  <div class="dash-chart-card" id="monthly-review-card" style="margin-top:12px">
-    <div class="dash-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <span>Monthly ritual</span>
-      <span id="mr-month-label" style="font-size:12px;color:#9ca3af;font-weight:400"></span>
-      <span style="display:flex;align-items:center;gap:6px">
-        <button type="button" class="btn btn-sm" onclick="mrPrevMonth()" title="Previous month">‹</button>
-        <button type="button" class="btn btn-sm" onclick="mrThisMonth()">This month</button>
-        <button type="button" class="btn btn-sm" onclick="mrNextMonth()" title="Next month">›</button>
-      </span>
-    </div>
-    <p style="font-size:12px;color:#6b7280;margin:8px 0 10px;line-height:1.5">Same prompts every month — capture what changed in your process (not just P&amp;L).</p>
-    <div id="mr-all-profile-hint" style="display:none;margin-bottom:10px;padding:8px 12px;background:rgba(148,130,255,0.08);border-radius:8px;font-size:13px;color:#c4b5fd">Switch off <strong>All</strong> to save monthly notes separately for Challenge, Funded, and Demo.</div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px 14px" id="mr-fields-wrap">
-      <div><label style="font-size:12px;color:#9ca3af">1 · Net result vs what you expected?</label><textarea id="mr-q1" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">2 · Best repeatable behaviour you saw?</label><textarea id="mr-q2" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">3 · Worst recurring mistake or slip?</label><textarea id="mr-q3" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">4 · Rule to add, tighten, or delete next month?</label><textarea id="mr-q4" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">5 · How did emotions skew entries or exits?</label><textarea id="mr-q5" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">6 · Psychology theme of this month (one line)?</label><textarea id="mr-q6" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">7 · Single focus for next month?</label><textarea id="mr-q7" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-      <div><label style="font-size:12px;color:#9ca3af">8 · Letter to yourself next review date?</label><textarea id="mr-q8" rows="2" style="width:100%;font-size:13px;padding:8px;border-radius:8px"></textarea></div>
-    </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:12px"><button type="button" class="btn btn-primary btn-sm" onclick="saveMonthlyReview()">Save month</button></div>
-  </div>
-
   <!-- WHAT YOUR TRADE DATA REVEALS — trigger button -->
   <div style="margin-top:16px;display:flex;justify-content:center">
     <button onclick="openRevealsModal()" style="display:flex;align-items:center;gap:10px;padding:13px 28px;border-radius:14px;border:1px solid rgba(16,185,129,0.3);background:linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.04) 100%);color:var(--accent);cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;letter-spacing:.01em;transition:all .2s;width:100%;max-width:460px;justify-content:center" onmouseover="this.style.background='linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(16,185,129,0.08) 100%)';this.style.borderColor='rgba(16,185,129,0.5)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(16,185,129,0.04) 100%)';this.style.borderColor='rgba(16,185,129,0.3)'">
@@ -2162,10 +2136,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
 <!-- STATS -->
 <div class="page" id="page-stats">
   <div class="page-header"><h2>Statistics</h2></div>
-  <!-- Filter bar -->
-  <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
-    <div id="s-tilt"></div>
-  </div>
 
   <!-- Smart Insights strip -->
   <div id="smart-insights-card" class="card" style="margin-bottom:12px;display:none">
@@ -2174,13 +2144,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
   </div>
 
   <!-- Row 1: key metrics -->
-  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
     <div class="metric-card"><div class="metric-lbl">Total P&amp;L</div><div class="metric-val" id="s-pnl" style="font-size:18px">$0</div></div>
     <div class="metric-card" id="s-wr-card"><div class="metric-lbl">Win rate</div><div class="metric-val" id="s-wr" style="font-size:18px">—</div></div>
     <div class="metric-card"><div class="metric-lbl">Trades</div><div class="metric-val" id="s-total" style="font-size:18px">0</div></div>
     <div class="metric-card"><div class="metric-lbl">Profit factor</div><div class="metric-val" id="s-profitfactor" style="font-size:18px">—</div></div>
-    <div class="metric-card"><div class="metric-lbl">Expectancy</div><div class="metric-val" id="s-expectancy" style="font-size:18px">—</div></div>
-    
   </div>
 
   <!-- Row 2: Equity curve (wide) + Outcomes donut -->
@@ -2217,10 +2185,6 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
         <span id="s-avg-win" style="font-size:14px;font-weight:500;color:#10b981">—</span>
         <span id="s-avg-loss" style="font-size:14px;font-weight:500;color:#ef4444">—</span>
       </div>
-      <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:12px">
-        <div class="flex-between" style="margin-bottom:4px"><span style="font-size:14px;color:#e5e7eb">Largest win</span><span id="s-largestwin" style="font-size:14px;font-weight:500;color:#10b981">—</span></div>
-        <div class="flex-between"><span style="font-size:14px;color:#e5e7eb">Largest loss</span><span id="s-largestloss" style="font-size:14px;font-weight:500;color:#ef4444">—</span></div>
-      </div>
     </div>
     <div class="card">
       <div class="section-label">Monthly P&amp;L</div>
@@ -2253,8 +2217,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <!-- Setup quality (sliceable, actionable) -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px">
+  <!-- Setup quality + IFVG (from log trade) -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:12px">
     <div class="card">
       <div class="section-label">P&amp;L by draw tier</div>
       <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Where your edge shows up in $ — log setup quality on each trade.</div>
@@ -2269,6 +2233,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
       <div class="section-label">5M gap + pullback</div>
       <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Clean gaps vs messy — same trade log fields.</div>
       <div id="s-sq-gap-pull" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
+    <div class="card">
+      <div class="section-label">IFVG quality (1M)</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">How inversion quality lines up with P&amp;L — from Log Trade.</div>
+      <div id="s-sq-ifvg" style="font-size:14px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -2288,8 +2257,13 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <!-- Row 6: Long vs Short + 5min FVG zone -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+  <!-- Row: 4H bias + Long vs Short + 5min FVG zone -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="card">
+      <div class="section-label">4H bias (logged)</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">Bullish / Bearish / Chop vs outcomes — from Log Trade.</div>
+      <div id="s-bias-stats" style="font-size:14px;color:#4b5563">No data</div>
+    </div>
     <div class="card">
       <div class="section-label">Long vs Short</div>
       <div id="s-longshort" style="font-size:14px;color:#4b5563">No data</div>
@@ -2319,17 +2293,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.5}
     </div>
   </div>
 
-  <!-- Checklist score vs win rate + Hold duration -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+  <!-- Checklist vs win rate -->
+  <div style="margin-bottom:12px">
     <div class="card">
-      <div class="section-label" style="margin-bottom:10px">Checklist score vs win rate</div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:10px">Does completing every check actually matter?</div>
+      <div class="section-label" style="margin-bottom:10px">Checklist vs win rate</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:10px">All model checks ticked vs win rate (from your log).</div>
       <div id="s-checklist-wr" style="font-size:14px;color:#4b5563">No data</div>
-    </div>
-    <div class="card">
-      <div class="section-label" style="margin-bottom:10px">Hold duration vs outcome</div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:10px">Win rate by how long you stayed in</div>
-      <div id="s-hold-duration" style="font-size:14px;color:#4b5563">No data</div>
     </div>
   </div>
 
@@ -2645,8 +2614,6 @@ function normalizeIctProfiles(raw){
 let trades=[];let mode=currentProfile==='demo'?'demo':'live';let outcome='';let tradeClass='';let tradeInterference='';
 let weeklyNotes={};
 let propSettings={};let selectedMistakes=[];var editingSelectedMistakes=[];
-let mrMonthOffset=0;
-
 const FUZE_JOURNAL_TAGLINE_KEY='fuze_journal_tagline';
 const DEFAULT_JOURNAL_TAGLINE='NASDAQ NY Continuation Model · 2:30–4:00 PM UK · Hard close 4:30 PM · 1 trade/day · 1% challenge / 0.5% funded · Min 1:1 RR';
 function getJournalTagline(){
@@ -3958,7 +3925,7 @@ let monthlyChartInstance=null;
 function renderStats(){
   const f=trades;
   // Reset all metric cards first so stale data never shows
-  ['s-pnl','s-wr','s-total','s-profitfactor','s-expectancy'].forEach(id=>{
+  ['s-pnl','s-wr','s-total','s-profitfactor'].forEach(id=>{
     const el=document.getElementById(id);if(el){el.textContent='—';el.style.color='';}
   });
   document.getElementById('s-total').textContent=f.length;
@@ -4020,17 +3987,11 @@ function renderStats(){
   renderSqTierStats(f);
   renderSqDisplacementStats(f);
   renderSqGapPullbackStats(f);
+  renderSqIfvgStats(f);
   renderPlannedVsActualStats(f);
   renderChecklistWR(f);
-  renderHoldDuration(f);
   renderClassStats(f);
-  const tiltEl=document.getElementById('s-tilt');
-  if(tiltEl){
-    const recent=f.filter(t=>t.pnl!=null).sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id)).slice(0,5);
-    let consLoss=0;for(const t of recent){if(t.pnl<0)consLoss++;else break;}
-    if(consLoss>=2){tiltEl.style.display='block';tiltEl.innerHTML='<div style="background:#1f0f0f;border:0.5px solid #6e2a2a;border-radius:8px;padding:10px 14px;font-size:14px;color:#ef4444">⚠ Tilt warning — '+consLoss+' consecutive losses. Consider stepping back before your next session.</div>';}
-    else{tiltEl.style.display='none';}
-  }
+  renderBiasStats(f);
 }
 
 function renderEquityChart(allTrades){
@@ -4100,46 +4061,18 @@ function renderMomentumStats(f){
       +'</div></div>';
   }).join('');
 }
-// ── Expectancy, Profit Factor, Largest Win/Loss, Tilt ──
+// ── Profit factor (from closed P&amp;L) ──
 function renderKeyMetrics(f){
   const withPnl=f.filter(t=>t.pnl!=null);
   const wins=withPnl.filter(t=>t.pnl>0);
   const losses=withPnl.filter(t=>t.pnl<0);
   const grossProfit=wins.reduce((s,t)=>s+t.pnl,0);
   const grossLoss=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));
-  const avgWin=wins.length?grossProfit/wins.length:0;
-  const avgLoss=losses.length?grossLoss/losses.length:0;
-  const wr=withPnl.length?(wins.length/withPnl.length):0;
-  const expectancy=withPnl.length?(avgWin*wr - avgLoss*(1-wr)):null;
   const pf=grossLoss>0?(grossProfit/grossLoss):null;
-  const largestWin=wins.length?Math.max(...wins.map(t=>t.pnl)):null;
-  const largestLoss=losses.length?Math.abs(Math.min(...losses.map(t=>t.pnl))):null;
-
-  const expEl=document.getElementById('s-expectancy');
-  if(expEl){
-    expEl.textContent=expectancy!=null?(expectancy>=0?'+$':'-$')+Math.abs(expectancy).toFixed(2):'—';
-    if(expEl)expEl.style.color=expectancy!=null?(expectancy>=0?'#10b981':'#ef4444'):'';
-  }
   const pfEl=document.getElementById('s-profitfactor');
   if(pfEl){
     pfEl.textContent=pf!=null?pf.toFixed(2):'—';
     pfEl.style.color=pf!=null?(pf>=1.5?'#10b981':pf>=1?'#f59e0b':'#ef4444'):'';
-  }
-  const lwEl=document.getElementById('s-largestwin');
-  if(lwEl){lwEl.textContent=largestWin!=null?'+$'+largestWin.toFixed(2):'—';lwEl.style.color='#10b981';}
-  const llEl=document.getElementById('s-largestloss');
-  if(llEl){llEl.textContent=largestLoss!=null?'-$'+largestLoss.toFixed(2):'—';llEl.style.color='#ef4444';}
-
-  // Tilt meter — 2+ consecutive losses
-  const tiltEl=document.getElementById('s-tilt');
-  if(tiltEl){
-    const recent=f.filter(t=>t.pnl!=null).sort((a,b)=>b.date.localeCompare(a.date)||(b.id-a.id)).slice(0,5);
-    let consLoss=0;
-    for(const t of recent){if(t.pnl<0)consLoss++;else break;}
-    if(consLoss>=2){
-      tiltEl.style.display='block';
-      tiltEl.innerHTML='<div style="background:#1f0f0f;border:0.5px solid #6e2a2a;border-radius:8px;padding:10px 14px;font-size:14px;color:#ef4444">⚠ Tilt warning — '+consLoss+' consecutive losses. Consider stepping back before your next session.</div>';
-    } else {tiltEl.style.display='none';}
   }
 }
 
@@ -4359,6 +4292,37 @@ function calDayClick(dateStr){
 
 
 
+function renderBiasStats(f){
+  var el=document.getElementById('s-bias-stats');if(!el)return;
+  var labels=['Bullish','Bearish','Chop'];
+  var m={};
+  labels.forEach(function(b){m[b]={n:0,w:0,l:0,be:0,pnl:0};});
+  f.filter(function(t){return t.bias&&t.outcome;}).forEach(function(t){
+    var b=t.bias;
+    if(!m[b]){m[b]={n:0,w:0,l:0,be:0,pnl:0};}
+    m[b].n++;
+    m[b].pnl+=(t.pnl!=null?t.pnl:0);
+    if(t.outcome==='win')m[b].w++;else if(t.outcome==='loss')m[b].l++;else m[b].be++;
+  });
+  var rows=labels.filter(function(b){return m[b].n>0;});
+  if(!rows.length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log 4H bias on trades to see performance by regime.</span>';return;}
+  el.innerHTML=rows.map(function(b){
+    var d=m[b];
+    var wl=d.w+d.l;
+    var wr=wl?Math.round(d.w/wl*100):null;
+    var col=b==='Bullish'?'#10b981':b==='Bearish'?'#ef4444':'#f59e0b';
+    var pnlCol=d.pnl>=0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    var wrStr=wr!=null?wr+'%':'—';
+    var wrCol=wr==null?'#9ca3af':(wr>=50?'#10b981':'#ef4444');
+    return'<div style="margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+      +'<span style="font-size:14px;font-weight:600;color:'+col+'">'+b+'</span>'
+      +'<span style="font-size:14px;color:#9ca3af">'+d.n+' tr</span></div>'
+      +'<div style="font-size:13px;color:#e5e7eb">WR <strong style="color:'+wrCol+'">'+wrStr+'</strong>'
+      +' · Σ <span style="color:'+pnlCol+'">'+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+'</span></div></div>';
+  }).join('');
+}
+
 // ── Long vs Short win rate ──
 function renderLongShort(f){
   const el=document.getElementById('s-longshort');if(!el)return;
@@ -4457,43 +4421,6 @@ function renderChecklistWR(f){
       +'</div>';
   });
   el.innerHTML=rows.length?rows.join(''):'<span style="font-size:13px;color:#6b7280">No data yet.</span>';
-}
-
-function renderHoldDuration(f){
-  const el=document.getElementById('s-hold-duration');if(!el)return;
-  const withTimes=f.filter(t=>t.entryTime&&t.exitTime&&(t.outcome==='win'||t.outcome==='loss'||t.outcome==='be'));
-  if(withTimes.length<3){el.innerHTML='<span style="font-size:13px;color:#6b7280">Need more trades to show this.</span>';return;}
-  function toMins(s){const p=s.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
-  const withDuration=withTimes.map(t=>{
-    const dur=toMins(t.exitTime)-toMins(t.entryTime);
-    return dur>0?{...t,dur}:null;
-  }).filter(Boolean);
-  if(withDuration.length<3){el.innerHTML='<span style="font-size:13px;color:#6b7280">Need more trades to show this.</span>';return;}
-  const buckets=[
-    {label:'Under 15 min',min:0,max:14,trades:[]},
-    {label:'15 – 30 min',min:15,max:30,trades:[]},
-    {label:'30 – 60 min',min:31,max:60,trades:[]},
-    {label:'Over 60 min',min:61,max:Infinity,trades:[]}
-  ];
-  withDuration.forEach(t=>{
-    const b=buckets.find(b=>t.dur>=b.min&&t.dur<=b.max);
-    if(b)b.trades.push(t);
-  });
-  const avgDur=Math.round(withDuration.reduce((s,t)=>s+t.dur,0)/withDuration.length);
-  const rows=buckets.filter(b=>b.trades.length>0).map(b=>{
-    const wins=b.trades.filter(t=>t.outcome==='win').length;
-    const losses=b.trades.filter(t=>t.outcome==='loss').length;
-    const wr=wins+losses>0?Math.round(wins/(wins+losses)*100):null;
-    const wrStr=wr!==null?wr+'%':'—';
-    const col=wr===null?'#6b7280':wr>=60?'#10b981':wr>=40?'#f59e0b':'#ef4444';
-    return'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);margin-bottom:7px">'
-      +'<div><div style="font-size:13px;color:#e5e7eb;font-weight:500;margin-bottom:2px">'+b.label+'</div>'
-      +'<div style="font-size:12px;color:#6b7280">'+b.trades.length+' trade'+(b.trades.length!==1?'s':'')+'</div></div>'
-      +'<div style="font-size:20px;font-weight:700;color:'+col+'">'+wrStr+'</div>'
-      +'</div>';
-  });
-  const footer='<div style="font-size:12px;color:#6b7280;margin-top:4px">Avg hold time: '+avgDur+' min</div>';
-  el.innerHTML=rows.join('')+footer;
 }
 
 function renderClassStats(f){
@@ -5337,52 +5264,6 @@ function saveWeeklyNotes(){
   saveWeeklyStore();alert('Notes saved ✓');
 }
 
-function getMrMonthParts(){
-  const d=new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth()+mrMonthOffset);
-  return{
-    key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),
-    label:d.toLocaleDateString('en-GB',{month:'long',year:'numeric'})
-  };
-}
-function mrPrevMonth(){mrMonthOffset--;renderMonthlyReviewDashboard();}
-function mrNextMonth(){mrMonthOffset++;renderMonthlyReviewDashboard();}
-function mrThisMonth(){mrMonthOffset=0;renderMonthlyReviewDashboard();}
-
-function renderMonthlyReviewDashboard(){
-  const lbl=document.getElementById('mr-month-label');
-  const hin=document.getElementById('mr-all-profile-hint');
-  const wrap=document.getElementById('mr-fields-wrap');
-  const parts=getMrMonthParts();
-  if(lbl)lbl.textContent=parts.label;
-  if(currentProfile==='all'){
-    if(hin)hin.style.display='block';
-    if(wrap){wrap.style.opacity='0.45';wrap.querySelectorAll('textarea').forEach(function(el){el.disabled=true;});}
-  }else{
-    if(hin)hin.style.display='none';
-    if(wrap){wrap.style.opacity='1';wrap.querySelectorAll('textarea').forEach(function(el){el.disabled=false;});}
-  }
-  let store=(allMonthlyReviews[currentProfile]||{})[parts.key]||{};
-  for(let i=1;i<=8;i++){
-    var el=document.getElementById('mr-q'+i);
-    if(el)el.value=store['q'+i]||'';
-  }
-}
-function saveMonthlyReview(){
-  if(currentProfile==='all'){alert('Switch to Challenge, Funded, or Demo to save the monthly ritual.');return;}
-  const parts=getMrMonthParts();
-  if(!allMonthlyReviews[currentProfile])allMonthlyReviews[currentProfile]={};
-  allMonthlyReviews[currentProfile][parts.key]={
-    q1:document.getElementById('mr-q1').value,q2:document.getElementById('mr-q2').value,q3:document.getElementById('mr-q3').value,q4:document.getElementById('mr-q4').value,
-    q5:document.getElementById('mr-q5').value,q6:document.getElementById('mr-q6').value,q7:document.getElementById('mr-q7').value,q8:document.getElementById('mr-q8').value,
-    savedAt:new Date().toISOString()
-  };
-  try{localStorage.setItem('fuze_monthly_profiles',JSON.stringify(allMonthlyReviews));}catch(e){}
-  supaSet('fuze_monthly_reviews',allMonthlyReviews);
-  alert('Monthly ritual saved ✓');
-}
-
 // ── Time of day performance ──
 function renderTimeOfDay(trades){
   const el=document.getElementById('s-timeofday');
@@ -5494,6 +5375,29 @@ function renderSqGapPullbackStats(f){
   var pOrder=['Slow / corrective','Moderate pace','Fast / aggressive','Spike then stall'];
   var html=block('Gap quality',gapM,gOrder)+block('Pullback',pullM,pOrder);
   el.innerHTML=html||'<span style="color:#9ca3af;font-size:14px">Log gap quality and pullback to see where chop costs you.</span>';
+}
+
+function renderSqIfvgStats(f){
+  var el=document.getElementById('s-sq-ifvg');if(!el)return;
+  var m={};
+  f.forEach(function(t){
+    var sq=t.setupQuality||{};var k=sq.ifvgQuality;
+    if(!k||t.pnl==null)return;
+    if(!m[k])m[k]={n:0,w:0,l:0,be:0,pnl:0};
+    var o=m[k];o.n++;o.pnl+=t.pnl||0;
+    if(t.outcome==='win')o.w++;else if(t.outcome==='loss')o.l++;else if(t.outcome==='be')o.be++;
+  });
+  if(!Object.keys(m).length){el.innerHTML='<span style="color:#9ca3af;font-size:14px">Log IFVG quality (1M) on trades to see which confirmations pay.</span>';return;}
+  var order=['Clean close through — NQ & MNQ aligned','Barely closed through / weak body','MNQ confirmed — NQ did not (or lagged)','NQ confirmed — MNQ only wick / no follow-through','Touch / wick only — no candle close through','IFVG in chop — poor context','Violated then reclaimed — messy','Other — describe in notes'];
+  var keys=order.filter(function(k){return m[k];}).concat(Object.keys(m).filter(function(k){return order.indexOf(k)<0;}));
+  el.innerHTML=keys.map(function(k){
+    var d=m[k];var wl=d.w+d.l;var wr=wl?Math.round(d.w/wl*100)+'%':'—';
+    var avg=d.n?d.pnl/d.n:0;var col=d.pnl>0?'#10b981':d.pnl<0?'#ef4444':'#9ca3af';
+    var shortK=k.length>36?k.slice(0,34)+'…':k;
+    return'<div class="flex-between" style="margin-bottom:8px;padding:8px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);align-items:flex-start;gap:8px">'
+      +'<div><div style="font-size:13px;font-weight:600;color:var(--text-primary,#e5e7eb);line-height:1.35">'+shortK+'</div></div>'
+      +'<div style="text-align:right;font-size:13px;color:'+col+'"><div>'+d.n+' tr · '+wr+'</div><div style="margin-top:2px">Σ '+(d.pnl>=0?'+$':'-$')+Math.abs(d.pnl).toFixed(0)+' · avg '+(avg>=0?'+$':'-$')+Math.abs(avg).toFixed(0)+'</div></div></div>';
+  }).join('');
 }
 
 function renderPlannedVsActualStats(f){
@@ -6622,12 +6526,19 @@ function revRenderPatternsSlide(){
   var bestHour = sortedByPnl.length?sortedByPnl[0]:null;
   var worstHour = sortedByPnl.length?sortedByPnl[sortedByPnl.length-1]:null;
 
-  var discs = allT.filter(function(t){return t.discRating;}).map(function(t){return t.discRating;});
-  var avgDisc = discs.length?(discs.reduce(function(a,b){return a+b;},0)/discs.length).toFixed(1):'—';
-  var highDisc = allT.filter(function(t){return t.discRating>=4;});
-  var lowDisc  = allT.filter(function(t){return t.discRating>0&&t.discRating<=2;});
-  var highDiscPnl = highDisc.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
-  var lowDiscPnl  = lowDisc.reduce(function(s,t){return s+(parseFloat(t.pnl)||0);},0);
+  var ifvgMap={};
+  allT.forEach(function(t){
+    var q=(t.setupQuality||{}).ifvgQuality;
+    if(!q)return;
+    if(!ifvgMap[q])ifvgMap[q]={n:0,pnl:0,w:0,l:0};
+    ifvgMap[q].n++;ifvgMap[q].pnl+=parseFloat(t.pnl)||0;
+    if(t.outcome==='win')ifvgMap[q].w++;else if(t.outcome==='loss')ifvgMap[q].l++;
+  });
+  var ifvgKeys=Object.keys(ifvgMap);
+  var topIfvg=ifvgKeys.length?ifvgKeys.sort(function(a,b){return ifvgMap[b].pnl-ifvgMap[a].pnl;})[0]:null;
+  var topIfvgN=topIfvg?ifvgMap[topIfvg].n:0;
+  var topIfvgPnl=topIfvg?ifvgMap[topIfvg].pnl:0;
+  var topIfvgWr=topIfvg&&(ifvgMap[topIfvg].w+ifvgMap[topIfvg].l)?Math.round(ifvgMap[topIfvg].w/(ifvgMap[topIfvg].w+ifvgMap[topIfvg].l)*100):null;
 
   var dayCount={};
   allT.forEach(function(t){if(t.date)dayCount[t.date]=(dayCount[t.date]||0)+1;});
@@ -6647,10 +6558,10 @@ function revRenderPatternsSlide(){
     patCard('⚠️','Worst Hour',
       (worstHour&&bestHour&&worstHour[0]!==bestHour[0])?worstHour[0]:'—',
       (worstHour&&bestHour&&worstHour[0]!==bestHour[0])?'$'+worstHour[1].pnl.toFixed(0)+' net over '+worstHour[1].count+' trade(s)':'No data','#ef4444') +
-    patCard('⭐','Avg Discipline',
-      avgDisc+'/5',
-      highDisc.length?'High disc (4-5★): $'+highDiscPnl.toFixed(0)+' · Low disc (1-2★): $'+lowDiscPnl.toFixed(0):'Log discipline ratings to see patterns',
-      parseFloat(avgDisc)>=4?'#10b981':parseFloat(avgDisc)>=3?'#f59e0b':'#ef4444') +
+    patCard('🎯','IFVG quality (1M)',
+      topIfvg?(String(topIfvg).slice(0,28)+(String(topIfvg).length>28?'…':'')):'—',
+      topIfvg?topIfvgN+' trade(s) · '+(topIfvgWr!=null?topIfvgWr+'% WR · ':'')+'Σ $'+topIfvgPnl.toFixed(0):'Log IFVG quality on trades to see which fills pay',
+      topIfvgPnl>0?'#10b981':topIfvgPnl<0?'#ef4444':'#9ca3af') +
     patCard('📊','Trades/Day',
       avgPerDay,
       'Max '+maxPerDay+' in one day · Model: 1 trade/day'+(maxPerDay>1?' — check for overtrading':''),
@@ -7092,11 +7003,6 @@ document.addEventListener('click',function(e){
   }
 
   /* ── 12. STATS — fix inline grid styles ── */
-  /* Tilt bar */
-  #s-tilt {
-    width: 100% !important;
-    margin-bottom: 12px !important;
-  }
   /* Charts */
   #page-stats canvas {
     max-height: 180px !important;
@@ -7489,53 +7395,39 @@ document.addEventListener('click',function(e){
    ═══════════════════════════════════════════════ */
 
 /* ── FUZE SCORE ─────────────────────────────────
-   Composite 0–100 score. Shown on dashboard.
-   Components:
-     Win rate        25pts  (60% wr = full marks)
-     Avg discipline  25pts  (5★ = full marks)
-     Valid setup %   20pts  (% of non-invalid trades)
-     Avg RR          15pts  (2R avg = full marks)
-     Neutral emotion 15pts  (% entries w/ neutral state)
+   Composite 0–100 (discipline stars removed — log fields only).
+   Win rate 28 · Valid setup % 30 · Avg RR 22 · Neutral entry 20
+   (60% WR, valid-good+bad share, 2R avg, neutral/patient emotion = full in each bucket)
 ─────────────────────────────────────────────── */
 function calcFuzeScore(tArr){
   if(!tArr||tArr.length===0) return null;
   const completed=tArr.filter(t=>t.outcome==='win'||t.outcome==='loss'||t.outcome==='be');
   if(completed.length===0) return null;
 
-  // Win rate (include BE in denominator for accuracy)
   const wins=completed.filter(t=>t.outcome==='win').length;
   const wrPct=completed.length>0?wins/completed.length:0;
-  const wrScore=Math.min(wrPct/0.60,1)*25;
+  const wrScore=Math.min(wrPct/0.60,1)*28;
 
-  // Avg discipline rating
-  const discs=completed.filter(t=>t.discRating&&t.discRating>0).map(t=>t.discRating);
-  const avgDisc=discs.length>0?discs.reduce((a,b)=>a+b,0)/discs.length:0;
-  const discScore=(avgDisc/5)*25;
-
-  // Valid setup %
   const classified=completed.filter(t=>t.tradeClass);
   const validPct=classified.length>0?classified.filter(t=>t.tradeClass==='valid-good'||t.tradeClass==='valid-bad').length/classified.length:0;
-  const classScore=classified.length>0?Math.min(validPct,1)*20:0;
+  const classScore=classified.length>0?Math.min(validPct,1)*30:0;
 
-  // Avg RR (positive closed trades only, capped at 2R for scoring)
   const rrVals=completed.filter(t=>t.rrActual&&parseFloat(t.rrActual)>0).map(t=>parseFloat(t.rrActual));
   const avgRR=rrVals.length>0?rrVals.reduce((a,b)=>a+b,0)/rrVals.length:0;
-  const rrScore=Math.min(avgRR/2,1)*15;
+  const rrScore=Math.min(avgRR/2,1)*22;
 
-  // Neutral/patient emotion %
   const withEmo=completed.filter(t=>t.emotion);
   const neutralPct=withEmo.length>0?withEmo.filter(function(t){var em=t.emotion||'';return em==='Neutral ✓'||em.indexOf('Patient / waiting')===0;}).length/withEmo.length:0;
-  const emoScore=withEmo.length>0?Math.min(neutralPct,1)*15:0;
+  const emoScore=withEmo.length>0?Math.min(neutralPct,1)*20:0;
 
-  const total=Math.round(wrScore+discScore+classScore+rrScore+emoScore);
+  const total=Math.round(wrScore+classScore+rrScore+emoScore);
   return{
     total:Math.min(total,100),
     components:[
-      {label:'Win rate',score:Math.min(Math.round(wrScore),25),max:25,pct:wrPct},
-      {label:'Discipline',score:Math.min(Math.round(discScore),25),max:25,avg:avgDisc},
-      {label:'Valid setups',score:Math.min(Math.round(classScore),20),max:20,pct:validPct},
-      {label:'Avg RR',score:Math.min(Math.round(rrScore),15),max:15,avg:avgRR},
-      {label:'Neutral entry',score:Math.min(Math.round(emoScore),15),max:15,pct:neutralPct}
+      {label:'Win rate',score:Math.min(Math.round(wrScore),28),max:28,pct:wrPct},
+      {label:'Valid setups',score:Math.min(Math.round(classScore),30),max:30,pct:validPct},
+      {label:'Avg RR',score:Math.min(Math.round(rrScore),22),max:22,avg:avgRR},
+      {label:'Neutral entry',score:Math.min(Math.round(emoScore),20),max:20,pct:neutralPct}
     ]
   };
 }
@@ -7952,7 +7844,7 @@ if(_origShowTab){
   window.showTab=function(t){
     _origShowTab(t);
     if(t==='stats') setTimeout(renderSmartInsights,50);
-    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); setTimeout(function(){typeof renderMonthlyReviewDashboard==='function'&&renderMonthlyReviewDashboard();},90); }
+    if(t==='dashboard'){ setTimeout(renderFuzeScore,80); setTimeout(renderConsistencyTracker,80); }
   };
 }
 
@@ -7965,7 +7857,6 @@ if(_origRenderDashboard){
     if(_eqSub)_eqSub.textContent='Starting balance + P&L';
     setTimeout(renderFuzeScore,100);
     setTimeout(renderConsistencyTracker,100);
-    setTimeout(function(){typeof renderMonthlyReviewDashboard==='function'&&renderMonthlyReviewDashboard();},120);
   };
 }
 
