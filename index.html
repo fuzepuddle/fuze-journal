@@ -2816,13 +2816,33 @@ function clearSbSession(){
   }catch(e){}
 }
 
-async function sbVerifyAccessToken(){
-  if(!sbAccessToken) return false;
+/** Supabase JWT `exp` in ms, or 0 if unreadable (forces a /user probe). */
+function sbJwtExpMs(tok){
   try{
-    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
-    const req=fetch(SUPA_URL+'/auth/v1/user',{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+sbAccessToken}});
-    const r=await Promise.race([req,timeout]);
-    return r.ok;
+    if(!tok||typeof tok!=='string')return 0;
+    var parts=tok.split('.');
+    if(parts.length<2)return 0;
+    var b=parts[1].replace(/-/g,'+').replace(/_/g,'/');
+    while(b.length%4)b+='=';
+    var p=JSON.parse(atob(b));
+    return (p.exp?Number(p.exp)*1000:0)||0;
+  }catch(e){return 0;}
+}
+
+async function sbVerifyAccessToken(){
+  if(!sbAccessToken)return false;
+  var expMs=sbJwtExpMs(sbAccessToken);
+  var skewMs=120000;
+  if(expMs&&Date.now()>=expMs-skewMs){
+    return sbRefreshToken?await sbRefreshAccessToken():false;
+  }
+  try{
+    var timeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},5000);});
+    var req=fetch(SUPA_URL+'/auth/v1/user',{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+sbAccessToken}});
+    var r=await Promise.race([req,timeout]);
+    if(r.ok)return true;
+    if((r.status===401||r.status===403)&&sbRefreshToken)return await sbRefreshAccessToken();
+    return false;
   }catch(e){return false;}
 }
 
